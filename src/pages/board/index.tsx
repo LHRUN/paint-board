@@ -1,16 +1,18 @@
-import React, { useMemo, useRef, useState, MouseEvent } from 'react'
+import React, { useMemo, useState, MouseEvent, ChangeEvent } from 'react'
 import { MousePosition } from '@/types/mouse'
 import { PaintBoard } from '@/utils/paintBoard'
 import { ToolType } from './constants'
 
 const Board: React.FC = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
   const board = useMemo(() => {
-    console.log(canvasRef.current)
-    if (canvasRef.current) {
-      return new PaintBoard(canvasRef.current)
+    console.log('canvasRef', screen)
+    if (canvasRef) {
+      canvasRef.width = Math.floor(screen.width * 0.8)
+      canvasRef.height = Math.floor(screen.height * 0.5)
+      return new PaintBoard(canvasRef)
     }
-  }, [canvasRef.current])
+  }, [canvasRef])
   const [lastMousePos, setLastMousePos] = useState<MousePosition>({
     x: 0,
     y: 0
@@ -20,17 +22,14 @@ const Board: React.FC = () => {
 
   const mouseDown = (event: MouseEvent) => {
     if (board) {
-      console.log('bb')
       const { clientX, clientY } = event
       const { top, left } = board.position
-      console.log(clientX, clientY)
       setIsMouse(true)
       setLastMousePos({
         x: clientX - left,
         y: clientY - top
       })
     }
-    console.log('aa', board)
   }
 
   const mouseMove = (event: MouseEvent) => {
@@ -85,15 +84,32 @@ const Board: React.FC = () => {
     }
   }
 
+  const changeLineColor = (e: ChangeEvent<{ value: string }>) => {
+    if (board) {
+      board.setLineColor(e.target.value)
+    }
+  }
+
+  const saveImage = () => {
+    if (board) {
+      board.saveImage()
+    }
+  }
+
   return (
-    <div className="flex justify-center items-center flex-col">
-      <div>
-        <button onClick={() => setToolType(ToolType.Line)}>Line</button>
-        <button onClick={() => setToolType(ToolType.Clean)}>Clean</button>
+    <div className="flex justify-center items-center flex-col w-screen h-screen">
+      <div className="mb-10">
+        <button className="mr-5" onClick={() => setToolType(ToolType.Line)}>
+          Link
+        </button>
+        <button className="mr-5" onClick={() => setToolType(ToolType.Clean)}>
+          Clean
+        </button>
         <button
           onClick={() => {
             undo()
           }}
+          className="mr-5"
         >
           后退
         </button>
@@ -101,18 +117,21 @@ const Board: React.FC = () => {
           onClick={() => {
             redo()
           }}
+          className="mr-5"
         >
           前进
         </button>
+        <input type="color" onChange={changeLineColor} />
+        <button onClick={saveImage}>保存为图片</button>
       </div>
       <canvas
         className="border-dashed border-4 border-black"
-        ref={canvasRef}
+        ref={setCanvasRef}
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}
         onMouseUp={mouseUp}
-        width="500"
-        height="500"
+        width="300"
+        height="300"
       ></canvas>
     </div>
   )

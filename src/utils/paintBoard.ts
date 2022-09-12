@@ -46,7 +46,6 @@ export class PaintBoard {
 
     // 使用两点距离公式计算出鼠标这一次和上一次的移动距离
     const mouseDistance = getDistance(start, end)
-    console.log('mouseDistance', mouseDistance)
     // 计算时间
     const curTime = Date.now()
     const mouseDuration = curTime - this.lastMouseTime
@@ -68,7 +67,6 @@ export class PaintBoard {
    * @returns
    */
   private computedLineWidth(speed: number) {
-    console.log('speed', speed)
     let lineWidth = 0
     const minLineWidth = 2
     const maxSpeed = 10
@@ -96,7 +94,9 @@ export class PaintBoard {
    * @param width 绘线宽
    */
   setLineWidth(width: number) {
-    this.currentLineWidth = width
+    if (width) {
+      this.currentLineWidth = width
+    }
   }
 
   /**
@@ -104,7 +104,9 @@ export class PaintBoard {
    * @param color 绘线颜色
    */
   setLineColor(color: string) {
-    this.currentLineColor = color
+    if (color) {
+      this.currentLineColor = color
+    }
   }
 
   // 当前橡皮擦宽度
@@ -164,21 +166,25 @@ export class PaintBoard {
    * 记录当前绘画
    */
   record() {
-    const data = this.canvas.toDataURL()
-    console.log(data)
-    this.history.add(data)
+    // const data = this.canvas.toDataURL()
+    // console.log(data)
+    // this.history.add(data)
+    this.context.save()
   }
 
   /**
    * 后退
    */
   undo() {
-    const img = new Image()
-    img.src = this.history.undo() as string
+    // const img = new Image()
+    // img.src = this.history.undo() as string
 
-    img.onload = () => {
-      this.context.drawImage(img, 0, 0)
-    }
+    // img.onload = () => {
+    //   console.log('onload')
+    //   this.context.drawImage(img, 0, 0)
+    // }
+    console.log('undo')
+    this.context.restore()
   }
 
   /**
@@ -186,5 +192,20 @@ export class PaintBoard {
    */
   redo() {
     console.log('redo')
+  }
+
+  /**
+   * 保存为图片
+   */
+  saveImage() {
+    const imageData = this.canvas.toDataURL('image/png') //返回base64的URL
+    const elink = document.createElement('a')
+    elink.download = '图片'
+    elink.style.display = 'none'
+    elink.href = imageData
+    document.body.appendChild(elink)
+    elink.click()
+    URL.revokeObjectURL(elink.href) //释放URL对象
+    document.body.removeChild(elink)
   }
 }
