@@ -1,19 +1,11 @@
 import { CANVAS_ELE_TYPE } from './constants'
 
 export class Background {
-  canvas: HTMLCanvasElement
-  context: CanvasRenderingContext2D
   color: string
   type: string
 
-  constructor(
-    context: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    color: string
-  ) {
+  constructor(color: string) {
     this.color = color
-    this.canvas = canvas
-    this.context = context
     this.type = CANVAS_ELE_TYPE.BACKGROUND
   }
 
@@ -24,11 +16,11 @@ export class Background {
     this.color = color
   }
 
-  render() {
-    this.context.save()
-    this.context.rect(0, 0, this.canvas.width, this.canvas.height)
-    this.context.fillStyle = this.color
-    this.context.fill()
-    this.context.restore()
+  render(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    context.save()
+    context.rect(0, 0, canvas.width, canvas.height)
+    context.fillStyle = this.color
+    context.fill()
+    context.restore()
   }
 }

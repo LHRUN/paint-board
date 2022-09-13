@@ -1,4 +1,4 @@
-import { MousePosition } from '@/types/mouse'
+import { MousePosition } from '@/types'
 
 /**
  * 计算两点之间的距离

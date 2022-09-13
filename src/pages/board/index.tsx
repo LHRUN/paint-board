@@ -13,7 +13,7 @@ const Board: React.FC = () => {
       canvasRef.width = screen.width
       canvasRef.height = screen.height
       const history = storage.get(BOARD_STORAGE_KEY)
-      return new PaintBoard(canvasRef, history, 'white')
+      return new PaintBoard(canvasRef, history)
     }
   }, [canvasRef])
   // 鼠标是否按下

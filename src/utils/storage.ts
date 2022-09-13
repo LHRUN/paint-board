@@ -13,8 +13,7 @@ export const storage = {
     if (!key || !value) {
       return null
     }
-    key = key.toString()
-    localStorage.setItem(key, JSON.stringify(value))
+    localStorage.setItem(key.toString(), JSON.stringify(value))
   },
   deleteKey(key: string) {
     if (!key) {

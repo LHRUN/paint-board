@@ -11,13 +11,14 @@ export class History {
 
   // 遍历stack
   each(cb: (ele: ELEMENT_INSTANCE) => any) {
-    for (let i = 0; i < this.step; i++) {
+    for (let i = 0; i <= this.step; i++) {
       cb(this.stack[i])
     }
   }
 
   // 添加
   add(data: ELEMENT_INSTANCE) {
+    this.stack.length = this.step + 1
     this.stack.push(data)
     this.step = this.stack.length - 1
   }

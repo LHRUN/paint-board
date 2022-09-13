@@ -42,6 +42,18 @@ const OptionsMenu: React.FC<IProps> = ({ board, setOptionsType }) => {
     }
   }
 
+  const setLineWidth = (w: number) => {
+    if (board) {
+      board.setLineWidth(w)
+    }
+  }
+
+  const setCleanWidth = (w: number) => {
+    if (board) {
+      board.setCleanWidth(w)
+    }
+  }
+
   return (
     <div className="fixed w-30 top-10 left-10 mb-10 flex flex-col">
       <div>
@@ -55,11 +67,13 @@ const OptionsMenu: React.FC<IProps> = ({ board, setOptionsType }) => {
           return !Number.isNaN(Number(w)) ? (
             <div
               style={{
-                width: `${w}px`,
+                width: `30px`,
                 height: `${w}px`,
                 borderRadius: '50%',
                 backgroundColor: 'black'
               }}
+              key={w}
+              onClick={() => setLineWidth(Number(w))}
             ></div>
           ) : null
         })}
@@ -76,11 +90,13 @@ const OptionsMenu: React.FC<IProps> = ({ board, setOptionsType }) => {
           return !Number.isNaN(Number(w)) ? (
             <div
               style={{
-                width: `${w}px`,
+                width: `30px`,
                 height: `${w}px`,
                 borderRadius: '50%',
                 backgroundColor: 'black'
               }}
+              key={w}
+              onClick={() => setCleanWidth(w)}
             ></div>
           ) : null
         })}

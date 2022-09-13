@@ -15,11 +15,7 @@ export class PaintBoard {
     left: 0
   }
 
-  constructor(
-    canvas: HTMLCanvasElement,
-    history?: ELEMENT_INSTANCE[],
-    background?: string
-  ) {
+  constructor(canvas: HTMLCanvasElement, history?: ELEMENT_INSTANCE[]) {
     this.canvas = canvas
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
     const { top, left } = canvas.getBoundingClientRect()
@@ -27,11 +23,8 @@ export class PaintBoard {
       top,
       left
     }
-    this.history = new History(
-      history
-        ? [new Background(this.context, this.canvas, background || '#FFF')]
-        : history || []
-    )
+    this.history = new History(history || [])
+    // this.render()
   }
 
   // 当前元素
@@ -44,15 +37,10 @@ export class PaintBoard {
     let ele: ELEMENT_INSTANCE = null
     switch (type) {
       case CANVAS_ELE_TYPE.FREE_LINE:
-        ele = new FreeLine(
-          this.context,
-          this.canvas,
-          this.currentLineColor,
-          this.currentLineWidth
-        )
+        ele = new FreeLine(this.currentLineColor, this.currentLineWidth)
         break
       case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.context, this.canvas, this.cleanWidth)
+        ele = new CleanLine(this.cleanWidth)
         break
       default:
         break
@@ -77,7 +65,7 @@ export class PaintBoard {
   render() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
     this.history.each((ele) => {
-      ele?.render()
+      ele?.render(this.context, this.canvas)
     })
     storage.set(BOARD_STORAGE_KEY, this.history.stack)
   }
