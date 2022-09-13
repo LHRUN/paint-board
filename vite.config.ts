@@ -8,7 +8,12 @@ import autoprefixer from 'autoprefixer'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), viteEslint()],
+  plugins: [
+    react(),
+    viteEslint({
+      failOnError: false
+    })
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, './src')

@@ -1,3 +1,9 @@
+export enum CANVAS_ELE_TYPE {
+  FREE_LINE = 'freeLine',
+  CLEAN_LINE = 'cleanLine',
+  BACKGROUND = 'background'
+}
+
 // 线宽枚举
 export enum LineWidth {
   W5 = 5,
@@ -12,9 +18,4 @@ export enum CleanWidth {
   W10 = 10,
   W15 = 15,
   W20 = 20
-}
-
-export enum ToolType {
-  Line = 'line',
-  Clean = 'clean'
 }

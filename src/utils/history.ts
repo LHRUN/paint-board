@@ -1,13 +1,23 @@
+import { ELEMENT_INSTANCE } from '@/types'
+
+// 执行历史记录
 export class History {
-  stack: string[]
+  stack: ELEMENT_INSTANCE[]
   step: number
-  constructor() {
-    this.stack = []
+  constructor(stack: ELEMENT_INSTANCE[]) {
+    this.stack = stack
     this.step = 0
   }
 
+  // 遍历stack
+  each(cb: (ele: ELEMENT_INSTANCE) => any) {
+    for (let i = 0; i < this.step; i++) {
+      cb(this.stack[i])
+    }
+  }
+
   // 添加
-  add(data: string) {
+  add(data: ELEMENT_INSTANCE) {
     this.stack.push(data)
     this.step = this.stack.length - 1
   }
@@ -16,7 +26,6 @@ export class History {
   undo() {
     if (this.step > 0) {
       this.step--
-      console.log(this.step, this.stack[this.step])
       return this.stack[this.step]
     }
   }

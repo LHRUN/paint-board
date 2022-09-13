@@ -1,7 +1,10 @@
-import { MousePosition } from '@/types/mouse'
-import { getDistance } from '@/utils'
-import { CleanWidth, LineWidth } from '../pages/board/constants'
+import { ELEMENT_INSTANCE, MousePosition } from '@/types'
+import { Background } from './background'
+import { CleanLine } from './cleanLine'
+import { CANVAS_ELE_TYPE, CleanWidth, LineWidth } from './constants'
+import { FreeLine } from './freeLine'
 import { History } from './history'
+import { BOARD_STORAGE_KEY, storage } from './storage'
 
 export class PaintBoard {
   canvas: HTMLCanvasElement
@@ -12,7 +15,11 @@ export class PaintBoard {
     left: 0
   }
 
-  constructor(canvas: HTMLCanvasElement) {
+  constructor(
+    canvas: HTMLCanvasElement,
+    history?: ELEMENT_INSTANCE[],
+    background?: string
+  ) {
     this.canvas = canvas
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
     const { top, left } = canvas.getBoundingClientRect()
@@ -20,74 +27,74 @@ export class PaintBoard {
       top,
       left
     }
-    this.history = new History()
+    this.history = new History(
+      history
+        ? [new Background(this.context, this.canvas, background || '#FFF')]
+        : history || []
+    )
   }
 
-  lastMouseTime = 0
-  // 最后绘线宽度
-  lastLineWidth = LineWidth.W5
-  // 当前绘线宽
-  currentLineWidth = LineWidth.W5
+  // 当前元素
+  currentEle: ELEMENT_INSTANCE = null
+
+  /**
+   * 记录当前绘画
+   */
+  recordCurrent(type: string) {
+    let ele: ELEMENT_INSTANCE = null
+    switch (type) {
+      case CANVAS_ELE_TYPE.FREE_LINE:
+        ele = new FreeLine(
+          this.context,
+          this.canvas,
+          this.currentLineColor,
+          this.currentLineWidth
+        )
+        break
+      case CANVAS_ELE_TYPE.CLEAN_LINE:
+        ele = new CleanLine(this.context, this.canvas, this.cleanWidth)
+        break
+      default:
+        break
+    }
+    this.history.add(ele)
+    this.currentEle = ele
+  }
+
+  /**
+   * 为当前元素添加坐标数据
+   */
+  currentAddPosition(position: MousePosition) {
+    if (!(this.currentEle instanceof Background)) {
+      this.currentEle?.addPosition(position)
+    }
+    this.render()
+  }
+
+  /**
+   * 渲染数据
+   */
+  render() {
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.history.each((ele) => {
+      ele?.render()
+    })
+    storage.set(BOARD_STORAGE_KEY, this.history.stack)
+  }
+
+  /**
+   * 修改背景颜色
+   */
+  setBackgroundColor(color: string) {
+    if (this.history.stack[0] instanceof Background) {
+      this.history.stack[0]?.setBackgroundColor(color)
+    }
+  }
+
   // 当前绘线颜色
   currentLineColor = 'black'
-
-  /**
-   * 画线
-   * @param start 起点
-   * @param end 终点
-   */
-  drawLine(start: MousePosition, end: MousePosition) {
-    this.context.beginPath()
-    this.context.lineCap = 'round'
-    this.context.lineJoin = 'round'
-    this.context.moveTo(start.x, start.y)
-    this.context.lineTo(end.x, end.y)
-    this.context.strokeStyle = this.currentLineColor
-
-    // 使用两点距离公式计算出鼠标这一次和上一次的移动距离
-    const mouseDistance = getDistance(start, end)
-    // 计算时间
-    const curTime = Date.now()
-    const mouseDuration = curTime - this.lastMouseTime
-    // 计算速度
-    const mouseSpeed = mouseDistance / mouseDuration
-    // 更新时间
-    this.lastMouseTime = curTime
-
-    const lineWidth = this.computedLineWidth(Number(mouseSpeed))
-    this.context.lineWidth = lineWidth
-
-    this.context.stroke()
-    this.context.closePath()
-  }
-
-  /**
-   * 计算线宽
-   * @param speed
-   * @returns
-   */
-  private computedLineWidth(speed: number) {
-    let lineWidth = 0
-    const minLineWidth = 2
-    const maxSpeed = 10
-    const minSpeed = 0.5
-    // 速度超快，那么直接使用最小的笔画
-    if (speed >= maxSpeed) {
-      lineWidth = minLineWidth
-    } else if (speed <= minSpeed) {
-      // 速度超慢，那么直接使用最大的笔画
-      lineWidth = this.currentLineWidth
-    } else {
-      // 中间速度，那么根据速度的比例来计算
-      lineWidth =
-        this.currentLineWidth -
-        ((speed - minSpeed) / (maxSpeed - minSpeed)) * this.currentLineWidth
-    }
-
-    lineWidth = lineWidth * (1 / 2) + this.lastLineWidth * (1 / 2)
-    this.lastLineWidth = lineWidth
-    return lineWidth
-  }
+  // 当前绘线宽
+  currentLineWidth = LineWidth.W5
 
   /**
    * 修改绘线宽
@@ -113,48 +120,6 @@ export class PaintBoard {
   cleanWidth = CleanWidth.W5
 
   /**
-   * 模拟橡皮擦线性清除
-   * @param start 起点
-   * @param end 终点
-   */
-  cleanLine(start: MousePosition, end: MousePosition) {
-    const { x: x1, y: y1 } = start
-    const { x: x2, y: y2 } = end
-
-    //获取两个点之间的剪辑区域四个端点
-    const asin = this.cleanWidth * Math.sin(Math.atan((y2 - y1) / (x2 - x1)))
-    const acos = this.cleanWidth * Math.cos(Math.atan((y2 - y1) / (x2 - x1)))
-    const x3 = x1 + asin
-    const y3 = y1 - acos
-    const x4 = x1 - asin
-    const y4 = y1 + acos
-    const x5 = x2 + asin
-    const y5 = y2 - acos
-    const x6 = x2 - asin
-    const y6 = y2 + acos
-
-    //保证线条的连贯，所以在矩形一端画圆
-    this.context.save()
-    this.context.beginPath()
-    this.context.arc(x2, y2, this.cleanWidth, 0, 2 * Math.PI)
-    this.context.clip()
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.context.restore()
-
-    //清除矩形剪辑区域里的像素
-    this.context.save()
-    this.context.beginPath()
-    this.context.moveTo(x3, y3)
-    this.context.lineTo(x5, y5)
-    this.context.lineTo(x6, y6)
-    this.context.lineTo(x4, y4)
-    this.context.closePath()
-    this.context.clip()
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.context.restore()
-  }
-
-  /**
    * 修改橡皮擦宽度
    * @param width 橡皮擦宽度
    */
@@ -163,35 +128,19 @@ export class PaintBoard {
   }
 
   /**
-   * 记录当前绘画
-   */
-  record() {
-    // const data = this.canvas.toDataURL()
-    // console.log(data)
-    // this.history.add(data)
-    this.context.save()
-  }
-
-  /**
    * 后退
    */
   undo() {
-    // const img = new Image()
-    // img.src = this.history.undo() as string
-
-    // img.onload = () => {
-    //   console.log('onload')
-    //   this.context.drawImage(img, 0, 0)
-    // }
-    console.log('undo')
-    this.context.restore()
+    this.history.undo()
+    this.render()
   }
 
   /**
    * 前进
    */
   redo() {
-    console.log('redo')
+    this.history.redo()
+    this.render()
   }
 
   /**

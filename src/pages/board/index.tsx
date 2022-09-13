@@ -1,129 +1,62 @@
 import React, { useMemo, useState, MouseEvent, ChangeEvent } from 'react'
-import { MousePosition } from '@/types/mouse'
 import { PaintBoard } from '@/utils/paintBoard'
-import { ToolType } from './constants'
+import { CANVAS_ELE_TYPE } from '@/utils/constants'
+import OptionsMenu from './components/optionsMenu'
+import { BOARD_STORAGE_KEY, storage } from '@/utils/storage'
 
 const Board: React.FC = () => {
+  // canvas元素
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
+  // 画板实例
   const board = useMemo(() => {
-    console.log('canvasRef', screen)
     if (canvasRef) {
-      canvasRef.width = Math.floor(screen.width * 0.8)
-      canvasRef.height = Math.floor(screen.height * 0.5)
-      return new PaintBoard(canvasRef)
+      canvasRef.width = screen.width
+      canvasRef.height = screen.height
+      const history = storage.get(BOARD_STORAGE_KEY)
+      return new PaintBoard(canvasRef, history, 'white')
     }
   }, [canvasRef])
-  const [lastMousePos, setLastMousePos] = useState<MousePosition>({
-    x: 0,
-    y: 0
-  })
-  const [isMouse, setIsMouse] = useState<boolean>(false)
-  const [toolType, setToolType] = useState<string>(ToolType.Line)
+  // 鼠标是否按下
+  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
+  // 当前工具类型
+  const [optionsType, setOptionsType] = useState<string>(
+    CANVAS_ELE_TYPE.FREE_LINE
+  )
 
-  const mouseDown = (event: MouseEvent) => {
+  // 鼠标按下
+  const mouseDown = () => {
     if (board) {
-      const { clientX, clientY } = event
-      const { top, left } = board.position
-      setIsMouse(true)
-      setLastMousePos({
-        x: clientX - left,
-        y: clientY - top
-      })
+      setIsMouseDown(true)
+      board.recordCurrent(optionsType)
     }
   }
 
+  // 鼠标移动
   const mouseMove = (event: MouseEvent) => {
     const { clientX, clientY } = event
-    // console.log(clientX, clientY, lastMousePos)
-    if (lastMousePos?.x && lastMousePos?.y && board && isMouse) {
+    if (board && isMouseDown) {
       const { top, left } = board.position
-      console.log(toolType)
-      switch (toolType) {
-        case ToolType.Line:
-          board.drawLine(
-            { x: lastMousePos.x, y: lastMousePos.y },
-            { x: clientX - left, y: clientY - top }
-          )
-          break
-        case ToolType.Clean:
-          board.cleanLine(
-            { x: lastMousePos.x, y: lastMousePos.y },
-            { x: clientX - left, y: clientY - top }
-          )
-          break
-        default:
-          break
-      }
-      setLastMousePos({
+      board.currentAddPosition({
         x: clientX - left,
         y: clientY - top
       })
     }
   }
 
+  // 鼠标
   const mouseUp = () => {
     if (board) {
-      setLastMousePos({
-        x: 0,
-        y: 0
-      })
-      setIsMouse(false)
-      board.record()
-    }
-  }
-
-  const undo = () => {
-    if (board) {
-      board.undo()
-    }
-  }
-
-  const redo = () => {
-    if (board) {
-      board.redo()
-    }
-  }
-
-  const changeLineColor = (e: ChangeEvent<{ value: string }>) => {
-    if (board) {
-      board.setLineColor(e.target.value)
-    }
-  }
-
-  const saveImage = () => {
-    if (board) {
-      board.saveImage()
+      setIsMouseDown(false)
     }
   }
 
   return (
     <div className="flex justify-center items-center flex-col w-screen h-screen">
-      <div className="mb-10">
-        <button className="mr-5" onClick={() => setToolType(ToolType.Line)}>
-          Link
-        </button>
-        <button className="mr-5" onClick={() => setToolType(ToolType.Clean)}>
-          Clean
-        </button>
-        <button
-          onClick={() => {
-            undo()
-          }}
-          className="mr-5"
-        >
-          后退
-        </button>
-        <button
-          onClick={() => {
-            redo()
-          }}
-          className="mr-5"
-        >
-          前进
-        </button>
-        <input type="color" onChange={changeLineColor} />
-        <button onClick={saveImage}>保存为图片</button>
-      </div>
+      <OptionsMenu
+        board={board}
+        optionsType={optionsType}
+        setOptionsType={setOptionsType}
+      />
       <canvas
         className="border-dashed border-4 border-black"
         ref={setCanvasRef}
