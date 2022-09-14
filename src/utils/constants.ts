@@ -19,3 +19,8 @@ export enum CleanWidth {
   W15 = 15,
   W20 = 20
 }
+
+// 按键枚举
+export enum KeyCode {
+  SPACE = 'Space'
+}

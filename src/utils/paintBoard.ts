@@ -10,6 +10,10 @@ export class PaintBoard {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   history: History
+  originPosition = {
+    x: 0,
+    y: 0
+  }
   position = {
     top: 0,
     left: 0
@@ -18,12 +22,12 @@ export class PaintBoard {
   constructor(canvas: HTMLCanvasElement, history?: ELEMENT_INSTANCE[]) {
     this.canvas = canvas
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
+    this.history = new History(history || [])
     const { top, left } = canvas.getBoundingClientRect()
     this.position = {
       top,
       left
     }
-    this.history = new History(history || [])
     // this.render()
   }
 
@@ -59,6 +63,13 @@ export class PaintBoard {
     this.render()
   }
 
+  translate(position: MousePosition) {
+    if (this.originPosition.x && this.originPosition.y) {
+      this.context.translate(position.x + 5, position.y + 5)
+    }
+    this.originPosition = position
+  }
+
   /**
    * 渲染数据
    */
@@ -67,7 +78,7 @@ export class PaintBoard {
     this.history.each((ele) => {
       ele?.render(this.context, this.canvas)
     })
-    storage.set(BOARD_STORAGE_KEY, this.history.stack)
+    // storage.set(BOARD_STORAGE_KEY, this.history.stack)
   }
 
   /**

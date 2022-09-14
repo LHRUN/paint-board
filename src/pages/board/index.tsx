@@ -1,6 +1,6 @@
-import React, { useMemo, useState, MouseEvent, ChangeEvent } from 'react'
+import React, { useMemo, useState, MouseEvent, useEffect } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
-import { CANVAS_ELE_TYPE } from '@/utils/constants'
+import { CANVAS_ELE_TYPE, KeyCode } from '@/utils/constants'
 import OptionsMenu from './components/optionsMenu'
 import { BOARD_STORAGE_KEY, storage } from '@/utils/storage'
 
@@ -22,12 +22,38 @@ const Board: React.FC = () => {
   const [optionsType, setOptionsType] = useState<string>(
     CANVAS_ELE_TYPE.FREE_LINE
   )
+  const [isDrag, setIsDrag] = useState<boolean>(false)
+
+  useEffect(() => {
+    window.addEventListener('keydown', onKeydown)
+    window.addEventListener('keyup', onKeyup)
+    return () => {
+      window.removeEventListener('keydown', onKeydown)
+      window.removeEventListener('keyup', onKeyup)
+    }
+  }, [])
+
+  const onKeydown = (e: KeyboardEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
+    if (e.code === KeyCode.SPACE) {
+      setIsDrag(true)
+    }
+  }
+
+  const onKeyup = (e: KeyboardEvent) => {
+    if (e.code === KeyCode.SPACE) {
+      setIsDrag(false)
+    }
+  }
 
   // 鼠标按下
   const mouseDown = () => {
     if (board) {
       setIsMouseDown(true)
-      board.recordCurrent(optionsType)
+      if (!isDrag) {
+        board.recordCurrent(optionsType)
+      }
     }
   }
 
@@ -36,10 +62,17 @@ const Board: React.FC = () => {
     const { clientX, clientY } = event
     if (board && isMouseDown) {
       const { top, left } = board.position
-      board.currentAddPosition({
-        x: clientX - left,
-        y: clientY - top
-      })
+      if (isDrag) {
+        board.translate({
+          x: clientX - left,
+          y: clientY - top
+        })
+      } else {
+        board.currentAddPosition({
+          x: clientX - left,
+          y: clientY - top
+        })
+      }
     }
   }
 
