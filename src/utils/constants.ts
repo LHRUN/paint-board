@@ -1,23 +1,13 @@
 export enum CANVAS_ELE_TYPE {
   FREE_LINE = 'freeLine',
-  CLEAN_LINE = 'cleanLine',
-  BACKGROUND = 'background'
+  CLEAN_LINE = 'cleanLine'
 }
 
-// 线宽枚举
-export enum LineWidth {
-  W5 = 5,
-  W10 = 10,
-  W15 = 15,
-  W20 = 20
-}
-
-// 橡皮擦宽度枚举
-export enum CleanWidth {
-  W5 = 5,
-  W10 = 10,
-  W15 = 15,
-  W20 = 20
+export const CommonWidth = {
+  W5: 6,
+  W10: 12,
+  W15: 16,
+  W20: 22
 }
 
 // 按键枚举

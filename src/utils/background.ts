@@ -1,12 +1,10 @@
-import { CANVAS_ELE_TYPE } from './constants'
-
 export class Background {
   color: string
   type: string
 
   constructor(color: string) {
     this.color = color
-    this.type = CANVAS_ELE_TYPE.BACKGROUND
+    this.type = 'BACKGROUND'
   }
 
   /**

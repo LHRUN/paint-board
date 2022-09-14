@@ -1,16 +1,19 @@
 import { ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { Background } from './background'
 import { CleanLine } from './cleanLine'
-import { CANVAS_ELE_TYPE, CleanWidth, LineWidth } from './constants'
+import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { FreeLine } from './freeLine'
 import { History } from './history'
-import { BOARD_STORAGE_KEY, storage } from './storage'
+// import { BOARD_STORAGE_KEY, storage } from './storage'
 
 export class PaintBoard {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   history: History
   originPosition = {
+    x: 0,
+    y: 0
+  }
+  originTranslate = {
     x: 0,
     y: 0
   }
@@ -57,15 +60,24 @@ export class PaintBoard {
    * 为当前元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    if (!(this.currentEle instanceof Background)) {
-      this.currentEle?.addPosition(position)
-    }
+    this.currentEle?.addPosition({
+      x: position.x - this.position.left - this.originTranslate.x,
+      y: position.y - this.position.top - this.originTranslate.y
+    })
+    this.context.translate(0, 0)
     this.render()
   }
 
   translate(position: MousePosition) {
     if (this.originPosition.x && this.originPosition.y) {
-      this.context.translate(position.x + 5, position.y + 5)
+      const translteX = position.x - this.originPosition.x
+      const translteY = position.y - this.originPosition.y
+      this.context.translate(translteX, translteY)
+      this.originTranslate = {
+        x: translteX + this.originTranslate.x,
+        y: translteY + this.originTranslate.y
+      }
+      this.render()
     }
     this.originPosition = position
   }
@@ -81,19 +93,10 @@ export class PaintBoard {
     // storage.set(BOARD_STORAGE_KEY, this.history.stack)
   }
 
-  /**
-   * 修改背景颜色
-   */
-  setBackgroundColor(color: string) {
-    if (this.history.stack[0] instanceof Background) {
-      this.history.stack[0]?.setBackgroundColor(color)
-    }
-  }
-
   // 当前绘线颜色
   currentLineColor = 'black'
   // 当前绘线宽
-  currentLineWidth = LineWidth.W5
+  currentLineWidth = CommonWidth.W5
 
   /**
    * 修改绘线宽
@@ -116,7 +119,7 @@ export class PaintBoard {
   }
 
   // 当前橡皮擦宽度
-  cleanWidth = CleanWidth.W5
+  cleanWidth = CommonWidth.W5
 
   /**
    * 修改橡皮擦宽度

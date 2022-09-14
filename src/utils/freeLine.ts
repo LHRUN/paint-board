@@ -1,5 +1,5 @@
-import { getDistance } from './index'
-import { CANVAS_ELE_TYPE, LineWidth } from './constants'
+// import { getDistance } from './index'
+import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { MousePosition } from '@/types'
 
 export class FreeLine {
@@ -9,7 +9,7 @@ export class FreeLine {
   // 当前绘线颜色
   color = 'black'
   // 当前绘线宽
-  currentLineWidth = LineWidth.W5
+  currentLineWidth = CommonWidth.W5
 
   constructor(color: string, width: number) {
     this.positions = []
@@ -36,7 +36,7 @@ export class FreeLine {
   // 最后mouse移动时间
   lastMouseTime = 0
   // 最后绘线宽度
-  lastLineWidth = LineWidth.W5
+  lastLineWidth = CommonWidth.W5
 
   /**
    * 画线

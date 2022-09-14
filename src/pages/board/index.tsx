@@ -1,8 +1,9 @@
-import React, { useMemo, useState, MouseEvent, useEffect } from 'react'
+import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
-import { CANVAS_ELE_TYPE, KeyCode } from '@/utils/constants'
+import { CANVAS_ELE_TYPE } from '@/utils/constants'
 import OptionsMenu from './components/optionsMenu'
 import { BOARD_STORAGE_KEY, storage } from '@/utils/storage'
+import { useSpaceEvent } from '@/hooks/keyEvent'
 
 const Board: React.FC = () => {
   // canvas元素
@@ -10,8 +11,8 @@ const Board: React.FC = () => {
   // 画板实例
   const board = useMemo(() => {
     if (canvasRef) {
-      canvasRef.width = screen.width
-      canvasRef.height = screen.height
+      canvasRef.width = screen.availWidth
+      canvasRef.height = screen.availHeight
       const history = storage.get(BOARD_STORAGE_KEY)
       return new PaintBoard(canvasRef, history)
     }
@@ -22,36 +23,22 @@ const Board: React.FC = () => {
   const [optionsType, setOptionsType] = useState<string>(
     CANVAS_ELE_TYPE.FREE_LINE
   )
-  const [isDrag, setIsDrag] = useState<boolean>(false)
 
-  useEffect(() => {
-    window.addEventListener('keydown', onKeydown)
-    window.addEventListener('keyup', onKeyup)
-    return () => {
-      window.removeEventListener('keydown', onKeydown)
-      window.removeEventListener('keyup', onKeyup)
+  // 是否按下空格
+  const isPressSpace = useSpaceEvent(board, () => {
+    if (board) {
+      board.originPosition = {
+        x: 0,
+        y: 0
+      }
     }
-  }, [])
-
-  const onKeydown = (e: KeyboardEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-    if (e.code === KeyCode.SPACE) {
-      setIsDrag(true)
-    }
-  }
-
-  const onKeyup = (e: KeyboardEvent) => {
-    if (e.code === KeyCode.SPACE) {
-      setIsDrag(false)
-    }
-  }
+  })
 
   // 鼠标按下
   const mouseDown = () => {
     if (board) {
       setIsMouseDown(true)
-      if (!isDrag) {
+      if (!isPressSpace) {
         board.recordCurrent(optionsType)
       }
     }
@@ -62,15 +49,15 @@ const Board: React.FC = () => {
     const { clientX, clientY } = event
     if (board && isMouseDown) {
       const { top, left } = board.position
-      if (isDrag) {
+      if (isPressSpace) {
         board.translate({
           x: clientX - left,
           y: clientY - top
         })
       } else {
         board.currentAddPosition({
-          x: clientX - left,
-          y: clientY - top
+          x: clientX,
+          y: clientY
         })
       }
     }
@@ -80,6 +67,10 @@ const Board: React.FC = () => {
   const mouseUp = () => {
     if (board) {
       setIsMouseDown(false)
+      board.originPosition = {
+        x: 0,
+        y: 0
+      }
     }
   }
 
@@ -91,13 +82,10 @@ const Board: React.FC = () => {
         setOptionsType={setOptionsType}
       />
       <canvas
-        className="border-dashed border-4 border-black"
         ref={setCanvasRef}
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}
         onMouseUp={mouseUp}
-        width="300"
-        height="300"
       ></canvas>
     </div>
   )
