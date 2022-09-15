@@ -11,8 +11,6 @@ const Board: React.FC = () => {
   // 画板实例
   const board = useMemo(() => {
     if (canvasRef) {
-      canvasRef.width = screen.availWidth
-      canvasRef.height = screen.availHeight
       const history = storage.get(BOARD_STORAGE_KEY)
       return new PaintBoard(canvasRef, history)
     }

@@ -21,9 +21,11 @@ export class PaintBoard {
     top: 0,
     left: 0
   }
+  resizeTimer: NodeJS.Timeout | null = null
 
   constructor(canvas: HTMLCanvasElement, history?: ELEMENT_INSTANCE[]) {
     this.canvas = canvas
+    this.initCanvasSize(this.canvas)
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
     this.history = new History(history || [])
     const { top, left } = canvas.getBoundingClientRect()
@@ -31,7 +33,38 @@ export class PaintBoard {
       top,
       left
     }
+    window.addEventListener('resize', () => {
+      this.initCanvasSize(this.canvas)
+      this.render()
+      // if (this.resizeTimer) {
+      //   clearTimeout(this.resizeTimer)
+      // }
+      // this.resizeTimer = setTimeout(() => {
+      //   this.initCanvasSize(this.canvas)
+      //   this.render()
+      // }, 300)
+    })
     // this.render()
+  }
+
+  // 初始化窗口变化
+  initCanvasSize(canvas: HTMLCanvasElement) {
+    this.originPosition = {
+      x: 0,
+      y: 0
+    }
+    canvas.width = document.body.clientWidth
+    canvas.height = document.body.clientHeight
+  }
+
+  changeScale(z: number) {
+    console.log(z)
+    this.context.scale(z, z)
+    this.render()
+    this.originPosition = {
+      x: 0,
+      y: 0
+    }
   }
 
   // 当前元素

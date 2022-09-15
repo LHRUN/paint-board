@@ -23,11 +23,19 @@ const OptionsMenu: React.FC<IProps> = ({
     [board?.currentLineWidth]
   )
   const cleanWidth = useMemo(() => board?.cleanWidth, [board?.cleanWidth])
+  const [scale, setScale] = useState(100)
 
   const changeLineColor = (color: string) => {
     if (board) {
       setColorInput(color)
       board.setLineColor(color)
+    }
+  }
+
+  const changeScale = (v: number) => {
+    if (board) {
+      board?.changeScale(v / 100)
+      setScale(v)
     }
   }
 
@@ -173,8 +181,9 @@ const OptionsMenu: React.FC<IProps> = ({
           type="range"
           min="0"
           max="300"
-          value="100"
+          value={scale}
           className="range mt-1"
+          onInput={(v) => changeScale(v.target.value)}
         />
       </div>
     </div>
