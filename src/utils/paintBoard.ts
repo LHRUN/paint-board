@@ -94,7 +94,7 @@ export class PaintBoard {
   }
 
   // 当前绘线颜色
-  currentLineColor = 'black'
+  currentLineColor = '#000000'
   // 当前绘线宽
   currentLineWidth = CommonWidth.W5
 
