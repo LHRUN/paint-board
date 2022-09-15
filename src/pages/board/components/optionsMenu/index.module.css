@@ -1,0 +1,22 @@
+.lineColor {
+  height: 2rem;
+  width: 2rem;
+  padding: 0px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.lineColor::-webkit-color-swatch-wrapper {
+  height: 2rem;
+  padding: 0px;
+  width: 2rem;
+  border-radius: 4px;
+  border: none;
+}
+.lineColor::-webkit-color-swatch {
+  height: 2rem;
+  padding: 0px;
+  width: 2rem;
+  border-radius: 4px;
+  border: none;
+}

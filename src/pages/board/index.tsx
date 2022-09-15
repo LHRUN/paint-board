@@ -73,7 +73,11 @@ const Board: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center items-center flex-col w-screen h-screen">
+    <div
+      className={`flex justify-center items-center flex-col w-screen h-screen ${
+        isPressSpace ? 'cursor-pointer' : ''
+      }`}
+    >
       <OptionsMenu
         board={board}
         optionsType={optionsType}

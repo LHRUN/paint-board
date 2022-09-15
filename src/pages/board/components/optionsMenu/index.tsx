@@ -6,6 +6,8 @@ import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
 import { PaintBoard } from '@/utils/paintBoard'
 
+import styles from './index.module.css'
+
 interface IProps {
   board: PaintBoard | undefined
   optionsType: string
@@ -17,7 +19,12 @@ const OptionsMenu: React.FC<IProps> = ({
   optionsType,
   setOptionsType
 }) => {
-  const [colorInput, setColorInput] = useState<string>('')
+  const colorInput = useMemo(() => {
+    if (board?.currentLineColor) {
+      return board.currentLineColor.split('#')[1] || ''
+    }
+    return ''
+  }, [board?.currentLineColor])
   const currentLineWidth = useMemo(
     () => board?.currentLineWidth,
     [board?.currentLineWidth]
@@ -27,7 +34,6 @@ const OptionsMenu: React.FC<IProps> = ({
 
   const changeLineColor = (color: string) => {
     if (board) {
-      setColorInput(color)
       board.setLineColor(color)
     }
   }
@@ -77,27 +83,29 @@ const OptionsMenu: React.FC<IProps> = ({
 
   return (
     <div
-      className="fixed top-10 left-10 flex flex-col card shadow-xl px-5 py-10"
+      className="fixed top-5 left-5 flex flex-col card shadow-xl px-5 py-10"
       style={{ backgroundColor: '#EEF1FF' }}
     >
       <div className="btn-group">
         <button
           className={classNames({
             btn: true,
+            'flex-grow': true,
             'btn-active': optionsType === CANVAS_ELE_TYPE.FREE_LINE
           })}
           onClick={() => setOptionsType(CANVAS_ELE_TYPE.FREE_LINE)}
         >
-          FreeLine
+          自由画笔
         </button>
         <button
           className={classNames({
             btn: true,
+            'flex-grow': true,
             'btn-active': optionsType === CANVAS_ELE_TYPE.CLEAN_LINE
           })}
           onClick={() => setOptionsType(CANVAS_ELE_TYPE.CLEAN_LINE)}
         >
-          CleanLine
+          橡皮擦
         </button>
       </div>
       <div className="mt-3">
@@ -109,6 +117,7 @@ const OptionsMenu: React.FC<IProps> = ({
                 key={w}
                 className={classNames({
                   btn: true,
+                  'flex-grow': true,
                   'btn-active':
                     optionsType === CANVAS_ELE_TYPE.FREE_LINE
                       ? currentLineWidth === w
@@ -133,50 +142,55 @@ const OptionsMenu: React.FC<IProps> = ({
       {optionsType === CANVAS_ELE_TYPE.FREE_LINE && (
         <div className="form-control mt-3">
           <div className="font-bold">Color</div>
-          <label className="input-group mt-1">
-            <span>
+          <div className="mt-1 flex items-center justify-center w-full">
+            <div className="w-8 h-8 mr-2 tooltip" data-tip="画笔颜色">
               <input
                 type="color"
                 value={board?.currentLineColor}
                 onChange={(e) => changeLineColor(e.target.value)}
+                className={styles.lineColor}
               />
-            </span>
-            <input
-              value={colorInput}
-              onInput={(e) => {
-                console.log(e)
-                setColorInput(e.currentTarget.value)
-              }}
-              className="input input-bordered input-md w-full max-w-xs"
-            />
-          </label>
+            </div>
+
+            <label className="input-group">
+              <span className="font-bold bg-primary">#</span>
+              <input
+                value={colorInput}
+                className="input input-bordered input-sm w-full max-w-xs focus:outline-none"
+                readOnly
+              />
+            </label>
+          </div>
         </div>
       )}
       <div className="mt-3">
         <div className="font-bold">Tool</div>
-        <ul
-          className="menu menu-horizontal bg-base-100 rounded-box justify-between mt-1"
-          style={{ width: '200px' }}
-        >
+        <ul className="menu menu-horizontal bg-base-100 rounded-box justify-between mt-1">
           <li>
             <a onClick={undo}>
-              <UndoIcon />
+              <div className="tooltip" data-tip="后退">
+                <UndoIcon />
+              </div>
             </a>
           </li>
           <li>
             <a onClick={redo}>
-              <RedoIcon />
+              <div className="tooltip" data-tip="前进">
+                <RedoIcon />
+              </div>
             </a>
           </li>
           <li>
             <a onClick={saveImage}>
-              <SaveIcon />
+              <div className="tooltip" data-tip="导出为图片">
+                <SaveIcon />
+              </div>
             </a>
           </li>
         </ul>
       </div>
       <div className="mt-3">
-        <div className="font-bold">Scale</div>
+        <div className="font-bold">Scale: </div>
         <input
           type="range"
           min="0"
