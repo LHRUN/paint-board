@@ -1,9 +1,9 @@
 import { ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { CleanLine } from './cleanLine'
+import { CleanLine, cleanLineRender } from './cleanLine'
 import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
-import { FreeLine } from './freeLine'
+import { FreeLine, freeLineRender } from './freeLine'
 import { History } from './history'
-// import { BOARD_STORAGE_KEY, storage } from './storage'
+import { BOARD_STORAGE_KEY, storage } from './storage'
 
 export class PaintBoard {
   canvas: HTMLCanvasElement
@@ -23,11 +23,11 @@ export class PaintBoard {
   }
   resizeTimer: NodeJS.Timeout | null = null
 
-  constructor(canvas: HTMLCanvasElement, history?: ELEMENT_INSTANCE[]) {
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
     this.initCanvasSize(this.canvas)
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
-    this.history = new History(history || [])
+    this.history = new History(storage.get(BOARD_STORAGE_KEY) || [])
     const { top, left } = canvas.getBoundingClientRect()
     this.position = {
       top,
@@ -36,35 +36,34 @@ export class PaintBoard {
     window.addEventListener('resize', () => {
       this.initCanvasSize(this.canvas)
       this.render()
-      // if (this.resizeTimer) {
-      //   clearTimeout(this.resizeTimer)
-      // }
-      // this.resizeTimer = setTimeout(() => {
-      //   this.initCanvasSize(this.canvas)
-      //   this.render()
-      // }, 300)
     })
-    // this.render()
+    this.render()
   }
 
   // 初始化窗口变化
   initCanvasSize(canvas: HTMLCanvasElement) {
-    this.originPosition = {
-      x: 0,
-      y: 0
-    }
+    this.initOriginPosition()
     canvas.width = document.body.clientWidth
     canvas.height = document.body.clientHeight
   }
 
-  changeScale(z: number) {
-    console.log(z)
-    this.context.scale(z, z)
-    this.render()
+  // 初始化原点
+  initOriginPosition() {
     this.originPosition = {
       x: 0,
       y: 0
     }
+  }
+
+  // 缩放比例
+  scale = 1
+  // 改变缩放比例
+  changeScale(z: number) {
+    const scale = this.scale * z
+    this.context.scale(scale, scale)
+    this.scale = scale
+    this.render()
+    this.initOriginPosition()
   }
 
   // 当前元素
@@ -116,14 +115,28 @@ export class PaintBoard {
   }
 
   /**
-   * 渲染数据
+   * 遍历history渲染数据
    */
   render() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.history.each((ele) => {
-      ele?.render(this.context, this.canvas)
-    })
-    // storage.set(BOARD_STORAGE_KEY, this.history.stack)
+    if (this.history.stack.length > 0) {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+      this.history.each((ele) => {
+        switch (ele?.type) {
+          case CANVAS_ELE_TYPE.FREE_LINE:
+            freeLineRender(this.context, ele as FreeLine)
+            break
+          case CANVAS_ELE_TYPE.CLEAN_LINE:
+            cleanLineRender(this.context, this.canvas, ele as CleanLine)
+            break
+          default:
+            break
+        }
+      })
+      storage.set(
+        BOARD_STORAGE_KEY,
+        this.history.stack.slice(0, this.history.step + 1)
+      )
+    }
   }
 
   // 当前绘线颜色

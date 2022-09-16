@@ -1,11 +1,7 @@
 import { KeyCode } from '@/utils/constants'
 import { useEffect, useState } from 'react'
 
-export function useSpaceEvent(
-  el: any,
-  keyDownCb?: () => void,
-  keyUpCb?: () => void
-) {
+export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
   const [isPressSpace, setIsPressSpace] = useState<boolean>(false)
 
   useEffect(() => {
@@ -15,19 +11,19 @@ export function useSpaceEvent(
       window.removeEventListener('keydown', onKeydown)
       window.removeEventListener('keyup', onKeyup)
     }
-  }, [el])
+  }, [])
 
   const onKeydown = (e: KeyboardEvent) => {
     e.stopPropagation()
     e.preventDefault()
-    if (e.code === KeyCode.SPACE && el) {
+    if (e.code === KeyCode.SPACE) {
       setIsPressSpace(true)
       keyDownCb?.()
     }
   }
 
   const onKeyup = (e: KeyboardEvent) => {
-    if (e.code === KeyCode.SPACE && el) {
+    if (e.code === KeyCode.SPACE) {
       setIsPressSpace(false)
       keyUpCb?.()
     }

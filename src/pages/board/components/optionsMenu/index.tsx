@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import UndoIcon from '@/components/icons/undo'
@@ -14,34 +14,36 @@ interface IProps {
   setOptionsType: (type: string) => void
 }
 
-const OptionsMenu: React.FC<IProps> = ({
+const OptionsCard: React.FC<IProps> = ({
   board,
   optionsType,
   setOptionsType
 }) => {
+  // 刷新操作栏
+  const [, setRefresh] = useState(0)
+  // scale range
+  const [scaleValue, setScaleValue] = useState(100)
+  // 颜色输入框(目前是只读数据)
   const colorInput = useMemo(() => {
     if (board?.currentLineColor) {
       return board.currentLineColor.split('#')[1] || ''
     }
     return ''
   }, [board?.currentLineColor])
-  const currentLineWidth = useMemo(
-    () => board?.currentLineWidth,
-    [board?.currentLineWidth]
-  )
-  const cleanWidth = useMemo(() => board?.cleanWidth, [board?.cleanWidth])
-  const [scale, setScale] = useState(100)
 
+  // 改变画笔颜色
   const changeLineColor = (color: string) => {
     if (board) {
       board.setLineColor(color)
+      setRefresh((v) => v + 1)
     }
   }
 
+  // 改变缩放比例
   const changeScale = (v: number) => {
     if (board) {
+      setScaleValue(v)
       board?.changeScale(v / 100)
-      setScale(v)
     }
   }
 
@@ -66,6 +68,7 @@ const OptionsMenu: React.FC<IProps> = ({
     }
   }
 
+  // 改变宽度
   const setWidth = (w: number) => {
     if (board) {
       switch (optionsType) {
@@ -78,6 +81,7 @@ const OptionsMenu: React.FC<IProps> = ({
         default:
           break
       }
+      setRefresh((v) => v + 1)
     }
   }
 
@@ -120,8 +124,8 @@ const OptionsMenu: React.FC<IProps> = ({
                   'flex-grow': true,
                   'btn-active':
                     optionsType === CANVAS_ELE_TYPE.FREE_LINE
-                      ? currentLineWidth === w
-                      : cleanWidth === w
+                      ? board?.currentLineWidth === w
+                      : board?.cleanWidth === w
                 })}
                 onClick={() => setWidth(w)}
               >
@@ -190,18 +194,20 @@ const OptionsMenu: React.FC<IProps> = ({
         </ul>
       </div>
       <div className="mt-3">
-        <div className="font-bold">Scale: </div>
+        <div className="font-bold">Scale: {scaleValue / 100}</div>
         <input
           type="range"
           min="0"
           max="300"
-          value={scale}
+          value={scaleValue}
           className="range mt-1"
-          onInput={(v) => changeScale(v.target.value)}
+          onInput={(e) => {
+            changeScale(Number((e.target as HTMLInputElement).value))
+          }}
         />
       </div>
     </div>
   )
 }
 
-export default OptionsMenu
+export default OptionsCard

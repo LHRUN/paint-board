@@ -6,32 +6,45 @@ export class History {
   step: number
   constructor(stack: ELEMENT_INSTANCE[]) {
     this.stack = stack
-    this.step = 0
+    this.step = stack.length > 0 ? stack.length - 1 : -1
   }
 
-  // 遍历stack
-  each(cb: (ele: ELEMENT_INSTANCE) => any) {
+  /**
+   * 遍历stack
+   * @param cb 遍历执行回调
+   */
+  each(cb?: (ele: ELEMENT_INSTANCE) => void) {
     for (let i = 0; i <= this.step; i++) {
-      cb(this.stack[i])
+      cb?.(this.stack[i])
     }
   }
 
-  // 添加
+  /**
+   * 添加数据
+   * @param data
+   */
   add(data: ELEMENT_INSTANCE) {
-    this.stack.length = this.step + 1
+    // 如果在回退时添加数据就删除暂存数据
+    if (this.step !== this.stack.length - 1) {
+      this.stack.length = this.step + 1
+    }
     this.stack.push(data)
     this.step = this.stack.length - 1
   }
 
-  // 后退
+  /**
+   * 后退
+   */
   undo() {
-    if (this.step > 0) {
+    if (this.step >= 0) {
       this.step--
       return this.stack[this.step]
     }
   }
 
-  // 前进
+  /**
+   * 前进
+   */
   redo() {
     if (this.step < this.stack.length - 1) {
       this.step++
@@ -39,7 +52,9 @@ export class History {
     }
   }
 
-  // 清空
+  /**
+   * 清空
+   */
   clean() {
     this.stack = []
     this.step = 0

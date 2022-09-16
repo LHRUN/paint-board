@@ -1,8 +1,7 @@
 import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
-import OptionsMenu from './components/optionsMenu'
-import { BOARD_STORAGE_KEY, storage } from '@/utils/storage'
+import OptionsCard from './components/optionsMenu'
 import { useSpaceEvent } from '@/hooks/keyEvent'
 
 const Board: React.FC = () => {
@@ -11,8 +10,7 @@ const Board: React.FC = () => {
   // 画板实例
   const board = useMemo(() => {
     if (canvasRef) {
-      const history = storage.get(BOARD_STORAGE_KEY)
-      return new PaintBoard(canvasRef, history)
+      return new PaintBoard(canvasRef)
     }
   }, [canvasRef])
   // 鼠标是否按下
@@ -23,12 +21,9 @@ const Board: React.FC = () => {
   )
 
   // 是否按下空格
-  const isPressSpace = useSpaceEvent(board, () => {
+  const isPressSpace = useSpaceEvent(() => {
     if (board) {
-      board.originPosition = {
-        x: 0,
-        y: 0
-      }
+      board.initOriginPosition()
     }
   })
 
@@ -65,20 +60,17 @@ const Board: React.FC = () => {
   const mouseUp = () => {
     if (board) {
       setIsMouseDown(false)
-      board.originPosition = {
-        x: 0,
-        y: 0
-      }
+      board.initOriginPosition()
     }
   }
 
   return (
     <div
       className={`flex justify-center items-center flex-col w-screen h-screen ${
-        isPressSpace ? 'cursor-pointer' : ''
+        isPressSpace ? 'cursor-move' : ''
       }`}
     >
-      <OptionsMenu
+      <OptionsCard
         board={board}
         optionsType={optionsType}
         setOptionsType={setOptionsType}
