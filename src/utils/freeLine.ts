@@ -2,6 +2,9 @@ import { getDistance } from './index'
 import { CANVAS_ELE_TYPE } from './constants'
 import { MousePosition } from '@/types'
 
+/**
+ * 自由画笔
+ */
 export class FreeLine {
   // 鼠标移动位置记录
   positions: MousePosition[]
@@ -19,7 +22,7 @@ export class FreeLine {
   // 最小速度
   minSpeed = 1
   // 最后mouse移动时间
-  lastMouseTime = 0
+  lastMoveTime = 0
   // 最后绘线宽度
   lastLineWidth: number
 
@@ -33,9 +36,13 @@ export class FreeLine {
     this.lastLineWidth = width
   }
 
+  /**
+   * 添加位置记录
+   * @param position
+   */
   addPosition(position: MousePosition) {
     this.positions.push(position)
-    // 记录当前鼠标移动速度，为后面的线宽做计算
+    // 记录当前鼠标移动速度，用于线宽计算
     if (this.positions.length > 1) {
       this.mouseSpeeds.push(
         this.computedSpeed(
@@ -53,19 +60,24 @@ export class FreeLine {
    * @returns 鼠标速度
    */
   private computedSpeed(start: MousePosition, end: MousePosition) {
-    // 使用两点距离公式计算出鼠标这一次和上一次的移动距离
-    const mouseDistance = getDistance(start, end)
+    // 计算距离
+    const moveDistance = getDistance(start, end)
     // 计算时间
     const curTime = Date.now()
-    const mouseDuration = curTime - this.lastMouseTime
+    const moveTime = curTime - this.lastMoveTime
     // 计算速度
-    const mouseSpeed = mouseDistance / mouseDuration
+    const moveSpeed = moveDistance / moveTime
     // 更新时间
-    this.lastMouseTime = curTime
-    return Number(mouseSpeed.toFixed(5))
+    this.lastMoveTime = curTime
+    return Number(moveSpeed.toFixed(5))
   }
 }
 
+/**
+ * 自由画笔渲染
+ * @param context canvas二维渲染上下文
+ * @param instance FreeLine 实例
+ */
 export const freeLineRender = (
   context: CanvasRenderingContext2D,
   instance: FreeLine
@@ -90,9 +102,9 @@ export const freeLineRender = (
  * 画线
  * @param start 起点
  * @param end 终点
- * @param context
+ * @param context canvas二维渲染上下文
  * @param speed 鼠标移动速度
- * @param instance 画笔实例
+ * @param instance FreeLine 实例
  */
 const _drawLine = (
   start: MousePosition,
@@ -116,7 +128,7 @@ const _drawLine = (
 /**
  * 计算画笔宽度
  * @param speed 鼠标移动速度
- * @param instance 画笔实例
+ * @param instance FreeLine 实例
  * @returns 画笔宽度
  */
 const _computedLineWidth = (speed: number, instance: FreeLine) => {

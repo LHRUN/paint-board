@@ -1,42 +1,52 @@
 import { ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { CleanLine, cleanLineRender } from './cleanLine'
-import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { FreeLine, freeLineRender } from './freeLine'
+import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 
+/**
+ * PaintBoard
+ */
 export class PaintBoard {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
-  history: History
+  history: History<ELEMENT_INSTANCE>
+  // 原点位置
   originPosition = {
     x: 0,
     y: 0
   }
+  // 针对原点拖拽距离
   originTranslate = {
     x: 0,
     y: 0
   }
-  position = {
+  // canvas几何属性
+  canvasRect = {
     top: 0,
     left: 0
   }
-  resizeTimer: NodeJS.Timeout | null = null
 
   constructor(canvas: HTMLCanvasElement) {
+    // 初始化配置
     this.canvas = canvas
     this.initCanvasSize(this.canvas)
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
     this.history = new History(storage.get(BOARD_STORAGE_KEY) || [])
     const { top, left } = canvas.getBoundingClientRect()
-    this.position = {
+    this.canvasRect = {
       top,
       left
     }
+
+    // 监听窗口size
     window.addEventListener('resize', () => {
       this.initCanvasSize(this.canvas)
       this.render()
     })
+
+    // 初始化渲染缓存数据
     this.render()
   }
 
@@ -59,18 +69,21 @@ export class PaintBoard {
   scale = 1
   // 改变缩放比例
   changeScale(z: number) {
-    const scale = this.scale * z
+    this.initOriginPosition()
+    const scale = z
+    console.log(scale)
+    // z > 1 ? this.scale + z : this.scale - z > 0 ? this.scale - z : 0
     this.context.scale(scale, scale)
+    console.log(scale)
     this.scale = scale
     this.render()
-    this.initOriginPosition()
   }
 
   // 当前元素
   currentEle: ELEMENT_INSTANCE = null
 
   /**
-   * 记录当前绘画
+   * 记录当前元素，并加入history
    */
   recordCurrent(type: string) {
     let ele: ELEMENT_INSTANCE = null
@@ -93,17 +106,24 @@ export class PaintBoard {
    */
   currentAddPosition(position: MousePosition) {
     this.currentEle?.addPosition({
-      x: position.x - this.position.left - this.originTranslate.x,
-      y: position.y - this.position.top - this.originTranslate.y
+      x: position.x - this.canvasRect.left - this.originTranslate.x,
+      y: position.y - this.canvasRect.top - this.originTranslate.y
     })
     this.context.translate(0, 0)
     this.render()
   }
 
-  translate(position: MousePosition) {
+  /**
+   * 拖拽画布
+   */
+  drag(position: MousePosition) {
+    const mousePosition = {
+      x: position.x - this.canvasRect.left,
+      y: position.y - this.canvasRect.top
+    }
     if (this.originPosition.x && this.originPosition.y) {
-      const translteX = position.x - this.originPosition.x
-      const translteY = position.y - this.originPosition.y
+      const translteX = mousePosition.x - this.originPosition.x
+      const translteY = mousePosition.y - this.originPosition.y
       this.context.translate(translteX, translteY)
       this.originTranslate = {
         x: translteX + this.originTranslate.x,
@@ -111,7 +131,7 @@ export class PaintBoard {
       }
       this.render()
     }
-    this.originPosition = position
+    this.originPosition = mousePosition
   }
 
   /**
@@ -192,17 +212,44 @@ export class PaintBoard {
   }
 
   /**
+   * 清除画布
+   */
+  clean() {
+    this.history.clean()
+    this.render()
+  }
+
+  /**
    * 保存为图片
    */
   saveImage() {
-    const imageData = this.canvas.toDataURL('image/png') //返回base64的URL
+    const imageData = this.context.getImageData(
+      0,
+      0,
+      document.body.clientWidth,
+      document.body.clientHeight
+    )
+    // 创建保存图片canvas
+    const canvas = document.createElement('canvas')
+    const context = canvas.getContext('2d')
+    canvas.width = document.body.clientWidth
+    canvas.height = document.body.clientHeight
+    canvas.style.position = 'fixed'
+    canvas.style.top = '10000px'
+    canvas.style.left = '10000px'
+    document.body.appendChild(canvas)
+    context?.putImageData(imageData, 0, 0)
+
+    // 创建下载link
+    const imageUrl = canvas.toDataURL('image/png')
     const elink = document.createElement('a')
     elink.download = '图片'
     elink.style.display = 'none'
-    elink.href = imageData
+    elink.href = imageUrl
     document.body.appendChild(elink)
     elink.click()
-    URL.revokeObjectURL(elink.href) //释放URL对象
+    URL.revokeObjectURL(elink.href)
     document.body.removeChild(elink)
+    document.body.removeChild(canvas)
   }
 }

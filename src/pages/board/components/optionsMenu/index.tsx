@@ -1,12 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
+import { PaintBoard } from '@/utils/paintBoard'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
-import { PaintBoard } from '@/utils/paintBoard'
 
 import styles from './index.module.css'
+import CleanIcon from '@/components/icons/clean'
 
 interface IProps {
   board: PaintBoard | undefined
@@ -58,6 +59,13 @@ const OptionsCard: React.FC<IProps> = ({
   const redo = () => {
     if (board) {
       board.redo()
+    }
+  }
+
+  // 清除画布
+  const clean = () => {
+    if (board) {
+      board.clean()
     }
   }
 
@@ -181,6 +189,13 @@ const OptionsCard: React.FC<IProps> = ({
             <a onClick={redo}>
               <div className="tooltip" data-tip="前进">
                 <RedoIcon />
+              </div>
+            </a>
+          </li>
+          <li>
+            <a onClick={clean}>
+              <div className="tooltip" data-tip="清除画布">
+                <CleanIcon />
               </div>
             </a>
           </li>

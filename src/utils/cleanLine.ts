@@ -1,6 +1,9 @@
 import { MousePosition } from '@/types'
 import { CANVAS_ELE_TYPE } from './constants'
 
+/**
+ * 橡皮擦
+ */
 export class CleanLine {
   // 鼠标移动位置记录
   positions: MousePosition[]
@@ -20,8 +23,8 @@ export class CleanLine {
 }
 
 /**
- * 线性清除渲染
- * @param context
+ * 橡皮擦渲染
+ * @param context canvas二维渲染上下文
  * @param canvas
  * @param instance CleanLine实例
  */
@@ -45,7 +48,7 @@ export const cleanLineRender = (
  * 线性清除
  * @param start 起点
  * @param end 终点
- * @param context
+ * @param context canvas二维渲染上下文
  * @param canvas
  * @param cleanWidth 清楚宽度
  */

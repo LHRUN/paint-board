@@ -1,10 +1,10 @@
-import { ELEMENT_INSTANCE } from '@/types'
-
-// 执行历史记录
-export class History {
-  stack: ELEMENT_INSTANCE[]
+/**
+ * 历史记录栈
+ */
+export class History<T> {
+  stack: T[]
   step: number
-  constructor(stack: ELEMENT_INSTANCE[]) {
+  constructor(stack: T[]) {
     this.stack = stack
     this.step = stack.length > 0 ? stack.length - 1 : -1
   }
@@ -13,7 +13,7 @@ export class History {
    * 遍历stack
    * @param cb 遍历执行回调
    */
-  each(cb?: (ele: ELEMENT_INSTANCE) => void) {
+  each(cb?: (ele: T) => void) {
     for (let i = 0; i <= this.step; i++) {
       cb?.(this.stack[i])
     }
@@ -23,7 +23,7 @@ export class History {
    * 添加数据
    * @param data
    */
-  add(data: ELEMENT_INSTANCE) {
+  add(data: T) {
     // 如果在回退时添加数据就删除暂存数据
     if (this.step !== this.stack.length - 1) {
       this.stack.length = this.step + 1
@@ -57,6 +57,6 @@ export class History {
    */
   clean() {
     this.stack = []
-    this.step = 0
+    this.step = -1
   }
 }

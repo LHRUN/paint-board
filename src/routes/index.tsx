@@ -5,7 +5,7 @@ import LazyLoad from './util/lazyLoad'
 
 const rootRouter: RouteObject[] = [
   {
-    path: '/board',
+    path: '/',
     element: LazyLoad(React.lazy(() => import('@/pages/board')))
   }
 ]

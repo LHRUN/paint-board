@@ -7,7 +7,7 @@ import { useSpaceEvent } from '@/hooks/keyEvent'
 const Board: React.FC = () => {
   // canvas元素
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
-  // 画板实例
+  // 画板
   const board = useMemo(() => {
     if (canvasRef) {
       return new PaintBoard(canvasRef)
@@ -15,7 +15,7 @@ const Board: React.FC = () => {
   }, [canvasRef])
   // 鼠标是否按下
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
-  // 当前工具类型
+  // 当前工具选择
   const [optionsType, setOptionsType] = useState<string>(
     CANVAS_ELE_TYPE.FREE_LINE
   )
@@ -39,18 +39,17 @@ const Board: React.FC = () => {
 
   // 鼠标移动
   const mouseMove = (event: MouseEvent) => {
-    const { clientX, clientY } = event
     if (board && isMouseDown) {
-      const { top, left } = board.position
+      const { clientX: x, clientY: y } = event
       if (isPressSpace) {
-        board.translate({
-          x: clientX - left,
-          y: clientY - top
+        board.drag({
+          x,
+          y
         })
       } else {
         board.currentAddPosition({
-          x: clientX,
-          y: clientY
+          x,
+          y
         })
       }
     }
