@@ -6,7 +6,7 @@ export class History<T> {
   step: number
   constructor(stack: T[]) {
     this.stack = stack
-    this.step = stack.length > 0 ? stack.length - 1 : -1
+    this.step = stack.length - 1
   }
 
   /**

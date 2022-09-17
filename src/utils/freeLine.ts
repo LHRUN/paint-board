@@ -1,4 +1,4 @@
-import { getDistance } from './index'
+import { getDistance, scalePosition } from './index'
 import { CANVAS_ELE_TYPE } from './constants'
 import { MousePosition } from '@/types'
 
@@ -25,8 +25,10 @@ export class FreeLine {
   lastMoveTime = 0
   // 最后绘线宽度
   lastLineWidth: number
+  // 当前缩放比例
+  scale = 1
 
-  constructor(color: string, width: number) {
+  constructor(color: string, width: number, scale: number) {
     this.positions = []
     this.mouseSpeeds = [0]
     this.type = CANVAS_ELE_TYPE.FREE_LINE
@@ -34,6 +36,7 @@ export class FreeLine {
     this.maxWidth = width
     this.minWidth = width / 2
     this.lastLineWidth = width
+    this.scale = scale
   }
 
   /**
@@ -41,7 +44,9 @@ export class FreeLine {
    * @param position
    */
   addPosition(position: MousePosition) {
-    this.positions.push(position)
+    this.positions.push(scalePosition(position, this.scale))
+    // this.positions.push(position)
+    // console.log(scalePosition(position, this.scale), position, this.scale)
     // 记录当前鼠标移动速度，用于线宽计算
     if (this.positions.length > 1) {
       this.mouseSpeeds.push(
@@ -76,7 +81,7 @@ export class FreeLine {
 /**
  * 自由画笔渲染
  * @param context canvas二维渲染上下文
- * @param instance FreeLine 实例
+ * @param instance FreeLine
  */
 export const freeLineRender = (
   context: CanvasRenderingContext2D,
@@ -87,39 +92,44 @@ export const freeLineRender = (
   context.lineJoin = 'round'
   context.strokeStyle = instance.color
   for (let i = 1; i < instance.positions.length; i++) {
-    _drawLine(
-      instance.positions[i - 1],
-      instance.positions[i],
-      context,
-      instance.mouseSpeeds[i],
-      instance
-    )
+    _drawLine(instance, i, context)
   }
   context.restore()
 }
 
 /**
  * 画线
- * @param start 起点
- * @param end 终点
- * @param context canvas二维渲染上下文
- * @param speed 鼠标移动速度
  * @param instance FreeLine 实例
+ * @param i 下标
+ * @param context canvas二维渲染上下文
  */
 const _drawLine = (
-  start: MousePosition,
-  end: MousePosition,
-  context: CanvasRenderingContext2D,
-  speed: number,
-  instance: FreeLine
+  instance: FreeLine,
+  i: number,
+  context: CanvasRenderingContext2D
 ) => {
+  const { positions, mouseSpeeds } = instance
+  const { x: centerX, y: centerY } = positions[i - 1]
+  const { x: endX, y: endY } = positions[i]
   context.beginPath()
-  context.moveTo(start.x, start.y)
-  context.lineTo(end.x, end.y)
+  if (i == 1) {
+    context.moveTo(centerX, centerY)
+    context.lineTo(endX, endY)
+  } else {
+    const { x: startX, y: startY } = positions[i - 2]
+    const lastX = (startX + centerX) / 2
+    const lastY = (startY + centerY) / 2
+    const x = (centerX + endX) / 2
+    const y = (centerY + endY) / 2
+    context.moveTo(lastX, lastY)
+    context.quadraticCurveTo(centerX, centerY, x, y)
+  }
+  // context.moveTo(start.x / instance.scale, start.y / instance.scale)
+  // context.lineTo(end.x / instance.scale, end.y / instance.scale)
 
-  const lineWidth = _computedLineWidth(speed, instance)
+  const lineWidth = _computedLineWidth(mouseSpeeds[i], instance)
   if (lineWidth > 0) {
-    context.lineWidth = lineWidth
+    context.lineWidth = lineWidth / instance.scale
   }
 
   context.stroke()
@@ -133,15 +143,17 @@ const _drawLine = (
  */
 const _computedLineWidth = (speed: number, instance: FreeLine) => {
   let lineWidth = 0
+  const minWidth = instance.minWidth
+  const maxWidth = instance.maxWidth
   if (speed >= instance.maxSpeed) {
-    lineWidth = instance.minWidth
+    lineWidth = minWidth
   } else if (speed <= instance.minSpeed) {
-    lineWidth = instance.maxWidth
+    lineWidth = maxWidth
   } else {
     lineWidth =
-      instance.maxWidth -
+      maxWidth -
       ((speed - instance.minSpeed) / (instance.maxSpeed - instance.minSpeed)) *
-        instance.maxWidth
+        maxWidth
   }
 
   lineWidth = lineWidth * (1 / 3) + instance.lastLineWidth * (2 / 3)

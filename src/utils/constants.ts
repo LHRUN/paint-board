@@ -6,10 +6,10 @@ export enum CANVAS_ELE_TYPE {
 
 // 通用绘画宽度
 export const CommonWidth = {
-  W5: 6,
-  W10: 12,
-  W15: 16,
-  W20: 22
+  W5: 4,
+  W10: 8,
+  W15: 12,
+  W20: 14
 }
 
 // 按键枚举

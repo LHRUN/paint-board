@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
@@ -24,9 +24,13 @@ const OptionsCard: React.FC<IProps> = ({
   const [, setRefresh] = useState(0)
   // scale range
   const [scaleValue, setScaleValue] = useState(100)
+  useEffect(() => {
+    setScaleValue(board?.scale || 1)
+  }, [board?.scale])
   // 颜色输入框(目前是只读数据)
   const colorInput = useMemo(() => {
     if (board?.currentLineColor) {
+      console.log('color')
       return board.currentLineColor.split('#')[1] || ''
     }
     return ''
@@ -44,7 +48,7 @@ const OptionsCard: React.FC<IProps> = ({
   const changeScale = (v: number) => {
     if (board) {
       setScaleValue(v)
-      board?.changeScale(v / 100)
+      board?.changeScale(v)
     }
   }
 
@@ -158,7 +162,7 @@ const OptionsCard: React.FC<IProps> = ({
             <div className="w-8 h-8 mr-2 tooltip" data-tip="画笔颜色">
               <input
                 type="color"
-                value={board?.currentLineColor}
+                value={`#${colorInput}`}
                 onChange={(e) => changeLineColor(e.target.value)}
                 className={styles.lineColor}
               />
@@ -209,11 +213,12 @@ const OptionsCard: React.FC<IProps> = ({
         </ul>
       </div>
       <div className="mt-3">
-        <div className="font-bold">Scale: {scaleValue / 100}</div>
+        <div className="font-bold">Scale: {Math.floor(scaleValue * 100)}%</div>
         <input
           type="range"
-          min="0"
-          max="300"
+          min="0.1"
+          max="3"
+          step="0.01"
           value={scaleValue}
           className="range mt-1"
           onInput={(e) => {

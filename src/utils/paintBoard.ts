@@ -31,34 +31,40 @@ export class PaintBoard {
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
     this.canvas = canvas
-    this.initCanvasSize(this.canvas)
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
-    this.history = new History(storage.get(BOARD_STORAGE_KEY) || [])
+    this.initCanvasSize()
     const { top, left } = canvas.getBoundingClientRect()
     this.canvasRect = {
       top,
       left
     }
+    // this.getCache(this)
 
     // 监听窗口size
     window.addEventListener('resize', () => {
-      this.initCanvasSize(this.canvas)
+      this.initCanvasSize()
       this.render()
     })
 
+    // 获取缓存
+    const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
+    Object.assign(this, { ...state })
+    this.history = new History(history)
+
     // 初始化渲染缓存数据
-    this.render()
+    this.changeScale(this.scale)
   }
 
   // 初始化窗口变化
-  initCanvasSize(canvas: HTMLCanvasElement) {
+  initCanvasSize() {
     this.initOriginPosition()
-    canvas.width = document.body.clientWidth
-    canvas.height = document.body.clientHeight
+    this.canvas.width = document.body.clientWidth
+    this.canvas.height = document.body.clientHeight
   }
 
   // 初始化原点
   initOriginPosition() {
+    this.context.translate(0, 0)
     this.originPosition = {
       x: 0,
       y: 0
@@ -68,14 +74,10 @@ export class PaintBoard {
   // 缩放比例
   scale = 1
   // 改变缩放比例
-  changeScale(z: number) {
+  changeScale(scale: number) {
     this.initOriginPosition()
-    const scale = z
-    console.log(scale)
-    // z > 1 ? this.scale + z : this.scale - z > 0 ? this.scale - z : 0
-    this.context.scale(scale, scale)
-    console.log(scale)
     this.scale = scale
+    this.context.setTransform(scale, 0, 0, scale, 0, 0)
     this.render()
   }
 
@@ -89,10 +91,14 @@ export class PaintBoard {
     let ele: ELEMENT_INSTANCE = null
     switch (type) {
       case CANVAS_ELE_TYPE.FREE_LINE:
-        ele = new FreeLine(this.currentLineColor, this.currentLineWidth)
+        ele = new FreeLine(
+          this.currentLineColor,
+          this.currentLineWidth,
+          this.scale
+        )
         break
       case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth)
+        ele = new CleanLine(this.cleanWidth, this.scale)
         break
       default:
         break
@@ -109,7 +115,7 @@ export class PaintBoard {
       x: position.x - this.canvasRect.left - this.originTranslate.x,
       y: position.y - this.canvasRect.top - this.originTranslate.y
     })
-    this.context.translate(0, 0)
+    this.initOriginPosition()
     this.render()
   }
 
@@ -138,8 +144,8 @@ export class PaintBoard {
    * 遍历history渲染数据
    */
   render() {
+    this.cleanCanvas()
     if (this.history.stack.length > 0) {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
       this.history.each((ele) => {
         switch (ele?.type) {
           case CANVAS_ELE_TYPE.FREE_LINE:
@@ -152,11 +158,33 @@ export class PaintBoard {
             break
         }
       })
-      storage.set(
-        BOARD_STORAGE_KEY,
-        this.history.stack.slice(0, this.history.step + 1)
-      )
     }
+    this.cache()
+  }
+
+  cache() {
+    const history = this.history.stack.slice(0, this.history.step + 1)
+    const {
+      scale,
+      currentLineColor,
+      currentLineWidth,
+      cleanWidth
+      // originTranslate
+    } = this
+    const state = {
+      scale,
+      currentLineColor,
+      currentLineWidth,
+      cleanWidth
+    }
+    storage.set(BOARD_STORAGE_KEY, { history, state })
+  }
+
+  cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
+    this.context.clearRect(0, 0, w, w)
+    this.context.clearRect(0, -w, w, w)
+    this.context.clearRect(-w, 0, w, w)
+    this.context.clearRect(-w, -w, w, w)
   }
 
   // 当前绘线颜色
@@ -237,13 +265,14 @@ export class PaintBoard {
     canvas.style.position = 'fixed'
     canvas.style.top = '10000px'
     canvas.style.left = '10000px'
+    canvas.style.visibility = 'hidden'
     document.body.appendChild(canvas)
     context?.putImageData(imageData, 0, 0)
 
     // 创建下载link
     const imageUrl = canvas.toDataURL('image/png')
     const elink = document.createElement('a')
-    elink.download = '图片'
+    elink.download = 'image'
     elink.style.display = 'none'
     elink.href = imageUrl
     document.body.appendChild(elink)
