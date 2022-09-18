@@ -2,7 +2,8 @@ import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
 import OptionsCard from './components/optionsMenu'
-import { useSpaceEvent } from '@/hooks/keyEvent'
+import { useResizeEvent, useSpaceEvent } from '@/hooks/event'
+import Info from './components/info'
 
 const Board: React.FC = () => {
   // canvas元素
@@ -13,8 +14,6 @@ const Board: React.FC = () => {
       return new PaintBoard(canvasRef)
     }
   }, [canvasRef])
-  // 鼠标是否按下
-  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
   // 当前工具选择
   const [optionsType, setOptionsType] = useState<string>(
     CANVAS_ELE_TYPE.FREE_LINE
@@ -27,7 +26,16 @@ const Board: React.FC = () => {
     }
   })
 
-  // 鼠标按下
+  useResizeEvent(() => {
+    if (board) {
+      board.initCanvasSize()
+      board.context.translate(board.originTranslate.x, board.originTranslate.y)
+      board.render()
+    }
+  })
+
+  // 监听鼠标事件
+  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
   const mouseDown = () => {
     if (board) {
       setIsMouseDown(true)
@@ -36,8 +44,6 @@ const Board: React.FC = () => {
       }
     }
   }
-
-  // 鼠标移动
   const mouseMove = (event: MouseEvent) => {
     if (board && isMouseDown) {
       const { clientX: x, clientY: y } = event
@@ -54,8 +60,6 @@ const Board: React.FC = () => {
       }
     }
   }
-
-  // 鼠标
   const mouseUp = () => {
     if (board) {
       setIsMouseDown(false)
@@ -80,6 +84,7 @@ const Board: React.FC = () => {
         onMouseMove={mouseMove}
         onMouseUp={mouseUp}
       ></canvas>
+      <Info />
     </div>
   )
 }

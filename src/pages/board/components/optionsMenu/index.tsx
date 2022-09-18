@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
+import CleanIcon from '@/components/icons/clean'
 
 import styles from './index.module.css'
-import CleanIcon from '@/components/icons/clean'
+import Layer from '../layer'
 
 interface IProps {
   board: PaintBoard | undefined
@@ -22,15 +23,9 @@ const OptionsCard: React.FC<IProps> = ({
 }) => {
   // 刷新操作栏
   const [, setRefresh] = useState(0)
-  // scale range
-  const [scaleValue, setScaleValue] = useState(100)
-  useEffect(() => {
-    setScaleValue(board?.scale || 1)
-  }, [board?.scale])
   // 颜色输入框(目前是只读数据)
   const colorInput = useMemo(() => {
     if (board?.currentLineColor) {
-      console.log('color')
       return board.currentLineColor.split('#')[1] || ''
     }
     return ''
@@ -41,14 +36,6 @@ const OptionsCard: React.FC<IProps> = ({
     if (board) {
       board.setLineColor(color)
       setRefresh((v) => v + 1)
-    }
-  }
-
-  // 改变缩放比例
-  const changeScale = (v: number) => {
-    if (board) {
-      setScaleValue(v)
-      board?.changeScale(v)
     }
   }
 
@@ -99,7 +86,7 @@ const OptionsCard: React.FC<IProps> = ({
 
   return (
     <div
-      className="fixed top-5 left-5 flex flex-col card shadow-xl px-5 py-10"
+      className="fixed top-5 left-5 flex flex-col card shadow-xl py-5 px-5"
       style={{ backgroundColor: '#EEF1FF' }}
     >
       <div className="btn-group">
@@ -111,7 +98,7 @@ const OptionsCard: React.FC<IProps> = ({
           })}
           onClick={() => setOptionsType(CANVAS_ELE_TYPE.FREE_LINE)}
         >
-          自由画笔
+          画笔
         </button>
         <button
           className={classNames({
@@ -163,7 +150,10 @@ const OptionsCard: React.FC<IProps> = ({
               <input
                 type="color"
                 value={`#${colorInput}`}
-                onChange={(e) => changeLineColor(e.target.value)}
+                onChange={(e) => {
+                  console.log(e)
+                  changeLineColor(e.target.value)
+                }}
                 className={styles.lineColor}
               />
             </div>
@@ -212,20 +202,7 @@ const OptionsCard: React.FC<IProps> = ({
           </li>
         </ul>
       </div>
-      <div className="mt-3">
-        <div className="font-bold">Scale: {Math.floor(scaleValue * 100)}%</div>
-        <input
-          type="range"
-          min="0.1"
-          max="3"
-          step="0.01"
-          value={scaleValue}
-          className="range mt-1"
-          onInput={(e) => {
-            changeScale(Number((e.target as HTMLInputElement).value))
-          }}
-        />
-      </div>
+      <Layer board={board} refresh={() => setRefresh((v) => v + 1)} />
     </div>
   )
 }

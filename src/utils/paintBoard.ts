@@ -4,6 +4,7 @@ import { FreeLine, freeLineRender } from './freeLine'
 import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
+import { Layer } from './layer'
 
 /**
  * PaintBoard
@@ -27,39 +28,36 @@ export class PaintBoard {
     top: 0,
     left: 0
   }
+  // 图层
+  layers: Layer
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
     this.canvas = canvas
     this.context = canvas.getContext('2d') as CanvasRenderingContext2D
     this.initCanvasSize()
+    this.initOriginPosition()
     const { top, left } = canvas.getBoundingClientRect()
     this.canvasRect = {
       top,
       left
     }
-    // this.getCache(this)
-
-    // 监听窗口size
-    window.addEventListener('resize', () => {
-      this.initCanvasSize()
-      this.render()
-    })
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
     Object.assign(this, { ...state })
-    this.history = new History(history)
+    this.layers = new Layer(this.render.bind(this), state?.layers)
 
     // 初始化渲染缓存数据
-    this.changeScale(this.scale)
+    this.history = new History(history)
+    this.context.translate(this.originTranslate.x, this.originTranslate.y)
+    this.render()
   }
 
   // 初始化窗口变化
   initCanvasSize() {
-    this.initOriginPosition()
-    this.canvas.width = document.body.clientWidth
-    this.canvas.height = document.body.clientHeight
+    this.canvas.width = window.innerWidth
+    this.canvas.height = window.innerHeight
   }
 
   // 初始化原点
@@ -69,16 +67,6 @@ export class PaintBoard {
       x: 0,
       y: 0
     }
-  }
-
-  // 缩放比例
-  scale = 1
-  // 改变缩放比例
-  changeScale(scale: number) {
-    this.initOriginPosition()
-    this.scale = scale
-    this.context.setTransform(scale, 0, 0, scale, 0, 0)
-    this.render()
   }
 
   // 当前元素
@@ -94,17 +82,30 @@ export class PaintBoard {
         ele = new FreeLine(
           this.currentLineColor,
           this.currentLineWidth,
-          this.scale
+          this.layers.active
         )
         break
       case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth, this.scale)
+        ele = new CleanLine(this.cleanWidth, this.layers.active)
         break
       default:
         break
     }
     this.history.add(ele)
+    this.sortOnLayer
     this.currentEle = ele
+  }
+
+  /**
+   * 对history进行排序
+   */
+  sortOnLayer() {
+    this.history.sort((a, b) => {
+      return (
+        this.layers.queue.findIndex(({ id }) => id === b?.layer) -
+        this.layers.queue.findIndex(({ id }) => id === a?.layer)
+      )
+    })
   }
 
   /**
@@ -145,41 +146,57 @@ export class PaintBoard {
    */
   render() {
     this.cleanCanvas()
-    if (this.history.stack.length > 0) {
+    if (this.history.cacheQueue.length > 0) {
+      const showLayerIds = new Set(
+        this.layers.queue.reduce<number[]>((acc, cur) => {
+          return cur.show ? [...acc, cur.id] : acc
+        }, [])
+      )
       this.history.each((ele) => {
-        switch (ele?.type) {
-          case CANVAS_ELE_TYPE.FREE_LINE:
-            freeLineRender(this.context, ele as FreeLine)
-            break
-          case CANVAS_ELE_TYPE.CLEAN_LINE:
-            cleanLineRender(this.context, this.canvas, ele as CleanLine)
-            break
-          default:
-            break
+        if (ele?.layer && showLayerIds.has(ele.layer)) {
+          this.context.save()
+          switch (ele?.type) {
+            case CANVAS_ELE_TYPE.FREE_LINE:
+              freeLineRender(this.context, ele as FreeLine)
+              break
+            case CANVAS_ELE_TYPE.CLEAN_LINE:
+              cleanLineRender(this.context, this.canvas, ele as CleanLine)
+              break
+            default:
+              break
+          }
+          this.context.restore()
         }
       })
     }
     this.cache()
   }
 
+  /**
+   * localStorage 缓存
+   */
   cache() {
-    const history = this.history.stack.slice(0, this.history.step + 1)
+    const history = this.history.cacheQueue.slice(0, this.history.step + 1)
     const {
-      scale,
       currentLineColor,
       currentLineWidth,
-      cleanWidth
-      // originTranslate
+      cleanWidth,
+      originTranslate,
+      layers
     } = this
     const state = {
-      scale,
       currentLineColor,
       currentLineWidth,
-      cleanWidth
+      cleanWidth,
+      originTranslate,
+      layers
     }
     storage.set(BOARD_STORAGE_KEY, { history, state })
   }
 
+  /**
+   * 清除画布
+   */
   cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
     this.context.clearRect(0, 0, w, w)
     this.context.clearRect(0, -w, w, w)
@@ -190,7 +207,7 @@ export class PaintBoard {
   // 当前绘线颜色
   currentLineColor = '#000000'
   // 当前绘线宽
-  currentLineWidth = CommonWidth.W5
+  currentLineWidth = CommonWidth.W4
 
   /**
    * 修改绘线宽
@@ -213,7 +230,7 @@ export class PaintBoard {
   }
 
   // 当前橡皮擦宽度
-  cleanWidth = CommonWidth.W5
+  cleanWidth = CommonWidth.W4
 
   /**
    * 修改橡皮擦宽度
@@ -251,26 +268,8 @@ export class PaintBoard {
    * 保存为图片
    */
   saveImage() {
-    const imageData = this.context.getImageData(
-      0,
-      0,
-      document.body.clientWidth,
-      document.body.clientHeight
-    )
-    // 创建保存图片canvas
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d')
-    canvas.width = document.body.clientWidth
-    canvas.height = document.body.clientHeight
-    canvas.style.position = 'fixed'
-    canvas.style.top = '10000px'
-    canvas.style.left = '10000px'
-    canvas.style.visibility = 'hidden'
-    document.body.appendChild(canvas)
-    context?.putImageData(imageData, 0, 0)
-
     // 创建下载link
-    const imageUrl = canvas.toDataURL('image/png')
+    const imageUrl = this.canvas.toDataURL('image/png')
     const elink = document.createElement('a')
     elink.download = 'image'
     elink.style.display = 'none'
@@ -279,6 +278,6 @@ export class PaintBoard {
     elink.click()
     URL.revokeObjectURL(elink.href)
     document.body.removeChild(elink)
-    document.body.removeChild(canvas)
+    this.context.translate(this.originTranslate.x, this.originTranslate.y)
   }
 }

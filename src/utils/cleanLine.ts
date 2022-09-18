@@ -1,5 +1,4 @@
 import { MousePosition } from '@/types'
-import { scalePosition } from './index'
 import { CANVAS_ELE_TYPE } from './constants'
 
 /**
@@ -11,17 +10,18 @@ export class CleanLine {
   type: string
   // 当前橡皮擦宽度
   cleanWidth: number
-  scale: number
+  // 所属图层
+  layer: number
 
-  constructor(width: number, scale: number) {
+  constructor(width: number, layer: number) {
     this.positions = []
     this.type = CANVAS_ELE_TYPE.CLEAN_LINE
     this.cleanWidth = width
-    this.scale = scale
+    this.layer = layer
   }
 
   addPosition(position: MousePosition) {
-    this.positions.push(scalePosition(position, this.scale))
+    this.positions.push(position)
   }
 }
 

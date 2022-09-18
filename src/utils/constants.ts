@@ -6,13 +6,13 @@ export enum CANVAS_ELE_TYPE {
 
 // 通用绘画宽度
 export const CommonWidth = {
-  W5: 4,
-  W10: 8,
-  W15: 12,
-  W20: 14
+  W4: 4,
+  W8: 8,
+  W12: 12,
+  W14: 14
 }
 
-// 按键枚举
+// 按键
 export enum KeyCode {
   SPACE = 'Space'
 }

@@ -1,4 +1,4 @@
-import { getDistance, scalePosition } from './index'
+import { getDistance } from './index'
 import { CANVAS_ELE_TYPE } from './constants'
 import { MousePosition } from '@/types'
 
@@ -25,10 +25,10 @@ export class FreeLine {
   lastMoveTime = 0
   // 最后绘线宽度
   lastLineWidth: number
-  // 当前缩放比例
-  scale = 1
+  // 所在图层
+  layer: number
 
-  constructor(color: string, width: number, scale: number) {
+  constructor(color: string, width: number, layer: number) {
     this.positions = []
     this.mouseSpeeds = [0]
     this.type = CANVAS_ELE_TYPE.FREE_LINE
@@ -36,7 +36,7 @@ export class FreeLine {
     this.maxWidth = width
     this.minWidth = width / 2
     this.lastLineWidth = width
-    this.scale = scale
+    this.layer = layer
   }
 
   /**
@@ -44,9 +44,7 @@ export class FreeLine {
    * @param position
    */
   addPosition(position: MousePosition) {
-    this.positions.push(scalePosition(position, this.scale))
-    // this.positions.push(position)
-    // console.log(scalePosition(position, this.scale), position, this.scale)
+    this.positions.push(position)
     // 记录当前鼠标移动速度，用于线宽计算
     if (this.positions.length > 1) {
       this.mouseSpeeds.push(
@@ -124,12 +122,10 @@ const _drawLine = (
     context.moveTo(lastX, lastY)
     context.quadraticCurveTo(centerX, centerY, x, y)
   }
-  // context.moveTo(start.x / instance.scale, start.y / instance.scale)
-  // context.lineTo(end.x / instance.scale, end.y / instance.scale)
 
   const lineWidth = _computedLineWidth(mouseSpeeds[i], instance)
   if (lineWidth > 0) {
-    context.lineWidth = lineWidth / instance.scale
+    context.lineWidth = lineWidth
   }
 
   context.stroke()

@@ -37,3 +37,20 @@ export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
 
   return isPressSpace
 }
+
+/**
+ * window resize hook
+ * @param cb resize callback
+ */
+export function useResizeEvent(cb: () => void) {
+  useEffect(() => {
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  })
+
+  const onResize = () => {
+    cb()
+  }
+}
