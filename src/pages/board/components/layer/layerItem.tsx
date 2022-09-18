@@ -7,15 +7,18 @@ import HiddenIcon from '@/components/icons/hidden'
 import ShowIcon from '@/components/icons/show'
 
 interface IProps {
-  board: PaintBoard | undefined
-  data: ILayer
-  index: number
-  refresh: () => void
+  board: PaintBoard | undefined // 画板
+  data: ILayer // 图层数据
+  index: number // 图层下标
+  refresh: () => void // 刷新事件
 }
 
+/**
+ * 图层item
+ */
 const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
+  // 初始化dnd ref
   const ref = useRef<HTMLDivElement>(null)
-
   const [, drop] = useDrop<{ index: number }>({
     accept: 'Card',
     drop(hoverItem) {
@@ -27,7 +30,6 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
       }
     }
   })
-
   const [, drag] = useDrag({
     type: 'Card',
     item: { index },
@@ -37,20 +39,34 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
   })
   drag(drop(ref))
 
-  const updateActiveLayer = (id: number) => {
+  /**
+   * 更新当前图层
+   * @param id 图层id
+   */
+  const updateCurrentLayer = (id: number) => {
     if (board) {
-      board.layers.updateActive(id)
+      board.layers.updateCurrent(id)
       refresh()
     }
   }
 
-  const setLayerVal = (id: number, value: string) => {
+  /**
+   * 修改图层标题
+   * @param id 图层id
+   * @param title 图层标题
+   */
+  const setLayerTitle = (id: number, title: string) => {
     if (board) {
-      board.layers.updateVal(id, value)
+      board.layers.updateTitle(id, title)
       refresh()
     }
   }
 
+  /**
+   * 修改图层展示状态
+   * @param id 图层id
+   * @param show 展示状态
+   */
   const setLayerShow = (id: number, show: boolean) => {
     if (board) {
       board.layers.updateShow(id, show)
@@ -62,18 +78,17 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
     <div ref={ref}>
       <div
         className={`flex justify-evenly py-1.5 cursor-pointer ${
-          board?.layers.active === data.id ? 'bg-primary' : ''
+          board?.layers.current === data.id ? 'bg-primary' : ''
         }`}
-        onClick={() => updateActiveLayer(data.id)}
+        onClick={() => updateCurrentLayer(data.id)}
       >
         <input
-          value={data.value}
+          value={data.title}
           type="text"
           className="px-2 w-40"
-          onInput={(e) => {
-            console.log(e)
-            setLayerVal(data.id, (e.target as HTMLInputElement).value)
-          }}
+          onInput={(e) =>
+            setLayerTitle(data.id, (e.target as HTMLInputElement).value)
+          }
         />
         <div
           onClick={(e) => {

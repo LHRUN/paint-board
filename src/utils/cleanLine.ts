@@ -20,6 +20,10 @@ export class CleanLine {
     this.layer = layer
   }
 
+  /**
+   * 添加位置记录
+   * @param position
+   */
   addPosition(position: MousePosition) {
     this.positions.push(position)
   }

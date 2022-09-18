@@ -1,4 +1,5 @@
 import { MousePosition } from '@/types'
+import { BaseSyntheticEvent } from 'react'
 
 /**
  * 计算两点之间的距离
@@ -24,4 +25,13 @@ export const scalePosition = (
     x: Math.floor(position.x / scale),
     y: Math.floor(position.y / scale)
   }
+}
+
+/**
+ * 取消事件默认行为
+ * @param e 事件对象
+ */
+export const cancelEventDefault = (e: BaseSyntheticEvent | Event) => {
+  e.stopPropagation()
+  e.preventDefault()
 }

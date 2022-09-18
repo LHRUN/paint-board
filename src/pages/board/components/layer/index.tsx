@@ -6,11 +6,17 @@ import { PaintBoard } from '@/utils/paintBoard'
 import LayerItem from './layerItem'
 
 interface IProps {
-  board: PaintBoard | undefined
-  refresh: () => void
+  board: PaintBoard | undefined // 画板
+  refresh: () => void // 刷新事件
 }
 
+/**
+ * 图层组件
+ */
 const Layer: React.FC<IProps> = ({ board, refresh }) => {
+  /**
+   * 添加图层
+   */
   const addLayer = () => {
     if (board) {
       board.layers.add()
@@ -18,6 +24,10 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
     }
   }
 
+  /**
+   * 删除图层
+   * @param id 图层id
+   */
   const deleteLayer = (id: number | undefined) => {
     if (board && id) {
       board.history.delete('layer', id)
@@ -31,14 +41,19 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
       <div className="font-bold flex justify-between items-center">
         <span>Layer</span>
         <div>
-          <span onClick={addLayer} className="text-2xl cursor-pointer">
+          <span
+            onClick={addLayer}
+            className="text-2xl cursor-pointer tooltip"
+            data-tip="添加图层"
+          >
             +
           </span>
           <span
             onClick={() => {
-              deleteLayer(board?.layers.active)
+              deleteLayer(board?.layers.current)
             }}
-            className="ml-3 mr-3 text-2xl cursor-pointer"
+            className="ml-3 mr-3 text-2xl cursor-pointer tooltip"
+            data-tip="删除图层"
           >
             -
           </span>

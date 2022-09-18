@@ -1,8 +1,9 @@
-import { KeyCode } from '@/utils/constants'
 import { useEffect, useState } from 'react'
+import { cancelEventDefault } from '@/utils'
+import { KeyCode } from '@/utils/constants'
 
 /**
- * 判断是否按下空格hook
+ * 判断是否按下空格
  * @param keyDownCb 空格键按下回调
  * @param keyUpCb 空格键松开回调
  * @returns 空格键按下状态
@@ -20,8 +21,7 @@ export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
   }, [])
 
   const onKeydown = (e: KeyboardEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+    cancelEventDefault(e)
     if (e.code === KeyCode.SPACE) {
       setIsPressSpace(true)
       keyDownCb?.()

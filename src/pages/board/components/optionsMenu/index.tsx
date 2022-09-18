@@ -11,11 +11,14 @@ import styles from './index.module.css'
 import Layer from '../layer'
 
 interface IProps {
-  board: PaintBoard | undefined
-  optionsType: string
-  setOptionsType: (type: string) => void
+  board: PaintBoard | undefined // 画板
+  optionsType: string // 操作类型
+  setOptionsType: (type: string) => void // 修改操作类型
 }
 
+/**
+ * 操作面板
+ */
 const OptionsCard: React.FC<IProps> = ({
   board,
   optionsType,

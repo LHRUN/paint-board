@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import InfoIcon from '@/components/icons/info'
+import { cancelEventDefault } from '@/utils'
 
+/**
+ * 帮助信息组件
+ */
 const Info: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
 
@@ -19,10 +23,7 @@ const Info: React.FC = () => {
         onClick={() => setShowModal(false)}
       >
         <div
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-          }}
+          onClick={(e) => cancelEventDefault(e)}
           className="flex flex-col bg-white w-6/12 rounded-2xl overflow-hidden"
         >
           <div className="font-bold my-4 mx-4">

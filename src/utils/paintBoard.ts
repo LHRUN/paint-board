@@ -12,6 +12,7 @@ import { Layer } from './layer'
 export class PaintBoard {
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
+  // 历史操作记录
   history: History<ELEMENT_INSTANCE>
   // 原点位置
   originPosition = {
@@ -46,9 +47,9 @@ export class PaintBoard {
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
     Object.assign(this, { ...state })
-    this.layers = new Layer(this.render.bind(this), state?.layers)
 
-    // 初始化渲染缓存数据
+    // 初始化缓存数据
+    this.layers = new Layer(this.render.bind(this), state?.layers)
     this.history = new History(history)
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
     this.render()
@@ -82,11 +83,11 @@ export class PaintBoard {
         ele = new FreeLine(
           this.currentLineColor,
           this.currentLineWidth,
-          this.layers.active
+          this.layers.current
         )
         break
       case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth, this.layers.active)
+        ele = new CleanLine(this.cleanWidth, this.layers.current)
         break
       default:
         break
