@@ -1,6 +1,6 @@
 import { ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { CleanLine, cleanLineRender } from './cleanLine'
-import { FreeLine, freeLineRender } from './freeLine'
+import { CleanLine, cleanLineRender } from './element/cleanLine'
+import { FreeLine, freeLineRender } from './element/freeLine'
 import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
@@ -70,14 +70,11 @@ export class PaintBoard {
     }
   }
 
-  // 当前元素
-  currentEle: ELEMENT_INSTANCE = null
-
   /**
    * 记录当前元素，并加入history
    */
   recordCurrent(type: string) {
-    let ele: ELEMENT_INSTANCE = null
+    let ele: ELEMENT_INSTANCE | null = null
     switch (type) {
       case CANVAS_ELE_TYPE.FREE_LINE:
         ele = new FreeLine(
@@ -92,9 +89,9 @@ export class PaintBoard {
       default:
         break
     }
-    this.history.add(ele)
-    this.sortOnLayer
-    this.currentEle = ele
+    if (ele) {
+      this.history.add(ele)
+    }
   }
 
   /**
@@ -113,10 +110,11 @@ export class PaintBoard {
    * 为当前元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    this.currentEle?.addPosition({
+    this.history.at(-1)?.addPosition({
       x: position.x - this.canvasRect.left - this.originTranslate.x,
       y: position.y - this.canvasRect.top - this.originTranslate.y
     })
+    this.history.cacheQueue
     this.initOriginPosition()
     this.render()
   }

@@ -1,5 +1,5 @@
-import { CleanLine } from '@/utils/cleanLine'
-import { FreeLine } from '@/utils/freeLine'
+import { CleanLine } from '@/utils/element/cleanLine'
+import { FreeLine } from '@/utils/element/freeLine'
 // 鼠标位置
 export interface MousePosition {
   x: number
@@ -7,4 +7,4 @@ export interface MousePosition {
 }
 
 // 元素实例类型
-export type ELEMENT_INSTANCE = FreeLine | CleanLine | null
+export type ELEMENT_INSTANCE = FreeLine | CleanLine

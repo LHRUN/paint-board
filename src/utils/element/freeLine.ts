@@ -1,14 +1,14 @@
-import { getDistance } from './index'
-import { CANVAS_ELE_TYPE } from './constants'
+import { getDistance } from '../index'
+import { CANVAS_ELE_TYPE } from '../constants'
 import { MousePosition } from '@/types'
+import { CanvasElement } from './element'
 
 /**
  * 自由画笔
  */
-export class FreeLine {
+export class FreeLine extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
-  type: string
   // 当前绘线颜色
   color = 'black'
   // 最大线宽
@@ -25,18 +25,15 @@ export class FreeLine {
   lastMoveTime = 0
   // 最后绘线宽度
   lastLineWidth: number
-  // 所在图层
-  layer: number
 
   constructor(color: string, width: number, layer: number) {
+    super(CANVAS_ELE_TYPE.FREE_LINE, layer)
     this.positions = []
     this.mouseSpeeds = [0]
-    this.type = CANVAS_ELE_TYPE.FREE_LINE
     this.color = color
     this.maxWidth = width
     this.minWidth = width / 2
     this.lastLineWidth = width
-    this.layer = layer
   }
 
   /**

@@ -20,6 +20,7 @@ specifiers:
   lint-staged: ^13.0.3
   postcss: ^8.4.16
   prettier: ^2.7.1
+  push-dir: ^0.4.1
   react: ^18.2.0
   react-dnd: ^16.0.1
   react-dnd-html5-backend: ^16.0.1
@@ -33,6 +34,7 @@ specifiers:
 dependencies:
   classnames: 2.3.2
   daisyui: 2.27.0_25hquoklqeoqwmt7fwvvcyxm5e
+  push-dir: 0.4.1
   react: 18.2.0
   react-dnd: 16.0.1_yec5w2xl5pqn5xbwduhi2valne
   react-dnd-html5-backend: 16.0.1
@@ -3024,6 +3026,14 @@ packages:
     resolution: {integrity: sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==}
     engines: {node: '>=6'}
     dev: true
+
+  /push-dir/0.4.1:
+    resolution: {integrity: sha512-Nrrsly0c3kCfu725Jnif/s5adHpBwKCGWBttHVxTndF4iyGBSFtNi/pduFxHF5ks0kWtHcbA3XXP5MEra6iiCA==}
+    engines: {node: '>=0.12'}
+    hasBin: true
+    dependencies:
+      minimist: 1.2.6
+    dev: false
 
   /q/1.5.1:
     resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}

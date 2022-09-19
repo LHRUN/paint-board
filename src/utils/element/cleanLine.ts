@@ -1,23 +1,20 @@
 import { MousePosition } from '@/types'
-import { CANVAS_ELE_TYPE } from './constants'
+import { CanvasElement } from './element'
+import { CANVAS_ELE_TYPE } from '../constants'
 
 /**
  * 橡皮擦
  */
-export class CleanLine {
+export class CleanLine extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
-  type: string
   // 当前橡皮擦宽度
   cleanWidth: number
-  // 所属图层
-  layer: number
 
   constructor(width: number, layer: number) {
+    super(CANVAS_ELE_TYPE.CLEAN_LINE, layer)
     this.positions = []
-    this.type = CANVAS_ELE_TYPE.CLEAN_LINE
     this.cleanWidth = width
-    this.layer = layer
   }
 
   /**
