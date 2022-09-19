@@ -27,18 +27,6 @@ export class History<T> {
   }
 
   /**
-   * 获取cacheQueue索引位置元素
-   * @param index 下标
-   */
-  at(index: number) {
-    if (index >= 0) {
-      return this.cacheQueue[index]
-    } else {
-      return this.cacheQueue[this.cacheQueue.length + index]
-    }
-  }
-
-  /**
    * 添加数据
    * @param data
    */

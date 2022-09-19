@@ -1,11 +1,10 @@
-import Router from './routes'
-
 import './App.css'
+import Board from '@/pages/board'
 
 function App() {
   return (
     <div>
-      <Router />
+      <Board />
     </div>
   )
 }

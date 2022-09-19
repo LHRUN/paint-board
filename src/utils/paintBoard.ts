@@ -70,6 +70,9 @@ export class PaintBoard {
     }
   }
 
+  // 当前元素
+  currentEle: ELEMENT_INSTANCE | null = null
+
   /**
    * 记录当前元素，并加入history
    */
@@ -91,6 +94,8 @@ export class PaintBoard {
     }
     if (ele) {
       this.history.add(ele)
+      this.currentEle = ele
+      this.sortOnLayer()
     }
   }
 
@@ -110,11 +115,10 @@ export class PaintBoard {
    * 为当前元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    this.history.at(-1)?.addPosition({
+    this.currentEle?.addPosition({
       x: position.x - this.canvasRect.left - this.originTranslate.x,
       y: position.y - this.canvasRect.top - this.originTranslate.y
     })
-    this.history.cacheQueue
     this.initOriginPosition()
     this.render()
   }
