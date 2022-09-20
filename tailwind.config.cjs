@@ -13,6 +13,7 @@ module.exports = {
     logs: true,
     rtl: false,
     prefix: '',
-    darkTheme: 'emerald'
+    // eslint-disable-next-line no-dupe-keys
+    themes: ['emerald']
   }
 }
