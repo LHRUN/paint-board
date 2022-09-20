@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import InfoIcon from '@/components/icons/info'
-import { cancelEventDefault } from '@/utils'
+import { cancelEventDefault } from '@/utils/common'
 
 /**
  * 帮助信息组件

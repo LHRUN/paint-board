@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { cancelEventDefault } from '@/utils'
+import { cancelEventDefault } from '@/utils/common'
 import { KeyCode } from '@/utils/constants'
 
 /**

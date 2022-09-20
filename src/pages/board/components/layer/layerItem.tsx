@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ILayer } from '@/utils/layer'
 import { PaintBoard } from '@/utils/paintBoard'
+import { cancelEventDefault } from '@/utils/common'
 
 import HiddenIcon from '@/components/icons/hidden'
 import ShowIcon from '@/components/icons/show'
@@ -18,11 +19,12 @@ interface IProps {
  */
 const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
   // 初始化dnd ref
-  const ref = useRef<HTMLDivElement>(null)
+  const dragRef = useRef<HTMLDivElement>(null)
+  const dropRef = useRef<HTMLDivElement>(null)
   const [, drop] = useDrop<{ index: number }>({
-    accept: 'Card',
-    drop(hoverItem) {
-      if (board && ref) {
+    accept: 'layer',
+    hover(hoverItem) {
+      if (board && dropRef && dragRef) {
         board.layers.swap(index, hoverItem.index)
         board.sortOnLayer()
         board.render()
@@ -30,14 +32,16 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
       }
     }
   })
-  const [, drag] = useDrag({
-    type: 'Card',
+  const [, drag, preview] = useDrag({
+    type: 'layer',
     item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
   })
-  drag(drop(ref))
+  preview(<div>123</div>)
+  drag(dragRef)
+  drop(dropRef)
 
   /**
    * 更新当前图层
@@ -75,7 +79,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
   }
 
   return (
-    <div ref={ref}>
+    <div ref={dropRef}>
       <div
         className={`flex justify-evenly py-1.5 cursor-pointer ${
           board?.layers.current === data.id ? 'bg-primary' : ''
@@ -84,7 +88,6 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
       >
         <input
           value={data.title}
-          type="text"
           className="px-2 w-40"
           onInput={(e) =>
             setLayerTitle(data.id, (e.target as HTMLInputElement).value)
@@ -92,11 +95,11 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
         />
         <div
           onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
+            cancelEventDefault(e)
             setLayerShow(data.id, !data.show)
           }}
           className="cursor-pointer"
+          ref={dragRef}
         >
           {data.show ? <ShowIcon /> : <HiddenIcon />}
         </div>

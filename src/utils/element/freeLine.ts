@@ -1,4 +1,4 @@
-import { getDistance } from '../index'
+import { getDistance } from '../common'
 import { CANVAS_ELE_TYPE } from '../constants'
 import { MousePosition } from '@/types'
 import { CanvasElement } from './element'

@@ -1,4 +1,5 @@
 import React, { useMemo, useState, MouseEvent } from 'react'
+import classNames from 'classnames'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
 import OptionsCard from './components/optionsMenu'
@@ -68,17 +69,16 @@ const Board: React.FC = () => {
   }
 
   return (
-    <div
-      className={`flex justify-center items-center flex-col w-screen h-screen ${
-        isPressSpace ? 'cursor-move' : ''
-      }`}
-    >
+    <div className="flex justify-center items-center flex-col w-screen h-screen">
       <OptionsCard
         board={board}
         optionsType={optionsType}
         setOptionsType={setOptionsType}
       />
       <canvas
+        className={classNames({
+          'cursor-move': isPressSpace
+        })}
         ref={setCanvasRef}
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}
