@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { cancelEventDefault } from '@/utils/common'
 import { KeyCode } from '@/utils/constants'
 
 /**
@@ -21,7 +20,6 @@ export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
   }, [])
 
   const onKeydown = (e: KeyboardEvent) => {
-    cancelEventDefault(e)
     if (e.code === KeyCode.SPACE) {
       setIsPressSpace(true)
       keyDownCb?.()

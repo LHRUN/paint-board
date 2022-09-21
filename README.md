@@ -1,6 +1,6 @@
 ## paint-board画板 v0.1.0
 基于canvas的手绘画板，效果如下
-![](https://s1.ax1x.com/2022/09/18/xpjte0.png)
+![](https://s1.ax1x.com/2022/09/18/xpLdFe.png)
 Demo地址：https://lhrun.github.io/paint-board
 
 目前已完成功能
@@ -8,7 +8,7 @@ Demo地址：https://lhrun.github.io/paint-board
 - [x] 橡皮擦
 - [x] 画布拖拽
 - [x] 操作记录，后退，前进，清除，保存画布
-- [x] 图层
+- [x] 多图层
 - [ ] 无限缩放
 - [ ] 多项目
 - [ ] 油漆刷

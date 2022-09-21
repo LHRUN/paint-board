@@ -15,7 +15,7 @@ export class FreeLine extends CanvasElement {
   maxWidth: number
   // 最小线宽
   minWidth: number
-  // 速度列表
+  // 鼠标移动速度记录
   mouseSpeeds: number[]
   // 最大速度
   maxSpeed = 10

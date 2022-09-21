@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { ILayer } from '@/utils/layer'
 import { PaintBoard } from '@/utils/paintBoard'
-import { cancelEventDefault } from '@/utils/common'
 
 import HiddenIcon from '@/components/icons/hidden'
 import ShowIcon from '@/components/icons/show'
@@ -19,12 +18,14 @@ interface IProps {
  */
 const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
   // 初始化dnd ref
-  const dragRef = useRef<HTMLDivElement>(null)
-  const dropRef = useRef<HTMLDivElement>(null)
+  const dndRef = useRef<HTMLDivElement>(null)
   const [, drop] = useDrop<{ index: number }>({
     accept: 'layer',
-    hover(hoverItem) {
-      if (board && dropRef && dragRef) {
+    drop(hoverItem) {
+      if (hoverItem.index === index) {
+        return
+      }
+      if (board && dndRef.current) {
         board.layers.swap(index, hoverItem.index)
         board.sortOnLayer()
         board.render()
@@ -32,16 +33,14 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
       }
     }
   })
-  const [, drag, preview] = useDrag({
+  const [{ isDragging }, drag] = useDrag({
     type: 'layer',
     item: { index },
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
   })
-  preview(<div>123</div>)
-  drag(dragRef)
-  drop(dropRef)
+  drop(drag(dndRef))
 
   /**
    * 更新当前图层
@@ -79,11 +78,11 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
   }
 
   return (
-    <div ref={dropRef}>
+    <div ref={dndRef}>
       <div
         className={`flex justify-evenly py-1.5 cursor-pointer ${
           board?.layers.current === data.id ? 'bg-primary' : ''
-        }`}
+        } ${isDragging ? 'opacity-50' : ''}`}
         onClick={() => updateCurrentLayer(data.id)}
       >
         <input
@@ -95,11 +94,10 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
         />
         <div
           onClick={(e) => {
-            cancelEventDefault(e)
+            e.stopPropagation()
             setLayerShow(data.id, !data.show)
           }}
           className="cursor-pointer"
-          ref={dragRef}
         >
           {data.show ? <ShowIcon /> : <HiddenIcon />}
         </div>
