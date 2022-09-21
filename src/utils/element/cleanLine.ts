@@ -30,7 +30,7 @@ export class CleanLine extends CanvasElement {
  * 橡皮擦渲染
  * @param context canvas二维渲染上下文
  * @param cleanCanvas 清除画板
- * @param instance CleanLine实例
+ * @param instance CleanLine
  */
 export const cleanLineRender = (
   context: CanvasRenderingContext2D,
@@ -49,12 +49,12 @@ export const cleanLineRender = (
 }
 
 /**
- * 线性清除
+ * 线状清除
  * @param start 起点
  * @param end 终点
  * @param context canvas二维渲染上下文
  * @param cleanCanvas 清除画板
- * @param cleanWidth 清楚宽度
+ * @param cleanWidth 清除宽度
  */
 const _cleanLine = (
   start: MousePosition,

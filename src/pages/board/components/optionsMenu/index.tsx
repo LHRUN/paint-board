@@ -133,9 +133,10 @@ const OptionsCard: React.FC<IProps> = ({
               onClick={() => setWidth(w)}
             >
               <div
-                className="w-30px rounded-2xl bg-black"
+                className="rounded-2xl bg-black"
                 style={{
-                  height: `${w / 2}px`
+                  height: `${w / 2}px`,
+                  width: '30px'
                 }}
                 key={w}
               ></div>
