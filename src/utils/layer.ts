@@ -1,14 +1,14 @@
 export interface ILayer {
-  id: number
-  title: string
-  show: boolean
+  id: number // 图层id
+  title: string // 图层名称
+  show: boolean // 图层展示状态
 }
 
 /**
  * 图层
  */
 export class Layer {
-  queue: ILayer[] // 图层队列
+  stack: ILayer[] // 图层数据
   id: number // 用于简单的自增id处理
   current: number // 当前图层
   render: () => void // 画板渲染事件
@@ -20,7 +20,7 @@ export class Layer {
    */
   constructor(render: () => void, initData?: Layer) {
     const {
-      queue = [
+      stack = [
         {
           id: 1,
           title: 'item1',
@@ -30,7 +30,7 @@ export class Layer {
       id = 1,
       current = 1
     } = initData || {}
-    this.queue = queue
+    this.stack = stack
     this.id = id
     this.current = current
     this.render = render
@@ -42,7 +42,7 @@ export class Layer {
   add() {
     const id = ++this.id
 
-    this.queue.unshift({
+    this.stack.unshift({
       id,
       title: `item${id}`,
       show: true
@@ -56,9 +56,9 @@ export class Layer {
    * @param id 图层id
    */
   delete(id: number) {
-    if (this.queue.length > 1) {
-      this.queue = this.queue.filter((item) => item.id !== id)
-      this.current = this.queue[0].id
+    if (this.stack.length > 1) {
+      this.stack = this.stack.filter((item) => item.id !== id)
+      this.current = this.stack[0].id
       this.render()
     }
   }
@@ -69,9 +69,9 @@ export class Layer {
    * @param dropIndex
    */
   swap(dragIndex: number, dropIndex: number) {
-    ;[this.queue[dragIndex], this.queue[dropIndex]] = [
-      this.queue[dropIndex],
-      this.queue[dragIndex]
+    ;[this.stack[dragIndex], this.stack[dropIndex]] = [
+      this.stack[dropIndex],
+      this.stack[dragIndex]
     ]
   }
 
@@ -81,7 +81,7 @@ export class Layer {
    * @param title 图层标题
    */
   updateTitle(id: number, title: string) {
-    this.queue.forEach((item) => {
+    this.stack.forEach((item) => {
       if (item.id === id) {
         item.title = title
       }
@@ -95,7 +95,7 @@ export class Layer {
    * @param show 图层展示状态
    */
   updateShow(id: number, show: boolean) {
-    this.queue.forEach((item) => {
+    this.stack.forEach((item) => {
       if (item.id === id) {
         item.show = show
       }

@@ -92,6 +92,7 @@ const OptionsCard: React.FC<IProps> = ({
       className="fixed top-5 left-5 flex flex-col card shadow-xl py-5 px-5"
       style={{ backgroundColor: '#EEF1FF' }}
     >
+      {/* 类型切换 */}
       <div className="btn-group">
         <button
           className={classNames({
@@ -114,37 +115,35 @@ const OptionsCard: React.FC<IProps> = ({
           橡皮擦
         </button>
       </div>
+      {/* 宽度设置 */}
       <div className="mt-3">
         <div className="font-bold">Width</div>
         <div className="btn-group mt-1">
-          {Object.values(CommonWidth).map((w) => {
-            return !Number.isNaN(w) ? (
-              <button
+          {Object.values(CommonWidth).map((w) => (
+            <button
+              key={w}
+              className={classNames({
+                btn: true,
+                'flex-grow': true,
+                'btn-active':
+                  optionsType === CANVAS_ELE_TYPE.FREE_LINE
+                    ? board?.currentLineWidth === w
+                    : board?.cleanWidth === w
+              })}
+              onClick={() => setWidth(w)}
+            >
+              <div
+                className="w-30px rounded-2xl bg-black"
+                style={{
+                  height: `${w / 2}px`
+                }}
                 key={w}
-                className={classNames({
-                  btn: true,
-                  'flex-grow': true,
-                  'btn-active':
-                    optionsType === CANVAS_ELE_TYPE.FREE_LINE
-                      ? board?.currentLineWidth === w
-                      : board?.cleanWidth === w
-                })}
-                onClick={() => setWidth(w)}
-              >
-                <div
-                  style={{
-                    width: `30px`,
-                    height: `${w / 2}px`,
-                    borderRadius: '20%',
-                    backgroundColor: 'black'
-                  }}
-                  key={w}
-                ></div>
-              </button>
-            ) : null
-          })}
+              ></div>
+            </button>
+          ))}
         </div>
       </div>
+      {/* 颜色设置 */}
       {optionsType === CANVAS_ELE_TYPE.FREE_LINE && (
         <div className="form-control mt-3">
           <div className="font-bold">Color</div>
@@ -172,6 +171,7 @@ const OptionsCard: React.FC<IProps> = ({
           </div>
         </div>
       )}
+      {/* 操作画板 */}
       <div className="mt-3">
         <div className="font-bold">Tool</div>
         <ul className="menu menu-horizontal bg-base-100 rounded-box justify-between mt-1">
@@ -205,6 +205,7 @@ const OptionsCard: React.FC<IProps> = ({
           </li>
         </ul>
       </div>
+      {/* 图层设置 */}
       <Layer board={board} refresh={() => setRefresh((v) => v + 1)} />
     </div>
   )

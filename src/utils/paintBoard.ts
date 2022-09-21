@@ -30,7 +30,7 @@ export class PaintBoard {
     left: 0
   }
   // 图层
-  layers: Layer
+  layer: Layer
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -49,19 +49,23 @@ export class PaintBoard {
     Object.assign(this, { ...state })
 
     // 初始化缓存数据
-    this.layers = new Layer(this.render.bind(this), state?.layers)
+    this.layer = new Layer(this.render.bind(this), state?.layer)
     this.history = new History(history)
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
     this.render()
   }
 
-  // 初始化窗口变化
+  /**
+   * 初始化canvas宽高
+   */
   initCanvasSize() {
     this.canvas.width = window.innerWidth
     this.canvas.height = window.innerHeight
   }
 
-  // 初始化原点
+  /**
+   * 初始化原点
+   */
   initOriginPosition() {
     this.context.translate(0, 0)
     this.originPosition = {
@@ -83,11 +87,11 @@ export class PaintBoard {
         ele = new FreeLine(
           this.currentLineColor,
           this.currentLineWidth,
-          this.layers.current
+          this.layer.current
         )
         break
       case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth, this.layers.current)
+        ele = new CleanLine(this.cleanWidth, this.layer.current)
         break
       default:
         break
@@ -105,8 +109,8 @@ export class PaintBoard {
   sortOnLayer() {
     this.history.sort((a, b) => {
       return (
-        this.layers.queue.findIndex(({ id }) => id === b?.layer) -
-        this.layers.queue.findIndex(({ id }) => id === a?.layer)
+        this.layer.stack.findIndex(({ id }) => id === b?.layer) -
+        this.layer.stack.findIndex(({ id }) => id === a?.layer)
       )
     })
   }
@@ -151,7 +155,7 @@ export class PaintBoard {
     this.cleanCanvas()
     if (this.history.cacheQueue.length > 0) {
       const showLayerIds = new Set(
-        this.layers.queue.reduce<number[]>((acc, cur) => {
+        this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
         }, [])
       )
@@ -163,7 +167,11 @@ export class PaintBoard {
               freeLineRender(this.context, ele as FreeLine)
               break
             case CANVAS_ELE_TYPE.CLEAN_LINE:
-              cleanLineRender(this.context, this.canvas, ele as CleanLine)
+              cleanLineRender(
+                this.context,
+                this.cleanCanvas.bind(this),
+                ele as CleanLine
+              )
               break
             default:
               break
@@ -185,14 +193,14 @@ export class PaintBoard {
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layers
+      layer
     } = this
     const state = {
       currentLineColor,
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layers
+      layer
     }
     storage.set(BOARD_STORAGE_KEY, { history, state })
   }
@@ -240,7 +248,9 @@ export class PaintBoard {
    * @param width 橡皮擦宽度
    */
   setCleanWidth(width: number) {
-    this.cleanWidth = width
+    if (width) {
+      this.cleanWidth = width
+    }
   }
 
   /**
@@ -271,7 +281,6 @@ export class PaintBoard {
    * 保存为图片
    */
   saveImage() {
-    // 创建下载link
     const imageUrl = this.canvas.toDataURL('image/png')
     const elink = document.createElement('a')
     elink.download = 'image'

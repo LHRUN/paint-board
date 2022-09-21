@@ -7,14 +7,14 @@ import { useResizeEvent, useSpaceEvent } from '@/hooks/event'
 import Info from './components/info'
 
 const Board: React.FC = () => {
-  // canvas元素
+  // 初始化画板
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
-  // 画板
   const board = useMemo(() => {
     if (canvasRef) {
       return new PaintBoard(canvasRef)
     }
   }, [canvasRef])
+
   // 当前工具选择
   const [optionsType, setOptionsType] = useState<string>(
     CANVAS_ELE_TYPE.FREE_LINE

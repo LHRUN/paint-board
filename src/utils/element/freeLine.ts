@@ -10,17 +10,17 @@ export class FreeLine extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
   // 当前绘线颜色
-  color = 'black'
+  color = '#000000'
   // 最大线宽
   maxWidth: number
   // 最小线宽
   minWidth: number
-  // 鼠标移动速度记录
-  mouseSpeeds: number[]
+  // 线宽记录
+  lineWidths: number[]
   // 最大速度
   maxSpeed = 10
   // 最小速度
-  minSpeed = 1
+  minSpeed = 0.5
   // 最后mouse移动时间
   lastMoveTime = 0
   // 最后绘线宽度
@@ -29,7 +29,7 @@ export class FreeLine extends CanvasElement {
   constructor(color: string, width: number, layer: number) {
     super(CANVAS_ELE_TYPE.FREE_LINE, layer)
     this.positions = []
-    this.mouseSpeeds = [0]
+    this.lineWidths = [0]
     this.color = color
     this.maxWidth = width
     this.minWidth = width / 2
@@ -42,14 +42,14 @@ export class FreeLine extends CanvasElement {
    */
   addPosition(position: MousePosition) {
     this.positions.push(position)
-    // 记录当前鼠标移动速度，用于线宽计算
+    // 处理当前线宽
     if (this.positions.length > 1) {
-      this.mouseSpeeds.push(
-        this.computedSpeed(
-          this.positions[this.positions.length - 2],
-          this.positions[this.positions.length - 1]
-        )
+      const mouseSpeed = this._computedSpeed(
+        this.positions[this.positions.length - 2],
+        this.positions[this.positions.length - 1]
       )
+      const lineWidth = this._computedLineWidth(mouseSpeed)
+      this.lineWidths.push(lineWidth)
     }
   }
 
@@ -59,17 +59,41 @@ export class FreeLine extends CanvasElement {
    * @param end 终点
    * @returns 鼠标速度
    */
-  private computedSpeed(start: MousePosition, end: MousePosition) {
-    // 计算距离
+  private _computedSpeed(start: MousePosition, end: MousePosition) {
+    // 获取距离
     const moveDistance = getDistance(start, end)
-    // 计算时间
+
     const curTime = Date.now()
+    // 获取移动间隔时间   lastMoveTime：最后鼠标移动时间
     const moveTime = curTime - this.lastMoveTime
     // 计算速度
-    const moveSpeed = moveDistance / moveTime
-    // 更新时间
+    const mouseSpeed = moveDistance / moveTime
+    // 更新最后移动时间
     this.lastMoveTime = curTime
-    return Number(moveSpeed.toFixed(5))
+    return Number(mouseSpeed.toFixed(5))
+  }
+
+  /**
+   * 计算画笔宽度
+   * @param speed 鼠标移动速度
+   */
+  private _computedLineWidth(speed: number) {
+    let lineWidth = 0
+    const minWidth = this.minWidth
+    const maxWidth = this.maxWidth
+    if (speed >= this.maxSpeed) {
+      lineWidth = minWidth
+    } else if (speed <= this.minSpeed) {
+      lineWidth = maxWidth
+    } else {
+      lineWidth =
+        maxWidth -
+        ((speed - this.minSpeed) / (this.maxSpeed - this.minSpeed)) * maxWidth
+    }
+
+    lineWidth = lineWidth * (1 / 2) + this.lastLineWidth * (1 / 2)
+    this.lastLineWidth = lineWidth
+    return lineWidth
   }
 }
 
@@ -103,7 +127,7 @@ const _drawLine = (
   i: number,
   context: CanvasRenderingContext2D
 ) => {
-  const { positions, mouseSpeeds } = instance
+  const { positions, lineWidths } = instance
   const { x: centerX, y: centerY } = positions[i - 1]
   const { x: endX, y: endY } = positions[i]
   context.beginPath()
@@ -120,36 +144,6 @@ const _drawLine = (
     context.quadraticCurveTo(centerX, centerY, x, y)
   }
 
-  const lineWidth = _computedLineWidth(mouseSpeeds[i], instance)
-  if (lineWidth > 0) {
-    context.lineWidth = lineWidth
-  }
-
+  context.lineWidth = lineWidths[i]
   context.stroke()
-}
-
-/**
- * 计算画笔宽度
- * @param speed 鼠标移动速度
- * @param instance FreeLine 实例
- * @returns 画笔宽度
- */
-const _computedLineWidth = (speed: number, instance: FreeLine) => {
-  let lineWidth = 0
-  const minWidth = instance.minWidth
-  const maxWidth = instance.maxWidth
-  if (speed >= instance.maxSpeed) {
-    lineWidth = minWidth
-  } else if (speed <= instance.minSpeed) {
-    lineWidth = maxWidth
-  } else {
-    lineWidth =
-      maxWidth -
-      ((speed - instance.minSpeed) / (instance.maxSpeed - instance.minSpeed)) *
-        maxWidth
-  }
-
-  lineWidth = lineWidth * (1 / 3) + instance.lastLineWidth * (2 / 3)
-  instance.lastLineWidth = lineWidth
-  return lineWidth
 }

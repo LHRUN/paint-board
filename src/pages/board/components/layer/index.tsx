@@ -19,7 +19,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
    */
   const addLayer = () => {
     if (board) {
-      board.layers.add()
+      board.layer.add()
       refresh()
     }
   }
@@ -31,7 +31,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
   const deleteLayer = (id: number | undefined) => {
     if (board && id) {
       board.history.delete('layer', id)
-      board.layers.delete(id)
+      board.layer.delete(id)
       refresh()
     }
   }
@@ -50,7 +50,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
           </span>
           <span
             onClick={() => {
-              deleteLayer(board?.layers.current)
+              deleteLayer(board?.layer.current)
             }}
             className="ml-3 mr-3 text-2xl cursor-pointer tooltip"
             data-tip="删除图层"
@@ -61,8 +61,8 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
       </div>
       <div className="mt-1 bg-white rounded-lg overflow-y-auto max-h-32">
         <DndProvider backend={HTML5Backend}>
-          {Array.isArray(board?.layers?.queue) &&
-            board?.layers?.queue?.map((item, i) => (
+          {Array.isArray(board?.layer?.stack) &&
+            board?.layer?.stack?.map((item, i) => (
               <LayerItem
                 index={i}
                 key={item.id}

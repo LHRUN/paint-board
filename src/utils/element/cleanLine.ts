@@ -29,12 +29,12 @@ export class CleanLine extends CanvasElement {
 /**
  * 橡皮擦渲染
  * @param context canvas二维渲染上下文
- * @param canvas
+ * @param cleanCanvas 清除画板
  * @param instance CleanLine实例
  */
 export const cleanLineRender = (
   context: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
+  cleanCanvas: () => void,
   instance: CleanLine
 ) => {
   for (let i = 0; i < instance.positions.length - 1; i++) {
@@ -42,7 +42,7 @@ export const cleanLineRender = (
       instance.positions[i],
       instance.positions[i + 1],
       context,
-      canvas,
+      cleanCanvas,
       instance.cleanWidth
     )
   }
@@ -53,14 +53,14 @@ export const cleanLineRender = (
  * @param start 起点
  * @param end 终点
  * @param context canvas二维渲染上下文
- * @param canvas
+ * @param cleanCanvas 清除画板
  * @param cleanWidth 清楚宽度
  */
 const _cleanLine = (
   start: MousePosition,
   end: MousePosition,
   context: CanvasRenderingContext2D,
-  canvas: HTMLCanvasElement,
+  cleanCanvas: () => void,
   cleanWidth: number
 ) => {
   const { x: x1, y: y1 } = start
@@ -83,7 +83,7 @@ const _cleanLine = (
   context.beginPath()
   context.arc(x2, y2, cleanWidth, 0, 2 * Math.PI)
   context.clip()
-  context.clearRect(0, 0, canvas.width, canvas.height)
+  cleanCanvas()
   context.restore()
 
   //清除矩形剪辑区域里的像素
@@ -95,6 +95,6 @@ const _cleanLine = (
   context.lineTo(x4, y4)
   context.closePath()
   context.clip()
-  context.clearRect(0, 0, canvas.width, canvas.height)
+  cleanCanvas()
   context.restore()
 }

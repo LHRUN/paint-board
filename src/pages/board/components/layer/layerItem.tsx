@@ -26,7 +26,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
         return
       }
       if (board && dndRef.current) {
-        board.layers.swap(index, hoverItem.index)
+        board.layer.swap(index, hoverItem.index)
         board.sortOnLayer()
         board.render()
         refresh()
@@ -48,7 +48,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
    */
   const updateCurrentLayer = (id: number) => {
     if (board) {
-      board.layers.updateCurrent(id)
+      board.layer.updateCurrent(id)
       refresh()
     }
   }
@@ -60,7 +60,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
    */
   const setLayerTitle = (id: number, title: string) => {
     if (board) {
-      board.layers.updateTitle(id, title)
+      board.layer.updateTitle(id, title)
       refresh()
     }
   }
@@ -72,7 +72,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
    */
   const setLayerShow = (id: number, show: boolean) => {
     if (board) {
-      board.layers.updateShow(id, show)
+      board.layer.updateShow(id, show)
       refresh()
     }
   }
@@ -81,7 +81,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
     <div ref={dndRef}>
       <div
         className={`flex justify-evenly py-1.5 cursor-pointer ${
-          board?.layers.current === data.id ? 'bg-primary' : ''
+          board?.layer.current === data.id ? 'bg-primary' : ''
         } ${isDragging ? 'opacity-50' : ''}`}
         onClick={() => updateCurrentLayer(data.id)}
       >
