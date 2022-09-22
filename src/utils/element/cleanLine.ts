@@ -93,6 +93,7 @@ const _cleanLine = (
   context.lineTo(x5, y5)
   context.lineTo(x6, y6)
   context.lineTo(x4, y4)
+  // context.stroke()
   context.closePath()
   context.clip()
   cleanCanvas()

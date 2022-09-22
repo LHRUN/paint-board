@@ -209,10 +209,7 @@ export class PaintBoard {
    * 清除画布
    */
   cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
-    this.context.clearRect(0, 0, w, w)
-    this.context.clearRect(0, -w, w, w)
-    this.context.clearRect(-w, 0, w, w)
-    this.context.clearRect(-w, -w, w, w)
+    this.context.clearRect(-(w / 2), -(w / 2), w, w)
   }
 
   // 当前绘线颜色

@@ -86,9 +86,7 @@ export class FreeLine extends CanvasElement {
     } else if (speed <= this.minSpeed) {
       lineWidth = maxWidth
     } else {
-      lineWidth =
-        maxWidth -
-        ((speed - this.minSpeed) / (this.maxSpeed - this.minSpeed)) * maxWidth
+      lineWidth = maxWidth - (speed / this.maxSpeed) * maxWidth
     }
 
     lineWidth = lineWidth * (1 / 3) + this.lastLineWidth * (2 / 3)

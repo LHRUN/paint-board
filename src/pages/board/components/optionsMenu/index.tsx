@@ -154,7 +154,6 @@ const OptionsCard: React.FC<IProps> = ({
                 type="color"
                 value={`#${colorInput}`}
                 onChange={(e) => {
-                  console.log(e)
                   changeLineColor(e.target.value)
                 }}
                 className={styles.lineColor}
