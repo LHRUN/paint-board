@@ -1,7 +1,7 @@
 ## paint-board画板 v0.1.0
 基于canvas的手绘画板，效果如下
 ![](https://s1.ax1x.com/2022/09/21/xiXVPK.png)
-预览地址：https://lhrun.github.io/paint-board
+预览地址：[https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 目前已完成功能
 - [x] 画笔
