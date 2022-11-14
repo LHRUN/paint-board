@@ -12,7 +12,7 @@ Features:
 - [x] undo，redo，clear，save
 - [x] multi layer
 - [ ] Infinite scaling
-- [ ] multo priject
+- [ ] multi project
 - [ ] toggle background color
 - [ ] ...
 
