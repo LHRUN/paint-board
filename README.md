@@ -1,11 +1,16 @@
-## paint-board v0.1.0
-Canvas based drawing board
+<h1 align="center">paint-board v0.1.0</h1>
+<div align="center">
+
+  Canvas based drawing board
+
+</div>
+
+## Preview
+Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ![](https://s1.ax1x.com/2022/09/21/xiXVPK.png)
 
-Preview：[https://songlh.top/paint-board/](https://songlh.top/paint-board/)
-
-Features: 
+## Features: 
 - [x] free drawing
 - [x] eraser
 - [x] drawing board dragging
@@ -16,14 +21,14 @@ Features:
 - [ ] toggle background color
 - [ ] ...
 
-### Getting Started
+## Getting Started
 ```
 git clone https://github.com/LHRUN/paint-board.git
 pnpm install
 pnpm run dev
 ```
 
-### file list
+## File List
 
 ```js
 ├─components        
@@ -53,7 +58,7 @@ pnpm run dev
      freeLine.ts // free draw
 ```
 
-### project design
+### Project Design
 1. First create a PaintBoard class，where all canvas data is processed, such as init, render, dragging...
 ```js
 class PaintBoard {
