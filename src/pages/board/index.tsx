@@ -46,18 +46,25 @@ const Board: React.FC = () => {
     }
   }
   const mouseMove = (event: MouseEvent) => {
-    if (board && isMouseDown) {
+    if (board) {
       const { clientX: x, clientY: y } = event
-      if (isPressSpace) {
-        board.drag({
+      if (optionsType === CANVAS_ELE_TYPE.SELECT) {
+        board.hasMoveElement({
           x,
           y
         })
-      } else {
-        board.currentAddPosition({
-          x,
-          y
-        })
+      } else if (isMouseDown) {
+        if (isPressSpace) {
+          board.drag({
+            x,
+            y
+          })
+        } else {
+          board.currentAddPosition({
+            x,
+            y
+          })
+        }
       }
     }
   }

@@ -5,6 +5,7 @@ import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
+import { getPositionToLineDistance } from './common'
 
 /**
  * PaintBoard
@@ -288,5 +289,42 @@ export class PaintBoard {
     URL.revokeObjectURL(elink.href)
     document.body.removeChild(elink)
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
+  }
+
+  activityEle: ELEMENT_INSTANCE | null = null
+
+  hasMoveElement(position: MousePosition) {
+    if (this.history.cacheQueue.length > 0) {
+      const showLayerIds = new Set(
+        this.layer.stack.reduce<number[]>((acc, cur) => {
+          return cur.show ? [...acc, cur.id] : acc
+        }, [])
+      )
+      let done = false
+      this.history.each((ele) => {
+        if (
+          ele?.layer &&
+          showLayerIds.has(ele.layer) &&
+          ele.type === CANVAS_ELE_TYPE.FREE_LINE
+        ) {
+          if (done) {
+            return
+          }
+          for (let i = 1; i < ele.positions.length; i++) {
+            const distance = getPositionToLineDistance(
+              position,
+              ele.positions[i - 1],
+              ele.positions[i]
+            )
+            if (distance < 10) {
+              console.log(ele)
+              this.activityEle = ele
+              this.canvas.style.cursor = 'pointer'
+              done = true
+            }
+          }
+        }
+      })
+    }
   }
 }

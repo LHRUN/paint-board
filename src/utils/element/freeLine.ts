@@ -25,6 +25,17 @@ export class FreeLine extends CanvasElement {
   lastMoveTime = 0
   // 最后绘线宽度
   lastLineWidth: number
+  // 当前画笔的矩形属性
+  rect = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    minX: Infinity,
+    maxX: -Infinity,
+    minY: Infinity,
+    maxY: -Infinity
+  }
 
   constructor(color: string, width: number, layer: number) {
     super(CANVAS_ELE_TYPE.FREE_LINE, layer)
@@ -42,6 +53,7 @@ export class FreeLine extends CanvasElement {
    */
   addPosition(position: MousePosition) {
     this.positions.push(position)
+    this._computedRect(position)
     // 处理当前线宽
     if (this.positions.length > 1) {
       const mouseSpeed = this._computedSpeed(
@@ -50,6 +62,38 @@ export class FreeLine extends CanvasElement {
       )
       const lineWidth = this._computedLineWidth(mouseSpeed)
       this.lineWidths.push(lineWidth)
+    }
+  }
+
+  /**
+   * 计算矩形属性
+   */
+  private _computedRect(position: MousePosition) {
+    const { x, y } = position
+    let { minX, maxX, minY, maxY } = this.rect
+    if (x < this.rect.minX) {
+      minX = x
+    }
+    if (x > this.rect.maxX) {
+      maxX = x
+    }
+    if (y < this.rect.minY) {
+      minY = y
+    }
+    if (y > this.rect.maxY) {
+      maxY = y
+    }
+    this.rect.x = this.rect.minX
+    this.rect.y = this.rect.minY
+    this.rect = {
+      minX,
+      maxX,
+      minY,
+      maxY,
+      x: minX,
+      y: minY,
+      width: maxX - minX,
+      height: maxY - minY
     }
   }
 
