@@ -49,6 +49,14 @@ export class History<T> {
   }
 
   /**
+   * 根据下标删除
+   * @param index 下标
+   */
+  deleteByIndex(index: number) {
+    this.cacheQueue.splice(index, 1)
+  }
+
+  /**
    * 后退
    */
   undo() {

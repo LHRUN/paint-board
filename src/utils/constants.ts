@@ -15,5 +15,16 @@ export const CommonWidth = {
 
 // 按键
 export enum KeyCode {
-  SPACE = 'Space'
+  SPACE = 'Space', // 空格键
+  BACKSPACE = 'Backspace' // 删除键
+}
+
+// 拖拽类型
+export enum RESIZE_TYPE {
+  NULL = 'null',
+  BODY = 'body',
+  BOTTOM_LEFT = 'bottom_left',
+  BOTTOM_RIGHT = 'bottom_right',
+  TOP_LEFT = 'top_left',
+  TOP_RIGHT = 'top_right'
 }

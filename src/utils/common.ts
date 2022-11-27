@@ -1,4 +1,5 @@
 import { MousePosition } from '@/types'
+import { RESIZE_TYPE } from './constants'
 
 /**
  * 计算两点之间的距离
@@ -26,6 +27,7 @@ export const getPositionToLineDistance = (
       Math.pow(startPos.x - endPos.x, 2) + Math.pow(startPos.y - endPos.y, 2)
     )
   )
+  // https://blog.csdn.net/wzp20092009/article/details/124683083
   //利用海伦公式计算三角形面积
   //周长的一半
   const P = (A + B + C) / 2
@@ -35,7 +37,19 @@ export const getPositionToLineDistance = (
   return dis
 }
 
-export const dragRender = (
+export const getTowPointDistance = (
+  startPos: MousePosition,
+  endPos: MousePosition
+) => {
+  return Math.sqrt(
+    Math.pow(startPos.x - endPos.x, 2) + Math.pow(startPos.y - endPos.y, 2)
+  )
+}
+
+/**
+ * 绘制拖拽矩形
+ */
+export const drawResizeRect = (
   context: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -43,24 +57,70 @@ export const dragRender = (
   height: number
 ) => {
   context.save()
+  context.strokeStyle = '#65CC8A'
   context.setLineDash([5])
+  context.lineWidth = 2
+  context.lineCap = 'round'
+  context.lineJoin = 'round'
   drawRect(context, x, y, width, height)
-  context.restore()
-  drawRect(context, x - 5, y - 5, 10, 10)
-  drawRect(context, x + width - 5, y - 5, 10, 10)
-  drawRect(context, x - 5, y + height - 5, 10, 10)
-  drawRect(context, x + width - 5, y + height - 5, 10, 10)
+  context.fillStyle = '#65CC8A'
+  drawRect(context, x - 10, y - 10, 10, 10, true)
+  drawRect(context, x + width, y - 10, 10, 10, true)
+  drawRect(context, x - 10, y + height, 10, 10, true)
+  drawRect(context, x + width, y + height, 10, 10, true)
   context.restore()
 }
 
+/**
+ * 绘制矩形
+ */
 const drawRect = (
   context: CanvasRenderingContext2D,
   x: number,
   y: number,
   width: number,
-  height: number
+  height: number,
+  fill = false
 ) => {
   context.beginPath()
   context.rect(x, y, width, height)
-  context.stroke()
+  if (fill) {
+    context.fill()
+  } else {
+    context.stroke()
+  }
+}
+
+export const getResizeArea = (
+  position: MousePosition,
+  rect: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+) => {
+  let resizeType = RESIZE_TYPE.NULL
+  const { x, y } = position
+  if (
+    rect.x + rect.width > x &&
+    x > rect.x &&
+    rect.y + rect.height > y &&
+    y > rect.y
+  ) {
+    resizeType = RESIZE_TYPE.BODY
+  } else if (rect.x > x && x > rect.x - 10) {
+    if (rect.y > y && y > rect.y - 10) {
+      resizeType = RESIZE_TYPE.TOP_LEFT
+    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
+      resizeType = RESIZE_TYPE.BOTTOM_LEFT
+    }
+  } else if (rect.x + rect.width + 10 > x && x > rect.x + rect.width) {
+    if (rect.y > y && y > rect.y - 10) {
+      resizeType = RESIZE_TYPE.TOP_RIGHT
+    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
+      resizeType = RESIZE_TYPE.BOTTOM_RIGHT
+    }
+  }
+  return resizeType
 }

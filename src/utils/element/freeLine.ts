@@ -47,13 +47,26 @@ export class FreeLine extends CanvasElement {
     this.lastLineWidth = width
   }
 
+  initRect = () => {
+    this.rect = {
+      width: 0,
+      height: 0,
+      x: 0,
+      y: 0,
+      minX: Infinity,
+      maxX: -Infinity,
+      minY: Infinity,
+      maxY: -Infinity
+    }
+  }
+
   /**
    * 添加位置记录
    * @param position
    */
   addPosition(position: MousePosition) {
     this.positions.push(position)
-    this._computedRect(position)
+    computedRect(this, position)
     // 处理当前线宽
     if (this.positions.length > 1) {
       const mouseSpeed = this._computedSpeed(
@@ -62,38 +75,6 @@ export class FreeLine extends CanvasElement {
       )
       const lineWidth = this._computedLineWidth(mouseSpeed)
       this.lineWidths.push(lineWidth)
-    }
-  }
-
-  /**
-   * 计算矩形属性
-   */
-  private _computedRect(position: MousePosition) {
-    const { x, y } = position
-    let { minX, maxX, minY, maxY } = this.rect
-    if (x < this.rect.minX) {
-      minX = x
-    }
-    if (x > this.rect.maxX) {
-      maxX = x
-    }
-    if (y < this.rect.minY) {
-      minY = y
-    }
-    if (y > this.rect.maxY) {
-      maxY = y
-    }
-    this.rect.x = this.rect.minX
-    this.rect.y = this.rect.minY
-    this.rect = {
-      minX,
-      maxX,
-      minY,
-      maxY,
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY
     }
   }
 
@@ -188,4 +169,86 @@ const _drawLine = (
 
   context.lineWidth = lineWidths[i]
   context.stroke()
+}
+
+/**
+ * 更新位置
+ * @param xDistance
+ * @param yDistance
+ */
+export const translatePosition = (
+  instance: FreeLine,
+  xDistance: number,
+  yDistance: number
+) => {
+  initRect(instance)
+  instance.positions.forEach((position) => {
+    position.x += xDistance
+    position.y += yDistance
+    computedRect(instance, position)
+  })
+}
+
+export const scalePosition = (
+  instance: FreeLine,
+  scaleX: number,
+  scaleY: number
+) => {
+  const { x: oldX, y: oldY } = { ...instance.rect }
+  initRect(instance)
+  instance.positions.forEach((position) => {
+    position.x = position.x < 0 ? position.x / scaleX : position.x * scaleX
+    position.y = position.y < 0 ? position.y / scaleY : position.y * scaleY
+    computedRect(instance, position)
+  })
+  const { x: newX, y: newY } = { ...instance.rect }
+  const offsetX = newX - oldX
+  const offsetY = newY - oldY
+  console.log(newX, oldX, newY, oldY)
+  instance.positions.forEach((position) => {
+    position.x = position.x - offsetX
+    position.y = position.y - offsetY
+  })
+}
+
+const initRect = (instance: FreeLine) => {
+  instance.rect = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    minX: Infinity,
+    maxX: -Infinity,
+    minY: Infinity,
+    maxY: -Infinity
+  }
+}
+
+const computedRect = (instance: FreeLine, position: MousePosition) => {
+  const { x, y } = position
+  let { minX, maxX, minY, maxY } = instance.rect
+  if (x < minX) {
+    minX = x
+  }
+  if (x > maxX) {
+    maxX = x
+  }
+  if (y < minY) {
+    minY = y
+  }
+  if (y > maxY) {
+    maxY = y
+  }
+  const rect = {
+    minX,
+    maxX,
+    minY,
+    maxY,
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY
+  }
+  instance.rect = rect
+  return rect
 }

@@ -1,10 +1,10 @@
 import React, { useMemo, useState, MouseEvent } from 'react'
-import classNames from 'classnames'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
 import OptionsCard from './components/optionsMenu'
-import { useResizeEvent, useSpaceEvent } from '@/hooks/event'
+import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
 import Info from './components/info'
+import { CURSOR_TYPE } from '@/utils/cursor'
 
 const Board: React.FC = () => {
   // 初始化画板
@@ -20,12 +20,30 @@ const Board: React.FC = () => {
     CANVAS_ELE_TYPE.FREE_LINE
   )
 
-  // 是否按下空格
-  const isPressSpace = useSpaceEvent(() => {
+  const handleOptionsType = (type: string) => {
     if (board) {
-      board.initOriginPosition()
+      if (type !== CANVAS_ELE_TYPE.SELECT) {
+        board.clearResizeElement()
+      }
+      setOptionsType(type)
+      board.render()
     }
-  })
+  }
+
+  // 是否按下空格
+  const isPressSpace = useSpaceEvent(
+    () => {
+      if (board) {
+        board.cursor.change(CURSOR_TYPE.POINTER)
+        board.initOriginPosition()
+      }
+    },
+    () => {
+      if (board) {
+        board.cursor.reset()
+      }
+    }
+  )
 
   useResizeEvent(() => {
     if (board) {
@@ -35,35 +53,66 @@ const Board: React.FC = () => {
     }
   })
 
+  useBackspace(() => {
+    console.log('useBackspace', board)
+    if (board) {
+      console.log('useBackspace board')
+
+      board.deleteSelectElement()
+    }
+  })
+
   // 监听鼠标事件
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
-  const mouseDown = () => {
+  const mouseDown = (event: MouseEvent) => {
     if (board) {
-      setIsMouseDown(true)
-      if (!isPressSpace) {
-        board.recordCurrent(optionsType)
+      const { clientX: x, clientY: y } = event
+      switch (optionsType) {
+        case CANVAS_ELE_TYPE.SELECT:
+          board.selectResizeElement({
+            x,
+            y
+          })
+          break
+        case CANVAS_ELE_TYPE.FREE_LINE:
+        case CANVAS_ELE_TYPE.CLEAN_LINE:
+          if (!isPressSpace) {
+            board.recordCurrent(optionsType)
+          }
+          break
+        default:
+          break
       }
+      setIsMouseDown(true)
     }
   }
   const mouseMove = (event: MouseEvent) => {
     if (board) {
       const { clientX: x, clientY: y } = event
-      if (optionsType === CANVAS_ELE_TYPE.SELECT) {
-        board.hasMoveElement({
+      if (isPressSpace && isMouseDown) {
+        board.dragCanvas({
           x,
           y
         })
-      } else if (isMouseDown) {
-        if (isPressSpace) {
-          board.drag({
-            x,
-            y
-          })
-        } else {
-          board.currentAddPosition({
-            x,
-            y
-          })
+      } else {
+        switch (optionsType) {
+          case CANVAS_ELE_TYPE.SELECT:
+            board.handleMoveToEl({
+              x,
+              y
+            })
+            break
+          case CANVAS_ELE_TYPE.FREE_LINE:
+          case CANVAS_ELE_TYPE.CLEAN_LINE:
+            if (isMouseDown) {
+              board.currentAddPosition({
+                x,
+                y
+              })
+            }
+            break
+          default:
+            break
         }
       }
     }
@@ -71,7 +120,7 @@ const Board: React.FC = () => {
   const mouseUp = () => {
     if (board) {
       setIsMouseDown(false)
-      board.initOriginPosition()
+      board.canvasMouseUp()
     }
   }
 
@@ -80,12 +129,9 @@ const Board: React.FC = () => {
       <OptionsCard
         board={board}
         optionsType={optionsType}
-        setOptionsType={setOptionsType}
+        setOptionsType={handleOptionsType}
       />
       <canvas
-        className={classNames({
-          'cursor-move': isPressSpace
-        })}
         ref={setCanvasRef}
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}

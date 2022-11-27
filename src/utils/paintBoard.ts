@@ -1,11 +1,22 @@
 import { ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { CleanLine, cleanLineRender } from './element/cleanLine'
-import { FreeLine, freeLineRender } from './element/freeLine'
-import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
+import {
+  FreeLine,
+  freeLineRender,
+  scalePosition,
+  translatePosition
+} from './element/freeLine'
+import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
-import { getPositionToLineDistance } from './common'
+import {
+  drawResizeRect,
+  getPositionToLineDistance,
+  getResizeArea,
+  getTowPointDistance
+} from './common'
+import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
 
 /**
  * PaintBoard
@@ -32,6 +43,8 @@ export class PaintBoard {
   }
   // 图层
   layer: Layer
+  // 鼠标样式
+  cursor: Cursor
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -44,6 +57,7 @@ export class PaintBoard {
       top,
       left
     }
+    this.cursor = new Cursor(canvas)
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
@@ -97,6 +111,7 @@ export class PaintBoard {
       default:
         break
     }
+    this.clearResizeElement()
     if (ele) {
       this.history.add(ele)
       this.currentEle = ele
@@ -131,11 +146,12 @@ export class PaintBoard {
   /**
    * 拖拽画布
    */
-  drag(position: MousePosition) {
+  dragCanvas(position: MousePosition) {
     const mousePosition = {
       x: position.x - this.canvasRect.left,
       y: position.y - this.canvasRect.top
     }
+    this.cursor.change(CURSOR_TYPE.POINTER)
     if (this.originPosition.x && this.originPosition.y) {
       const translteX = mousePosition.x - this.originPosition.x
       const translteY = mousePosition.y - this.originPosition.y
@@ -180,6 +196,11 @@ export class PaintBoard {
           this.context.restore()
         }
       })
+
+      if (this.resizeElement) {
+        const rect = this.resizeElement.rect
+        drawResizeRect(this.context, rect.x, rect.y, rect.width, rect.height)
+      }
     }
     this.cache()
   }
@@ -291,9 +312,29 @@ export class PaintBoard {
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
   }
 
-  activityEle: ELEMENT_INSTANCE | null = null
+  /**
+   * 转换坐标
+   */
+  transformPosition(position: MousePosition) {
+    return {
+      x: position.x - this.canvasRect.left - this.originTranslate.x,
+      y: position.y - this.canvasRect.top - this.originTranslate.y
+    }
+  }
 
-  hasMoveElement(position: MousePosition) {
+  mouseHoverElement: FreeLine | null = null
+  mouseHoverElementIndex = -1
+  resizeElement: FreeLine | null = null
+  resizeElementIndex = -1
+  resizeMousePos = {
+    x: 0,
+    y: 0
+  }
+  resizeType = RESIZE_TYPE.NULL
+
+  handleMoveToEl(position: MousePosition) {
+    const movePos = this.transformPosition(position)
+    let cursorType = CURSOR_TYPE.AUTO
     if (this.history.cacheQueue.length > 0) {
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
@@ -301,7 +342,7 @@ export class PaintBoard {
         }, [])
       )
       let done = false
-      this.history.each((ele) => {
+      this.history.each((ele, eleIndex) => {
         if (
           ele?.layer &&
           showLayerIds.has(ele.layer) &&
@@ -311,20 +352,107 @@ export class PaintBoard {
             return
           }
           for (let i = 1; i < ele.positions.length; i++) {
+            const distance1 = getTowPointDistance(movePos, ele.positions[i - 1])
+            const distance2 = getTowPointDistance(movePos, ele.positions[i])
             const distance = getPositionToLineDistance(
-              position,
+              movePos,
               ele.positions[i - 1],
               ele.positions[i]
             )
-            if (distance < 10) {
-              console.log(ele)
-              this.activityEle = ele
-              this.canvas.style.cursor = 'pointer'
+            if ((distance1 < 10 || distance2 < 10) && distance < 10) {
+              this.mouseHoverElement = ele as FreeLine
+              this.mouseHoverElementIndex = eleIndex
+              cursorType = CURSOR_TYPE.POINTER
               done = true
             }
           }
         }
       })
+      if (!done) {
+        this.mouseHoverElementIndex = -1
+        this.mouseHoverElement = null
+      }
     }
+    if (this.resizeElement) {
+      if (this.resizeType !== RESIZE_TYPE.NULL) {
+        const { x, y } = movePos
+        const rect = { ...this.resizeElement.rect }
+        const disntanceX = x - this.resizeMousePos.x
+        const disntanceY = y - this.resizeMousePos.y
+        const newWidth = rect.width + disntanceX
+        const newHeight = rect.height + disntanceY
+        const scaleX = newWidth / rect.width
+        const scaleY = newHeight / rect.height
+        cursorType = getResizeCursorType(this.resizeType, cursorType)
+        switch (this.resizeType) {
+          case RESIZE_TYPE.BODY:
+            translatePosition(this.resizeElement, disntanceX, disntanceY)
+            break
+          case RESIZE_TYPE.BOTTOM_RIGHT:
+            scalePosition(this.resizeElement, scaleX, scaleY)
+            break
+          case RESIZE_TYPE.BOTTOM_LEFT:
+            break
+          case RESIZE_TYPE.TOP_LEFT:
+            break
+          case RESIZE_TYPE.TOP_RIGHT:
+            break
+          default:
+            break
+        }
+
+        this.resizeMousePos = movePos
+        this.render()
+      } else {
+        const resizeType = getResizeArea(movePos, this.resizeElement.rect)
+        cursorType = getResizeCursorType(resizeType, cursorType)
+      }
+    }
+    this.cursor.change(cursorType)
+  }
+
+  selectResizeElement(position: MousePosition) {
+    const resizeMousePos = this.transformPosition(position)
+    if (this.resizeElement) {
+      const resizeType = getResizeArea(resizeMousePos, this.resizeElement.rect)
+      this.resizeType = resizeType
+    }
+    if (this.resizeType === RESIZE_TYPE.NULL) {
+      if (this.mouseHoverElement) {
+        this.cursor.change(CURSOR_TYPE.MOVE)
+        this.resizeElement = this.mouseHoverElement
+        this.resizeElementIndex = this.mouseHoverElementIndex
+      } else {
+        this.resizeElementIndex = -1
+        this.resizeElement = null
+      }
+    }
+    if (this.resizeElement) {
+      this.resizeMousePos = resizeMousePos
+    }
+
+    this.render()
+  }
+
+  deleteSelectElement() {
+    if (this.resizeElementIndex !== -1) {
+      this.history.deleteByIndex(this.resizeElementIndex)
+      this.resizeElement = null
+      this.resizeElementIndex = -1
+      this.mouseHoverElement = null
+      this.mouseHoverElementIndex = -1
+      this.resizeType = RESIZE_TYPE.NULL
+      this.render()
+    }
+  }
+
+  clearResizeElement() {
+    this.resizeElement = null
+  }
+
+  canvasMouseUp() {
+    this.resizeType = RESIZE_TYPE.NULL
+    this.currentEle = null
+    this.initOriginPosition()
   }
 }
