@@ -379,23 +379,46 @@ export class PaintBoard {
         const rect = { ...this.resizeElement.rect }
         const disntanceX = x - this.resizeMousePos.x
         const disntanceY = y - this.resizeMousePos.y
-        const newWidth = rect.width + disntanceX
-        const newHeight = rect.height + disntanceY
-        const scaleX = newWidth / rect.width
-        const scaleY = newHeight / rect.height
         cursorType = getResizeCursorType(this.resizeType, cursorType)
         switch (this.resizeType) {
           case RESIZE_TYPE.BODY:
             translatePosition(this.resizeElement, disntanceX, disntanceY)
             break
           case RESIZE_TYPE.BOTTOM_RIGHT:
-            scalePosition(this.resizeElement, scaleX, scaleY)
+            scalePosition(
+              this.resizeElement,
+              (rect.width + disntanceX) / rect.width,
+              (rect.height + disntanceY) / rect.height,
+              rect,
+              RESIZE_TYPE.BOTTOM_RIGHT
+            )
             break
           case RESIZE_TYPE.BOTTOM_LEFT:
+            scalePosition(
+              this.resizeElement,
+              (rect.width - disntanceX) / rect.width,
+              (rect.height + disntanceY) / rect.height,
+              rect,
+              RESIZE_TYPE.BOTTOM_LEFT
+            )
             break
           case RESIZE_TYPE.TOP_LEFT:
+            scalePosition(
+              this.resizeElement,
+              (rect.width - disntanceX) / rect.width,
+              (rect.height - disntanceY) / rect.height,
+              rect,
+              RESIZE_TYPE.TOP_LEFT
+            )
             break
           case RESIZE_TYPE.TOP_RIGHT:
+            scalePosition(
+              this.resizeElement,
+              (rect.width + disntanceX) / rect.width,
+              (rect.height - disntanceY) / rect.height,
+              rect,
+              RESIZE_TYPE.TOP_RIGHT
+            )
             break
           default:
             break

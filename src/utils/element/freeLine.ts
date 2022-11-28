@@ -1,7 +1,18 @@
 import { getDistance } from '../common'
-import { CANVAS_ELE_TYPE } from '../constants'
+import { CANVAS_ELE_TYPE, RESIZE_TYPE } from '../constants'
 import { MousePosition } from '@/types'
 import { CanvasElement } from './element'
+
+interface FreeLineRect {
+  width: number
+  height: number
+  x: number
+  y: number
+  minX: number
+  maxX: number
+  minY: number
+  maxY: number
+}
 
 /**
  * 自由画笔
@@ -26,7 +37,7 @@ export class FreeLine extends CanvasElement {
   // 最后绘线宽度
   lastLineWidth: number
   // 当前画笔的矩形属性
-  rect = {
+  rect: FreeLineRect = {
     width: 0,
     height: 0,
     x: 0,
@@ -192,22 +203,44 @@ export const translatePosition = (
 export const scalePosition = (
   instance: FreeLine,
   scaleX: number,
-  scaleY: number
+  scaleY: number,
+  rect: FreeLineRect,
+  resizeType: string
 ) => {
-  const { x: oldX, y: oldY } = { ...instance.rect }
   initRect(instance)
   instance.positions.forEach((position) => {
-    position.x = position.x < 0 ? position.x / scaleX : position.x * scaleX
-    position.y = position.y < 0 ? position.y / scaleY : position.y * scaleY
+    position.x = position.x * scaleX
+    position.y = position.y * scaleY
     computedRect(instance, position)
   })
-  const { x: newX, y: newY } = { ...instance.rect }
-  const offsetX = newX - oldX
-  const offsetY = newY - oldY
-  console.log(newX, oldX, newY, oldY)
+  const { x: newX, y: newY, width: newWidth, height: newHeight } = instance.rect
+  let offsetX = 0
+  let offsetY = 0
+  switch (resizeType) {
+    case RESIZE_TYPE.BOTTOM_RIGHT:
+      offsetX = newX - rect.x
+      offsetY = newY - rect.y
+      break
+    case RESIZE_TYPE.BOTTOM_LEFT:
+      offsetX = newX + newWidth - (rect.x + rect.width)
+      offsetY = newY - rect.y
+      break
+    case RESIZE_TYPE.TOP_LEFT:
+      offsetX = newX + newWidth - (rect.x + rect.width)
+      offsetY = newY + newHeight - (rect.y + rect.height)
+      break
+    case RESIZE_TYPE.TOP_RIGHT:
+      offsetX = newX - rect.x
+      offsetY = newY + newHeight - (rect.y + rect.height)
+      break
+    default:
+      break
+  }
+  initRect(instance)
   instance.positions.forEach((position) => {
     position.x = position.x - offsetX
     position.y = position.y - offsetY
+    computedRect(instance, position)
   })
 }
 
