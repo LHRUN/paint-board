@@ -124,3 +124,38 @@ export const getResizeArea = (
   }
   return resizeType
 }
+
+/**
+ * 判断key是否存在于object
+ * @param key
+ * @param object
+ * @returns boolean
+ */
+export function isValidKey(
+  key: string | number | symbol,
+  object: object
+): key is keyof typeof object {
+  return key in object
+}
+
+/**
+ * 创建元素
+ * @param elType 元素类型
+ * @param styleObj 样式对象
+ * @param parent 父级元素
+ * @returns element
+ */
+export const createDocument = <T extends keyof HTMLElementTagNameMap>(
+  elType: T,
+  styleObj: Record<string, string | number> = {},
+  parent: HTMLElement | DocumentFragment = document.body
+): HTMLElementTagNameMap[T] => {
+  const el = document.createElement(elType)
+  Object.keys(styleObj).forEach((key) => {
+    if (isValidKey(key, styleObj)) {
+      Reflect.set(el.style, key, styleObj[key])
+    }
+  })
+  parent.appendChild(el)
+  return el
+}

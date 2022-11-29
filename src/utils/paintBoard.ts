@@ -17,6 +17,7 @@ import {
   getTowPointDistance
 } from './common'
 import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
+import { TextElement, TextRect, textRender } from './element/text'
 
 /**
  * PaintBoard
@@ -135,12 +136,14 @@ export class PaintBoard {
    * 为当前元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    this.currentEle?.addPosition({
-      x: position.x - this.canvasRect.left - this.originTranslate.x,
-      y: position.y - this.canvasRect.top - this.originTranslate.y
-    })
-    this.initOriginPosition()
-    this.render()
+    if (!(this.currentEle instanceof TextElement)) {
+      this.currentEle?.addPosition({
+        x: position.x - this.canvasRect.left - this.originTranslate.x,
+        y: position.y - this.canvasRect.top - this.originTranslate.y
+      })
+      this.initOriginPosition()
+      this.render()
+    }
   }
 
   /**
@@ -189,6 +192,9 @@ export class PaintBoard {
                 this.cleanCanvas.bind(this),
                 ele as CleanLine
               )
+              break
+            case CANVAS_ELE_TYPE.TEXT:
+              textRender(this.context, ele)
               break
             default:
               break
@@ -477,5 +483,17 @@ export class PaintBoard {
     this.resizeType = RESIZE_TYPE.NULL
     this.currentEle = null
     this.initOriginPosition()
+  }
+
+  renderText(value: string, rect: TextRect) {
+    if (value) {
+      rect.y = rect.y + 35
+      const position = this.transformPosition(rect)
+      rect.x = position.x
+      rect.y = position.y
+      const text = new TextElement(this.layer.current, value, rect)
+      this.history.add(text)
+      this.render()
+    }
   }
 }

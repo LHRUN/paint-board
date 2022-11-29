@@ -2,7 +2,8 @@
 export enum CANVAS_ELE_TYPE {
   FREE_LINE = 'freeLine',
   CLEAN_LINE = 'cleanLine',
-  SELECT = 'select'
+  SELECT = 'select',
+  TEXT = 'text'
 }
 
 // 通用绘画宽度

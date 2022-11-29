@@ -5,6 +5,9 @@ import OptionsCard from './components/optionsMenu'
 import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
 import Info from './components/info'
 import { CURSOR_TYPE } from '@/utils/cursor'
+import { showTextInput } from '@/utils/element/text'
+
+let inputElement: HTMLInputElement | null = null
 
 const Board: React.FC = () => {
   // 初始化画板
@@ -67,12 +70,20 @@ const Board: React.FC = () => {
   const mouseDown = (event: MouseEvent) => {
     if (board) {
       const { clientX: x, clientY: y } = event
+      const position = {
+        x,
+        y
+      }
+      if (inputElement !== null) {
+        const value = inputElement.value
+        const rect = inputElement.getBoundingClientRect()
+        board.renderText(value, rect)
+        document.body.removeChild(inputElement)
+        inputElement = null
+      }
       switch (optionsType) {
         case CANVAS_ELE_TYPE.SELECT:
-          board.selectResizeElement({
-            x,
-            y
-          })
+          board.selectResizeElement(position)
           break
         case CANVAS_ELE_TYPE.FREE_LINE:
         case CANVAS_ELE_TYPE.CLEAN_LINE:
@@ -86,6 +97,19 @@ const Board: React.FC = () => {
       setIsMouseDown(true)
     }
   }
+
+  const dbClick = (event: MouseEvent) => {
+    if (board) {
+      const { clientX: x, clientY: y } = event
+      const position = {
+        x,
+        y
+      }
+
+      inputElement = showTextInput(position)
+    }
+  }
+
   const mouseMove = (event: MouseEvent) => {
     if (board) {
       const { clientX: x, clientY: y } = event
@@ -136,6 +160,7 @@ const Board: React.FC = () => {
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}
         onMouseUp={mouseUp}
+        onDoubleClick={dbClick}
       ></canvas>
       <Info />
     </div>
