@@ -1,13 +1,9 @@
 import { getDistance } from '../common'
 import { CANVAS_ELE_TYPE, RESIZE_TYPE } from '../constants'
-import { MousePosition } from '@/types'
+import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
-interface FreeLineRect {
-  width: number
-  height: number
-  x: number
-  y: number
+interface FreeLineRect extends ElementRect {
   minX: number
   maxX: number
   minY: number
@@ -58,26 +54,13 @@ export class FreeLine extends CanvasElement {
     this.lastLineWidth = width
   }
 
-  initRect = () => {
-    this.rect = {
-      width: 0,
-      height: 0,
-      x: 0,
-      y: 0,
-      minX: Infinity,
-      maxX: -Infinity,
-      minY: Infinity,
-      maxY: -Infinity
-    }
-  }
-
   /**
    * 添加位置记录
    * @param position
    */
   addPosition(position: MousePosition) {
     this.positions.push(position)
-    computedRect(this, position)
+    calculateRect(this, position)
     // 处理当前线宽
     if (this.positions.length > 1) {
       const mouseSpeed = this._computedSpeed(
@@ -196,10 +179,18 @@ export const translatePosition = (
   instance.positions.forEach((position) => {
     position.x += xDistance
     position.y += yDistance
-    computedRect(instance, position)
+    calculateRect(instance, position)
   })
 }
 
+/**
+ * 缩放坐标
+ * @param instance
+ * @param scaleX
+ * @param scaleY
+ * @param rect
+ * @param resizeType
+ */
 export const scalePosition = (
   instance: FreeLine,
   scaleX: number,
@@ -211,7 +202,7 @@ export const scalePosition = (
   instance.positions.forEach((position) => {
     position.x = position.x * scaleX
     position.y = position.y * scaleY
-    computedRect(instance, position)
+    calculateRect(instance, position)
   })
   const { x: newX, y: newY, width: newWidth, height: newHeight } = instance.rect
   let offsetX = 0
@@ -240,10 +231,14 @@ export const scalePosition = (
   instance.positions.forEach((position) => {
     position.x = position.x - offsetX
     position.y = position.y - offsetY
-    computedRect(instance, position)
+    calculateRect(instance, position)
   })
 }
 
+/**
+ * 初始化矩形属性
+ * @param instance
+ */
 const initRect = (instance: FreeLine) => {
   instance.rect = {
     width: 0,
@@ -257,7 +252,13 @@ const initRect = (instance: FreeLine) => {
   }
 }
 
-const computedRect = (instance: FreeLine, position: MousePosition) => {
+/**
+ * 计算矩形属性
+ * @param instance
+ * @param position
+ * @returns
+ */
+const calculateRect = (instance: FreeLine, position: MousePosition) => {
   const { x, y } = position
   let { minX, maxX, minY, maxY } = instance.rect
   if (x < minX) {

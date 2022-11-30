@@ -1,15 +1,18 @@
 import { RESIZE_TYPE } from './constants'
 
 export enum CURSOR_TYPE {
-  AUTO = 'auto',
-  POINTER = 'pointer',
-  MOVE = 'move',
+  AUTO = 'auto', // 默认样式
+  POINTER = 'pointer', // 悬浮样式
+  MOVE = 'move', // 移动样式
   NE_RESIZE = 'ne-resize', // 右上方朝向箭头
   NW_RESIZE = 'nw-resize', // 左上方朝向箭头
   SE_RESIZE = 'se-resize', // 右下方朝向箭头
   SW_RESIZE = 'sw-resize' // 左下方朝向箭头
 }
 
+/**
+ * 鼠标样式
+ */
 export class Cursor {
   element: HTMLElement
   type = CURSOR_TYPE.AUTO
@@ -19,18 +22,30 @@ export class Cursor {
     this.reset()
   }
 
+  /**
+   * 改变样式
+   * @param type
+   */
   change(type: string) {
     this.element.style.cursor = type
   }
 
+  /**
+   * 重置样式
+   */
   reset() {
     this.element.style.cursor = CURSOR_TYPE.AUTO
   }
 }
 
+/**
+ * 根据当前调整大小获取鼠标样式
+ * @param resizeType // 调整大小类型
+ * @param defaultCursorType // 默认鼠标样式
+ */
 export const getResizeCursorType = (
   resizeType: string,
-  defaultCursorType: CURSOR_TYPE
+  defaultCursorType: CURSOR_TYPE = CURSOR_TYPE.AUTO
 ): CURSOR_TYPE => {
   let cursorType = defaultCursorType
   switch (resizeType) {

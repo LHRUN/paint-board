@@ -10,3 +10,13 @@ export interface MousePosition {
 
 // 元素实例类型
 export type ELEMENT_INSTANCE = FreeLine | CleanLine | TextElement
+
+/**
+ * 元素矩形
+ */
+export interface ElementRect {
+  x: number
+  y: number
+  width: number
+  height: number
+}

@@ -1,4 +1,4 @@
-import { ELEMENT_INSTANCE, MousePosition } from '@/types'
+import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { CleanLine, cleanLineRender } from './element/cleanLine'
 import {
   FreeLine,
@@ -13,11 +13,14 @@ import { Layer } from './layer'
 import {
   drawResizeRect,
   getPositionToLineDistance,
-  getResizeArea,
-  getTowPointDistance
+  getResizeType,
+  getTowPointDistance,
+  isInsideRect
 } from './common'
 import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
-import { TextElement, TextRect, textRender } from './element/text'
+import { TextElement, textRender } from './element/text'
+
+type MOVE_ELE = FreeLine | CleanLine | null
 
 /**
  * PaintBoard
@@ -90,14 +93,14 @@ export class PaintBoard {
     }
   }
 
-  // 当前元素
-  currentEle: ELEMENT_INSTANCE | null = null
+  // 记录当前移动元素，用于画笔和橡皮擦
+  currentMoveEle: MOVE_ELE = null
 
   /**
-   * 记录当前元素，并加入history
+   * 记录当前移动元素，并加入history
    */
   recordCurrent(type: string) {
-    let ele: ELEMENT_INSTANCE | null = null
+    let ele: MOVE_ELE = null
     switch (type) {
       case CANVAS_ELE_TYPE.FREE_LINE:
         ele = new FreeLine(
@@ -112,10 +115,10 @@ export class PaintBoard {
       default:
         break
     }
-    this.clearResizeElement()
+    this.cancelSelectElement()
     if (ele) {
       this.history.add(ele)
-      this.currentEle = ele
+      this.currentMoveEle = ele
       this.sortOnLayer()
     }
   }
@@ -133,17 +136,15 @@ export class PaintBoard {
   }
 
   /**
-   * 为当前元素添加坐标数据
+   * 为当前移动元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    if (!(this.currentEle instanceof TextElement)) {
-      this.currentEle?.addPosition({
-        x: position.x - this.canvasRect.left - this.originTranslate.x,
-        y: position.y - this.canvasRect.top - this.originTranslate.y
-      })
-      this.initOriginPosition()
-      this.render()
-    }
+    this.currentMoveEle?.addPosition({
+      x: position.x - this.canvasRect.left - this.originTranslate.x,
+      y: position.y - this.canvasRect.top - this.originTranslate.y
+    })
+    this.initOriginPosition()
+    this.render()
   }
 
   /**
@@ -194,7 +195,7 @@ export class PaintBoard {
               )
               break
             case CANVAS_ELE_TYPE.TEXT:
-              textRender(this.context, ele)
+              textRender(this.context, ele as TextElement)
               break
             default:
               break
@@ -203,9 +204,9 @@ export class PaintBoard {
         }
       })
 
-      if (this.resizeElement) {
-        const rect = this.resizeElement.rect
-        drawResizeRect(this.context, rect.x, rect.y, rect.width, rect.height)
+      if (this.selectElementIndex !== -1) {
+        const rect = this.getSelectElement(this.selectElementIndex).rect
+        drawResizeRect(this.context, rect)
       }
     }
     this.cache()
@@ -328,17 +329,19 @@ export class PaintBoard {
     }
   }
 
-  mouseHoverElement: FreeLine | null = null
-  mouseHoverElementIndex = -1
-  resizeElement: FreeLine | null = null
-  resizeElementIndex = -1
+  mouseHoverElementIndex = -1 // 选择模式下鼠标悬停元素坐标
+  selectElementIndex = -1 // 选择模式下当前选择元素坐标
   resizeMousePos = {
     x: 0,
     y: 0
-  }
-  resizeType = RESIZE_TYPE.NULL
+  } // 调整大小鼠标位置
+  resizeType = RESIZE_TYPE.NULL // 调整大小鼠标点击类型
 
-  handleMoveToEl(position: MousePosition) {
+  /**
+   * 选择模式下 移动鼠标
+   * @param position
+   */
+  moveSelectElement(position: MousePosition) {
     const movePos = this.transformPosition(position)
     let cursorType = CURSOR_TYPE.AUTO
     if (this.history.cacheQueue.length > 0) {
@@ -349,50 +352,61 @@ export class PaintBoard {
       )
       let done = false
       this.history.each((ele, eleIndex) => {
-        if (
-          ele?.layer &&
-          showLayerIds.has(ele.layer) &&
-          ele.type === CANVAS_ELE_TYPE.FREE_LINE
-        ) {
+        if (ele?.layer && showLayerIds.has(ele.layer)) {
           if (done) {
             return
           }
-          for (let i = 1; i < ele.positions.length; i++) {
-            const distance1 = getTowPointDistance(movePos, ele.positions[i - 1])
-            const distance2 = getTowPointDistance(movePos, ele.positions[i])
-            const distance = getPositionToLineDistance(
-              movePos,
-              ele.positions[i - 1],
-              ele.positions[i]
-            )
-            if ((distance1 < 10 || distance2 < 10) && distance < 10) {
-              this.mouseHoverElement = ele as FreeLine
-              this.mouseHoverElementIndex = eleIndex
-              cursorType = CURSOR_TYPE.POINTER
-              done = true
-            }
+          switch (ele.type) {
+            case CANVAS_ELE_TYPE.FREE_LINE:
+              for (let i = 1; i < ele.positions.length; i++) {
+                const distance1 = getTowPointDistance(
+                  movePos,
+                  ele.positions[i - 1]
+                )
+                const distance2 = getTowPointDistance(movePos, ele.positions[i])
+                const distance = getPositionToLineDistance(
+                  movePos,
+                  ele.positions[i - 1],
+                  ele.positions[i]
+                )
+                if ((distance1 < 10 || distance2 < 10) && distance < 10) {
+                  this.mouseHoverElementIndex = eleIndex
+                  cursorType = CURSOR_TYPE.POINTER
+                  done = true
+                }
+              }
+              break
+            case CANVAS_ELE_TYPE.TEXT:
+              if (isInsideRect(movePos, ele.rect)) {
+                this.mouseHoverElementIndex = eleIndex
+                cursorType = CURSOR_TYPE.POINTER
+                done = true
+              }
+              break
+            default:
+              break
           }
         }
       })
       if (!done) {
         this.mouseHoverElementIndex = -1
-        this.mouseHoverElement = null
       }
     }
-    if (this.resizeElement) {
+    if (this.selectElementIndex !== -1) {
       if (this.resizeType !== RESIZE_TYPE.NULL) {
         const { x, y } = movePos
-        const rect = { ...this.resizeElement.rect }
+        const resizeElement = this.getSelectElement(this.selectElementIndex)
+        const rect = { ...resizeElement.rect }
         const disntanceX = x - this.resizeMousePos.x
         const disntanceY = y - this.resizeMousePos.y
         cursorType = getResizeCursorType(this.resizeType, cursorType)
         switch (this.resizeType) {
           case RESIZE_TYPE.BODY:
-            translatePosition(this.resizeElement, disntanceX, disntanceY)
+            translatePosition(resizeElement, disntanceX, disntanceY)
             break
           case RESIZE_TYPE.BOTTOM_RIGHT:
             scalePosition(
-              this.resizeElement,
+              resizeElement,
               (rect.width + disntanceX) / rect.width,
               (rect.height + disntanceY) / rect.height,
               rect,
@@ -401,7 +415,7 @@ export class PaintBoard {
             break
           case RESIZE_TYPE.BOTTOM_LEFT:
             scalePosition(
-              this.resizeElement,
+              resizeElement,
               (rect.width - disntanceX) / rect.width,
               (rect.height + disntanceY) / rect.height,
               rect,
@@ -410,7 +424,7 @@ export class PaintBoard {
             break
           case RESIZE_TYPE.TOP_LEFT:
             scalePosition(
-              this.resizeElement,
+              resizeElement,
               (rect.width - disntanceX) / rect.width,
               (rect.height - disntanceY) / rect.height,
               rect,
@@ -419,7 +433,7 @@ export class PaintBoard {
             break
           case RESIZE_TYPE.TOP_RIGHT:
             scalePosition(
-              this.resizeElement,
+              resizeElement,
               (rect.width + disntanceX) / rect.width,
               (rect.height - disntanceY) / rect.height,
               rect,
@@ -433,61 +447,89 @@ export class PaintBoard {
         this.resizeMousePos = movePos
         this.render()
       } else {
-        const resizeType = getResizeArea(movePos, this.resizeElement.rect)
+        const resizeType = getResizeType(
+          movePos,
+          this.getSelectElement(this.selectElementIndex).rect
+        )
         cursorType = getResizeCursorType(resizeType, cursorType)
       }
     }
     this.cursor.change(cursorType)
   }
 
-  selectResizeElement(position: MousePosition) {
+  /**
+   * 鼠标点击获取选择元素
+   * @param position
+   */
+  clickSelectElement(position: MousePosition) {
     const resizeMousePos = this.transformPosition(position)
-    if (this.resizeElement) {
-      const resizeType = getResizeArea(resizeMousePos, this.resizeElement.rect)
+    if (this.selectElementIndex !== -1) {
+      const resizeType = getResizeType(
+        resizeMousePos,
+        this.getSelectElement(this.selectElementIndex).rect
+      )
       this.resizeType = resizeType
     }
     if (this.resizeType === RESIZE_TYPE.NULL) {
-      if (this.mouseHoverElement) {
+      if (this.mouseHoverElementIndex !== -1) {
         this.cursor.change(CURSOR_TYPE.MOVE)
-        this.resizeElement = this.mouseHoverElement
-        this.resizeElementIndex = this.mouseHoverElementIndex
+        this.selectElementIndex = this.mouseHoverElementIndex
       } else {
-        this.resizeElementIndex = -1
-        this.resizeElement = null
+        this.cancelSelectElement()
       }
     }
-    if (this.resizeElement) {
+    if (this.selectElementIndex !== -1) {
       this.resizeMousePos = resizeMousePos
     }
 
     this.render()
   }
 
+  /**
+   * 获取当前选择元素
+   * @param index 坐标
+   */
+  getSelectElement(index: number) {
+    return this.history.cacheQueue[index] as FreeLine | TextElement
+  }
+
+  /**
+   * 删除当前选择元素
+   */
   deleteSelectElement() {
-    if (this.resizeElementIndex !== -1) {
-      this.history.deleteByIndex(this.resizeElementIndex)
-      this.resizeElement = null
-      this.resizeElementIndex = -1
-      this.mouseHoverElement = null
+    if (this.selectElementIndex !== -1) {
+      this.history.deleteByIndex(this.selectElementIndex)
+      this.cancelSelectElement()
       this.mouseHoverElementIndex = -1
       this.resizeType = RESIZE_TYPE.NULL
       this.render()
     }
   }
 
-  clearResizeElement() {
-    this.resizeElement = null
+  /**
+   * 取消选择元素
+   */
+  cancelSelectElement() {
+    this.selectElementIndex = -1
   }
 
+  /**
+   * 鼠标松开
+   */
   canvasMouseUp() {
     this.resizeType = RESIZE_TYPE.NULL
-    this.currentEle = null
+    this.currentMoveEle = null
     this.initOriginPosition()
   }
 
-  renderText(value: string, rect: TextRect) {
+  /**
+   * 添加文本元素
+   * @param value 文本内容
+   * @param rect 文本矩形属性
+   */
+  addTextElement(value: string, rect: ElementRect) {
     if (value) {
-      rect.y = rect.y + 35
+      rect.y = rect.y + 20
       const position = this.transformPosition(rect)
       rect.x = position.x
       rect.y = position.y

@@ -1,26 +1,24 @@
 import { CanvasElement } from './element'
-import { MousePosition } from '../../types/index'
+import { ElementRect, MousePosition } from '../../types/index'
 import { CANVAS_ELE_TYPE } from '../constants'
 import { createDocument } from '../common'
 
-export interface TextRect {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
 export class TextElement extends CanvasElement {
   value: string
-  rect: TextRect
+  rect: ElementRect
 
-  constructor(layer: number, value: string, rect: TextRect) {
+  constructor(layer: number, value: string, rect: ElementRect) {
     super(CANVAS_ELE_TYPE.TEXT, layer)
     this.value = value
     this.rect = rect
   }
 }
 
+/**
+ * 渲染文本元素
+ * @param context
+ * @param instance
+ */
 export const textRender = (
   context: CanvasRenderingContext2D,
   instance: TextElement
@@ -31,12 +29,16 @@ export const textRender = (
   context.restore()
 }
 
+/**
+ * 显示文本输入框
+ * @param position
+ */
 export const showTextInput = (position: MousePosition) => {
   const inputStyle = {
     position: 'fixed',
-    top: `${position.y - 25}px`,
+    top: `${position.y}px`,
     left: `${position.x}px`,
-    height: '50px',
+    height: '25px',
     minWidth: '100px',
     fontSize: '25px',
     outline: 0,

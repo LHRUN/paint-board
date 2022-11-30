@@ -26,7 +26,7 @@ const Board: React.FC = () => {
   const handleOptionsType = (type: string) => {
     if (board) {
       if (type !== CANVAS_ELE_TYPE.SELECT) {
-        board.clearResizeElement()
+        board.cancelSelectElement()
       }
       setOptionsType(type)
       board.render()
@@ -77,13 +77,13 @@ const Board: React.FC = () => {
       if (inputElement !== null) {
         const value = inputElement.value
         const rect = inputElement.getBoundingClientRect()
-        board.renderText(value, rect)
+        board.addTextElement(value, rect)
         document.body.removeChild(inputElement)
         inputElement = null
       }
       switch (optionsType) {
         case CANVAS_ELE_TYPE.SELECT:
-          board.selectResizeElement(position)
+          board.clickSelectElement(position)
           break
         case CANVAS_ELE_TYPE.FREE_LINE:
         case CANVAS_ELE_TYPE.CLEAN_LINE:
@@ -105,7 +105,6 @@ const Board: React.FC = () => {
         x,
         y
       }
-
       inputElement = showTextInput(position)
     }
   }
@@ -121,7 +120,7 @@ const Board: React.FC = () => {
       } else {
         switch (optionsType) {
           case CANVAS_ELE_TYPE.SELECT:
-            board.handleMoveToEl({
+            board.moveSelectElement({
               x,
               y
             })

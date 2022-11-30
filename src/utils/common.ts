@@ -1,4 +1,4 @@
-import { MousePosition } from '@/types'
+import { ElementRect, MousePosition } from '@/types'
 import { RESIZE_TYPE } from './constants'
 
 /**
@@ -11,6 +11,13 @@ export const getDistance = (start: MousePosition, end: MousePosition) => {
   return Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
 }
 
+/**
+ * 获取鼠标坐标距离线段距离
+ * @param pos 鼠标坐标
+ * @param startPos 线段起点
+ * @param endPos 线段终点
+ * @returns 距离
+ */
 export const getPositionToLineDistance = (
   pos: MousePosition,
   startPos: MousePosition,
@@ -37,6 +44,12 @@ export const getPositionToLineDistance = (
   return dis
 }
 
+/**
+ * 获取两点距离
+ * @param startPos
+ * @param endPos
+ * @returns 距离
+ */
 export const getTowPointDistance = (
   startPos: MousePosition,
   endPos: MousePosition
@@ -51,11 +64,9 @@ export const getTowPointDistance = (
  */
 export const drawResizeRect = (
   context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number
+  rect: ElementRect
 ) => {
+  const { x, y, width, height } = rect
   context.save()
   context.strokeStyle = '#65CC8A'
   context.setLineDash([5])
@@ -91,23 +102,15 @@ const drawRect = (
   }
 }
 
-export const getResizeArea = (
-  position: MousePosition,
-  rect: {
-    x: number
-    y: number
-    width: number
-    height: number
-  }
-) => {
+/**
+ * 获取调整大小类型
+ * @param position
+ * @param rect
+ */
+export const getResizeType = (position: MousePosition, rect: ElementRect) => {
   let resizeType = RESIZE_TYPE.NULL
   const { x, y } = position
-  if (
-    rect.x + rect.width > x &&
-    x > rect.x &&
-    rect.y + rect.height > y &&
-    y > rect.y
-  ) {
+  if (isInsideRect(position, rect)) {
     resizeType = RESIZE_TYPE.BODY
   } else if (rect.x > x && x > rect.x - 10) {
     if (rect.y > y && y > rect.y - 10) {
@@ -126,15 +129,38 @@ export const getResizeArea = (
 }
 
 /**
+ * 判断是否在矩形内部
+ * @param position
+ * @param rect
+ * @returns boolean
+ */
+export const isInsideRect = (
+  position: MousePosition,
+  rect: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+) => {
+  return (
+    rect.x + rect.width > position.x &&
+    position.x > rect.x &&
+    rect.y + rect.height > position.y &&
+    position.y > rect.y
+  )
+}
+
+/**
  * 判断key是否存在于object
  * @param key
  * @param object
  * @returns boolean
  */
-export function isValidKey(
+export const isValidKey = (
   key: string | number | symbol,
   object: object
-): key is keyof typeof object {
+): key is keyof typeof object => {
   return key in object
 }
 

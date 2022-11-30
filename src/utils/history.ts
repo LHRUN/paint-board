@@ -49,7 +49,7 @@ export class History<T> {
   }
 
   /**
-   * 根据下标删除
+   * 根据坐标删除
    * @param index 下标
    */
   deleteByIndex(index: number) {
