@@ -3,7 +3,7 @@ import { CANVAS_ELE_TYPE, RESIZE_TYPE } from '../constants'
 import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
-interface FreeLineRect extends ElementRect {
+export interface FreeLineRect extends ElementRect {
   minX: number
   maxX: number
   minY: number

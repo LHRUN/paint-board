@@ -66,7 +66,7 @@ export const useBackspace = (keyDownCb?: () => void) => {
     return () => {
       window.removeEventListener('keydown', onKeydown)
     }
-  }, [])
+  }, [keyDownCb])
 
   const onKeydown = (e: KeyboardEvent) => {
     if (e.code === KeyCode.BACKSPACE) {

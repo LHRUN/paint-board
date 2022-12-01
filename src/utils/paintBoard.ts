@@ -2,6 +2,7 @@ import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { CleanLine, cleanLineRender } from './element/cleanLine'
 import {
   FreeLine,
+  FreeLineRect,
   freeLineRender,
   scalePosition,
   translatePosition
@@ -18,7 +19,7 @@ import {
   isInsideRect
 } from './common'
 import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
-import { TextElement, textRender } from './element/text'
+import { scaleTextElement, TextElement, textRender } from './element/text'
 
 type MOVE_ELE = FreeLine | CleanLine | null
 
@@ -360,30 +361,37 @@ export class PaintBoard {
           if (done) {
             return
           }
-          if (ele instanceof FreeLine) {
-            for (let i = 1; i < ele.positions.length; i++) {
-              const distance1 = getDistance(movePos, ele.positions[i - 1])
-              const distance2 = getDistance(movePos, ele.positions[i])
-              const distance = getPositionToLineDistance(
-                movePos,
-                ele.positions[i - 1],
-                ele.positions[i]
-              )
-              if ((distance1 < 10 || distance2 < 10) && distance < 10) {
+          let positions = []
+          switch (ele.type) {
+            case CANVAS_ELE_TYPE.FREE_LINE:
+              positions = (ele as FreeLine).positions
+              for (let i = 1; i < positions.length; i++) {
+                const distance1 = getDistance(movePos, positions[i - 1])
+                const distance2 = getDistance(movePos, positions[i])
+                const distance = getPositionToLineDistance(
+                  movePos,
+                  positions[i - 1],
+                  positions[i]
+                )
+                if ((distance1 < 10 || distance2 < 10) && distance < 10) {
+                  this.mouseHoverElementIndex = eleIndex
+                  cursorType = CURSOR_TYPE.POINTER
+                  done = true
+                }
+              }
+              break
+            case CANVAS_ELE_TYPE.TEXT:
+              if (isInsideRect(movePos, (ele as TextElement).rect)) {
                 this.mouseHoverElementIndex = eleIndex
                 cursorType = CURSOR_TYPE.POINTER
                 done = true
               }
-            }
-          } else if (ele instanceof TextElement) {
-            if (isInsideRect(movePos, ele.rect)) {
-              this.mouseHoverElementIndex = eleIndex
-              cursorType = CURSOR_TYPE.POINTER
-              done = true
-            }
+              break
+            default:
+              break
           }
         }
-      }, EACH_ORDER_TYPE.LAST)
+      })
       if (!done) {
         this.mouseHoverElementIndex = -1
       }
@@ -395,15 +403,19 @@ export class PaintBoard {
         const disntanceX = x - this.resizeMousePos.x
         const disntanceY = y - this.resizeMousePos.y
         cursorType = getResizeCursorType(this.resizeType, cursorType)
-        if (resizeElement instanceof FreeLine) {
-          const rect = { ...resizeElement.rect }
+        if (resizeElement.type === CANVAS_ELE_TYPE.FREE_LINE) {
+          const rect = { ...resizeElement.rect } as FreeLineRect
           switch (this.resizeType) {
             case RESIZE_TYPE.BODY:
-              translatePosition(resizeElement, disntanceX, disntanceY)
+              translatePosition(
+                resizeElement as FreeLine,
+                disntanceX,
+                disntanceY
+              )
               break
             case RESIZE_TYPE.BOTTOM_RIGHT:
               scalePosition(
-                resizeElement,
+                resizeElement as FreeLine,
                 (rect.width + disntanceX) / rect.width,
                 (rect.height + disntanceY) / rect.height,
                 rect,
@@ -412,7 +424,7 @@ export class PaintBoard {
               break
             case RESIZE_TYPE.BOTTOM_LEFT:
               scalePosition(
-                resizeElement,
+                resizeElement as FreeLine,
                 (rect.width - disntanceX) / rect.width,
                 (rect.height + disntanceY) / rect.height,
                 rect,
@@ -421,7 +433,7 @@ export class PaintBoard {
               break
             case RESIZE_TYPE.TOP_LEFT:
               scalePosition(
-                resizeElement,
+                resizeElement as FreeLine,
                 (rect.width - disntanceX) / rect.width,
                 (rect.height - disntanceY) / rect.height,
                 rect,
@@ -430,12 +442,37 @@ export class PaintBoard {
               break
             case RESIZE_TYPE.TOP_RIGHT:
               scalePosition(
-                resizeElement,
+                resizeElement as FreeLine,
                 (rect.width + disntanceX) / rect.width,
                 (rect.height - disntanceY) / rect.height,
                 rect,
                 RESIZE_TYPE.TOP_RIGHT
               )
+              break
+            default:
+              break
+          }
+        } else if (resizeElement.type === CANVAS_ELE_TYPE.TEXT) {
+          switch (this.resizeType) {
+            case RESIZE_TYPE.BODY:
+              resizeElement.rect.x += disntanceX
+              resizeElement.rect.y += disntanceY
+              break
+            case RESIZE_TYPE.BOTTOM_RIGHT:
+              // resizeElement.rect.width += disntanceX
+              // resizeElement.rect.height += disntanceY
+              scaleTextElement(
+                resizeElement as TextElement,
+                disntanceX,
+                disntanceY,
+                resizeElement.rect
+              )
+              break
+            case RESIZE_TYPE.BOTTOM_LEFT:
+              break
+            case RESIZE_TYPE.TOP_LEFT:
+              break
+            case RESIZE_TYPE.TOP_RIGHT:
               break
             default:
               break
@@ -527,7 +564,7 @@ export class PaintBoard {
    */
   addTextElement(value: string, rect: ElementRect) {
     if (value) {
-      rect.y = rect.y + 20
+      // rect.y = rect.y
       const position = this.transformPosition(rect)
       rect.x = position.x
       rect.y = position.y

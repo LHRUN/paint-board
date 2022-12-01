@@ -5,9 +5,9 @@ import OptionsCard from './components/optionsMenu'
 import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
 import Info from './components/info'
 import { CURSOR_TYPE } from '@/utils/cursor'
-import { showTextInput } from '@/utils/element/text'
+import { TextEdit } from '@/utils/element/text'
 
-let inputElement: HTMLInputElement | null = null
+const textEdit = new TextEdit()
 
 const Board: React.FC = () => {
   // 初始化画板
@@ -57,10 +57,7 @@ const Board: React.FC = () => {
   })
 
   useBackspace(() => {
-    console.log('useBackspace', board)
     if (board) {
-      console.log('useBackspace board')
-
       board.deleteSelectElement()
     }
   })
@@ -74,12 +71,9 @@ const Board: React.FC = () => {
         x,
         y
       }
-      if (inputElement !== null) {
-        const value = inputElement.value
-        const rect = inputElement.getBoundingClientRect()
-        board.addTextElement(value, rect)
-        document.body.removeChild(inputElement)
-        inputElement = null
+      if (textEdit) {
+        board.addTextElement(textEdit.value, textEdit.rect)
+        textEdit.destroy()
       }
       switch (optionsType) {
         case CANVAS_ELE_TYPE.SELECT:
@@ -105,7 +99,7 @@ const Board: React.FC = () => {
         x,
         y
       }
-      inputElement = showTextInput(position)
+      textEdit.showTextInput(position)
     }
   }
 
