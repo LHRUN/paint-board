@@ -23,40 +23,20 @@ export const getPositionToLineDistance = (
   startPos: MousePosition,
   endPos: MousePosition
 ) => {
-  const A = Math.abs(
-    Math.sqrt(Math.pow(pos.x - startPos.x, 2) + Math.pow(pos.y - startPos.y, 2))
-  )
-  const B = Math.abs(
-    Math.sqrt(Math.pow(pos.x - endPos.x, 2) + Math.pow(pos.y - endPos.y, 2))
-  )
-  const C = Math.abs(
-    Math.sqrt(
-      Math.pow(startPos.x - endPos.x, 2) + Math.pow(startPos.y - endPos.y, 2)
-    )
-  )
-  // https://blog.csdn.net/wzp20092009/article/details/124683083
-  //利用海伦公式计算三角形面积
-  //周长的一半
-  const P = (A + B + C) / 2
-  const allArea = Math.abs(Math.sqrt(P * (P - A) * (P - B) * (P - C)))
-  //普通公式计算三角形面积反推点到线的垂直距离
-  const dis = (2 * allArea) / C
-  return dis
-}
+  /**
+   * 1. 计算三点之间的直线距离
+   * 2. 计算三角形半周长
+   * 3. 通过海伦公式求面积
+   * 4. 根据面积公式求三角形的高
+   */
+  const A = Math.abs(getDistance(pos, startPos))
+  const B = Math.abs(getDistance(pos, endPos))
+  const C = Math.abs(getDistance(startPos, endPos))
 
-/**
- * 获取两点距离
- * @param startPos
- * @param endPos
- * @returns 距离
- */
-export const getTowPointDistance = (
-  startPos: MousePosition,
-  endPos: MousePosition
-) => {
-  return Math.sqrt(
-    Math.pow(startPos.x - endPos.x, 2) + Math.pow(startPos.y - endPos.y, 2)
-  )
+  const P = (A + B + C) / 2
+  const area = Math.abs(Math.sqrt(P * (P - A) * (P - B) * (P - C)))
+  const distance = (2 * area) / C
+  return distance
 }
 
 /**
@@ -73,7 +53,10 @@ export const drawResizeRect = (
   context.lineWidth = 2
   context.lineCap = 'round'
   context.lineJoin = 'round'
+  // 绘制虚线框
   drawRect(context, x, y, width, height)
+
+  // 绘制四角手柄
   context.fillStyle = '#65CC8A'
   drawRect(context, x - 10, y - 10, 10, 10, true)
   drawRect(context, x + width, y - 10, 10, 10, true)
@@ -91,7 +74,7 @@ const drawRect = (
   y: number,
   width: number,
   height: number,
-  fill = false
+  fill = false // 是否填充
 ) => {
   context.beginPath()
   context.rect(x, y, width, height)

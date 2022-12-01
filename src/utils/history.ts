@@ -1,3 +1,8 @@
+export enum EACH_ORDER_TYPE {
+  FIRST = 'first', // 顺序
+  LAST = 'last' // 倒序
+}
+
 /**
  * 历史记录栈
  */
@@ -13,9 +18,15 @@ export class History<T> {
    * 遍历cacheQueue
    * @param cb 遍历执行回调
    */
-  each(cb?: (ele: T, i: number) => void) {
-    for (let i = 0; i <= this.step; i++) {
-      cb?.(this.cacheQueue[i], i)
+  each(cb?: (ele: T, i: number) => void, order = EACH_ORDER_TYPE.FIRST) {
+    if (order === EACH_ORDER_TYPE.FIRST) {
+      for (let i = 0; i <= this.step; i++) {
+        cb?.(this.cacheQueue[i], i)
+      }
+    } else if (order === EACH_ORDER_TYPE.LAST) {
+      for (let i = this.step - 1; i >= 0; i--) {
+        cb?.(this.cacheQueue[i], i)
+      }
     }
   }
 

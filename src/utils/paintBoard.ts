@@ -7,14 +7,14 @@ import {
   translatePosition
 } from './element/freeLine'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
-import { History } from './history'
+import { EACH_ORDER_TYPE, History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
 import {
   drawResizeRect,
   getPositionToLineDistance,
   getResizeType,
-  getTowPointDistance,
+  getDistance,
   isInsideRect
 } from './common'
 import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
@@ -344,50 +344,46 @@ export class PaintBoard {
   moveSelectElement(position: MousePosition) {
     const movePos = this.transformPosition(position)
     let cursorType = CURSOR_TYPE.AUTO
+
+    /**
+     * 遍历符合条件的所有元素，判断鼠标是否悬浮到元素上方
+     */
     if (this.history.cacheQueue.length > 0) {
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
         }, [])
       )
-      let done = false
+      let done = false // 判断是否找到元素
       this.history.each((ele, eleIndex) => {
         if (ele?.layer && showLayerIds.has(ele.layer)) {
           if (done) {
             return
           }
-          switch (ele.type) {
-            case CANVAS_ELE_TYPE.FREE_LINE:
-              for (let i = 1; i < ele.positions.length; i++) {
-                const distance1 = getTowPointDistance(
-                  movePos,
-                  ele.positions[i - 1]
-                )
-                const distance2 = getTowPointDistance(movePos, ele.positions[i])
-                const distance = getPositionToLineDistance(
-                  movePos,
-                  ele.positions[i - 1],
-                  ele.positions[i]
-                )
-                if ((distance1 < 10 || distance2 < 10) && distance < 10) {
-                  this.mouseHoverElementIndex = eleIndex
-                  cursorType = CURSOR_TYPE.POINTER
-                  done = true
-                }
-              }
-              break
-            case CANVAS_ELE_TYPE.TEXT:
-              if (isInsideRect(movePos, ele.rect)) {
+          if (ele instanceof FreeLine) {
+            for (let i = 1; i < ele.positions.length; i++) {
+              const distance1 = getDistance(movePos, ele.positions[i - 1])
+              const distance2 = getDistance(movePos, ele.positions[i])
+              const distance = getPositionToLineDistance(
+                movePos,
+                ele.positions[i - 1],
+                ele.positions[i]
+              )
+              if ((distance1 < 10 || distance2 < 10) && distance < 10) {
                 this.mouseHoverElementIndex = eleIndex
                 cursorType = CURSOR_TYPE.POINTER
                 done = true
               }
-              break
-            default:
-              break
+            }
+          } else if (ele instanceof TextElement) {
+            if (isInsideRect(movePos, ele.rect)) {
+              this.mouseHoverElementIndex = eleIndex
+              cursorType = CURSOR_TYPE.POINTER
+              done = true
+            }
           }
         }
-      })
+      }, EACH_ORDER_TYPE.LAST)
       if (!done) {
         this.mouseHoverElementIndex = -1
       }
@@ -396,52 +392,54 @@ export class PaintBoard {
       if (this.resizeType !== RESIZE_TYPE.NULL) {
         const { x, y } = movePos
         const resizeElement = this.getSelectElement(this.selectElementIndex)
-        const rect = { ...resizeElement.rect }
         const disntanceX = x - this.resizeMousePos.x
         const disntanceY = y - this.resizeMousePos.y
         cursorType = getResizeCursorType(this.resizeType, cursorType)
-        switch (this.resizeType) {
-          case RESIZE_TYPE.BODY:
-            translatePosition(resizeElement, disntanceX, disntanceY)
-            break
-          case RESIZE_TYPE.BOTTOM_RIGHT:
-            scalePosition(
-              resizeElement,
-              (rect.width + disntanceX) / rect.width,
-              (rect.height + disntanceY) / rect.height,
-              rect,
-              RESIZE_TYPE.BOTTOM_RIGHT
-            )
-            break
-          case RESIZE_TYPE.BOTTOM_LEFT:
-            scalePosition(
-              resizeElement,
-              (rect.width - disntanceX) / rect.width,
-              (rect.height + disntanceY) / rect.height,
-              rect,
-              RESIZE_TYPE.BOTTOM_LEFT
-            )
-            break
-          case RESIZE_TYPE.TOP_LEFT:
-            scalePosition(
-              resizeElement,
-              (rect.width - disntanceX) / rect.width,
-              (rect.height - disntanceY) / rect.height,
-              rect,
-              RESIZE_TYPE.TOP_LEFT
-            )
-            break
-          case RESIZE_TYPE.TOP_RIGHT:
-            scalePosition(
-              resizeElement,
-              (rect.width + disntanceX) / rect.width,
-              (rect.height - disntanceY) / rect.height,
-              rect,
-              RESIZE_TYPE.TOP_RIGHT
-            )
-            break
-          default:
-            break
+        if (resizeElement instanceof FreeLine) {
+          const rect = { ...resizeElement.rect }
+          switch (this.resizeType) {
+            case RESIZE_TYPE.BODY:
+              translatePosition(resizeElement, disntanceX, disntanceY)
+              break
+            case RESIZE_TYPE.BOTTOM_RIGHT:
+              scalePosition(
+                resizeElement,
+                (rect.width + disntanceX) / rect.width,
+                (rect.height + disntanceY) / rect.height,
+                rect,
+                RESIZE_TYPE.BOTTOM_RIGHT
+              )
+              break
+            case RESIZE_TYPE.BOTTOM_LEFT:
+              scalePosition(
+                resizeElement,
+                (rect.width - disntanceX) / rect.width,
+                (rect.height + disntanceY) / rect.height,
+                rect,
+                RESIZE_TYPE.BOTTOM_LEFT
+              )
+              break
+            case RESIZE_TYPE.TOP_LEFT:
+              scalePosition(
+                resizeElement,
+                (rect.width - disntanceX) / rect.width,
+                (rect.height - disntanceY) / rect.height,
+                rect,
+                RESIZE_TYPE.TOP_LEFT
+              )
+              break
+            case RESIZE_TYPE.TOP_RIGHT:
+              scalePosition(
+                resizeElement,
+                (rect.width + disntanceX) / rect.width,
+                (rect.height - disntanceY) / rect.height,
+                rect,
+                RESIZE_TYPE.TOP_RIGHT
+              )
+              break
+            default:
+              break
+          }
         }
 
         this.resizeMousePos = movePos
