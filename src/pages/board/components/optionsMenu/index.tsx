@@ -195,7 +195,7 @@ const OptionsCard: React.FC<IProps> = ({
                   onClick={copyColor}
                   value={colorInput}
                   id="colorInput"
-                  className="input input-bordered input-sm w-full max-w-xs focus:outline-none cursor-pointer"
+                  className="input input-bordered input-sm w-40 max-w-xs focus:outline-none cursor-pointer"
                   readOnly
                 />
               </label>

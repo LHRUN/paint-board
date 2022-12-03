@@ -1,5 +1,5 @@
 import { getDistance } from '../common'
-import { CANVAS_ELE_TYPE, RESIZE_TYPE } from '../constants'
+import { CANVAS_ELE_TYPE, RECT_MIN_SIZE, RESIZE_TYPE } from '../constants'
 import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
@@ -170,7 +170,7 @@ const _drawLine = (
  * @param xDistance
  * @param yDistance
  */
-export const translatePosition = (
+export const moveFreeLine = (
   instance: FreeLine,
   xDistance: number,
   yDistance: number
@@ -191,13 +191,20 @@ export const translatePosition = (
  * @param rect
  * @param resizeType
  */
-export const scalePosition = (
+export const resizeFreeLine = (
   instance: FreeLine,
   scaleX: number,
   scaleY: number,
   rect: FreeLineRect,
   resizeType: string
 ) => {
+  // 没有做反向移动处理，所以在宽度和高度小到一定程度就禁止缩小
+  if (
+    (instance.rect.width <= RECT_MIN_SIZE && scaleX < 1) ||
+    (instance.rect.height <= RECT_MIN_SIZE && scaleY < 1)
+  ) {
+    return
+  }
   initRect(instance)
   instance.positions.forEach((position) => {
     position.x = position.x * scaleX
@@ -239,7 +246,7 @@ export const scalePosition = (
  * 初始化矩形属性
  * @param instance
  */
-const initRect = (instance: FreeLine) => {
+export const initRect = (instance: FreeLine) => {
   instance.rect = {
     width: 0,
     height: 0,
@@ -258,7 +265,7 @@ const initRect = (instance: FreeLine) => {
  * @param position
  * @returns
  */
-const calculateRect = (instance: FreeLine, position: MousePosition) => {
+export const calculateRect = (instance: FreeLine, position: MousePosition) => {
   const { x, y } = position
   let { minX, maxX, minY, maxY } = instance.rect
   if (x < minX) {

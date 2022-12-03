@@ -20,7 +20,7 @@ export function useSpaceEvent(
       window.removeEventListener('keydown', onKeydown)
       window.removeEventListener('keyup', onKeyup)
     }
-  }, [])
+  }, [keyDownCb, keyUpCb])
 
   const onKeydown = (e: KeyboardEvent) => {
     if (e.code === KeyCode.SPACE) {
@@ -49,7 +49,7 @@ export function useResizeEvent(cb: () => void) {
     return () => {
       window.removeEventListener('resize', onResize)
     }
-  })
+  }, [cb])
 
   const onResize = () => {
     cb()

@@ -1,11 +1,12 @@
+import { cloneDeep } from 'lodash'
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { CleanLine, cleanLineRender } from './element/cleanLine'
 import {
   FreeLine,
   FreeLineRect,
   freeLineRender,
-  scalePosition,
-  translatePosition
+  resizeFreeLine,
+  moveFreeLine
 } from './element/freeLine'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
 import { EACH_ORDER_TYPE, History } from './history'
@@ -19,7 +20,7 @@ import {
   isInsideRect
 } from './common'
 import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
-import { scaleTextElement, TextElement, textRender } from './element/text'
+import { resizeTextElement, TextElement, textRender } from './element/text'
 
 type MOVE_ELE = FreeLine | CleanLine | null
 
@@ -50,6 +51,7 @@ export class PaintBoard {
   layer: Layer
   // 鼠标样式
   cursor: Cursor
+  version = '0.2.0' // 版本号，主要用于兼容缓存数据
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -70,7 +72,11 @@ export class PaintBoard {
 
     // 初始化缓存数据
     this.layer = new Layer(this.render.bind(this), state?.layer)
-    this.history = new History(history)
+
+    // 兼容一下v0.1.0时未记录版本的问题
+    const version = state?.version ? state.version : '0.1.0'
+    this.history = new History(history, version)
+
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
     this.render()
   }
@@ -175,7 +181,7 @@ export class PaintBoard {
    */
   render() {
     this.cleanCanvas()
-    if (this.history.cacheQueue.length > 0) {
+    if (this.history.getCurrentStack()?.length ?? 0 > 0) {
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
@@ -217,20 +223,22 @@ export class PaintBoard {
    * localStorage 缓存
    */
   cache() {
-    const history = this.history.cacheQueue.slice(0, this.history.step + 1)
+    const history = this.history.getCurrentStack()
     const {
       currentLineColor,
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layer
+      layer,
+      version
     } = this
     const state = {
       currentLineColor,
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layer
+      layer,
+      version
     }
     storage.set(BOARD_STORAGE_KEY, { history, state })
   }
@@ -284,6 +292,7 @@ export class PaintBoard {
    * 后退
    */
   undo() {
+    this.cancelSelectElement()
     this.history.undo()
     this.render()
   }
@@ -292,6 +301,7 @@ export class PaintBoard {
    * 前进
    */
   redo() {
+    this.cancelSelectElement()
     this.history.redo()
     this.render()
   }
@@ -300,6 +310,7 @@ export class PaintBoard {
    * 清除画布
    */
   clean() {
+    this.cancelSelectElement()
     this.history.clean()
     this.render()
   }
@@ -337,6 +348,8 @@ export class PaintBoard {
     y: 0
   } // 调整大小鼠标位置
   resizeType = RESIZE_TYPE.NULL // 调整大小鼠标点击类型
+  tempCache: ELEMENT_INSTANCE[] | null = null // 临时缓存
+  isCurrentChange = false // 当前是否有变化
 
   /**
    * 选择模式下 移动鼠标
@@ -349,7 +362,7 @@ export class PaintBoard {
     /**
      * 遍历符合条件的所有元素，判断鼠标是否悬浮到元素上方
      */
-    if (this.history.cacheQueue.length > 0) {
+    if (this.history.getCurrentStack()?.length ?? 0 > 0) {
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
@@ -391,13 +404,14 @@ export class PaintBoard {
               break
           }
         }
-      })
+      }, EACH_ORDER_TYPE.LAST)
       if (!done) {
         this.mouseHoverElementIndex = -1
       }
     }
     if (this.selectElementIndex !== -1) {
       if (this.resizeType !== RESIZE_TYPE.NULL) {
+        this.isCurrentChange = true
         const { x, y } = movePos
         const resizeElement = this.getSelectElement(this.selectElementIndex)
         const disntanceX = x - this.resizeMousePos.x
@@ -407,14 +421,10 @@ export class PaintBoard {
           const rect = { ...resizeElement.rect } as FreeLineRect
           switch (this.resizeType) {
             case RESIZE_TYPE.BODY:
-              translatePosition(
-                resizeElement as FreeLine,
-                disntanceX,
-                disntanceY
-              )
+              moveFreeLine(resizeElement as FreeLine, disntanceX, disntanceY)
               break
             case RESIZE_TYPE.BOTTOM_RIGHT:
-              scalePosition(
+              resizeFreeLine(
                 resizeElement as FreeLine,
                 (rect.width + disntanceX) / rect.width,
                 (rect.height + disntanceY) / rect.height,
@@ -423,7 +433,7 @@ export class PaintBoard {
               )
               break
             case RESIZE_TYPE.BOTTOM_LEFT:
-              scalePosition(
+              resizeFreeLine(
                 resizeElement as FreeLine,
                 (rect.width - disntanceX) / rect.width,
                 (rect.height + disntanceY) / rect.height,
@@ -432,7 +442,7 @@ export class PaintBoard {
               )
               break
             case RESIZE_TYPE.TOP_LEFT:
-              scalePosition(
+              resizeFreeLine(
                 resizeElement as FreeLine,
                 (rect.width - disntanceX) / rect.width,
                 (rect.height - disntanceY) / rect.height,
@@ -441,7 +451,7 @@ export class PaintBoard {
               )
               break
             case RESIZE_TYPE.TOP_RIGHT:
-              scalePosition(
+              resizeFreeLine(
                 resizeElement as FreeLine,
                 (rect.width + disntanceX) / rect.width,
                 (rect.height - disntanceY) / rect.height,
@@ -459,20 +469,36 @@ export class PaintBoard {
               resizeElement.rect.y += disntanceY
               break
             case RESIZE_TYPE.BOTTOM_RIGHT:
-              // resizeElement.rect.width += disntanceX
-              // resizeElement.rect.height += disntanceY
-              scaleTextElement(
+              resizeTextElement(
                 resizeElement as TextElement,
-                disntanceX,
-                disntanceY,
-                resizeElement.rect
+                resizeElement.rect.width + disntanceX,
+                resizeElement.rect.height + disntanceY,
+                RESIZE_TYPE.BOTTOM_RIGHT
               )
               break
             case RESIZE_TYPE.BOTTOM_LEFT:
+              resizeTextElement(
+                resizeElement as TextElement,
+                resizeElement.rect.width - disntanceX,
+                resizeElement.rect.height + disntanceY,
+                RESIZE_TYPE.BOTTOM_LEFT
+              )
               break
             case RESIZE_TYPE.TOP_LEFT:
+              resizeTextElement(
+                resizeElement as TextElement,
+                resizeElement.rect.width - disntanceX,
+                resizeElement.rect.height - disntanceY,
+                RESIZE_TYPE.TOP_LEFT
+              )
               break
             case RESIZE_TYPE.TOP_RIGHT:
+              resizeTextElement(
+                resizeElement as TextElement,
+                resizeElement.rect.width + disntanceX,
+                resizeElement.rect.height - disntanceY,
+                RESIZE_TYPE.TOP_RIGHT
+              )
               break
             default:
               break
@@ -514,6 +540,7 @@ export class PaintBoard {
       }
     }
     if (this.selectElementIndex !== -1) {
+      this.tempCache = cloneDeep(this.history.getCurrentStack())
       this.resizeMousePos = resizeMousePos
     }
 
@@ -525,7 +552,8 @@ export class PaintBoard {
    * @param index 坐标
    */
   getSelectElement(index: number) {
-    return this.history.cacheQueue[index] as FreeLine | TextElement
+    const last = this.history.getCurrentStack() as ELEMENT_INSTANCE[]
+    return last[index] as FreeLine | TextElement
   }
 
   /**
@@ -552,6 +580,11 @@ export class PaintBoard {
    * 鼠标松开
    */
   canvasMouseUp() {
+    if (this.isCurrentChange && this.tempCache) {
+      this.history.pushStack(this.history.getCurrentStack(), this.tempCache)
+    }
+    this.isCurrentChange = false
+    this.tempCache = null
     this.resizeType = RESIZE_TYPE.NULL
     this.currentMoveEle = null
     this.initOriginPosition()
@@ -564,7 +597,6 @@ export class PaintBoard {
    */
   addTextElement(value: string, rect: ElementRect) {
     if (value) {
-      // rect.y = rect.y
       const position = this.transformPosition(rect)
       rect.x = position.x
       rect.y = position.y

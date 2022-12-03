@@ -1,8 +1,12 @@
+import { RECT_MIN_SIZE, RESIZE_TYPE } from './../constants'
 import { CanvasElement } from './element'
 import { ElementRect, MousePosition } from '../../types/index'
 import { CANVAS_ELE_TYPE } from '../constants'
 import { createDocument } from '../common'
 
+/**
+ * 文本元素
+ */
 export class TextElement extends CanvasElement {
   value: string
   rect: ElementRect
@@ -16,16 +20,19 @@ export class TextElement extends CanvasElement {
   }
 }
 
+/**
+ * 文本编辑
+ */
 export class TextEdit {
   rect: ElementRect = {
     x: 0,
     y: 0,
     width: 0,
     height: 0
-  }
-  inputEle: HTMLInputElement | null = null
-  previewEle: HTMLDivElement | null = null
-  value = ''
+  } // 文本矩形属性
+  inputEle: HTMLInputElement | null = null // input元素
+  previewEle: HTMLDivElement | null = null // 预览元素，用于获取矩形属性
+  value = '' // input[value]
 
   /**
    * 显示文本输入框
@@ -67,7 +74,6 @@ export class TextEdit {
         const value = this.inputEle.value
         this.previewEle.textContent = value
         const { width, height } = this.previewEle.getBoundingClientRect()
-        console.log(width, height, value)
         this.inputEle.style.width = `${width}px`
         this.rect.width = width
         this.rect.height = height
@@ -80,6 +86,9 @@ export class TextEdit {
     return inputEle
   }
 
+  /**
+   * 编辑后销毁
+   */
   destroy() {
     if (this.inputEle) {
       document.body.removeChild(this.inputEle)
@@ -102,44 +111,61 @@ export class TextEdit {
 /**
  * 渲染文本元素
  * @param context
- * @param instance
+ * @param ele
  */
 export const textRender = (
   context: CanvasRenderingContext2D,
-  instance: TextElement
+  ele: TextElement
 ) => {
   context.save()
-  context.font = `${instance.fontSize}px serif`
-  // 因为fillText的y轴坐标是文字的左下角，而其他记录的都是右上角，所以需要+21
-  context.fillText(instance.value, instance.rect.x, instance.rect.y + 21)
+  context.font = `${ele.fontSize}px serif`
+  // 因为fillText的坐标是文字的左下角，而其他记录的都是左上角，所以需要加上字体大小
+  context.fillText(ele.value, ele.rect.x, ele.rect.y + ele.fontSize * 0.84)
   context.restore()
 }
 
-export const scaleTextElement = (
-  instance: TextElement,
-  distanceX: number,
-  distanceY: number,
-  rect: ElementRect
+/**
+ * 修改文本元素大小
+ * @param ele 文本元素
+ * @param width 改变后的宽度
+ * @param height 改变后的高度
+ * @param resizeType 拖拽类型
+ */
+export const resizeTextElement = (
+  ele: TextElement,
+  width: number,
+  height: number,
+  resizeType: string
 ) => {
-  // instance.rect.width += distanceX
-  // instance.rect.height += distanceY
-  let newWidth = rect.width + distanceX
-  let newHeight = rect.height + distanceY
-  const originRatio = rect.width / rect.height // 原始矩形的宽高比
-  const newRatio = newWidth / newHeight // 新矩形的宽高比
-  // let x1, y1
-  if (newRatio < originRatio) {
-    // 新矩形的比例小于原始矩形的比例，宽度不变，调整新矩形的高度
-    // x1 = newRect.x + newRect.width;
-    // y1 = newRect.y + newRect.width / originRatio;
-    newHeight = newWidth / originRatio
-  } else if (newRatio > originRatio) {
-    // 新矩形的比例大于原始矩形的比例，高度不变，调整新矩形的宽度
-    // x1 = newRect.x + originRatio * newRect.height;
-    // y1 = newRect.y + newRect.height;
-    newWidth = originRatio * newHeight
+  const oldRatio = ele.rect.width / ele.rect.height // 原始矩形的宽高比
+  const newRatio = width / height // 新矩形的宽高比
+  if (newRatio < oldRatio) {
+    height = width / oldRatio
+  } else if (newRatio > oldRatio) {
+    width = oldRatio * height
   }
-  instance.rect.height = newHeight
-  instance.rect.width = newWidth
-  instance.fontSize = instance.rect.height
+
+  if (height < RECT_MIN_SIZE || width < RECT_MIN_SIZE) {
+    return
+  }
+
+  switch (resizeType) {
+    case RESIZE_TYPE.BOTTOM_RIGHT:
+      break
+    case RESIZE_TYPE.BOTTOM_LEFT:
+      ele.rect.x -= width - ele.rect.width
+      break
+    case RESIZE_TYPE.TOP_LEFT:
+      ele.rect.x -= width - ele.rect.width
+      ele.rect.y -= height - ele.rect.height
+      break
+    case RESIZE_TYPE.TOP_RIGHT:
+      ele.rect.y -= height - ele.rect.height
+      break
+    default:
+      break
+  }
+  ele.rect.height = height
+  ele.rect.width = width
+  ele.fontSize = ele.rect.height
 }

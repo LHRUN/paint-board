@@ -29,3 +29,6 @@ export enum RESIZE_TYPE {
   TOP_LEFT = 'top_left',
   TOP_RIGHT = 'top_right'
 }
+
+// 矩形最小宽高，用于限制缩放
+export const RECT_MIN_SIZE = 10
