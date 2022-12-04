@@ -39,7 +39,7 @@ const Info: React.FC = () => {
           </div>
           <img
             className="mask"
-            src="https://s1.ax1x.com/2022/09/18/xpLdFe.png"
+            src="https://s1.ax1x.com/2022/12/03/zrDz4S.jpg"
           />
         </div>
       </div>

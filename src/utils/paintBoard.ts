@@ -1,10 +1,15 @@
-import { ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { CleanLine, cleanLineRender } from './element/cleanLine'
-import { FreeLine, freeLineRender } from './element/freeLine'
-import { CANVAS_ELE_TYPE, CommonWidth } from './constants'
+import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
+import { Eraser, eraserRender } from './element/eraser'
+import { FreeDraw, freeDrawRender } from './element/freeDraw'
+import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
+import { Cursor, CURSOR_TYPE } from './cursor'
+import { TextElement, textRender } from './element/text'
+import { drawResizeRect, SelectElement } from './select'
+
+type MOVE_ELE = FreeDraw | Eraser | null
 
 /**
  * PaintBoard
@@ -31,6 +36,10 @@ export class PaintBoard {
   }
   // 图层
   layer: Layer
+  // 鼠标光标
+  cursor: Cursor
+  select: SelectElement
+  version = '0.2.0' // 版本号，主要用于兼容缓存数据
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -43,6 +52,8 @@ export class PaintBoard {
       top,
       left
     }
+    this.cursor = new Cursor(canvas)
+    this.select = new SelectElement(this)
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
@@ -50,7 +61,11 @@ export class PaintBoard {
 
     // 初始化缓存数据
     this.layer = new Layer(this.render.bind(this), state?.layer)
-    this.history = new History(history)
+
+    // 兼容一下v0.1.0时未记录版本的问题
+    const version = state?.version ? state.version : '0.1.0'
+    this.history = new History(history, version)
+
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
     this.render()
   }
@@ -74,31 +89,32 @@ export class PaintBoard {
     }
   }
 
-  // 当前元素
-  currentEle: ELEMENT_INSTANCE | null = null
+  // 记录当前移动元素，用于画笔和橡皮擦
+  currentMoveEle: MOVE_ELE = null
 
   /**
-   * 记录当前元素，并加入history
+   * 记录当前移动元素，并加入history
    */
   recordCurrent(type: string) {
-    let ele: ELEMENT_INSTANCE | null = null
+    let ele: MOVE_ELE = null
     switch (type) {
-      case CANVAS_ELE_TYPE.FREE_LINE:
-        ele = new FreeLine(
+      case CANVAS_ELE_TYPE.FREE_DRAW:
+        ele = new FreeDraw(
           this.currentLineColor,
           this.currentLineWidth,
           this.layer.current
         )
         break
-      case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth, this.layer.current)
+      case CANVAS_ELE_TYPE.ERASER:
+        ele = new Eraser(this.cleanWidth, this.layer.current)
         break
       default:
         break
     }
+    this.select.cancelSelectElement()
     if (ele) {
       this.history.add(ele)
-      this.currentEle = ele
+      this.currentMoveEle = ele
       this.sortOnLayer()
     }
   }
@@ -116,10 +132,10 @@ export class PaintBoard {
   }
 
   /**
-   * 为当前元素添加坐标数据
+   * 为当前移动元素添加坐标数据
    */
   currentAddPosition(position: MousePosition) {
-    this.currentEle?.addPosition({
+    this.currentMoveEle?.addPosition({
       x: position.x - this.canvasRect.left - this.originTranslate.x,
       y: position.y - this.canvasRect.top - this.originTranslate.y
     })
@@ -130,11 +146,12 @@ export class PaintBoard {
   /**
    * 拖拽画布
    */
-  drag(position: MousePosition) {
+  dragCanvas(position: MousePosition) {
     const mousePosition = {
       x: position.x - this.canvasRect.left,
       y: position.y - this.canvasRect.top
     }
+    this.cursor.change(CURSOR_TYPE.POINTER)
     if (this.originPosition.x && this.originPosition.y) {
       const translteX = mousePosition.x - this.originPosition.x
       const translteY = mousePosition.y - this.originPosition.y
@@ -153,7 +170,7 @@ export class PaintBoard {
    */
   render() {
     this.cleanCanvas()
-    if (this.history.cacheQueue.length > 0) {
+    if (this.history.getCurrentStack()?.length ?? 0 > 0) {
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
@@ -163,15 +180,18 @@ export class PaintBoard {
         if (ele?.layer && showLayerIds.has(ele.layer)) {
           this.context.save()
           switch (ele?.type) {
-            case CANVAS_ELE_TYPE.FREE_LINE:
-              freeLineRender(this.context, ele as FreeLine)
+            case CANVAS_ELE_TYPE.FREE_DRAW:
+              freeDrawRender(this.context, ele as FreeDraw)
               break
-            case CANVAS_ELE_TYPE.CLEAN_LINE:
-              cleanLineRender(
+            case CANVAS_ELE_TYPE.ERASER:
+              eraserRender(
                 this.context,
                 this.cleanCanvas.bind(this),
-                ele as CleanLine
+                ele as Eraser
               )
+              break
+            case CANVAS_ELE_TYPE.TEXT:
+              textRender(this.context, ele as TextElement)
               break
             default:
               break
@@ -179,6 +199,11 @@ export class PaintBoard {
           this.context.restore()
         }
       })
+
+      if (this.select.selectElementIndex !== -1) {
+        const rect = this.select.getCurSelectElement().rect
+        drawResizeRect(this.context, rect)
+      }
     }
     this.cache()
   }
@@ -187,20 +212,22 @@ export class PaintBoard {
    * localStorage 缓存
    */
   cache() {
-    const history = this.history.cacheQueue.slice(0, this.history.step + 1)
+    const history = this.history.getCurrentStack()
     const {
       currentLineColor,
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layer
+      layer,
+      version
     } = this
     const state = {
       currentLineColor,
       currentLineWidth,
       cleanWidth,
       originTranslate,
-      layer
+      layer,
+      version
     }
     storage.set(BOARD_STORAGE_KEY, { history, state })
   }
@@ -254,6 +281,7 @@ export class PaintBoard {
    * 后退
    */
   undo() {
+    this.select.cancelSelectElement()
     this.history.undo()
     this.render()
   }
@@ -262,6 +290,7 @@ export class PaintBoard {
    * 前进
    */
   redo() {
+    this.select.cancelSelectElement()
     this.history.redo()
     this.render()
   }
@@ -270,6 +299,7 @@ export class PaintBoard {
    * 清除画布
    */
   clean() {
+    this.select.cancelSelectElement()
     this.history.clean()
     this.render()
   }
@@ -288,5 +318,48 @@ export class PaintBoard {
     URL.revokeObjectURL(elink.href)
     document.body.removeChild(elink)
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
+  }
+
+  /**
+   * 转换坐标
+   */
+  transformPosition(position: MousePosition) {
+    return {
+      x: position.x - this.canvasRect.left - this.originTranslate.x,
+      y: position.y - this.canvasRect.top - this.originTranslate.y
+    }
+  }
+
+  /**
+   * 鼠标松开
+   */
+  canvasMouseUp() {
+    if (this.select.isCurrentChange && this.select.tempCache) {
+      this.history.pushStack(
+        this.history.getCurrentStack(),
+        this.select.tempCache
+      )
+    }
+    this.select.isCurrentChange = false
+    this.select.tempCache = null
+    this.select.resizeType = RESIZE_TYPE.NULL
+    this.currentMoveEle = null
+    this.initOriginPosition()
+  }
+
+  /**
+   * 添加文本元素
+   * @param value 文本内容
+   * @param rect 文本矩形属性
+   */
+  addTextElement(value: string, rect: ElementRect) {
+    if (value) {
+      const position = this.transformPosition(rect)
+      rect.x = position.x
+      rect.y = position.y
+      const text = new TextElement(this.layer.current, value, rect)
+      this.history.add(text)
+      this.render()
+    }
   }
 }

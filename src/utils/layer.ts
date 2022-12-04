@@ -23,7 +23,7 @@ export class Layer {
       stack = [
         {
           id: 1,
-          title: 'item1',
+          title: 'layer1',
           show: true
         }
       ],
@@ -44,7 +44,7 @@ export class Layer {
 
     this.stack.unshift({
       id,
-      title: `item${id}`,
+      title: `layer${id}`,
       show: true
     })
     this.current = id

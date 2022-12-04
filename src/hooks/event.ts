@@ -7,7 +7,10 @@ import { KeyCode } from '@/utils/constants'
  * @param keyUpCb 空格键松开回调
  * @returns 空格键按下状态
  */
-export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
+export function useSpaceEvent(
+  keyDownCb?: (spacePressState: boolean) => void,
+  keyUpCb?: (spacePressState: boolean) => void
+) {
   const [isPressSpace, setIsPressSpace] = useState<boolean>(false)
 
   useEffect(() => {
@@ -17,19 +20,19 @@ export function useSpaceEvent(keyDownCb?: () => void, keyUpCb?: () => void) {
       window.removeEventListener('keydown', onKeydown)
       window.removeEventListener('keyup', onKeyup)
     }
-  }, [])
+  }, [keyDownCb, keyUpCb])
 
   const onKeydown = (e: KeyboardEvent) => {
     if (e.code === KeyCode.SPACE) {
       setIsPressSpace(true)
-      keyDownCb?.()
+      keyDownCb?.(true)
     }
   }
 
   const onKeyup = (e: KeyboardEvent) => {
     if (e.code === KeyCode.SPACE) {
       setIsPressSpace(false)
-      keyUpCb?.()
+      keyUpCb?.(false)
     }
   }
 
@@ -46,9 +49,28 @@ export function useResizeEvent(cb: () => void) {
     return () => {
       window.removeEventListener('resize', onResize)
     }
-  })
+  }, [cb])
 
   const onResize = () => {
     cb()
+  }
+}
+
+/**
+ * 监听backspace键
+ * @param keyDownCb backspace键按下回调
+ */
+export const useBackspace = (keyDownCb?: () => void) => {
+  useEffect(() => {
+    window.addEventListener('keydown', onKeydown)
+    return () => {
+      window.removeEventListener('keydown', onKeydown)
+    }
+  }, [keyDownCb])
+
+  const onKeydown = (e: KeyboardEvent) => {
+    if (e.code === KeyCode.BACKSPACE) {
+      keyDownCb?.()
+    }
   }
 }
