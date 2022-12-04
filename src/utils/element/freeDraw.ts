@@ -3,7 +3,7 @@ import { CANVAS_ELE_TYPE, RECT_MIN_SIZE, RESIZE_TYPE } from '../constants'
 import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
-export interface FreeLineRect extends ElementRect {
+export interface FreeDrawRect extends ElementRect {
   minX: number
   maxX: number
   minY: number
@@ -13,7 +13,7 @@ export interface FreeLineRect extends ElementRect {
 /**
  * 自由画笔
  */
-export class FreeLine extends CanvasElement {
+export class FreeDraw extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
   // 当前绘线颜色
@@ -33,7 +33,7 @@ export class FreeLine extends CanvasElement {
   // 最后绘线宽度
   lastLineWidth: number
   // 当前画笔的矩形属性
-  rect: FreeLineRect = {
+  rect: FreeDrawRect = {
     width: 0,
     height: 0,
     x: 0,
@@ -45,7 +45,7 @@ export class FreeLine extends CanvasElement {
   }
 
   constructor(color: string, width: number, layer: number) {
-    super(CANVAS_ELE_TYPE.FREE_LINE, layer)
+    super(CANVAS_ELE_TYPE.FREE_DRAW, layer)
     this.positions = []
     this.lineWidths = [0]
     this.color = color
@@ -117,11 +117,11 @@ export class FreeLine extends CanvasElement {
 /**
  * 自由画笔渲染
  * @param context canvas二维渲染上下文
- * @param instance FreeLine
+ * @param instance FreeDraw
  */
-export const freeLineRender = (
+export const freeDrawRender = (
   context: CanvasRenderingContext2D,
-  instance: FreeLine
+  instance: FreeDraw
 ) => {
   context.save()
   context.lineCap = 'round'
@@ -135,12 +135,12 @@ export const freeLineRender = (
 
 /**
  * 画线
- * @param instance FreeLine 实例
+ * @param instance FreeDraw 实例
  * @param i 下标
  * @param context canvas二维渲染上下文
  */
 const _drawLine = (
-  instance: FreeLine,
+  instance: FreeDraw,
   i: number,
   context: CanvasRenderingContext2D
 ) => {
@@ -170,8 +170,8 @@ const _drawLine = (
  * @param xDistance
  * @param yDistance
  */
-export const moveFreeLine = (
-  instance: FreeLine,
+export const moveFreeDraw = (
+  instance: FreeDraw,
   xDistance: number,
   yDistance: number
 ) => {
@@ -191,11 +191,11 @@ export const moveFreeLine = (
  * @param rect
  * @param resizeType
  */
-export const resizeFreeLine = (
-  instance: FreeLine,
+export const resizeFreeDraw = (
+  instance: FreeDraw,
   scaleX: number,
   scaleY: number,
-  rect: FreeLineRect,
+  rect: FreeDrawRect,
   resizeType: string
 ) => {
   // 没有做反向移动处理，所以在宽度和高度小到一定程度就禁止缩小
@@ -246,7 +246,7 @@ export const resizeFreeLine = (
  * 初始化矩形属性
  * @param instance
  */
-export const initRect = (instance: FreeLine) => {
+export const initRect = (instance: FreeDraw) => {
   instance.rect = {
     width: 0,
     height: 0,
@@ -265,7 +265,7 @@ export const initRect = (instance: FreeLine) => {
  * @param position
  * @returns
  */
-export const calculateRect = (instance: FreeLine, position: MousePosition) => {
+export const calculateRect = (instance: FreeDraw, position: MousePosition) => {
   const { x, y } = position
   let { minX, maxX, minY, maxY } = instance.rect
   if (x < minX) {

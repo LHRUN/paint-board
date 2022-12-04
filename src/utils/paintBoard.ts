@@ -1,28 +1,15 @@
-import { cloneDeep } from 'lodash'
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { CleanLine, cleanLineRender } from './element/cleanLine'
-import {
-  FreeLine,
-  FreeLineRect,
-  freeLineRender,
-  resizeFreeLine,
-  moveFreeLine
-} from './element/freeLine'
+import { Eraser, eraserRender } from './element/eraser'
+import { FreeDraw, freeDrawRender } from './element/freeDraw'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
-import { EACH_ORDER_TYPE, History } from './history'
+import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
-import {
-  drawResizeRect,
-  getPositionToLineDistance,
-  getResizeType,
-  getDistance,
-  isInsideRect
-} from './common'
-import { Cursor, CURSOR_TYPE, getResizeCursorType } from './cursor'
-import { resizeTextElement, TextElement, textRender } from './element/text'
+import { Cursor, CURSOR_TYPE } from './cursor'
+import { TextElement, textRender } from './element/text'
+import { drawResizeRect, SelectElement } from './select'
 
-type MOVE_ELE = FreeLine | CleanLine | null
+type MOVE_ELE = FreeDraw | Eraser | null
 
 /**
  * PaintBoard
@@ -49,8 +36,9 @@ export class PaintBoard {
   }
   // 图层
   layer: Layer
-  // 鼠标样式
+  // 鼠标光标
   cursor: Cursor
+  select: SelectElement
   version = '0.2.0' // 版本号，主要用于兼容缓存数据
 
   constructor(canvas: HTMLCanvasElement) {
@@ -65,6 +53,7 @@ export class PaintBoard {
       left
     }
     this.cursor = new Cursor(canvas)
+    this.select = new SelectElement(this)
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
@@ -109,20 +98,20 @@ export class PaintBoard {
   recordCurrent(type: string) {
     let ele: MOVE_ELE = null
     switch (type) {
-      case CANVAS_ELE_TYPE.FREE_LINE:
-        ele = new FreeLine(
+      case CANVAS_ELE_TYPE.FREE_DRAW:
+        ele = new FreeDraw(
           this.currentLineColor,
           this.currentLineWidth,
           this.layer.current
         )
         break
-      case CANVAS_ELE_TYPE.CLEAN_LINE:
-        ele = new CleanLine(this.cleanWidth, this.layer.current)
+      case CANVAS_ELE_TYPE.ERASER:
+        ele = new Eraser(this.cleanWidth, this.layer.current)
         break
       default:
         break
     }
-    this.cancelSelectElement()
+    this.select.cancelSelectElement()
     if (ele) {
       this.history.add(ele)
       this.currentMoveEle = ele
@@ -191,14 +180,14 @@ export class PaintBoard {
         if (ele?.layer && showLayerIds.has(ele.layer)) {
           this.context.save()
           switch (ele?.type) {
-            case CANVAS_ELE_TYPE.FREE_LINE:
-              freeLineRender(this.context, ele as FreeLine)
+            case CANVAS_ELE_TYPE.FREE_DRAW:
+              freeDrawRender(this.context, ele as FreeDraw)
               break
-            case CANVAS_ELE_TYPE.CLEAN_LINE:
-              cleanLineRender(
+            case CANVAS_ELE_TYPE.ERASER:
+              eraserRender(
                 this.context,
                 this.cleanCanvas.bind(this),
-                ele as CleanLine
+                ele as Eraser
               )
               break
             case CANVAS_ELE_TYPE.TEXT:
@@ -211,8 +200,8 @@ export class PaintBoard {
         }
       })
 
-      if (this.selectElementIndex !== -1) {
-        const rect = this.getSelectElement(this.selectElementIndex).rect
+      if (this.select.selectElementIndex !== -1) {
+        const rect = this.select.getCurSelectElement().rect
         drawResizeRect(this.context, rect)
       }
     }
@@ -292,7 +281,7 @@ export class PaintBoard {
    * 后退
    */
   undo() {
-    this.cancelSelectElement()
+    this.select.cancelSelectElement()
     this.history.undo()
     this.render()
   }
@@ -301,7 +290,7 @@ export class PaintBoard {
    * 前进
    */
   redo() {
-    this.cancelSelectElement()
+    this.select.cancelSelectElement()
     this.history.redo()
     this.render()
   }
@@ -310,7 +299,7 @@ export class PaintBoard {
    * 清除画布
    */
   clean() {
-    this.cancelSelectElement()
+    this.select.cancelSelectElement()
     this.history.clean()
     this.render()
   }
@@ -341,251 +330,19 @@ export class PaintBoard {
     }
   }
 
-  mouseHoverElementIndex = -1 // 选择模式下鼠标悬停元素坐标
-  selectElementIndex = -1 // 选择模式下当前选择元素坐标
-  resizeMousePos = {
-    x: 0,
-    y: 0
-  } // 调整大小鼠标位置
-  resizeType = RESIZE_TYPE.NULL // 调整大小鼠标点击类型
-  tempCache: ELEMENT_INSTANCE[] | null = null // 临时缓存
-  isCurrentChange = false // 当前是否有变化
-
-  /**
-   * 选择模式下 移动鼠标
-   * @param position
-   */
-  moveSelectElement(position: MousePosition) {
-    const movePos = this.transformPosition(position)
-    let cursorType = CURSOR_TYPE.AUTO
-
-    /**
-     * 遍历符合条件的所有元素，判断鼠标是否悬浮到元素上方
-     */
-    if (this.history.getCurrentStack()?.length ?? 0 > 0) {
-      const showLayerIds = new Set(
-        this.layer.stack.reduce<number[]>((acc, cur) => {
-          return cur.show ? [...acc, cur.id] : acc
-        }, [])
-      )
-      let done = false // 判断是否找到元素
-      this.history.each((ele, eleIndex) => {
-        if (ele?.layer && showLayerIds.has(ele.layer)) {
-          if (done) {
-            return
-          }
-          let positions = []
-          switch (ele.type) {
-            case CANVAS_ELE_TYPE.FREE_LINE:
-              positions = (ele as FreeLine).positions
-              for (let i = 1; i < positions.length; i++) {
-                const distance1 = getDistance(movePos, positions[i - 1])
-                const distance2 = getDistance(movePos, positions[i])
-                const distance = getPositionToLineDistance(
-                  movePos,
-                  positions[i - 1],
-                  positions[i]
-                )
-                if ((distance1 < 10 || distance2 < 10) && distance < 10) {
-                  this.mouseHoverElementIndex = eleIndex
-                  cursorType = CURSOR_TYPE.POINTER
-                  done = true
-                }
-              }
-              break
-            case CANVAS_ELE_TYPE.TEXT:
-              if (isInsideRect(movePos, (ele as TextElement).rect)) {
-                this.mouseHoverElementIndex = eleIndex
-                cursorType = CURSOR_TYPE.POINTER
-                done = true
-              }
-              break
-            default:
-              break
-          }
-        }
-      }, EACH_ORDER_TYPE.LAST)
-      if (!done) {
-        this.mouseHoverElementIndex = -1
-      }
-    }
-    if (this.selectElementIndex !== -1) {
-      if (this.resizeType !== RESIZE_TYPE.NULL) {
-        this.isCurrentChange = true
-        const { x, y } = movePos
-        const resizeElement = this.getSelectElement(this.selectElementIndex)
-        const disntanceX = x - this.resizeMousePos.x
-        const disntanceY = y - this.resizeMousePos.y
-        cursorType = getResizeCursorType(this.resizeType, cursorType)
-        if (resizeElement.type === CANVAS_ELE_TYPE.FREE_LINE) {
-          const rect = { ...resizeElement.rect } as FreeLineRect
-          switch (this.resizeType) {
-            case RESIZE_TYPE.BODY:
-              moveFreeLine(resizeElement as FreeLine, disntanceX, disntanceY)
-              break
-            case RESIZE_TYPE.BOTTOM_RIGHT:
-              resizeFreeLine(
-                resizeElement as FreeLine,
-                (rect.width + disntanceX) / rect.width,
-                (rect.height + disntanceY) / rect.height,
-                rect,
-                RESIZE_TYPE.BOTTOM_RIGHT
-              )
-              break
-            case RESIZE_TYPE.BOTTOM_LEFT:
-              resizeFreeLine(
-                resizeElement as FreeLine,
-                (rect.width - disntanceX) / rect.width,
-                (rect.height + disntanceY) / rect.height,
-                rect,
-                RESIZE_TYPE.BOTTOM_LEFT
-              )
-              break
-            case RESIZE_TYPE.TOP_LEFT:
-              resizeFreeLine(
-                resizeElement as FreeLine,
-                (rect.width - disntanceX) / rect.width,
-                (rect.height - disntanceY) / rect.height,
-                rect,
-                RESIZE_TYPE.TOP_LEFT
-              )
-              break
-            case RESIZE_TYPE.TOP_RIGHT:
-              resizeFreeLine(
-                resizeElement as FreeLine,
-                (rect.width + disntanceX) / rect.width,
-                (rect.height - disntanceY) / rect.height,
-                rect,
-                RESIZE_TYPE.TOP_RIGHT
-              )
-              break
-            default:
-              break
-          }
-        } else if (resizeElement.type === CANVAS_ELE_TYPE.TEXT) {
-          switch (this.resizeType) {
-            case RESIZE_TYPE.BODY:
-              resizeElement.rect.x += disntanceX
-              resizeElement.rect.y += disntanceY
-              break
-            case RESIZE_TYPE.BOTTOM_RIGHT:
-              resizeTextElement(
-                resizeElement as TextElement,
-                resizeElement.rect.width + disntanceX,
-                resizeElement.rect.height + disntanceY,
-                RESIZE_TYPE.BOTTOM_RIGHT
-              )
-              break
-            case RESIZE_TYPE.BOTTOM_LEFT:
-              resizeTextElement(
-                resizeElement as TextElement,
-                resizeElement.rect.width - disntanceX,
-                resizeElement.rect.height + disntanceY,
-                RESIZE_TYPE.BOTTOM_LEFT
-              )
-              break
-            case RESIZE_TYPE.TOP_LEFT:
-              resizeTextElement(
-                resizeElement as TextElement,
-                resizeElement.rect.width - disntanceX,
-                resizeElement.rect.height - disntanceY,
-                RESIZE_TYPE.TOP_LEFT
-              )
-              break
-            case RESIZE_TYPE.TOP_RIGHT:
-              resizeTextElement(
-                resizeElement as TextElement,
-                resizeElement.rect.width + disntanceX,
-                resizeElement.rect.height - disntanceY,
-                RESIZE_TYPE.TOP_RIGHT
-              )
-              break
-            default:
-              break
-          }
-        }
-
-        this.resizeMousePos = movePos
-        this.render()
-      } else {
-        const resizeType = getResizeType(
-          movePos,
-          this.getSelectElement(this.selectElementIndex).rect
-        )
-        cursorType = getResizeCursorType(resizeType, cursorType)
-      }
-    }
-    this.cursor.change(cursorType)
-  }
-
-  /**
-   * 鼠标点击获取选择元素
-   * @param position
-   */
-  clickSelectElement(position: MousePosition) {
-    const resizeMousePos = this.transformPosition(position)
-    if (this.selectElementIndex !== -1) {
-      const resizeType = getResizeType(
-        resizeMousePos,
-        this.getSelectElement(this.selectElementIndex).rect
-      )
-      this.resizeType = resizeType
-    }
-    if (this.resizeType === RESIZE_TYPE.NULL) {
-      if (this.mouseHoverElementIndex !== -1) {
-        this.cursor.change(CURSOR_TYPE.MOVE)
-        this.selectElementIndex = this.mouseHoverElementIndex
-      } else {
-        this.cancelSelectElement()
-      }
-    }
-    if (this.selectElementIndex !== -1) {
-      this.tempCache = cloneDeep(this.history.getCurrentStack())
-      this.resizeMousePos = resizeMousePos
-    }
-
-    this.render()
-  }
-
-  /**
-   * 获取当前选择元素
-   * @param index 坐标
-   */
-  getSelectElement(index: number) {
-    const last = this.history.getCurrentStack() as ELEMENT_INSTANCE[]
-    return last[index] as FreeLine | TextElement
-  }
-
-  /**
-   * 删除当前选择元素
-   */
-  deleteSelectElement() {
-    if (this.selectElementIndex !== -1) {
-      this.history.deleteByIndex(this.selectElementIndex)
-      this.cancelSelectElement()
-      this.mouseHoverElementIndex = -1
-      this.resizeType = RESIZE_TYPE.NULL
-      this.render()
-    }
-  }
-
-  /**
-   * 取消选择元素
-   */
-  cancelSelectElement() {
-    this.selectElementIndex = -1
-  }
-
   /**
    * 鼠标松开
    */
   canvasMouseUp() {
-    if (this.isCurrentChange && this.tempCache) {
-      this.history.pushStack(this.history.getCurrentStack(), this.tempCache)
+    if (this.select.isCurrentChange && this.select.tempCache) {
+      this.history.pushStack(
+        this.history.getCurrentStack(),
+        this.select.tempCache
+      )
     }
-    this.isCurrentChange = false
-    this.tempCache = null
-    this.resizeType = RESIZE_TYPE.NULL
+    this.select.isCurrentChange = false
+    this.select.tempCache = null
+    this.select.resizeType = RESIZE_TYPE.NULL
     this.currentMoveEle = null
     this.initOriginPosition()
   }

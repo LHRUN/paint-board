@@ -72,6 +72,7 @@ const LayerItem: React.FC<IProps> = ({ board, data, refresh, index }) => {
    */
   const setLayerShow = (id: number, show: boolean) => {
     if (board) {
+      board.select.cancelSelectElement()
       board.layer.updateShow(id, show)
       refresh()
     }

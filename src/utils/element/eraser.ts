@@ -5,14 +5,14 @@ import { CANVAS_ELE_TYPE } from '../constants'
 /**
  * 橡皮擦
  */
-export class CleanLine extends CanvasElement {
+export class Eraser extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
   // 当前橡皮擦宽度
   cleanWidth: number
 
   constructor(width: number, layer: number) {
-    super(CANVAS_ELE_TYPE.CLEAN_LINE, layer)
+    super(CANVAS_ELE_TYPE.ERASER, layer)
     this.positions = []
     this.cleanWidth = width
   }
@@ -30,12 +30,12 @@ export class CleanLine extends CanvasElement {
  * 橡皮擦渲染
  * @param context canvas二维渲染上下文
  * @param cleanCanvas 清除画板
- * @param instance CleanLine
+ * @param instance Eraser
  */
-export const cleanLineRender = (
+export const eraserRender = (
   context: CanvasRenderingContext2D,
   cleanCanvas: () => void,
-  instance: CleanLine
+  instance: Eraser
 ) => {
   for (let i = 0; i < instance.positions.length - 1; i++) {
     _cleanLine(

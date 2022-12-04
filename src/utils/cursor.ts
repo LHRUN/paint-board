@@ -11,7 +11,7 @@ export enum CURSOR_TYPE {
 }
 
 /**
- * 鼠标样式
+ * 鼠标光标
  */
 export class Cursor {
   element: HTMLElement
@@ -23,7 +23,7 @@ export class Cursor {
   }
 
   /**
-   * 改变样式
+   * 改变光标
    * @param type
    */
   change(type: string) {
@@ -31,7 +31,7 @@ export class Cursor {
   }
 
   /**
-   * 重置样式
+   * 重置光标
    */
   reset() {
     this.element.style.cursor = CURSOR_TYPE.AUTO
@@ -39,9 +39,9 @@ export class Cursor {
 }
 
 /**
- * 根据当前调整大小获取鼠标样式
- * @param resizeType // 调整大小类型
- * @param defaultCursorType // 默认鼠标样式
+ * 根据当前手柄类型获取鼠标光标
+ * @param resizeType // 手柄类型
+ * @param defaultCursorType // 默认光标样式
  */
 export const getResizeCursorType = (
   resizeType: string,

@@ -1,7 +1,7 @@
 import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
-import OptionsCard from './components/optionsMenu'
+import ToolPanel from './components/toolPanel'
 import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
 import Info from './components/info'
 import { CURSOR_TYPE } from '@/utils/cursor'
@@ -18,17 +18,15 @@ const Board: React.FC = () => {
     }
   }, [canvasRef])
 
-  // 当前工具选择
-  const [optionsType, setOptionsType] = useState<string>(
-    CANVAS_ELE_TYPE.FREE_LINE
-  )
+  // 工具类型
+  const [toolType, setToolType] = useState<string>(CANVAS_ELE_TYPE.FREE_DRAW)
 
-  const handleOptionsType = (type: string) => {
+  const handleToolType = (type: string) => {
     if (board) {
       if (type !== CANVAS_ELE_TYPE.SELECT) {
-        board.cancelSelectElement()
+        board.select.cancelSelectElement()
       }
-      setOptionsType(type)
+      setToolType(type)
       board.render()
     }
   }
@@ -58,7 +56,7 @@ const Board: React.FC = () => {
 
   useBackspace(() => {
     if (board) {
-      board.deleteSelectElement()
+      board.select.deleteSelectElement()
     }
   })
 
@@ -71,18 +69,19 @@ const Board: React.FC = () => {
         x,
         y
       }
+      // 如果有文本编辑框，取消编辑
       if (textEdit) {
         board.addTextElement(textEdit.value, textEdit.rect)
         textEdit.destroy()
       }
-      switch (optionsType) {
+      switch (toolType) {
         case CANVAS_ELE_TYPE.SELECT:
-          board.clickSelectElement(position)
+          board.select.clickSelectElement(position)
           break
-        case CANVAS_ELE_TYPE.FREE_LINE:
-        case CANVAS_ELE_TYPE.CLEAN_LINE:
+        case CANVAS_ELE_TYPE.FREE_DRAW:
+        case CANVAS_ELE_TYPE.ERASER:
           if (!isPressSpace) {
-            board.recordCurrent(optionsType)
+            board.recordCurrent(toolType)
           }
           break
         default:
@@ -112,15 +111,15 @@ const Board: React.FC = () => {
           y
         })
       } else {
-        switch (optionsType) {
+        switch (toolType) {
           case CANVAS_ELE_TYPE.SELECT:
-            board.moveSelectElement({
+            board.select.moveSelectElement({
               x,
               y
             })
             break
-          case CANVAS_ELE_TYPE.FREE_LINE:
-          case CANVAS_ELE_TYPE.CLEAN_LINE:
+          case CANVAS_ELE_TYPE.FREE_DRAW:
+          case CANVAS_ELE_TYPE.ERASER:
             if (isMouseDown) {
               board.currentAddPosition({
                 x,
@@ -143,10 +142,10 @@ const Board: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center flex-col w-screen h-screen">
-      <OptionsCard
+      <ToolPanel
         board={board}
-        optionsType={optionsType}
-        setOptionsType={handleOptionsType}
+        toolType={toolType}
+        setToolType={handleToolType}
       />
       <canvas
         ref={setCanvasRef}

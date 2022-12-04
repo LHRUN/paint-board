@@ -1,7 +1,7 @@
 // canvas 元素类型
 export enum CANVAS_ELE_TYPE {
-  FREE_LINE = 'freeLine',
-  CLEAN_LINE = 'cleanLine',
+  FREE_DRAW = 'freeDraw',
+  ERASER = 'eraser',
   SELECT = 'select',
   TEXT = 'text'
 }

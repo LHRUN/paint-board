@@ -2,7 +2,7 @@ import { ELEMENT_INSTANCE } from '@/types'
 import { cloneDeep } from 'lodash'
 import { at, compareVersion } from './common'
 import { CANVAS_ELE_TYPE } from './constants'
-import { calculateRect, FreeLine, initRect } from './element/freeLine'
+import { calculateRect, FreeDraw, initRect } from './element/freeDraw'
 
 export enum EACH_ORDER_TYPE {
   FIRST = 'first', // 顺序
@@ -16,8 +16,7 @@ export class History<T> {
   cacheStack: Array<T[]>
   step: number
   constructor(cacheStack: T[], version: string) {
-    console.log(cacheStack, version)
-    formatHistory(cacheStack, version)
+    formatHistory(<ELEMENT_INSTANCE[]>cacheStack, version)
     this.cacheStack = [cacheStack]
     this.step = 0
   }
@@ -61,7 +60,6 @@ export class History<T> {
     }
 
     const last = at(this.cacheStack)
-    console.log(last)
     const newData = last ? [...cloneDeep(last), data] : [data]
     this.cacheStack.push(newData)
     this.step = this.cacheStack.length - 1
@@ -161,12 +159,20 @@ export class History<T> {
  * @param stack
  */
 export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
-  if (compareVersion(version, '0.1.1') < 0) {
+  if (compareVersion(version, '0.2.0') < 0) {
     stack.forEach((ele) => {
-      if (ele.type === CANVAS_ELE_TYPE.FREE_LINE) {
-        initRect(ele as FreeLine)
-        ;(ele as FreeLine).positions.forEach((position) => {
-          calculateRect(ele as FreeLine, position)
+      // 兼容类型，类型已修改
+      if (ele.type === 'freeLine') {
+        ele.type = CANVAS_ELE_TYPE.FREE_DRAW
+      } else if (ele.type === 'cleanLine') {
+        ele.type = CANVAS_ELE_TYPE.ERASER
+      }
+
+      // 0.2.0增加选择模式，兼容矩形数据
+      if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
+        initRect(<FreeDraw>ele)
+        ;(<FreeDraw>ele).positions.forEach((position) => {
+          calculateRect(<FreeDraw>ele, position)
         })
       }
     })

@@ -137,8 +137,8 @@ export const resizeTextElement = (
   height: number,
   resizeType: string
 ) => {
-  const oldRatio = ele.rect.width / ele.rect.height // 原始矩形的宽高比
-  const newRatio = width / height // 新矩形的宽高比
+  const oldRatio = ele.rect.width / ele.rect.height
+  const newRatio = width / height
   if (newRatio < oldRatio) {
     height = width / oldRatio
   } else if (newRatio > oldRatio) {

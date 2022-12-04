@@ -1,5 +1,4 @@
-import { ElementRect, MousePosition } from '@/types'
-import { RESIZE_TYPE } from './constants'
+import { MousePosition } from '@/types'
 
 /**
  * 计算两点之间的距离
@@ -40,35 +39,9 @@ export const getPositionToLineDistance = (
 }
 
 /**
- * 绘制拖拽矩形
- */
-export const drawResizeRect = (
-  context: CanvasRenderingContext2D,
-  rect: ElementRect
-) => {
-  const { x, y, width, height } = rect
-  context.save()
-  context.strokeStyle = '#65CC8A'
-  context.setLineDash([5])
-  context.lineWidth = 2
-  context.lineCap = 'round'
-  context.lineJoin = 'round'
-  // 绘制虚线框
-  drawRect(context, x, y, width, height)
-
-  // 绘制四角手柄
-  context.fillStyle = '#65CC8A'
-  drawRect(context, x - 10, y - 10, 10, 10, true)
-  drawRect(context, x + width, y - 10, 10, 10, true)
-  drawRect(context, x - 10, y + height, 10, 10, true)
-  drawRect(context, x + width, y + height, 10, 10, true)
-  context.restore()
-}
-
-/**
  * 绘制矩形
  */
-const drawRect = (
+export const drawRect = (
   context: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -83,32 +56,6 @@ const drawRect = (
   } else {
     context.stroke()
   }
-}
-
-/**
- * 获取调整大小类型
- * @param position
- * @param rect
- */
-export const getResizeType = (position: MousePosition, rect: ElementRect) => {
-  let resizeType = RESIZE_TYPE.NULL
-  const { x, y } = position
-  if (isInsideRect(position, rect)) {
-    resizeType = RESIZE_TYPE.BODY
-  } else if (rect.x > x && x > rect.x - 10) {
-    if (rect.y > y && y > rect.y - 10) {
-      resizeType = RESIZE_TYPE.TOP_LEFT
-    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
-      resizeType = RESIZE_TYPE.BOTTOM_LEFT
-    }
-  } else if (rect.x + rect.width + 10 > x && x > rect.x + rect.width) {
-    if (rect.y > y && y > rect.y - 10) {
-      resizeType = RESIZE_TYPE.TOP_RIGHT
-    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
-      resizeType = RESIZE_TYPE.BOTTOM_RIGHT
-    }
-  }
-  return resizeType
 }
 
 /**

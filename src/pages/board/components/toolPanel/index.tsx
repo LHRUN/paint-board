@@ -12,8 +12,8 @@ import Layer from '../layer'
 
 interface IProps {
   board: PaintBoard | undefined // 画板
-  optionsType: string // 操作类型
-  setOptionsType: (type: string) => void // 修改操作类型
+  toolType: string // 操作类型
+  setToolType: (type: string) => void // 修改操作类型
 }
 
 let toastTimeout: NodeJS.Timeout | null = null
@@ -21,11 +21,7 @@ let toastTimeout: NodeJS.Timeout | null = null
 /**
  * 操作面板
  */
-const OptionsCard: React.FC<IProps> = ({
-  board,
-  optionsType,
-  setOptionsType
-}) => {
+const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
   // 刷新操作栏
   const [, setRefresh] = useState(0)
   const [toastState, setToastState] = useState(false)
@@ -91,11 +87,11 @@ const OptionsCard: React.FC<IProps> = ({
   // 改变宽度
   const setWidth = (w: number) => {
     if (board) {
-      switch (optionsType) {
-        case CANVAS_ELE_TYPE.FREE_LINE:
+      switch (toolType) {
+        case CANVAS_ELE_TYPE.FREE_DRAW:
           board.setLineWidth(w)
           break
-        case CANVAS_ELE_TYPE.CLEAN_LINE:
+        case CANVAS_ELE_TYPE.ERASER:
           board.setCleanWidth(w)
           break
         default:
@@ -117,9 +113,9 @@ const OptionsCard: React.FC<IProps> = ({
             className={classNames({
               btn: true,
               'flex-grow': true,
-              'btn-active': optionsType === CANVAS_ELE_TYPE.FREE_LINE
+              'btn-active': toolType === CANVAS_ELE_TYPE.FREE_DRAW
             })}
-            onClick={() => setOptionsType(CANVAS_ELE_TYPE.FREE_LINE)}
+            onClick={() => setToolType(CANVAS_ELE_TYPE.FREE_DRAW)}
           >
             画笔
           </button>
@@ -127,9 +123,9 @@ const OptionsCard: React.FC<IProps> = ({
             className={classNames({
               btn: true,
               'flex-grow': true,
-              'btn-active': optionsType === CANVAS_ELE_TYPE.CLEAN_LINE
+              'btn-active': toolType === CANVAS_ELE_TYPE.ERASER
             })}
-            onClick={() => setOptionsType(CANVAS_ELE_TYPE.CLEAN_LINE)}
+            onClick={() => setToolType(CANVAS_ELE_TYPE.ERASER)}
           >
             橡皮擦
           </button>
@@ -137,44 +133,47 @@ const OptionsCard: React.FC<IProps> = ({
             className={classNames({
               btn: true,
               'flex-grow': true,
-              'btn-active': optionsType === CANVAS_ELE_TYPE.SELECT
+              'btn-active': toolType === CANVAS_ELE_TYPE.SELECT
             })}
-            onClick={() => setOptionsType(CANVAS_ELE_TYPE.SELECT)}
+            onClick={() => setToolType(CANVAS_ELE_TYPE.SELECT)}
           >
-            Select
+            选择
           </button>
         </div>
         {/* 宽度设置 */}
-        <div className="mt-3">
-          <div className="font-bold">Width</div>
-          <div className="btn-group mt-1">
-            {Object.values(CommonWidth).map((w) => (
-              <button
-                key={w}
-                className={classNames({
-                  btn: true,
-                  'flex-grow': true,
-                  'btn-active':
-                    optionsType === CANVAS_ELE_TYPE.FREE_LINE
-                      ? board?.currentLineWidth === w
-                      : board?.cleanWidth === w
-                })}
-                onClick={() => setWidth(w)}
-              >
-                <div
-                  className="rounded-2xl bg-black"
-                  style={{
-                    height: `${w / 2}px`,
-                    width: '30px'
-                  }}
+        {(toolType === CANVAS_ELE_TYPE.FREE_DRAW ||
+          toolType === CANVAS_ELE_TYPE.ERASER) && (
+          <div className="mt-3">
+            <div className="font-bold">Width</div>
+            <div className="btn-group mt-1">
+              {Object.values(CommonWidth).map((w) => (
+                <button
                   key={w}
-                ></div>
-              </button>
-            ))}
+                  className={classNames({
+                    btn: true,
+                    'flex-grow': true,
+                    'btn-active':
+                      toolType === CANVAS_ELE_TYPE.FREE_DRAW
+                        ? board?.currentLineWidth === w
+                        : board?.cleanWidth === w
+                  })}
+                  onClick={() => setWidth(w)}
+                >
+                  <div
+                    className="rounded-2xl bg-black"
+                    style={{
+                      height: `${w / 2}px`,
+                      width: '30px'
+                    }}
+                    key={w}
+                  ></div>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         {/* 颜色设置 */}
-        {optionsType === CANVAS_ELE_TYPE.FREE_LINE && (
+        {toolType === CANVAS_ELE_TYPE.FREE_DRAW && (
           <div className="form-control mt-3">
             <div className="font-bold">Color</div>
             <div className="mt-1 flex items-center justify-center w-full">
@@ -252,4 +251,4 @@ const OptionsCard: React.FC<IProps> = ({
   )
 }
 
-export default OptionsCard
+export default ToolPanel
