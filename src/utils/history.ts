@@ -2,7 +2,7 @@ import { ELEMENT_INSTANCE } from '@/types'
 import { cloneDeep } from 'lodash'
 import { at, compareVersion } from './common'
 import { CANVAS_ELE_TYPE } from './constants'
-import { calculateRect, FreeDraw, initRect } from './element/freeDraw'
+import { updateRect, FreeDraw, initRect } from './element/freeDraw'
 
 export enum EACH_ORDER_TYPE {
   FIRST = 'first', // 顺序
@@ -172,7 +172,7 @@ export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
       if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
         initRect(<FreeDraw>ele)
         ;(<FreeDraw>ele).positions.forEach((position) => {
-          calculateRect(<FreeDraw>ele, position)
+          updateRect(<FreeDraw>ele, position)
         })
       }
     })

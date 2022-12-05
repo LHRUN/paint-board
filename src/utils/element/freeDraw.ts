@@ -60,7 +60,7 @@ export class FreeDraw extends CanvasElement {
    */
   addPosition(position: MousePosition) {
     this.positions.push(position)
-    calculateRect(this, position)
+    updateRect(this, position)
     // 处理当前线宽
     if (this.positions.length > 1) {
       const mouseSpeed = this._computedSpeed(
@@ -167,24 +167,24 @@ const _drawLine = (
 
 /**
  * 更新位置
- * @param xDistance
- * @param yDistance
+ * @param distanceX
+ * @param distanceY
  */
 export const moveFreeDraw = (
   instance: FreeDraw,
-  xDistance: number,
-  yDistance: number
+  distanceX: number,
+  distanceY: number
 ) => {
   initRect(instance)
   instance.positions.forEach((position) => {
-    position.x += xDistance
-    position.y += yDistance
-    calculateRect(instance, position)
+    position.x += distanceX
+    position.y += distanceY
+    updateRect(instance, position)
   })
 }
 
 /**
- * 缩放坐标
+ * 缩放绘画
  * @param instance
  * @param scaleX
  * @param scaleY
@@ -209,7 +209,7 @@ export const resizeFreeDraw = (
   instance.positions.forEach((position) => {
     position.x = position.x * scaleX
     position.y = position.y * scaleY
-    calculateRect(instance, position)
+    updateRect(instance, position)
   })
   const { x: newX, y: newY, width: newWidth, height: newHeight } = instance.rect
   let offsetX = 0
@@ -238,7 +238,7 @@ export const resizeFreeDraw = (
   instance.positions.forEach((position) => {
     position.x = position.x - offsetX
     position.y = position.y - offsetY
-    calculateRect(instance, position)
+    updateRect(instance, position)
   })
 }
 
@@ -265,7 +265,7 @@ export const initRect = (instance: FreeDraw) => {
  * @param position
  * @returns
  */
-export const calculateRect = (instance: FreeDraw, position: MousePosition) => {
+export const updateRect = (instance: FreeDraw, position: MousePosition) => {
   const { x, y } = position
   let { minX, maxX, minY, maxY } = instance.rect
   if (x < minX) {

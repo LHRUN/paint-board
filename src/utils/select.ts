@@ -62,14 +62,24 @@ export class SelectElement {
             case CANVAS_ELE_TYPE.FREE_DRAW:
               positions = (ele as FreeDraw).positions
               for (let i = 1; i < positions.length; i++) {
-                const distance1 = getDistance(movePos, positions[i - 1])
-                const distance2 = getDistance(movePos, positions[i])
-                const distance = getPositionToLineDistance(
+                const startDistance = getDistance(movePos, positions[i - 1])
+                const endDistance = getDistance(movePos, positions[i])
+                const lineDistance = getPositionToLineDistance(
                   movePos,
                   positions[i - 1],
                   positions[i]
                 )
-                if ((distance1 < 10 || distance2 < 10) && distance < 10) {
+                const rangeX =
+                  Math.max(positions[i - 1].x, positions[i].x) >= movePos.x &&
+                  movePos.x >= Math.min(positions[i - 1].x, positions[i].x)
+                const rangeY =
+                  Math.max(positions[i - 1].y, positions[i].y) >= movePos.y &&
+                  movePos.y >= Math.min(positions[i - 1].y, positions[i].y)
+                if (
+                  startDistance < 10 ||
+                  endDistance < 10 ||
+                  (lineDistance < 10 && rangeX && rangeY)
+                ) {
                   this.mouseHoverElementIndex = eleIndex
                   cursorType = CURSOR_TYPE.POINTER
                   done = true
