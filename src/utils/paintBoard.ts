@@ -1,6 +1,6 @@
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { Eraser, eraserRender } from './element/eraser'
-import { FreeDraw, freeDrawRender } from './element/freeDraw'
+import { FreeDraw, FreeDrawStyle, freeDrawRender } from './element/freeDraw'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
 import { History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
@@ -102,7 +102,8 @@ export class PaintBoard {
         ele = new FreeDraw(
           this.currentLineColor,
           this.currentLineWidth,
-          this.layer.current
+          this.layer.current,
+          this.currentFreeDrawStyle
         )
         break
       case CANVAS_ELE_TYPE.ERASER:
@@ -239,28 +240,40 @@ export class PaintBoard {
     this.context.clearRect(-(w / 2), -(w / 2), w, w)
   }
 
-  // 当前绘线颜色
+  // 当前画笔颜色
   currentLineColor = '#000000'
-  // 当前绘线宽
+  // 当前画笔宽度
   currentLineWidth = CommonWidth.W4
+  // 当前画笔模式
+  currentFreeDrawStyle = FreeDrawStyle.Basic
 
   /**
-   * 修改绘线宽
-   * @param width 绘线宽
+   * 修改画笔宽度
+   * @param width 画笔宽度
    */
-  setLineWidth(width: number) {
+  setFreeDrawWidth(width: number) {
     if (width) {
       this.currentLineWidth = width
     }
   }
 
   /**
-   * 修改绘线颜色
-   * @param color 绘线颜色
+   * 修改画笔颜色
+   * @param color 画笔颜色
    */
-  setLineColor(color: string) {
+  setFreeDrawColor(color: string) {
     if (color) {
       this.currentLineColor = color
+    }
+  }
+
+  /**
+   * 修改画笔模式
+   * @param mode 画笔模式
+   */
+  setFreeDrawStyle(style: FreeDrawStyle) {
+    if (style) {
+      this.currentFreeDrawStyle = style
     }
   }
 
