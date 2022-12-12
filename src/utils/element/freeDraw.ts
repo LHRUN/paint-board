@@ -23,7 +23,7 @@ export enum FreeDrawStyle {
   Bubble = 'bubble' // 动态圆球
 }
 
-function getPattern(color: string) {
+function getPattern(colors: string[]) {
   // const canvas = document.createElement('canvas'),
   //   dotWidth = 10,
   //   dotDistance = 5,
@@ -41,12 +41,12 @@ function getPattern(color: string) {
   const patternCanvas = document.createElement('canvas')
   const ctx = patternCanvas.getContext('2d') as CanvasRenderingContext2D
 
-  patternCanvas.width = 10
+  patternCanvas.width = 5 * colors.length
   patternCanvas.height = 20
-  ctx.fillStyle = color
-  ctx.fillRect(0, 0, 5, 20)
-  ctx.fillStyle = 'white'
-  ctx.fillRect(5, 0, 10, 20)
+  colors.forEach((color, i) => {
+    ctx.fillStyle = color
+    ctx.fillRect(5 * i, 0, 5, 20)
+  })
   return ctx.createPattern(patternCanvas, 'repeat') as CanvasPattern
 }
 
@@ -57,7 +57,7 @@ export class FreeDraw extends CanvasElement {
   // 鼠标移动位置记录
   positions: MousePosition[]
   // 当前绘线颜色
-  color = '#000000'
+  colors = ['#000000']
   // 最大线宽
   maxWidth: number
   // 最小线宽
@@ -90,7 +90,7 @@ export class FreeDraw extends CanvasElement {
   style: FreeDrawStyle // 画笔模式
 
   constructor(
-    color: string,
+    colors: string[],
     width: number,
     layer: number,
     style = FreeDrawStyle.Basic
@@ -98,7 +98,7 @@ export class FreeDraw extends CanvasElement {
     super(CANVAS_ELE_TYPE.FREE_DRAW, layer)
     this.positions = []
     this.lineWidths = [0]
-    this.color = color
+    this.colors = colors
     this.maxWidth = width
     this.minWidth = width / 2
     this.lastLineWidth = width
@@ -187,21 +187,20 @@ export const freeDrawRender = (
   context.save()
   context.lineCap = 'round'
   context.lineJoin = 'round'
-
   switch (instance.style) {
     case FreeDrawStyle.Basic:
-      context.strokeStyle = instance.color
+      context.strokeStyle = instance.colors[0]
       break
     case FreeDrawStyle.Shadow:
-      context.shadowColor = instance.color
-      context.strokeStyle = instance.color
+      context.shadowColor = instance.colors[0]
+      context.strokeStyle = instance.colors[0]
       break
     case FreeDrawStyle.Bubble:
     case FreeDrawStyle.Spray:
-      context.fillStyle = instance.color
+      context.fillStyle = instance.colors[0]
       break
     case FreeDrawStyle.DoubleColor:
-      context.strokeStyle = getPattern(instance.color)
+      context.strokeStyle = getPattern(instance.colors)
       break
     default:
       break

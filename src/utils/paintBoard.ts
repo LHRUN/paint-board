@@ -57,6 +57,11 @@ export class PaintBoard {
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
+    if (state?.currentLineColor) {
+      state.currentLineColor = Array.isArray(state?.currentLineColor)
+        ? state.currentLineColor
+        : [state.currentLineColor]
+    }
     Object.assign(this, { ...state })
 
     // 初始化缓存数据
@@ -241,7 +246,7 @@ export class PaintBoard {
   }
 
   // 当前画笔颜色
-  currentLineColor = '#000000'
+  currentLineColor = ['#000000']
   // 当前画笔宽度
   currentLineWidth = CommonWidth.W4
   // 当前画笔模式
@@ -261,9 +266,9 @@ export class PaintBoard {
    * 修改画笔颜色
    * @param color 画笔颜色
    */
-  setFreeDrawColor(color: string) {
-    if (color) {
-      this.currentLineColor = color
+  setFreeDrawColor(colors: string[]) {
+    if (colors) {
+      this.currentLineColor = colors
     }
   }
 

@@ -159,8 +159,8 @@ export class History<T> {
  * @param stack
  */
 export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
-  if (compareVersion(version, '0.2.0') < 0) {
-    stack.forEach((ele) => {
+  stack.forEach((ele) => {
+    if (compareVersion(version, '0.2.0') < 0) {
       // 兼容类型，类型已修改
       if (ele.type === 'freeLine') {
         ele.type = CANVAS_ELE_TYPE.FREE_DRAW
@@ -175,6 +175,11 @@ export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
           updateRect(<FreeDraw>ele, position)
         })
       }
-    })
-  }
+    }
+    if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
+      if (ele.color) {
+        ;(<FreeDraw>ele).colors = [ele.color]
+      }
+    }
+  })
 }

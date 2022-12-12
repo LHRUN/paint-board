@@ -30,15 +30,27 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
   // 颜色输入框(目前是只读数据)
   const colorInput = useMemo(() => {
     if (board?.currentLineColor) {
-      return board.currentLineColor.split('#')[1] || ''
+      return board.currentLineColor[0].split('#')[1] || ''
     }
     return ''
   }, [board?.currentLineColor])
 
   // 改变画笔颜色
-  const changeLineColor = (color: string) => {
+  const changeLineColor = (color: string, index: number, type: string) => {
     if (board) {
-      board.setFreeDrawColor(color)
+      const colors = [...board.currentLineColor]
+      colors[index] = color
+      const newColor = type === 'simple' ? [color] : colors
+      board.setFreeDrawColor(newColor)
+      setRefresh((v) => v + 1)
+    }
+  }
+
+  const deleteLineColor = (index: number) => {
+    if (board) {
+      const colors = [...board.currentLineColor]
+      colors.splice(index, 1)
+      board.setFreeDrawColor(colors)
       setRefresh((v) => v + 1)
     }
   }
@@ -148,7 +160,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
             {/* 类型切换 */}
             <div className="btn-group">
               <button
-                className={`btn flex-grow ${
+                className={`btn btn-sm flex-grow ${
                   toolType === CANVAS_ELE_TYPE.FREE_DRAW ? 'btn-active' : ''
                 }`}
                 onClick={() => setToolType(CANVAS_ELE_TYPE.FREE_DRAW)}
@@ -156,7 +168,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                 画笔
               </button>
               <button
-                className={`btn flex-grow ${
+                className={`btn btn-sm flex-grow ${
                   toolType === CANVAS_ELE_TYPE.ERASER ? 'btn-active' : ''
                 }`}
                 onClick={() => setToolType(CANVAS_ELE_TYPE.ERASER)}
@@ -164,7 +176,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                 橡皮擦
               </button>
               <button
-                className={`btn flex-grow ${
+                className={`btn btn-sm flex-grow ${
                   toolType === CANVAS_ELE_TYPE.SELECT ? 'btn-active' : ''
                 }`}
                 onClick={() => setToolType(CANVAS_ELE_TYPE.SELECT)}
@@ -183,6 +195,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                       key={w}
                       className={classNames({
                         btn: true,
+                        'btn-sm': true,
                         'flex-grow': true,
                         'btn-active':
                           toolType === CANVAS_ELE_TYPE.FREE_DRAW
@@ -208,28 +221,70 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
             {toolType === CANVAS_ELE_TYPE.FREE_DRAW && (
               <div className="form-control mt-3">
                 <div className="font-bold">Color</div>
-                <div className="mt-1 flex items-center justify-center w-full">
-                  <div className="w-8 h-8 mr-2 tooltip" data-tip="画笔颜色">
-                    <input
-                      type="color"
-                      value={`#${colorInput}`}
-                      onChange={(e) => {
-                        changeLineColor(e.target.value)
-                      }}
-                      className={styles.lineColor}
-                    />
-                  </div>
-
-                  <label className="input-group">
-                    <span className="font-bold bg-primary">#</span>
-                    <input
-                      onClick={copyColor}
-                      value={colorInput}
-                      id="colorInput"
-                      className="input input-bordered input-sm w-40 max-w-xs focus:outline-none cursor-pointer"
-                      readOnly
-                    />
-                  </label>
+                <div className="mt-1 flex items-center w-full">
+                  {board?.currentFreeDrawStyle === FreeDrawStyle.DoubleColor ? (
+                    <>
+                      {board.currentLineColor.map((color, i) => {
+                        return (
+                          <div className="w-8 h-8 mr-2 indicator" key={i}>
+                            <input
+                              type="color"
+                              value={color}
+                              onChange={(e) => {
+                                changeLineColor(e.target.value, i, 'double')
+                              }}
+                              className={styles.lineColor}
+                            />
+                            {board.currentLineColor.length > 1 && (
+                              <span
+                                onClick={() => deleteLineColor(i)}
+                                className="indicator-item badge badge-secondary w-3 h-3 p-0 text-sm bg-black text-white border-black cursor-pointer"
+                              >
+                                x
+                              </span>
+                            )}
+                          </div>
+                        )
+                      })}
+                      {board.currentLineColor.length < 6 && (
+                        <div
+                          className="w-8 h-8 rounded-sm border-dashed border-2 border-black text-center leading-6 text-2xl box-border"
+                          onClick={() => {
+                            changeLineColor(
+                              '#000000',
+                              board.currentLineColor.length,
+                              'double'
+                            )
+                          }}
+                        >
+                          +
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-8 h-8 mr-2">
+                        <input
+                          type="color"
+                          value={`#${colorInput}`}
+                          onChange={(e) => {
+                            changeLineColor(e.target.value, 1, 'simple')
+                          }}
+                          className={styles.lineColor}
+                        />
+                      </div>
+                      <label className="input-group">
+                        <span className="font-bold bg-primary">#</span>
+                        <input
+                          onClick={copyColor}
+                          value={colorInput}
+                          id="colorInput"
+                          className="input input-bordered input-sm w-32 focus:outline-none cursor-pointer"
+                          readOnly
+                        />
+                      </label>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -245,7 +300,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                     }`}
                     onClick={() => setFreeDrawStyle(FreeDrawStyle.Basic)}
                   >
-                    基础
+                    单色
                   </button>
                   <button
                     className={`btn btn-sm flex-grow ${
@@ -265,7 +320,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                     }`}
                     onClick={() => setFreeDrawStyle(FreeDrawStyle.DoubleColor)}
                   >
-                    双色
+                    多色
                   </button>
                   <button
                     className={`btn btn-sm flex-grow ${
