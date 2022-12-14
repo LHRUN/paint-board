@@ -18,36 +18,10 @@ export interface FreeDrawRect extends ElementRect {
 export enum FreeDrawStyle {
   Basic = 'basic', // 基础线条
   Shadow = 'shadow', // 带阴影的荧光线条
-  DoubleColor = 'doubleColor', // 双色线条
+  MultiColor = 'multiColor', // 双色线条
   Spray = 'spray', // 喷雾
-  Bubble = 'bubble' // 动态圆球
-}
-
-function getPattern(colors: string[]) {
-  // const canvas = document.createElement('canvas'),
-  //   dotWidth = 10,
-  //   dotDistance = 5,
-  //   context = canvas.getContext('2d') as CanvasRenderingContext2D
-
-  // canvas.width = canvas.height = dotWidth + dotDistance
-
-  // context.fillStyle = color
-  // context.beginPath()
-  // context.arc(dotWidth / 2, dotWidth / 2, dotWidth / 2, 0, Math.PI * 2, false)
-  // context.closePath()
-  // context.fill()
-  // return context.createPattern(canvas, 'repeat') as CanvasPattern
-
-  const patternCanvas = document.createElement('canvas')
-  const ctx = patternCanvas.getContext('2d') as CanvasRenderingContext2D
-
-  patternCanvas.width = 5 * colors.length
-  patternCanvas.height = 20
-  colors.forEach((color, i) => {
-    ctx.fillStyle = color
-    ctx.fillRect(5 * i, 0, 5, 20)
-  })
-  return ctx.createPattern(patternCanvas, 'repeat') as CanvasPattern
+  Crayon = 'crayon', // 蜡笔
+  Bubble = 'bubble' // 泡泡
 }
 
 /**
@@ -199,8 +173,11 @@ export const freeDrawRender = (
     case FreeDrawStyle.Spray:
       context.fillStyle = instance.colors[0]
       break
-    case FreeDrawStyle.DoubleColor:
-      context.strokeStyle = getPattern(instance.colors)
+    case FreeDrawStyle.MultiColor:
+      context.strokeStyle = getMultiColorPattern(instance.colors)
+      break
+    case FreeDrawStyle.Crayon:
+      context.strokeStyle = getCrayonPattern(instance.colors[0])
       break
     default:
       break
@@ -208,14 +185,13 @@ export const freeDrawRender = (
 
   for (let i = 1; i < instance.positions.length; i++) {
     switch (instance.style) {
+      case FreeDrawStyle.MultiColor:
+      case FreeDrawStyle.Crayon:
       case FreeDrawStyle.Basic:
         _drawBasic(instance, i, context)
         break
       case FreeDrawStyle.Shadow:
         _drawShadow(instance, i, context)
-        break
-      case FreeDrawStyle.DoubleColor:
-        _drawDoubleColor(instance, i, context)
         break
       case FreeDrawStyle.Spray:
         _drawSpray(instance, i, context)
@@ -290,37 +266,6 @@ const _drawShadow = (
   }
   context.lineWidth = lineWidths[i]
   context.shadowBlur = lineWidths[i]
-  context.stroke()
-}
-
-/**
- * 绘制双色线条
- * @param instance FreeDraw 实例
- * @param i 下标
- * @param context canvas二维渲染上下文
- */
-const _drawDoubleColor = (
-  instance: FreeDraw,
-  i: number,
-  context: CanvasRenderingContext2D
-) => {
-  const { positions, lineWidths } = instance
-  const { x: centerX, y: centerY } = positions[i - 1]
-  const { x: endX, y: endY } = positions[i]
-  context.beginPath()
-  if (i == 1) {
-    context.moveTo(centerX, centerY)
-    context.lineTo(endX, endY)
-  } else {
-    const { x: startX, y: startY } = positions[i - 2]
-    const lastX = (startX + centerX) / 2
-    const lastY = (startY + centerY) / 2
-    const x = (centerX + endX) / 2
-    const y = (centerY + endY) / 2
-    context.moveTo(lastX, lastY)
-    context.quadraticCurveTo(centerX, centerY, x, y)
-  }
-  context.lineWidth = lineWidths[i]
   context.stroke()
 }
 
@@ -495,4 +440,37 @@ export const updateRect = (instance: FreeDraw, position: MousePosition) => {
   }
   instance.rect = rect
   return rect
+}
+
+/**
+ * 获取多色图案
+ * @param colors 多色数组
+ */
+const getMultiColorPattern = (colors: string[]) => {
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
+
+  canvas.width = 5 * colors.length
+  canvas.height = 20
+  colors.forEach((color, i) => {
+    context.fillStyle = color
+    context.fillRect(5 * i, 0, 5, 20)
+  })
+  return context.createPattern(canvas, 'repeat') as CanvasPattern
+}
+
+const getCrayonPattern = (color: string) => {
+  const canvas = document.createElement('canvas')
+  const context = canvas.getContext('2d') as CanvasRenderingContext2D
+  context.globalAlpha = 0.5
+  canvas.width = 10
+  canvas.height = 10
+  context.fillStyle = color
+  context.fillRect(0, 0, 10, 10)
+
+  const img = new Image()
+  img.src = '/pattern/crayon.png'
+  context.drawImage(img, 0, 0, 10, 10)
+
+  return context.createPattern(canvas, 'repeat') as CanvasPattern
 }

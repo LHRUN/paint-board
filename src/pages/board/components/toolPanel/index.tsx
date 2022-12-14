@@ -4,6 +4,7 @@ import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import { FreeDrawStyle } from '@/utils/element/freeDraw'
 import Layer from '../layer'
+import { styleRadio } from './constant'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
@@ -55,6 +56,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
     }
   }
 
+  // 复制颜色
   const copyColor = () => {
     const inputElement = document.querySelector(
       '#colorInput'
@@ -222,7 +224,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
               <div className="form-control mt-3">
                 <div className="font-bold">Color</div>
                 <div className="mt-1 flex items-center w-full">
-                  {board?.currentFreeDrawStyle === FreeDrawStyle.DoubleColor ? (
+                  {board?.currentFreeDrawStyle === FreeDrawStyle.MultiColor ? (
                     <>
                       {board.currentLineColor.map((color, i) => {
                         return (
@@ -292,46 +294,17 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
               <div className="mt-3">
                 <div className="font-bold">Style</div>
                 <div className="btn-group">
-                  <button
-                    className={`btn btn-sm flex-grow ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.Basic
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.Basic)}
-                  >
-                    单色
-                  </button>
-                  <button
-                    className={`btn btn-sm flex-grow ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.Shadow
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.Shadow)}
-                  >
-                    荧光
-                  </button>
-                  <button
-                    className={`btn btn-sm flex-grow ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.DoubleColor
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.DoubleColor)}
-                  >
-                    多色
-                  </button>
-                  <button
-                    className={`btn btn-sm flex-grow ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.Spray
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.Spray)}
-                  >
-                    喷雾
-                  </button>
+                  {styleRadio.map(({ type, text }) => (
+                    <button
+                      key={type}
+                      className={`btn btn-sm flex-grow ${
+                        board?.currentFreeDrawStyle === type ? 'btn-active' : ''
+                      }`}
+                      onClick={() => setFreeDrawStyle(type)}
+                    >
+                      {text}
+                    </button>
+                  ))}
                 </div>
                 {/* <div className="btn-group">
                   <button
@@ -343,16 +316,6 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                     onClick={() => setFreeDrawStyle(FreeDrawStyle.Bubble)}
                   >
                     泡泡
-                  </button>
-                  <button
-                    className={`btn btn-sm ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.Spray
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.Spray)}
-                  >
-                    喷雾
                   </button>
                 </div> */}
               </div>
