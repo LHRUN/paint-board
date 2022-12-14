@@ -20,5 +20,9 @@ export const styleRadio = [
   {
     type: FreeDrawStyle.Crayon,
     text: '蜡笔'
+  },
+  {
+    type: FreeDrawStyle.Bubble,
+    text: '泡泡'
   }
 ]

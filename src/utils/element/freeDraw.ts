@@ -24,6 +24,9 @@ export enum FreeDrawStyle {
   Bubble = 'bubble' // 泡泡
 }
 
+const crayonImg = new Image()
+crayonImg.src = '/pattern/crayon1.png'
+
 /**
  * 自由画笔
  */
@@ -154,7 +157,7 @@ export class FreeDraw extends CanvasElement {
  * @param context canvas二维渲染上下文
  * @param instance FreeDraw
  */
-export const freeDrawRender = (
+export const freeDrawRender = async (
   context: CanvasRenderingContext2D,
   instance: FreeDraw
 ) => {
@@ -284,12 +287,17 @@ const _drawSpray = (
   for (let j = 0; j < 50; j++) {
     const { angle, radius, alpha } = sprayPoint[i % 5][j]
     context.globalAlpha = alpha
-    context.fillRect(
-      x + radius * Math.cos(angle),
-      y + radius * Math.sin(angle),
-      2,
-      2
-    )
+    const distanceX = radius * Math.cos(angle)
+    const distanceY = radius * Math.sin(angle)
+    // 根据宽度限制喷雾宽度，因为喷雾太细了不好看，我就统一放大一倍
+    if (
+      distanceX < instance.lineWidths[i] * 2 &&
+      distanceY < instance.lineWidths[i] * 2 &&
+      distanceX > -instance.lineWidths[i] * 2 &&
+      distanceY > -instance.lineWidths[i] * 2
+    ) {
+      context.fillRect(x + distanceX, y + distanceY, 2, 2)
+    }
   }
 }
 
@@ -462,15 +470,10 @@ const getMultiColorPattern = (colors: string[]) => {
 const getCrayonPattern = (color: string) => {
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
-  context.globalAlpha = 0.5
-  canvas.width = 10
-  canvas.height = 10
+  canvas.width = 100
+  canvas.height = 100
   context.fillStyle = color
-  context.fillRect(0, 0, 10, 10)
-
-  const img = new Image()
-  img.src = '/pattern/crayon.png'
-  context.drawImage(img, 0, 0, 10, 10)
-
+  context.fillRect(0, 0, 100, 100)
+  context.drawImage(crayonImg, 0, 0, 100, 100)
   return context.createPattern(canvas, 'repeat') as CanvasPattern
 }
