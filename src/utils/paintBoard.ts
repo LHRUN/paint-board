@@ -10,6 +10,15 @@ import { TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
 
 type MOVE_ELE = FreeDraw | Eraser | null
+// export type HistoryState {
+//   currentLineColor: PaintBoard['currentLineColor'],
+//   // currentLineWidth,
+//   // cleanWidth,
+//   // originTranslate,
+//   // layer,
+//   // version
+// }
+export type HistoryState = Pick<PaintBoard, 'currentLineColor'>
 
 /**
  * PaintBoard
@@ -39,7 +48,7 @@ export class PaintBoard {
   // 鼠标光标
   cursor: Cursor
   select: SelectElement
-  version = '0.2.0' // 版本号，主要用于兼容缓存数据
+  version = '0.2.1' // 版本号，主要用于兼容缓存数据
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置

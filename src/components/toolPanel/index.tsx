@@ -4,11 +4,13 @@ import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import { FreeDrawStyle } from '@/utils/element/freeDraw'
 import Layer from '../layer'
-import { styleRadio } from './constant'
+import { CHANGE_COLOR_TYPE, styleSwitch, typeSwitch } from './constant'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
 import CleanIcon from '@/components/icons/clean'
+import CloseIcon from '../icons/close'
+import MenuIcon from '../icons/menu'
 
 import styles from './index.module.css'
 
@@ -24,10 +26,9 @@ let toastTimeout: NodeJS.Timeout | null = null
  * 操作面板
  */
 const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
-  // 刷新操作栏
-  const [, setRefresh] = useState(0)
-  const [toastState, setToastState] = useState(false)
-  const [showPanel, setShowPanel] = useState(true)
+  const [, setRefresh] = useState(0) // 刷新数据
+  const [toastState, setToastState] = useState(false) // 复制提示
+  const [showPanel, setShowPanel] = useState(true) // 面板展示控制
   // 颜色输入框(目前是只读数据)
   const colorInput = useMemo(() => {
     if (board?.currentLineColor) {
@@ -41,12 +42,13 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
     if (board) {
       const colors = [...board.currentLineColor]
       colors[index] = color
-      const newColor = type === 'simple' ? [color] : colors
+      const newColor = type === CHANGE_COLOR_TYPE.UNI ? [color] : colors
       board.setFreeDrawColor(newColor)
       setRefresh((v) => v + 1)
     }
   }
 
+  // 删除画笔颜色
   const deleteLineColor = (index: number) => {
     if (board) {
       const colors = [...board.currentLineColor]
@@ -117,15 +119,12 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
     }
   }
 
+  // 改变画笔样式
   const setFreeDrawStyle = (mode: FreeDrawStyle) => {
     if (board) {
       board.setFreeDrawStyle(mode)
       setRefresh((v) => v + 1)
     }
-  }
-
-  const changeShowPanel = () => {
-    setShowPanel((v) => !v)
   }
 
   return (
@@ -136,55 +135,27 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
         }`}
         style={{ backgroundColor: '#EEF1FF' }}
       >
+        {/* 控制面板显示 */}
         <label className="btn btn-circle swap swap-rotate absolute -top-4 -left-4 h-8 w-8 min-h-0">
-          <input type="checkbox" onChange={() => changeShowPanel()} />
-          <svg
-            className="swap-on fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 512 512"
-          >
-            <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
-          </svg>
-          <svg
-            className="swap-off fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 512 512"
-          >
-            <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-          </svg>
+          <input type="checkbox" onChange={() => setShowPanel((v) => !v)} />
+          <CloseIcon className="swap-on fill-current" />
+          <MenuIcon className="swap-off fill-current" />
         </label>
         {showPanel && (
           <>
             {/* 类型切换 */}
             <div className="btn-group">
-              <button
-                className={`btn btn-sm flex-grow ${
-                  toolType === CANVAS_ELE_TYPE.FREE_DRAW ? 'btn-active' : ''
-                }`}
-                onClick={() => setToolType(CANVAS_ELE_TYPE.FREE_DRAW)}
-              >
-                画笔
-              </button>
-              <button
-                className={`btn btn-sm flex-grow ${
-                  toolType === CANVAS_ELE_TYPE.ERASER ? 'btn-active' : ''
-                }`}
-                onClick={() => setToolType(CANVAS_ELE_TYPE.ERASER)}
-              >
-                橡皮擦
-              </button>
-              <button
-                className={`btn btn-sm flex-grow ${
-                  toolType === CANVAS_ELE_TYPE.SELECT ? 'btn-active' : ''
-                }`}
-                onClick={() => setToolType(CANVAS_ELE_TYPE.SELECT)}
-              >
-                选择
-              </button>
+              {typeSwitch.map(({ type, text }) => (
+                <button
+                  key={type}
+                  className={`btn btn-sm flex-grow ${
+                    toolType === type ? 'btn-active' : ''
+                  }`}
+                  onClick={() => setToolType(type)}
+                >
+                  {text}
+                </button>
+              ))}
             </div>
             {/* 宽度设置 */}
             {(toolType === CANVAS_ELE_TYPE.FREE_DRAW ||
@@ -225,6 +196,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                 <div className="font-bold">Color</div>
                 <div className="mt-1 flex items-center w-full">
                   {board?.currentFreeDrawStyle === FreeDrawStyle.MultiColor ? (
+                    // 多色配置
                     <>
                       {board.currentLineColor.map((color, i) => {
                         return (
@@ -255,7 +227,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                             changeLineColor(
                               '#000000',
                               board.currentLineColor.length,
-                              'double'
+                              CHANGE_COLOR_TYPE.MULTI
                             )
                           }}
                         >
@@ -264,13 +236,18 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                       )}
                     </>
                   ) : (
+                    // 单色配置
                     <>
                       <div className="w-8 h-8 mr-2">
                         <input
                           type="color"
                           value={`#${colorInput}`}
                           onChange={(e) => {
-                            changeLineColor(e.target.value, 1, 'simple')
+                            changeLineColor(
+                              e.target.value,
+                              1,
+                              CHANGE_COLOR_TYPE.UNI
+                            )
                           }}
                           className={styles.lineColor}
                         />
@@ -290,11 +267,12 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                 </div>
               </div>
             )}
+            {/* 样式配置 */}
             {toolType === CANVAS_ELE_TYPE.FREE_DRAW && (
               <div className="mt-3">
                 <div className="font-bold">Style</div>
                 <div className="btn-group">
-                  {styleRadio.map(({ type, text }) => (
+                  {styleSwitch.line_1.map(({ type, text }) => (
                     <button
                       key={type}
                       className={`btn btn-sm flex-grow ${
@@ -306,18 +284,19 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                     </button>
                   ))}
                 </div>
-                {/* <div className="btn-group">
-                  <button
-                    className={`btn btn-sm ${
-                      board?.currentFreeDrawStyle === FreeDrawStyle.Bubble
-                        ? 'btn-active'
-                        : ''
-                    }`}
-                    onClick={() => setFreeDrawStyle(FreeDrawStyle.Bubble)}
-                  >
-                    泡泡
-                  </button>
-                </div> */}
+                <div className="btn-group mt-1">
+                  {styleSwitch.line_2.map(({ type, text }) => (
+                    <button
+                      key={type}
+                      className={`btn btn-sm flex-grow ${
+                        board?.currentFreeDrawStyle === type ? 'btn-active' : ''
+                      }`}
+                      onClick={() => setFreeDrawStyle(type)}
+                    >
+                      {text}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {/* 操作画板 */}

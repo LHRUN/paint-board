@@ -3,7 +3,7 @@ import InfoIcon from '@/components/icons/info'
 import Mask from '@/components/mask'
 
 /**
- * 帮助信息组件
+ * 操作指南弹窗
  */
 const Info: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)

@@ -1,9 +1,9 @@
 import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
-import ToolPanel from './components/toolPanel'
+import ToolPanel from '../../components/toolPanel'
 import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
-import Info from './components/info'
+import Info from '../../components/info'
 import { CURSOR_TYPE } from '@/utils/cursor'
 import { TextEdit } from '@/utils/element/text'
 
@@ -90,7 +90,6 @@ const Board: React.FC = () => {
       setIsMouseDown(true)
     }
   }
-
   const dbClick = (event: MouseEvent) => {
     if (board) {
       const { clientX: x, clientY: y } = event
@@ -98,10 +97,10 @@ const Board: React.FC = () => {
         x,
         y
       }
+      // 双击展示文字输入框
       textEdit.showTextInput(position)
     }
   }
-
   const mouseMove = (event: MouseEvent) => {
     if (board) {
       const { clientX: x, clientY: y } = event

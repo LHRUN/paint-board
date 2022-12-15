@@ -155,10 +155,14 @@ export class History<T> {
 }
 
 /**
- * 处理历史记录栈格式，主要用于版本兼容
+ * 处理历史缓存数据结构，主要用于版本兼容
  * @param stack
  */
-export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
+export const formatHistory = (
+  stack: ELEMENT_INSTANCE[],
+  // state,
+  version: string
+) => {
   stack.forEach((ele) => {
     if (compareVersion(version, '0.2.0') < 0) {
       // 兼容类型，类型已修改
@@ -168,7 +172,7 @@ export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
         ele.type = CANVAS_ELE_TYPE.ERASER
       }
 
-      // 0.2.0增加选择模式，兼容矩形数据
+      // 增加选择模式，兼容矩形数据
       if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
         initRect(<FreeDraw>ele)
         ;(<FreeDraw>ele).positions.forEach((position) => {
@@ -176,9 +180,14 @@ export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
         })
       }
     }
-    if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
-      if (ele.color) {
-        ;(<FreeDraw>ele).colors = [ele.color]
+
+    if (compareVersion(version, '0.2.1') < 0) {
+      // 画笔增加多色属性
+      if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
+        if (Reflect.has(ele, 'color')) {
+          Reflect.set(ele, 'colors', [Reflect.get(ele, 'color')])
+          Reflect.deleteProperty(ele, 'color')
+        }
       }
     }
   })
