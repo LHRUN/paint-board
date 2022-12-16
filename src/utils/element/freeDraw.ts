@@ -24,8 +24,10 @@ export enum FreeDrawStyle {
   Bubble = 'bubble' // 泡泡
 }
 
-const crayonImg = new Image()
-crayonImg.src = '/pattern/crayon1.png'
+// 画笔素材
+export interface Material {
+  crayon: HTMLImageElement | null // 蜡笔
+}
 
 /**
  * 自由画笔
@@ -60,10 +62,10 @@ export class FreeDraw extends CanvasElement {
     minY: Infinity,
     maxY: -Infinity
   }
-  circles?: {
+  bubbles?: {
     radius: number
     opacity: number
-  }[]
+  }[] // 泡泡
   style: FreeDrawStyle // 画笔模式
 
   constructor(
@@ -81,7 +83,7 @@ export class FreeDraw extends CanvasElement {
     this.lastLineWidth = width
     this.style = style
     if (this.style === FreeDrawStyle.Bubble) {
-      this.circles = []
+      this.bubbles = []
     }
   }
 
@@ -92,9 +94,9 @@ export class FreeDraw extends CanvasElement {
   addPosition(position: MousePosition) {
     this.positions.push(position)
     updateRect(this, position)
-    if (this.style === FreeDrawStyle.Bubble && this.circles) {
-      this.circles.push({
-        radius: getRandomInt(10, 30),
+    if (this.style === FreeDrawStyle.Bubble && this.bubbles) {
+      this.bubbles.push({
+        radius: getRandomInt(this.minWidth * 2, this.maxWidth * 2),
         opacity: Math.random()
       })
     }
@@ -156,10 +158,12 @@ export class FreeDraw extends CanvasElement {
  * 自由画笔渲染
  * @param context canvas二维渲染上下文
  * @param instance FreeDraw
+ * @param material 画笔素材
  */
-export const freeDrawRender = async (
+export const freeDrawRender = (
   context: CanvasRenderingContext2D,
-  instance: FreeDraw
+  instance: FreeDraw,
+  material: Material
 ) => {
   context.save()
   context.lineCap = 'round'
@@ -180,7 +184,10 @@ export const freeDrawRender = async (
       context.strokeStyle = getMultiColorPattern(instance.colors)
       break
     case FreeDrawStyle.Crayon:
-      context.strokeStyle = getCrayonPattern(instance.colors[0])
+      context.strokeStyle = getCrayonPattern(
+        instance.colors[0],
+        material.crayon
+      )
       break
     default:
       break
@@ -194,7 +201,9 @@ export const freeDrawRender = async (
         _drawBasic(instance, i, context)
         break
       case FreeDrawStyle.Shadow:
-        _drawShadow(instance, i, context)
+        _drawBasic(instance, i, context, (instance, i, context) => {
+          context.shadowBlur = instance.lineWidths[i]
+        })
         break
       case FreeDrawStyle.Spray:
         _drawSpray(instance, i, context)
@@ -214,11 +223,17 @@ export const freeDrawRender = async (
  * @param instance FreeDraw 实例
  * @param i 下标
  * @param context canvas二维渲染上下文
+ * @param cb 一些绘制前的处理，修改一些样式
  */
 const _drawBasic = (
   instance: FreeDraw,
   i: number,
-  context: CanvasRenderingContext2D
+  context: CanvasRenderingContext2D,
+  cb?: (
+    instance: FreeDraw,
+    i: number,
+    context: CanvasRenderingContext2D
+  ) => void
 ) => {
   const { positions, lineWidths } = instance
   const { x: centerX, y: centerY } = positions[i - 1]
@@ -237,38 +252,7 @@ const _drawBasic = (
     context.quadraticCurveTo(centerX, centerY, x, y)
   }
   context.lineWidth = lineWidths[i]
-  context.stroke()
-}
-
-/**
- * 绘制带阴影的荧光线条
- * @param instance FreeDraw 实例
- * @param i 下标
- * @param context canvas二维渲染上下文
- */
-const _drawShadow = (
-  instance: FreeDraw,
-  i: number,
-  context: CanvasRenderingContext2D
-) => {
-  const { positions, lineWidths } = instance
-  const { x: centerX, y: centerY } = positions[i - 1]
-  const { x: endX, y: endY } = positions[i]
-  context.beginPath()
-  if (i == 1) {
-    context.moveTo(centerX, centerY)
-    context.lineTo(endX, endY)
-  } else {
-    const { x: startX, y: startY } = positions[i - 2]
-    const lastX = (startX + centerX) / 2
-    const lastY = (startY + centerY) / 2
-    const x = (centerX + endX) / 2
-    const y = (centerY + endY) / 2
-    context.moveTo(lastX, lastY)
-    context.quadraticCurveTo(centerX, centerY, x, y)
-  }
-  context.lineWidth = lineWidths[i]
-  context.shadowBlur = lineWidths[i]
+  cb?.(instance, i, context)
   context.stroke()
 }
 
@@ -313,10 +297,10 @@ const _drawBubble = (
   context: CanvasRenderingContext2D
 ) => {
   context.beginPath()
-  if (instance.circles) {
+  if (instance.bubbles) {
     const { x, y } = instance.positions[i]
-    context.globalAlpha = instance.circles[i].opacity
-    context.arc(x, y, instance.circles[i].radius, 0, Math.PI * 2, false)
+    context.globalAlpha = instance.bubbles[i].opacity
+    context.arc(x, y, instance.bubbles[i].radius, 0, Math.PI * 2, false)
     context.fill()
   }
 }
@@ -451,7 +435,7 @@ export const updateRect = (instance: FreeDraw, position: MousePosition) => {
 }
 
 /**
- * 获取多色图案
+ * 获取多色模版
  * @param colors 多色数组
  */
 const getMultiColorPattern = (colors: string[]) => {
@@ -468,16 +452,18 @@ const getMultiColorPattern = (colors: string[]) => {
 }
 
 /**
- * 获取蜡笔图案
+ * 获取蜡笔模版
  * @param color 蜡笔底色
  */
-const getCrayonPattern = (color: string) => {
+const getCrayonPattern = (color: string, crayon: Material['crayon']) => {
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
   canvas.width = 100
   canvas.height = 100
   context.fillStyle = color
   context.fillRect(0, 0, 100, 100)
-  context.drawImage(crayonImg, 0, 0, 100, 100, 0, 0, 100, 100)
+  if (crayon) {
+    context.drawImage(crayon, 0, 0, 100, 100)
+  }
   return context.createPattern(canvas, 'repeat') as CanvasPattern
 }

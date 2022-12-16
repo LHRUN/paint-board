@@ -212,7 +212,8 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                             {board.currentLineColor.length > 1 && (
                               <span
                                 onClick={() => deleteLineColor(i)}
-                                className="indicator-item badge badge-secondary w-3 h-3 p-0 text-sm bg-black text-white border-black cursor-pointer"
+                                className="indicator-item badge badge-secondary w-3 h-3 p-0 text-sm bg-black text-white border-black cursor-pointer block text-center"
+                                style={{ lineHeight: '0.5rem' }}
                               >
                                 x
                               </span>

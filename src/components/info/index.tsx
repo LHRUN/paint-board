@@ -16,7 +16,12 @@ const Info: React.FC = () => {
       >
         <InfoIcon />
       </div>
-      <Mask show={showModal} clickMask={() => setShowModal(false)}>
+      <Mask
+        show={showModal}
+        clickMask={() => {
+          setShowModal(false)
+        }}
+      >
         <div className="flex flex-col bg-white w-6/12 rounded-2xl overflow-hidden">
           <div className="font-bold my-4 mx-4">
             repo:

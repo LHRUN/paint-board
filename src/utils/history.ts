@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { at, compareVersion } from './common'
 import { CANVAS_ELE_TYPE } from './constants'
 import { updateRect, FreeDraw, initRect } from './element/freeDraw'
+import { HistoryState } from './paintBoard'
 
 export enum EACH_ORDER_TYPE {
   FIRST = 'first', // 顺序
@@ -15,8 +16,7 @@ export enum EACH_ORDER_TYPE {
 export class History<T> {
   cacheStack: Array<T[]>
   step: number
-  constructor(cacheStack: T[], version: string) {
-    formatHistory(<ELEMENT_INSTANCE[]>cacheStack, version)
+  constructor(cacheStack: T[]) {
     this.cacheStack = [cacheStack]
     this.step = 0
   }
@@ -160,9 +160,14 @@ export class History<T> {
  */
 export const formatHistory = (
   stack: ELEMENT_INSTANCE[],
-  // state,
+  state: HistoryState,
   version: string
 ) => {
+  if (state?.currentLineColor) {
+    state.currentLineColor = Array.isArray(state?.currentLineColor)
+      ? state.currentLineColor
+      : [state.currentLineColor]
+  }
   stack.forEach((ele) => {
     if (compareVersion(version, '0.2.0') < 0) {
       // 兼容类型，类型已修改
