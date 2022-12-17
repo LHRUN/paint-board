@@ -157,3 +157,21 @@ export const compareVersion = (v1: string, v2: string) => {
   }
   return 0
 }
+
+/**
+ * 获取随机整数数
+ * @param min 最小范围
+ * @param max 最大范围
+ */
+export const getRandomInt = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+/**
+ * 获取随机浮点数
+ * @param min
+ * @param max
+ */
+export const getRandomFloat = (min: number, max: number) => {
+  return Math.random() * (max - min) + min
+}

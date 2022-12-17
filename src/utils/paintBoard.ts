@@ -1,8 +1,13 @@
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { Eraser, eraserRender } from './element/eraser'
-import { FreeDraw, freeDrawRender } from './element/freeDraw'
+import {
+  FreeDraw,
+  FreeDrawStyle,
+  freeDrawRender,
+  Material
+} from './element/freeDraw'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
-import { History } from './history'
+import { formatHistory, History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
 import { Cursor, CURSOR_TYPE } from './cursor'
@@ -10,6 +15,17 @@ import { TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
 
 type MOVE_ELE = FreeDraw | Eraser | null
+
+// 画板状态缓存
+export type HistoryState = Pick<
+  PaintBoard,
+  | 'currentLineColor'
+  | 'currentLineWidth'
+  | 'cleanWidth'
+  | 'originTranslate'
+  | 'layer'
+  | 'version'
+>
 
 /**
  * PaintBoard
@@ -38,8 +54,16 @@ export class PaintBoard {
   layer: Layer
   // 鼠标光标
   cursor: Cursor
+  // 选择元素
   select: SelectElement
-  version = '0.2.0' // 版本号，主要用于兼容缓存数据
+  // 版本号，主要用于兼容缓存数据
+  version = '0.2.1'
+  // 画笔素材加载状态
+  loadMaterialState = false
+  // 画笔素材
+  material: Material = {
+    crayon: null
+  }
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -57,17 +81,39 @@ export class PaintBoard {
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
+    formatHistory(history, state, state?.version || '0.1.0')
     Object.assign(this, { ...state })
 
     // 初始化缓存数据
     this.layer = new Layer(this.render.bind(this), state?.layer)
 
-    // 兼容一下v0.1.0时未记录版本的问题
-    const version = state?.version ? state.version : '0.1.0'
-    this.history = new History(history, version)
+    this.history = new History(history)
 
     this.context.translate(this.originTranslate.x, this.originTranslate.y)
-    this.render()
+    this.loadMaterial().then(() => {
+      this.render()
+    })
+  }
+
+  /**
+   * 加载素材
+   */
+  loadMaterial() {
+    return new Promise<void>((resolve) => {
+      this.cleanCanvas()
+      const loadPos = this.transformPosition({
+        x: this.canvas.width / 2,
+        y: this.canvas.height / 2
+      })
+      this.context.fillText('loading...', loadPos.x, loadPos.y)
+      const crayonImg = new Image()
+      crayonImg.src = '/pattern/crayon.png'
+      crayonImg.onload = () => {
+        this.loadMaterialState = true
+        this.material.crayon = crayonImg
+        resolve()
+      }
+    })
   }
 
   /**
@@ -102,7 +148,8 @@ export class PaintBoard {
         ele = new FreeDraw(
           this.currentLineColor,
           this.currentLineWidth,
-          this.layer.current
+          this.layer.current,
+          this.currentFreeDrawStyle
         )
         break
       case CANVAS_ELE_TYPE.ERASER:
@@ -169,6 +216,9 @@ export class PaintBoard {
    * 遍历history渲染数据
    */
   render() {
+    if (!this.loadMaterialState) {
+      return
+    }
     this.cleanCanvas()
     if (this.history.getCurrentStack()?.length ?? 0 > 0) {
       const showLayerIds = new Set(
@@ -181,7 +231,7 @@ export class PaintBoard {
           this.context.save()
           switch (ele?.type) {
             case CANVAS_ELE_TYPE.FREE_DRAW:
-              freeDrawRender(this.context, ele as FreeDraw)
+              freeDrawRender(this.context, ele as FreeDraw, this.material)
               break
             case CANVAS_ELE_TYPE.ERASER:
               eraserRender(
@@ -239,28 +289,40 @@ export class PaintBoard {
     this.context.clearRect(-(w / 2), -(w / 2), w, w)
   }
 
-  // 当前绘线颜色
-  currentLineColor = '#000000'
-  // 当前绘线宽
+  // 当前画笔颜色
+  currentLineColor = ['#000000']
+  // 当前画笔宽度
   currentLineWidth = CommonWidth.W4
+  // 当前画笔模式
+  currentFreeDrawStyle = FreeDrawStyle.Basic
 
   /**
-   * 修改绘线宽
-   * @param width 绘线宽
+   * 修改画笔宽度
+   * @param width 画笔宽度
    */
-  setLineWidth(width: number) {
+  setFreeDrawWidth(width: number) {
     if (width) {
       this.currentLineWidth = width
     }
   }
 
   /**
-   * 修改绘线颜色
-   * @param color 绘线颜色
+   * 修改画笔颜色
+   * @param color 画笔颜色
    */
-  setLineColor(color: string) {
-    if (color) {
-      this.currentLineColor = color
+  setFreeDrawColor(colors: string[]) {
+    if (colors) {
+      this.currentLineColor = colors
+    }
+  }
+
+  /**
+   * 修改画笔模式
+   * @param mode 画笔模式
+   */
+  setFreeDrawStyle(style: FreeDrawStyle) {
+    if (style) {
+      this.currentFreeDrawStyle = style
     }
   }
 

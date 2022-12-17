@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash'
 import { at, compareVersion } from './common'
 import { CANVAS_ELE_TYPE } from './constants'
 import { updateRect, FreeDraw, initRect } from './element/freeDraw'
+import { HistoryState } from './paintBoard'
 
 export enum EACH_ORDER_TYPE {
   FIRST = 'first', // 顺序
@@ -15,8 +16,7 @@ export enum EACH_ORDER_TYPE {
 export class History<T> {
   cacheStack: Array<T[]>
   step: number
-  constructor(cacheStack: T[], version: string) {
-    formatHistory(<ELEMENT_INSTANCE[]>cacheStack, version)
+  constructor(cacheStack: T[]) {
     this.cacheStack = [cacheStack]
     this.step = 0
   }
@@ -155,12 +155,21 @@ export class History<T> {
 }
 
 /**
- * 处理历史记录栈格式，主要用于版本兼容
+ * 处理历史缓存数据结构，主要用于版本兼容
  * @param stack
  */
-export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
-  if (compareVersion(version, '0.2.0') < 0) {
-    stack.forEach((ele) => {
+export const formatHistory = (
+  stack: ELEMENT_INSTANCE[],
+  state: HistoryState,
+  version: string
+) => {
+  if (state?.currentLineColor) {
+    state.currentLineColor = Array.isArray(state?.currentLineColor)
+      ? state.currentLineColor
+      : [state.currentLineColor]
+  }
+  stack.forEach((ele) => {
+    if (compareVersion(version, '0.2.0') < 0) {
       // 兼容类型，类型已修改
       if (ele.type === 'freeLine') {
         ele.type = CANVAS_ELE_TYPE.FREE_DRAW
@@ -168,13 +177,23 @@ export const formatHistory = (stack: ELEMENT_INSTANCE[], version: string) => {
         ele.type = CANVAS_ELE_TYPE.ERASER
       }
 
-      // 0.2.0增加选择模式，兼容矩形数据
+      // 增加选择模式，兼容矩形数据
       if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
         initRect(<FreeDraw>ele)
         ;(<FreeDraw>ele).positions.forEach((position) => {
           updateRect(<FreeDraw>ele, position)
         })
       }
-    })
-  }
+    }
+
+    if (compareVersion(version, '0.2.1') < 0) {
+      // 画笔增加多色属性
+      if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
+        if (Reflect.has(ele, 'color')) {
+          Reflect.set(ele, 'colors', [Reflect.get(ele, 'color')])
+          Reflect.deleteProperty(ele, 'color')
+        }
+      }
+    }
+  })
 }
