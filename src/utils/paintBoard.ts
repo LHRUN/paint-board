@@ -107,7 +107,8 @@ export class PaintBoard {
       })
       this.context.fillText('loading...', loadPos.x, loadPos.y)
       const crayonImg = new Image()
-      crayonImg.src = '/pattern/crayon.png'
+      const imgurl = new URL('/pattern/crayon.png', import.meta.url).href
+      crayonImg.src = imgurl
       crayonImg.onload = () => {
         this.loadMaterialState = true
         this.material.crayon = crayonImg
