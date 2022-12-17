@@ -10,11 +10,13 @@
 ## 预览
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
-![](https://s1.ax1x.com/2022/12/03/zrR5Sf.png)
+![](https://s1.ax1x.com/2022/12/17/zH59vn.png)
 
 ## 功能列表
 已完成功能：
-+ 画笔，可修改宽度颜色，根据速度动态展示线宽
++ 画笔
+  - 可修改颜色，可根据速度动态展示线宽
+  - 多种画笔效果，荧光、多色、蜡笔、喷雾、泡泡...
 + 橡皮擦，随鼠标线性擦除内容
 + 绘制文字，双击画板输入文字绘制指定位置
 + 画板拖拽，按住空格可以无限拖拽画板
@@ -30,7 +32,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + ...
 
 ## 操作指南
-<image src="https://s1.ax1x.com/2022/12/03/zrDz4S.jpg" width="500" />
+<image src="https://s1.ax1x.com/2022/12/17/zHbHJK.png" />
 
 ## 本地启动
 ```
@@ -42,19 +44,20 @@ pnpm run dev
 ## 文件结构
 
 ```bash
-├─components        
+├─components  
+│  ├─info // 帮助信息
+│  ├─layer // 多图层
+│  ├─mask // 蒙层
+│  └─toolPanel // 工具面板
 │  └─icons
+│
 ├─hooks
-│  event.ts // event hook
+│  └─event.ts // event hook
 ├─pages
-│  └─board
-│    │ index.tsx
-│    │
-│    └─components
-│       ├─info // 帮助信息
-│       ├─layer // 多图层
-│       └─toolPanel // 工具面板
+│  └─board // 画板页
+│
 ├─types
+│
 └─utils
   │  constants
   │  history.ts // 历史记录
@@ -108,4 +111,5 @@ class CanvasElement {
 ## 技术文章
 + [基于canvas实现的多功能画板](https://lhrun.github.io/2022/09/21/%E5%9F%BA%E4%BA%8Ecanvas%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%9A%E5%8A%9F%E8%83%BD%E7%94%BB%E6%9D%BF/)
 + [canvas画板之绘画元素的框选](https://songlh.top/2022/12/05/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%BB%98%E7%94%BB%E5%85%83%E7%B4%A0%E7%9A%84%E6%A1%86%E9%80%89/)
++ [canvas画板之画笔的多种效果](https://songlh.top/2022/12/17/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%94%BB%E7%AC%94%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%95%88%E6%9E%9C/)
 

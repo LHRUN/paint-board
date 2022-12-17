@@ -22,7 +22,7 @@ const Info: React.FC = () => {
           setShowModal(false)
         }}
       >
-        <div className="flex flex-col bg-white w-6/12 rounded-2xl overflow-hidden">
+        <div className="flex flex-col bg-white rounded-2xl overflow-hidden">
           <div className="font-bold my-4 mx-4">
             repo:
             <a
@@ -36,8 +36,8 @@ const Info: React.FC = () => {
             欢迎Star⭐️
           </div>
           <img
-            className="mask"
-            src="https://s1.ax1x.com/2022/12/03/zrDz4S.jpg"
+            className="mask w-100"
+            src="https://s1.ax1x.com/2022/12/17/zHbHJK.png"
           />
         </div>
       </Mask>

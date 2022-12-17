@@ -441,12 +441,13 @@ export const updateRect = (instance: FreeDraw, position: MousePosition) => {
 const getMultiColorPattern = (colors: string[]) => {
   const canvas = document.createElement('canvas')
   const context = canvas.getContext('2d') as CanvasRenderingContext2D
+  const COLOR_WIDTH = 5 // 每个颜色的宽度
 
-  canvas.width = 5 * colors.length
+  canvas.width = COLOR_WIDTH * colors.length
   canvas.height = 20
   colors.forEach((color, i) => {
     context.fillStyle = color
-    context.fillRect(5 * i, 0, 5, 20)
+    context.fillRect(COLOR_WIDTH * i, 0, COLOR_WIDTH, 20)
   })
   return context.createPattern(canvas, 'repeat') as CanvasPattern
 }
@@ -454,6 +455,7 @@ const getMultiColorPattern = (colors: string[]) => {
 /**
  * 获取蜡笔模版
  * @param color 蜡笔底色
+ * @param crayon 蜡笔素材
  */
 const getCrayonPattern = (color: string, crayon: Material['crayon']) => {
   const canvas = document.createElement('canvas')
