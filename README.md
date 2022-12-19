@@ -48,7 +48,7 @@ pnpm run dev
 │  ├─info // 帮助信息
 │  ├─layer // 多图层
 │  ├─mask // 蒙层
-│  └─toolPanel // 工具面板
+│  ├─toolPanel // 工具面板
 │  └─icons
 │
 ├─hooks
@@ -59,20 +59,19 @@ pnpm run dev
 ├─types
 │
 └─utils
-  │  constants
-  │  history.ts // 历史记录
-  │  common.ts 
-  │  layer.ts // 图层
-  │  paintBoard.ts // 画本主逻辑
-  │  storage.ts // 缓存
-  │  cursor.ts // 鼠标光标
-  │  select.ts // 选择元素
-  │
+  ├─constants
+  ├─history.ts // 历史记录
+  ├─common.ts 
+  ├─layer.ts // 图层
+  ├─paintBoard.ts // 画本主逻辑
+  ├─storage.ts // 缓存
+  ├─cursor.ts // 鼠标光标
+  ├─select.ts // 选择元素
   └─element
-     eraser.ts // 橡皮擦
-     element.ts // 基础元素
-     freeDraw.ts // 画笔
-     text.ts // 文本元素
+     ├─eraser.ts // 橡皮擦
+     ├─element.ts // 基础元素
+     ├─freeDraw.ts // 画笔
+     └─text.ts // 文本元素
 ```
 
 ## 画板设计
