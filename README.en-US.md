@@ -52,27 +52,26 @@ pnpm run dev
 │  └─icons
 │
 ├─hooks
-│  event.ts // event hook
+│  └─event.ts // event hook
 ├─pages
 │  └─board // board page
 │
 ├─types
 │
 └─utils
-  │  constants
-  │  history.ts // history operation record
-  │  common.ts 
-  │  layer.ts // multi layer
-  │  paintBoard.ts // PaintBoard
-  │  storage.ts // localStorage cache
-  │  cursor.ts // mouse cursor
-  │  select.ts // select mode
-  │
+  ├─constants
+  ├─history.ts // history operation record
+  ├─common.ts 
+  ├─layer.ts // multi layer
+  ├─paintBoard.ts // PaintBoard
+  ├─storage.ts // localStorage cache
+  ├─cursor.ts // mouse cursor
+  ├─select.ts // select mode
   └─element
-     eraser.ts // eraser
-     element.ts // basic element
-     freeDraw.ts // free draw
-     text.ts // text element
+     ├─eraser.ts // eraser
+     ├─element.ts // basic element
+     ├─freeDraw.ts // free draw
+     └─text.ts // text element
 ```
 
 ## paint-board design
