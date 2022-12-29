@@ -2,12 +2,15 @@ import React, { useMemo, useState, MouseEvent } from 'react'
 import { PaintBoard } from '@/utils/paintBoard'
 import { CANVAS_ELE_TYPE } from '@/utils/constants'
 import ToolPanel from '../../components/toolPanel'
-import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
+import {
+  useBackspace,
+  useCancelContextMenu,
+  useResizeEvent,
+  useSpaceEvent
+} from '@/hooks/event'
 import Info from '../../components/info'
+import ContextMenu from '@/components/contextMenu'
 import { CURSOR_TYPE } from '@/utils/cursor'
-import { TextEdit } from '@/utils/element/text'
-
-const textEdit = new TextEdit()
 
 const Board: React.FC = () => {
   // 初始化画板
@@ -60,6 +63,13 @@ const Board: React.FC = () => {
     }
   })
 
+  const [showContextMenu, setShowContextMenu] = useState(false)
+  const [contextMenuPos, setContextMenuPos] = useState({
+    x: 0,
+    y: 0
+  })
+  useCancelContextMenu()
+
   // 监听鼠标事件
   const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
   const mouseDown = (event: MouseEvent) => {
@@ -69,11 +79,19 @@ const Board: React.FC = () => {
         x,
         y
       }
-      // 如果有文本编辑框，取消编辑
-      if (textEdit) {
-        board.addTextElement(textEdit.value, textEdit.rect)
-        textEdit.destroy()
+
+      if (event.button === 2) {
+        setShowContextMenu(true)
+        setContextMenuPos(position)
+        return
       }
+
+      setShowContextMenu(false)
+
+      // 如果有文本编辑框，取消编辑
+      board.addTextElement(board.textEdit.value, board.textEdit.rect)
+      board.textEdit.destroy()
+
       switch (toolType) {
         case CANVAS_ELE_TYPE.SELECT:
           board.select.clickSelectElement(position)
@@ -90,15 +108,10 @@ const Board: React.FC = () => {
       setIsMouseDown(true)
     }
   }
-  const dbClick = (event: MouseEvent) => {
+  const showTextEdit = () => {
     if (board) {
-      const { clientX: x, clientY: y } = event
-      const position = {
-        x,
-        y
-      }
-      // 双击展示文字输入框
-      textEdit.showTextInput(position)
+      setShowContextMenu(false)
+      board.textEdit.showTextInput(contextMenuPos)
     }
   }
   const mouseMove = (event: MouseEvent) => {
@@ -151,9 +164,15 @@ const Board: React.FC = () => {
         onMouseDown={mouseDown}
         onMouseMove={mouseMove}
         onMouseUp={mouseUp}
-        onDoubleClick={dbClick}
       ></canvas>
       <Info />
+      {showContextMenu && (
+        <ContextMenu
+          board={board}
+          position={contextMenuPos}
+          clickText={showTextEdit}
+        />
+      )}
     </div>
   )
 }

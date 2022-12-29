@@ -1,3 +1,4 @@
+import { ImageElement } from './../utils/element/image'
 import { Eraser } from '@/utils/element/eraser'
 import { FreeDraw } from '@/utils/element/freeDraw'
 import { TextElement } from '@/utils/element/text'
@@ -9,7 +10,7 @@ export interface MousePosition {
 }
 
 // 元素实例类型
-export type ELEMENT_INSTANCE = FreeDraw | Eraser | TextElement
+export type ELEMENT_INSTANCE = FreeDraw | Eraser | TextElement | ImageElement
 
 /**
  * 元素矩形

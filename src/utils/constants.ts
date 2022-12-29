@@ -3,7 +3,8 @@ export enum CANVAS_ELE_TYPE {
   FREE_DRAW = 'freeDraw',
   ERASER = 'eraser',
   SELECT = 'select',
-  TEXT = 'text'
+  TEXT = 'text',
+  IMAGE = 'image'
 }
 
 // 通用绘画宽度
@@ -13,7 +14,6 @@ export const CommonWidth = {
   W12: 12,
   W14: 14
 }
-
 // 按键
 export enum KeyCode {
   SPACE = 'Space', // 空格键
@@ -32,6 +32,9 @@ export enum RESIZE_TYPE {
 
 // 矩形最小宽高，用于限制缩放
 export const RECT_MIN_SIZE = 10
+
+// 拖拽手柄大小
+export const DRAG_HANDLE_SIZE = 10
 
 // 写死喷雾点数据，因为每个点都是动态的话，内存占用太大，所以写死几套数据，顺序输出效果差不多
 export const sprayPoint = [

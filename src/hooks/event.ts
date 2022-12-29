@@ -74,3 +74,19 @@ export const useBackspace = (keyDownCb?: () => void) => {
     }
   }
 }
+
+/**
+ * 取消右键菜单
+ */
+export const useCancelContextMenu = () => {
+  useEffect(() => {
+    window.addEventListener('contextmenu', cancel)
+    return () => {
+      window.removeEventListener('contextmenu', cancel)
+    }
+  }, [])
+
+  const cancel = (event: Event) => {
+    event.preventDefault()
+  }
+}

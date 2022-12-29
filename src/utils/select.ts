@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash'
 import { PaintBoard } from './paintBoard'
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
-import { CANVAS_ELE_TYPE, RESIZE_TYPE } from './constants'
+import { CANVAS_ELE_TYPE, DRAG_HANDLE_SIZE, RESIZE_TYPE } from './constants'
 import { CURSOR_TYPE, getResizeCursorType } from './cursor'
 import {
   drawRect,
@@ -18,6 +18,8 @@ import {
 import { resizeTextElement, TextElement } from './element/text'
 import { EACH_ORDER_TYPE } from './history'
 
+type SelectElementType = FreeDraw | TextElement
+
 export class SelectElement {
   board: PaintBoard // 画板
   mouseHoverElementIndex = -1 // 鼠标悬停元素下标
@@ -29,6 +31,10 @@ export class SelectElement {
   resizeType = RESIZE_TYPE.NULL // 调整大小类型
   tempCache: ELEMENT_INSTANCE[] | null = null // 临时缓存
   isCurrentChange = false // 当前选择元素是否有变化
+  guideLine: Array<{
+    start: MousePosition
+    end: MousePosition
+  }> = []
 
   constructor(board: PaintBoard) {
     this.board = board
@@ -204,6 +210,7 @@ export class SelectElement {
         }
 
         this.startMousePos = movePos
+        // this.getGuideLine(resizeElement)
         this.board.render()
       } else {
         const resizeType = getResizeType(
@@ -214,6 +221,83 @@ export class SelectElement {
       }
     }
     this.board.cursor.change(cursorType)
+  }
+
+  /**
+   * 获取辅助线
+   */
+  getGuideLine(curEle: SelectElementType) {
+    const showLayerIds = new Set(
+      this.board.layer.stack.reduce<number[]>((acc, cur) => {
+        return cur.show ? [...acc, cur.id] : acc
+      }, [])
+    )
+    const curRect = curEle.rect
+    const guideLine: Array<{
+      start: MousePosition
+      end: MousePosition
+    }> = []
+    this.board.history.each((ele) => {
+      if (ele?.layer && showLayerIds.has(ele.layer) && ele !== curEle) {
+        if (
+          ele.type === CANVAS_ELE_TYPE.FREE_DRAW ||
+          ele.type === CANVAS_ELE_TYPE.TEXT
+        ) {
+          const eleRect = (ele as SelectElementType).rect
+          if (eleRect.y === curRect.y) {
+            if (eleRect.x > curRect.x) {
+              guideLine.push({
+                start: {
+                  x: curRect.x,
+                  y: curRect.y
+                },
+                end: {
+                  x: eleRect.x + eleRect.width,
+                  y: eleRect.y
+                }
+              })
+            } else {
+              guideLine.push({
+                start: {
+                  x: curRect.x + curRect.width,
+                  y: curRect.y
+                },
+                end: {
+                  x: eleRect.x,
+                  y: eleRect.y
+                }
+              })
+            }
+          }
+          if (eleRect.x === curRect.x) {
+            if (eleRect.y > curRect.y) {
+              guideLine.push({
+                start: {
+                  x: curRect.x,
+                  y: curRect.y
+                },
+                end: {
+                  x: eleRect.x,
+                  y: eleRect.y + eleRect.height
+                }
+              })
+            } else {
+              guideLine.push({
+                start: {
+                  x: curRect.x,
+                  y: curRect.y + eleRect.height
+                },
+                end: {
+                  x: eleRect.x,
+                  y: eleRect.y
+                }
+              })
+            }
+          }
+        }
+      }
+    })
+    this.guideLine = guideLine
   }
 
   /**
@@ -255,8 +339,9 @@ export class SelectElement {
    * @param index 坐标
    */
   getCurSelectElement() {
-    const last = this.board.history.getCurrentStack() as ELEMENT_INSTANCE[]
-    return last[this.selectElementIndex] as FreeDraw | TextElement
+    const currentStack =
+      this.board.history.getCurrentStack() as ELEMENT_INSTANCE[]
+    return currentStack[this.selectElementIndex] as SelectElementType
   }
 
   /**
@@ -299,10 +384,38 @@ export const drawResizeRect = (
 
   // 绘制四角手柄
   context.fillStyle = '#65CC8A'
-  drawRect(context, x - 10, y - 10, 10, 10, true)
-  drawRect(context, x + width, y - 10, 10, 10, true)
-  drawRect(context, x - 10, y + height, 10, 10, true)
-  drawRect(context, x + width, y + height, 10, 10, true)
+  drawRect(
+    context,
+    x - DRAG_HANDLE_SIZE,
+    y - DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    true
+  )
+  drawRect(
+    context,
+    x + width,
+    y - DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    true
+  )
+  drawRect(
+    context,
+    x - DRAG_HANDLE_SIZE,
+    y + height,
+    DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    true
+  )
+  drawRect(
+    context,
+    x + width,
+    y + height,
+    DRAG_HANDLE_SIZE,
+    DRAG_HANDLE_SIZE,
+    true
+  )
   context.restore()
 }
 
@@ -316,16 +429,25 @@ export const getResizeType = (position: MousePosition, rect: ElementRect) => {
   const { x, y } = position
   if (isInsideRect(position, rect)) {
     resizeType = RESIZE_TYPE.BODY
-  } else if (rect.x > x && x > rect.x - 10) {
-    if (rect.y > y && y > rect.y - 10) {
+  } else if (rect.x > x && x > rect.x - DRAG_HANDLE_SIZE) {
+    if (rect.y > y && y > rect.y - DRAG_HANDLE_SIZE) {
       resizeType = RESIZE_TYPE.TOP_LEFT
-    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
+    } else if (
+      rect.y + rect.height + DRAG_HANDLE_SIZE > y &&
+      y > rect.y + rect.height
+    ) {
       resizeType = RESIZE_TYPE.BOTTOM_LEFT
     }
-  } else if (rect.x + rect.width + 10 > x && x > rect.x + rect.width) {
-    if (rect.y > y && y > rect.y - 10) {
+  } else if (
+    rect.x + rect.width + DRAG_HANDLE_SIZE > x &&
+    x > rect.x + rect.width
+  ) {
+    if (rect.y > y && y > rect.y - DRAG_HANDLE_SIZE) {
       resizeType = RESIZE_TYPE.TOP_RIGHT
-    } else if (rect.y + rect.height + 10 > y && y > rect.y + rect.height) {
+    } else if (
+      rect.y + rect.height + DRAG_HANDLE_SIZE > y &&
+      y > rect.y + rect.height
+    ) {
       resizeType = RESIZE_TYPE.BOTTOM_RIGHT
     }
   }

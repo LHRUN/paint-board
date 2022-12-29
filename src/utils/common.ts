@@ -59,6 +59,37 @@ export const drawRect = (
 }
 
 /**
+ * 绘制实线
+ * @param context canvas context2D
+ * @param start 起点
+ * @param end 终点
+ * @param options 实线配置
+ */
+export const drawLine = (
+  context: CanvasRenderingContext2D,
+  start: MousePosition,
+  end: MousePosition,
+  options?: {
+    lineWidth?: number
+    color?: string
+  }
+) => {
+  context.save()
+  context.beginPath()
+  if (options?.lineWidth) {
+    context.lineWidth = options.lineWidth
+  }
+  if (options?.color) {
+    context.strokeStyle = options.color
+  }
+
+  context.moveTo(start.x, start.y)
+  context.lineTo(end.x, end.y)
+  context.stroke()
+  context.restore()
+}
+
+/**
  * 判断是否在矩形内部
  * @param position
  * @param rect

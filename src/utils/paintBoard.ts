@@ -11,8 +11,15 @@ import { formatHistory, History } from './history'
 import { BOARD_STORAGE_KEY, storage } from './storage'
 import { Layer } from './layer'
 import { Cursor, CURSOR_TYPE } from './cursor'
-import { TextElement, textRender } from './element/text'
+import { TextEdit, TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
+import { drawLine } from './common'
+import {
+  ImageData,
+  ImageEdit,
+  ImageElement,
+  imageRender
+} from './element/image'
 
 type MOVE_ELE = FreeDraw | Eraser | null
 
@@ -64,6 +71,8 @@ export class PaintBoard {
   material: Material = {
     crayon: null
   }
+  textEdit: TextEdit
+  imageEdit: ImageEdit
 
   constructor(canvas: HTMLCanvasElement) {
     // 初始化配置
@@ -78,6 +87,8 @@ export class PaintBoard {
     }
     this.cursor = new Cursor(canvas)
     this.select = new SelectElement(this)
+    this.textEdit = new TextEdit()
+    this.imageEdit = new ImageEdit()
 
     // 获取缓存
     const { history = [], state = {} } = storage.get(BOARD_STORAGE_KEY) || {}
@@ -227,7 +238,7 @@ export class PaintBoard {
           return cur.show ? [...acc, cur.id] : acc
         }, [])
       )
-      this.history.each((ele) => {
+      this.history.each(async (ele) => {
         if (ele?.layer && showLayerIds.has(ele.layer)) {
           this.context.save()
           switch (ele?.type) {
@@ -244,6 +255,9 @@ export class PaintBoard {
             case CANVAS_ELE_TYPE.TEXT:
               textRender(this.context, ele as TextElement)
               break
+            case CANVAS_ELE_TYPE.IMAGE:
+              await imageRender(this.context, ele as ImageElement)
+              break
             default:
               break
           }
@@ -254,6 +268,14 @@ export class PaintBoard {
       if (this.select.selectElementIndex !== -1) {
         const rect = this.select.getCurSelectElement().rect
         drawResizeRect(this.context, rect)
+      }
+
+      if (this.select.guideLine.length) {
+        for (const line of this.select.guideLine) {
+          drawLine(this.context, line.start, line.end, {
+            color: '#65CC8A'
+          })
+        }
       }
     }
     this.cache()
@@ -424,5 +446,19 @@ export class PaintBoard {
       this.history.add(text)
       this.render()
     }
+  }
+
+  addImageElement(imgData: ImageData, position: MousePosition) {
+    const transformPos = this.transformPosition(position)
+    const rect = {
+      x: transformPos.x,
+      y: transformPos.y,
+      width: imgData.width,
+      height: imgData.height
+    }
+    console.log(imgData)
+    const image = new ImageElement(this.layer.current, imgData.url, rect)
+    this.history.add(image)
+    this.render()
   }
 }
