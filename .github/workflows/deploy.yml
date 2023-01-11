@@ -1,0 +1,43 @@
+name: deploy gh-page
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  build:
+    name: build and deploy gh-page
+    env:
+      COMMIT_SECRET: ${{secrets.commit_secret}}
+      USER_NAME: songlh
+      USER_EMAIL: song.lhlh@gmail.com
+      PUBLISH_DIR: ./dist
+      GITHUB_REPOSITORY: paint-board
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository main branch
+        uses: actions/checkout@main
+      - name: with node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: npm install
+        run: |
+          npm install -g pnpm
+          pnpm install
+      - name: npm run build
+        run: |
+          pnpm build
+      - name: commit files
+        run: |
+          cd $PUBLISH_DIR
+          git init
+          git config --local user.name $USER_NAME
+          git config --local user.email $USER_EMAIL
+          git status
+          git remote add origin https://$COMMIT_SECRET@github.com/$GITHUB_REPOSITORY.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "deploy to github pages"
+          git push origin gh-pages -f
+          echo deploy gh-pages complete
