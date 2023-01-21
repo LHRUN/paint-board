@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "node deploy.cjs",
     "lint": "pnpm lint:script && pnpm lint:style",
     "lint:script": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./",
     "lint:style": "stylelint --fix \"src/**/*.css\""
@@ -37,7 +36,6 @@
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
-    "gh-pages": "^4.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.0",
     "postcss": "^8.4.21",

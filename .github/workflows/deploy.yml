@@ -8,7 +8,7 @@ jobs:
   build:
     name: build and deploy gh-page
     env:
-      COMMIT_SECRET: ${{secrets.commit_secret}}
+      COMMIT_SECRET: ${{secrets.COMMIT_SECRET}}
       USER_NAME: songlh
       USER_EMAIL: song.lhlh@gmail.com
       PUBLISH_DIR: ./dist
