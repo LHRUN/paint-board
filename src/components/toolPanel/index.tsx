@@ -144,7 +144,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
         {showPanel && (
           <>
             {/* 类型切换 */}
-            <div className="btn-group">
+            <div className="btn-group flex">
               {typeSwitch.map(({ type, text }) => (
                 <button
                   key={type}
@@ -162,7 +162,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
               toolType === CANVAS_ELE_TYPE.ERASER) && (
               <div className="mt-3">
                 <div className="font-bold">Width</div>
-                <div className="btn-group mt-1">
+                <div className="btn-group flex mt-1">
                   {Object.values(CommonWidth).map((w) => (
                     <button
                       key={w}
@@ -272,7 +272,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
             {toolType === CANVAS_ELE_TYPE.FREE_DRAW && (
               <div className="mt-3">
                 <div className="font-bold">Style</div>
-                <div className="btn-group">
+                <div className="btn-group flex">
                   {styleSwitch.line_1.map(({ type, text }) => (
                     <button
                       key={type}
@@ -285,7 +285,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                     </button>
                   ))}
                 </div>
-                <div className="btn-group mt-1">
+                <div className="btn-group mt-1 flex">
                   {styleSwitch.line_2.map(({ type, text }) => (
                     <button
                       key={type}
