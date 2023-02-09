@@ -1,0 +1,25 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+    - '[0-9]+.*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+    
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+        prerelease: false
+        body: |
+            Please refer to [CHANGELOG.md](https://github.com/LHRUN/paint-board/blob/main/CHANGELOG.md) for details.
