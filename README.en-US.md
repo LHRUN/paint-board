@@ -32,7 +32,7 @@ Unfinished Features:
 + ...
 
 ## Operation Guide
-<image src="https://s1.ax1x.com/2023/02/16/pSb8nYt.png"/>
+<image src="https://s1.ax1x.com/2023/02/16/pSb8nYt.png" width="70%" />
 
 ## Getting Started
 ```
