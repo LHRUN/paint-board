@@ -32,7 +32,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + ...
 
 ## 操作指南
-<image src="https://s1.ax1x.com/2022/12/17/zHbHJK.png" />
+<image src="https://s1.ax1x.com/2023/02/16/pSb8NYq.png" width="70%" />
 
 ## 本地启动
 ```
