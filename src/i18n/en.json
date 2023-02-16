@@ -1,0 +1,19 @@
+{
+  "tool": {
+    "draw": "Draw",
+    "eraser": "Eraser",
+    "select": "Select"
+  },
+  "style": {
+    "basic": "Single",
+    "shadow": "Fluor",
+    "multicolor": "Multi",
+    "spray": "Spray",
+    "crayon": "Crayon",
+    "bubble": "Bubble"
+  },
+  "info": {
+    "welecome": "Welcome to star",
+    "url": "https://s1.ax1x.com/2023/02/16/pSb8nYt.png"
+  }
+}

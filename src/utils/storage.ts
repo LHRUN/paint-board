@@ -1,4 +1,5 @@
 export const BOARD_STORAGE_KEY = 'PAINT_BOARD_DATA'
+export const BOARD_LOCAL_KEY = 'PAINT_BOARD_LOCAL'
 
 /**
  * localStorage封装

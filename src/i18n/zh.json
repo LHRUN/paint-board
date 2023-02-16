@@ -1,0 +1,19 @@
+{
+  "tool": {
+    "draw": "画笔",
+    "eraser": "橡皮擦",
+    "select": "选择"
+  },
+  "style": {
+    "basic": "单色",
+    "shadow": "荧光",
+    "multicolor": "多色",
+    "spray": "喷雾",
+    "crayon": "蜡笔",
+    "bubble": "泡泡"
+  },
+  "info": {
+    "welecome": "欢迎Star",
+    "url": "https://s1.ax1x.com/2023/02/16/pSb8NYq.png"
+  }
+}

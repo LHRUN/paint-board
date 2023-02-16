@@ -32,13 +32,13 @@ Unfinished Features:
 + ...
 
 ## Operation Guide
-<image src="https://s1.ax1x.com/2022/12/17/zHbHJK.png"/>
+<image src="https://s1.ax1x.com/2023/02/16/pSb8nYt.png" width="70%" />
 
 ## Getting Started
 ```
 git clone https://github.com/LHRUN/paint-board.git
 pnpm install
-pnpm run dev
+pnpm dev
 ```
 
 ## File List
@@ -57,6 +57,8 @@ pnpm run dev
 │  └─board // board page
 │
 ├─types
+│
+├─i18n
 │
 └─utils
   ├─constants
