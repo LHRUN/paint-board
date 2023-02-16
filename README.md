@@ -38,7 +38,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ```
 git clone https://github.com/LHRUN/paint-board.git
 pnpm install
-pnpm run dev
+pnpm dev
 ```
 
 ## 文件结构
@@ -57,6 +57,8 @@ pnpm run dev
 │  └─board // 画板页
 │
 ├─types
+│
+├─i18n
 │
 └─utils
   ├─constants
