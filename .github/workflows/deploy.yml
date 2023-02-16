@@ -2,8 +2,6 @@ name: deploy gh-page
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 jobs:
   build:
     name: build and deploy gh-page
