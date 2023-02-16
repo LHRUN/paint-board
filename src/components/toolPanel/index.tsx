@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import { FreeDrawStyle } from '@/utils/element/freeDraw'
@@ -26,6 +27,7 @@ let toastTimeout: NodeJS.Timeout | null = null
  * 操作面板
  */
 const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
+  const { t } = useTranslation()
   const [, setRefresh] = useState(0) // 刷新数据
   const [toastState, setToastState] = useState(false) // 复制提示
   const [showPanel, setShowPanel] = useState(true) // 面板展示控制
@@ -153,7 +155,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                   }`}
                   onClick={() => setToolType(type)}
                 >
-                  {text}
+                  {t(text)}
                 </button>
               ))}
             </div>
@@ -281,7 +283,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                       }`}
                       onClick={() => setFreeDrawStyle(type)}
                     >
-                      {text}
+                      {t(text)}
                     </button>
                   ))}
                 </div>
@@ -294,7 +296,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                       }`}
                       onClick={() => setFreeDrawStyle(type)}
                     >
-                      {text}
+                      {t(text)}
                     </button>
                   ))}
                 </div>

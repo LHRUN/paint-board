@@ -1,0 +1,15 @@
+{
+  "tool": {
+    "draw": "Draw",
+    "eraser": "Eraser",
+    "select": "Select"
+  },
+  "style": {
+    "basic": "Single",
+    "shadow": "Fluorescent",
+    "multicolor": "Multicolor",
+    "spray": "Spray",
+    "crayon": "Crayon",
+    "bubble": "Bubble"
+  }
+}
