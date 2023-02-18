@@ -225,7 +225,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                       })}
                       {board.currentLineColor.length < 6 && (
                         <div
-                          className="w-8 h-8 rounded-sm border-dashed border-2 border-black text-center leading-6 text-2xl box-border"
+                          className="w-8 h-8 rounded-sm border-dashed border-2 border-black text-center leading-6 text-2xl box-border cursor-pointer"
                           onClick={() => {
                             changeLineColor(
                               '#000000',
@@ -308,28 +308,28 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
               <ul className="menu menu-horizontal bg-base-100 rounded-box justify-between mt-1">
                 <li>
                   <a onClick={undo}>
-                    <div className="tooltip" data-tip="后退">
+                    <div className="tooltip" data-tip={t('operate.undo')}>
                       <UndoIcon />
                     </div>
                   </a>
                 </li>
                 <li>
                   <a onClick={redo}>
-                    <div className="tooltip" data-tip="前进">
+                    <div className="tooltip" data-tip={t('operate.redo')}>
                       <RedoIcon />
                     </div>
                   </a>
                 </li>
                 <li>
                   <a onClick={clean}>
-                    <div className="tooltip" data-tip="清除画布">
+                    <div className="tooltip" data-tip={t('operate.clean')}>
                       <CleanIcon />
                     </div>
                   </a>
                 </li>
                 <li>
                   <a onClick={saveImage}>
-                    <div className="tooltip" data-tip="导出为图片">
+                    <div className="tooltip" data-tip={t('operate.save')}>
                       <SaveIcon />
                     </div>
                   </a>

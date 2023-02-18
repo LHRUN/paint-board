@@ -1,6 +1,7 @@
 import React from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { useTranslation } from 'react-i18next'
 
 import { PaintBoard } from '@/utils/paintBoard'
 import LayerItem from './layerItem'
@@ -14,6 +15,8 @@ interface IProps {
  * 图层组件
  */
 const Layer: React.FC<IProps> = ({ board, refresh }) => {
+  const { t } = useTranslation()
+
   /**
    * 添加图层
    */
@@ -44,7 +47,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
           <span
             onClick={addLayer}
             className="text-2xl cursor-pointer tooltip"
-            data-tip="添加图层"
+            data-tip={t('layer.add')}
           >
             +
           </span>
@@ -53,7 +56,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
               deleteLayer(board?.layer.current)
             }}
             className="ml-3 mr-3 text-2xl cursor-pointer tooltip"
-            data-tip="删除图层"
+            data-tip={t('layer.delete')}
           >
             -
           </span>

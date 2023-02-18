@@ -12,6 +12,16 @@
     "crayon": "蜡笔",
     "bubble": "泡泡"
   },
+  "operate": {
+    "undo": "后退",
+    "redo": "前进",
+    "clean": "清除画板",
+    "save": "保存为图片"
+  },
+  "layer": {
+    "add": "添加图层",
+    "delete": "删除图层"
+  },
   "info": {
     "welecome": "欢迎Star",
     "url": "https://s1.ax1x.com/2023/02/16/pSb8NYq.png"
