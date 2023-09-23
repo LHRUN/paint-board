@@ -1,3 +1,10 @@
+# 0.2.4 (2023-09-23)
+
+### Fix
+
+- issue#11
+- click mask doesn't close
+
 # 0.2.3 (2023-02-16)
 
 ### Feat
