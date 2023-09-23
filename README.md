@@ -10,7 +10,7 @@
 ## 预览
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
-![](https://s1.ax1x.com/2022/12/17/zH59vn.png)
+![](/public/desc/desc_preview.png)
 
 ## 功能列表
 已完成功能：
@@ -32,7 +32,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + ...
 
 ## 操作指南
-<image src="https://s1.ax1x.com/2023/02/16/pSb8NYq.png" width="70%" />
+<image src="/public/desc/desc_zh.png" width="70%" />
 
 ## 本地启动
 ```

@@ -33,7 +33,7 @@ const Info: React.FC = () => {
           setShowModal(false)
         }}
       >
-        <div className="flex flex-col bg-white rounded-2xl overflow-hidden w-7/12 py-1 px-3">
+        <div className="flex flex-col bg-white rounded-2xl overflow-hidden py-1 px-3">
           <div className="flex items-center justify-between font-bold my-4 mx-4">
             <div>
               repo:
@@ -52,7 +52,7 @@ const Info: React.FC = () => {
             </span>
           </div>
 
-          <img className="mask" src={t('info.url') || ''} />
+          <img className="mask" width={600} src={t('info.url') || ''} />
         </div>
       </Mask>
     </>
