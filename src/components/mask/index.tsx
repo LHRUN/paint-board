@@ -9,13 +9,13 @@ interface IProps {
 const Mask: FC<IProps> = ({ show, clickMask, children }) => {
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-full items-center justify-center bg-black z-10 bg-opacity-75 ${
-        show ? 'flex' : 'hidden'
+      className={`fixed top-0 left-0 right-0 bottom-0 bg-black z-10 bg-opacity-75 ${
+        show ? 'block' : 'hidden'
       }`}
       onClick={clickMask}
     >
       <div
-        className="flex items-center justify-center"
+        className="absolute top-1/2 left-1/2 -translate-x-2/4 -translate-y-2/4"
         onClick={(e) => e.stopPropagation()}
       >
         {children}

@@ -104,7 +104,7 @@ export class History<T> {
    * 后退
    */
   undo() {
-    if (this.step >= 0) {
+    if (this.step >= 1) {
       this.step--
       return this.cacheStack[this.step]
     }
@@ -124,8 +124,8 @@ export class History<T> {
    * 清空
    */
   clean() {
-    this.cacheStack = []
-    this.step = -1
+    this.cacheStack = [[]]
+    this.step = 0
   }
 
   /**
