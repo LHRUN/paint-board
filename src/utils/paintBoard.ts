@@ -57,7 +57,7 @@ export class PaintBoard {
   // 选择元素
   select: SelectElement
   // 版本号，主要用于兼容缓存数据
-  version = '0.2.4'
+  version = '0.2.5'
   // 画笔素材加载状态
   loadMaterialState = false
   // 画笔素材

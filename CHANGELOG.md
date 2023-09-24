@@ -1,3 +1,9 @@
+# 0.2.5 (2023-09-24)
+
+### Fix
+
+- single layer deleted error
+
 # 0.2.4 (2023-09-23)
 
 ### Fix
