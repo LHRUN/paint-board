@@ -32,7 +32,7 @@ const Layer: React.FC<IProps> = ({ board, refresh }) => {
    * @param id 图层id
    */
   const deleteLayer = (id: number | undefined) => {
-    if (board && id) {
+    if (board && board.layer.stack.length > 1 && id) {
       board.history.delete('layer', id)
       board.layer.delete(id)
       refresh()
