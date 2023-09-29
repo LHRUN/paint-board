@@ -13,6 +13,7 @@ import { Layer } from './layer'
 import { Cursor, CURSOR_TYPE } from './cursor'
 import { TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
+import { formatPublicUrl } from './common'
 
 type MOVE_ELE = FreeDraw | Eraser | null
 
@@ -57,7 +58,7 @@ export class PaintBoard {
   // 选择元素
   select: SelectElement
   // 版本号，主要用于兼容缓存数据
-  version = '0.2.5'
+  version = '0.2.6'
   // 画笔素材加载状态
   loadMaterialState = false
   // 画笔素材
@@ -107,7 +108,7 @@ export class PaintBoard {
       })
       this.context.fillText('loading...', loadPos.x, loadPos.y)
       const crayonImg = new Image()
-      const imgurl = new URL('/pattern/crayon.png', import.meta.url).href
+      const imgurl = formatPublicUrl('/pattern/crayon.png')
       crayonImg.src = imgurl
       crayonImg.onload = () => {
         this.loadMaterialState = true
