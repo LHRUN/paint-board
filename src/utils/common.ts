@@ -182,8 +182,8 @@ export const getRandomFloat = (min: number, max: number) => {
  * @returns publicDir + originUrl
  */
 export const formatPublicUrl = (originUrl: string) => {
-  if (typeof originUrl === 'string') {
-    return new URL(originUrl, import.meta.url).href
+  if (originUrl && typeof originUrl === 'string') {
+    return `${import.meta.env.BASE_URL}${originUrl}`
   }
   return ''
 }
