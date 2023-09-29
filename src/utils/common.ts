@@ -175,3 +175,15 @@ export const getRandomInt = (min: number, max: number) => {
 export const getRandomFloat = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
+
+/**
+ * 处理public文件夹下的静态文件路径
+ * @param originUrl
+ * @returns publicDir + originUrl
+ */
+export const formatPublicUrl = (originUrl: string) => {
+  if (typeof originUrl === 'string') {
+    return new URL(originUrl, import.meta.url).href
+  }
+  return ''
+}

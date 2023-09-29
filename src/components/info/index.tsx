@@ -5,6 +5,7 @@ import Mask from '@/components/mask'
 import ZhIcon from '../icons/zh'
 import EnIcon from '../icons/en'
 import { BOARD_LOCAL_KEY, storage } from '@/utils/storage'
+import { formatPublicUrl } from '@/utils/common'
 import styles from './index.module.css'
 
 /**
@@ -52,7 +53,11 @@ const Info: React.FC = () => {
             </span>
           </div>
 
-          <img className="mask" width={600} src={t('info.url') || ''} />
+          <img
+            className="mask"
+            width={600}
+            src={formatPublicUrl(t('info.url') || '')}
+          />
         </div>
       </Mask>
     </>
