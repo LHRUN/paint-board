@@ -2,7 +2,8 @@
   "tool": {
     "draw": "Draw",
     "eraser": "Eraser",
-    "select": "Select"
+    "select": "Select",
+    "render": "Render"
   },
   "style": {
     "basic": "Single",

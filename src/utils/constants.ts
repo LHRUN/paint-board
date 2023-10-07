@@ -3,6 +3,7 @@ export enum CANVAS_ELE_TYPE {
   FREE_DRAW = 'freeDraw',
   ERASER = 'eraser',
   SELECT = 'select',
+  RENDER = 'render',
   TEXT = 'text'
 }
 

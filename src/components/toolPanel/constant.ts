@@ -13,6 +13,10 @@ export const typeSwitch = [
   {
     type: CANVAS_ELE_TYPE.SELECT,
     text: 'tool.select'
+  },
+  {
+    type: CANVAS_ELE_TYPE.RENDER,
+    text: 'tool.render'
   }
 ]
 

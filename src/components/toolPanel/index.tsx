@@ -14,6 +14,12 @@ import CloseIcon from '../icons/close'
 import MenuIcon from '../icons/menu'
 
 import styles from './index.module.css'
+import fs from 'fs'
+
+// import body from 'koa-body'
+// import koastatic from 'koa-static'
+// import { resolve } from 'path'
+
 
 interface IProps {
   board: PaintBoard | undefined // 画板
@@ -128,6 +134,79 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
       setRefresh((v) => v + 1)
     }
   }
+
+  // Call image upload
+  function uploadImage() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = handleFileUpload;
+  
+    input.click();
+  }
+  
+  function handleFileUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    // 发送 AJAX 请求
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://127.0.0.1:9876/upload', true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          console.log('File uploaded successfully!');
+        } else {
+          console.error('Failed to upload file:', xhr.statusText);
+        }
+      }
+    };
+    xhr.send(formData);
+
+    
+    // console.log(file?.toString());
+    // if (file) {
+    //   const formData = new FormData();
+    //   formData.append('image', file);
+  
+    //   fetch('http://127.0.0.1:9876/upload', {
+    //     method: 'POST',
+    //     body: formData,
+    //   })
+    //     .then((response) => response.json())
+    //     .then((data) => {
+    //       if (data.success) {
+    //         console.log('上传成功:', data.message);
+    //       } else {
+    //         console.error('上传失败:', data.message);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       console.error('上传失败:', error);
+    //     });
+    // }
+  }
+
+  // Upload image.
+  type filesitemtype = {
+    filepath: string,
+    size: number,
+    mimetype: string,
+    newFilename: string,
+    originalFilename: string
+    url:string
+  }
+  type filestype = {
+      url: string,
+      size: number,
+      mimetype: string,
+      newFilename: string,
+      originalFilename: string
+  }
+
 
   return (
     <>
@@ -302,6 +381,15 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                 </div>
               </div>
             )}
+            {/* 自由渲染 */}
+            {toolType === CANVAS_ELE_TYPE.RENDER && (
+              <div className='mt-3'>
+                <div>在这里上传含有所需要提取的笔刷的图片(png, jpg, etc.)</div>
+                <button className='btn btn-sm flex-grow' onClick={() => uploadImage()}>上传图片</button>
+              </div>
+            )
+
+            }
             {/* 操作画板 */}
             <div className="mt-3">
               <div className="font-bold">Tool</div>

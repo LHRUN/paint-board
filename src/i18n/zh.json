@@ -2,7 +2,8 @@
   "tool": {
     "draw": "画笔",
     "eraser": "橡皮擦",
-    "select": "选择"
+    "select": "选择",
+    "render": "渲染"
   },
   "style": {
     "basic": "单色",
