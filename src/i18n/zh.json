@@ -26,5 +26,11 @@
   "info": {
     "welecome": "欢迎Star",
     "url": "desc/desc_zh.png"
+  },
+  "renderer": {
+    "render1": "笔刷1",
+    "render2": "笔刷2",
+    "render3": "笔刷3",
+    "render4": "笔刷4"
   }
 }

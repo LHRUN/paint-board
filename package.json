@@ -23,7 +23,8 @@
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
-    "react-i18next": "^12.1.5"
+    "react-i18next": "^12.1.5",
+    "three": "^0.157.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.1",
@@ -33,6 +34,7 @@
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.10",
+    "@types/three": "^0.156.0",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
     "@vitejs/plugin-react": "^2.2.0",

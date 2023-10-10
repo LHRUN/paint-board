@@ -8,6 +8,8 @@ import {
 import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
+import * as THREE from 'three'
+
 export interface FreeDrawRect extends ElementRect {
   minX: number
   maxX: number
@@ -154,12 +156,96 @@ export class FreeDraw extends CanvasElement {
   }
 }
 
-/**
- * 自由画笔渲染
- * @param context canvas二维渲染上下文
- * @param instance FreeDraw
- * @param material 画笔素材
- */
+export const threejsRender = (
+  scene: THREE.Scene,
+  instance: FreeDraw,
+  brush: THREE.RawShaderMaterial,
+  //brush: THREE.RawShaderMaterial,
+)=>{
+  const position:number[] = []
+  const radius:number[] = []
+
+  if(instance.positions.length <= 1) return
+
+  for (let i = 1; i < instance.positions.length; i++) {
+    const { x: x, y: y } = instance.positions[i]
+    position.push(x, y)
+    const w = instance.lineWidths[i]
+    radius.push(w/2)
+  }
+
+  const position0 = [...position];
+  const position1 = [...position.slice(2)];
+  const radius0 = [...radius];
+  const radius1 = [...radius.slice(1)];
+  const summedLength0 = [];
+  const summedLength1 = [];
+
+  if(brush.uniforms.stampMode.value == 0){
+    var currLength = 0.0;
+    summedLength0.push(currLength);
+    for(let i = 0; i < radius1.length; ++i){
+      const stride = 2*i;
+      const p0 = new THREE.Vector2(position0[stride], position0[stride+1]);
+      const p1 = new THREE.Vector2(position1[stride], position1[stride+1]);
+
+      currLength += p0.distanceTo(p1);
+      summedLength0.push(currLength);
+      summedLength1.push(currLength);
+    }
+  }
+  // The method about RatioDistant is not published yet.
+  // There is calculus in it so you can see several weired formulas when it comes.
+  // Ignore it temporily.
+  if(brush.uniforms.stampMode.value == 1){
+    var currLength = 0.0;
+    summedLength0.push(currLength);
+    for(let i = 0; i < radius1.length; ++i){
+      const stride = 2*i;
+      const p0 = new THREE.Vector2(position0[stride], position0[stride+1]);
+      const p1 = new THREE.Vector2(position1[stride], position1[stride+1]);
+      let r0 = radius0[i];
+      let r1 = radius1[i];
+
+      // When raidus is zero index comes to infinity, which is avoided here.
+      const tolerance = 1e-5;
+      if(r0 <= 0 || r0/r1 < tolerance){
+        r0 = tolerance * r1;
+        radius0[i] = r0;
+      }
+      if(r1 <= 0 || r1/r0 < tolerance){
+        r1 = tolerance * r0;
+        radius1[i] = r1;
+      }
+
+      let l = p0.distanceTo(p1);
+
+      if(r0 <= 0.0 && r1 <= 0.0) currLength += 0.0;
+      else if(r0 == r1) currLength += l/r0;
+      else currLength += Math.log(r0/r1)/(r0 - r1) * l;
+      summedLength0.push(currLength);
+      summedLength1.push(currLength);
+    }
+  }
+
+  const buffer = new THREE.BufferGeometry();
+  const indices = [
+    0, 1, 2,
+    2, 3, 0,
+  ];
+  buffer.setIndex(indices);
+  buffer.setAttribute("position0", new THREE.InstancedBufferAttribute(new Float32Array(position0), 2));
+  buffer.setAttribute("radius0", new THREE.InstancedBufferAttribute(new Float32Array(radius0), 1));
+  buffer.setAttribute("position1", new THREE.InstancedBufferAttribute(new Float32Array(position1), 2));
+  buffer.setAttribute("radius1", new THREE.InstancedBufferAttribute(new Float32Array(radius1), 1));
+  buffer.setAttribute("summedLength0", new THREE.InstancedBufferAttribute(new Float32Array(summedLength0), 1));
+  buffer.setAttribute("summedLength1", new THREE.InstancedBufferAttribute(new Float32Array(summedLength1), 1));
+
+  const polylineMesh = new THREE.InstancedMesh(buffer, brush, instance.positions.length-2);
+  polylineMesh.frustumCulled = false;
+  scene.add(polylineMesh);
+}
+
 export const freeDrawRender = (
   context: CanvasRenderingContext2D,
   instance: FreeDraw,
@@ -238,6 +324,7 @@ const _drawBasic = (
   const { positions, lineWidths } = instance
   const { x: centerX, y: centerY } = positions[i - 1]
   const { x: endX, y: endY } = positions[i]
+
   context.beginPath()
   if (i == 1) {
     context.moveTo(centerX, centerY)

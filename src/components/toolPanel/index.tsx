@@ -5,7 +5,7 @@ import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import { FreeDrawStyle } from '@/utils/element/freeDraw'
 import Layer from '../layer'
-import { CHANGE_COLOR_TYPE, styleSwitch, typeSwitch } from './constant'
+import { BrushSwitch, CHANGE_COLOR_TYPE, styleSwitch, typeSwitch } from './constant'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
@@ -16,6 +16,9 @@ import MenuIcon from '../icons/menu'
 import styles from './index.module.css'
 import fs from 'fs'
 
+import tgt from './tgt.json'
+import { Dictionary, List } from 'lodash'
+
 // import body from 'koa-body'
 // import koastatic from 'koa-static'
 // import { resolve } from 'path'
@@ -24,7 +27,9 @@ import fs from 'fs'
 interface IProps {
   board: PaintBoard | undefined // 画板
   toolType: string // 操作类型
+  brushType: string // 笔刷类型
   setToolType: (type: string) => void // 修改操作类型
+  setBrushType: (type: string) => void // 点选笔刷
 }
 
 let toastTimeout: NodeJS.Timeout | null = null
@@ -32,7 +37,7 @@ let toastTimeout: NodeJS.Timeout | null = null
 /**
  * 操作面板
  */
-const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
+const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
   const { t } = useTranslation()
   const [, setRefresh] = useState(0) // 刷新数据
   const [toastState, setToastState] = useState(false) // 复制提示
@@ -45,6 +50,15 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
     return ''
   }, [board?.currentLineColor])
 
+  // 设置画笔类型
+  const [brushType, setBrushType] = useState<string>("1")
+  const handleBrushType = (type: string) => {
+    if (board){
+      setBrushType(type);
+      console.log(brushType);
+      board.render();
+    }
+  }
   // 改变画笔颜色
   const changeLineColor = (color: string, index: number, type: string) => {
     if (board) {
@@ -165,29 +179,27 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
       }
     };
     xhr.send(formData);
+  }
 
-    
-    // console.log(file?.toString());
-    // if (file) {
-    //   const formData = new FormData();
-    //   formData.append('image', file);
-  
-    //   fetch('http://127.0.0.1:9876/upload', {
-    //     method: 'POST',
-    //     body: formData,
-    //   })
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       if (data.success) {
-    //         console.log('上传成功:', data.message);
-    //       } else {
-    //         console.error('上传失败:', data.message);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       console.error('上传失败:', error);
-    //     });
-    // }
+  // Read brushes
+  const [brushes, setBrushes] = useState<List<any>>([])
+  const handleBrushes = () => {
+    if (board){
+      const brushlist = []
+      let count = 0;
+      for(let key in tgt){
+        const value = tgt[key];
+        value.key = key;
+        console.log(key);
+        brushlist.push(value);
+        count += 1;
+        if (count == 8){
+          break;
+        }
+      }
+      setBrushes(brushlist);
+      board.render();
+    }
   }
 
   // Upload image.
@@ -351,42 +363,67 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
             )}
             {/* 样式配置 */}
             {toolType === CANVAS_ELE_TYPE.FREE_DRAW && (
-              <div className="mt-3">
-                <div className="font-bold">Style</div>
-                <div className="btn-group flex">
-                  {styleSwitch.line_1.map(({ type, text }) => (
-                    <button
-                      key={type}
-                      className={`btn btn-sm flex-grow ${
-                        board?.currentFreeDrawStyle === type ? 'btn-active' : ''
-                      }`}
-                      onClick={() => setFreeDrawStyle(type)}
-                    >
-                      {t(text)}
-                    </button>
-                  ))}
-                </div>
-                <div className="btn-group mt-1 flex">
-                  {styleSwitch.line_2.map(({ type, text }) => (
-                    <button
-                      key={type}
-                      className={`btn btn-sm flex-grow ${
-                        board?.currentFreeDrawStyle === type ? 'btn-active' : ''
-                      }`}
-                      onClick={() => setFreeDrawStyle(type)}
-                    >
-                      {t(text)}
-                    </button>
-                  ))}
-                </div>
+              
+                <div>
+                  <div className="font-bold">笔刷列表</div>
+                {brushes.map(({ key, Thickness, Rvalue, Gvalue, Bvalue, Avalue, StampimageNoisefactor, Rotationrandomness}) => (
+                  <div className="btn-group flex">
+                  <button
+                    key={key}
+                    className={`btn btn-sm flex-grow ${
+                      brushType === key ? 'btn-active' : ''
+                    }`}
+                    onClick={() => setBrushType(key)}
+                  >
+                    {key}
+                  </button><br/><br/></div>
+                ))}
               </div>
+              // <div className="mt-3">
+              //   <div className="font-bold">Style</div>
+              //   <div className="btn-group flex">
+              //     {styleSwitch.line_1.map(({ type, text }) => (
+              //       <button
+              //         key={type}
+              //         className={`btn btn-sm flex-grow ${
+              //           board?.currentFreeDrawStyle === type ? 'btn-active' : ''
+              //         }`}
+              //         onClick={() => setFreeDrawStyle(type)}
+              //       >
+              //         {t(text)}
+              //       </button>
+              //     ))}
+              //   </div>
+              //   <div className="btn-group mt-1 flex">
+              //     {styleSwitch.line_2.map(({ type, text }) => (
+              //       <button
+              //         key={type}
+              //         className={`btn btn-sm flex-grow ${
+              //           board?.currentFreeDrawStyle === type ? 'btn-active' : ''
+              //         }`}
+              //         onClick={() => setFreeDrawStyle(type)}
+              //       >
+              //         {t(text)}
+              //       </button>
+              //     ))}
+              //   </div>
+              // </div>
             )}
             {/* 自由渲染 */}
             {toolType === CANVAS_ELE_TYPE.RENDER && (
-              <div className='mt-3'>
+              <><div className='mt-3'>
                 <div>在这里上传含有所需要提取的笔刷的图片(png, jpg, etc.)</div>
                 <button className='btn btn-sm flex-grow' onClick={() => uploadImage()}>上传图片</button>
+                <span>={'>'}</span>
+                <button className='btn btn-sm flex-grow' onClick={() => uploadImage()}>切割图片</button>
+                <span>={'>'}</span>
+                <button className='btn btn-sm flex-grow' onClick={() => handleBrushes()}>笔刷生成</button>
               </div>
+              <div>
+              <div>笔刷列表</div>
+                {/* 类型切换 */}
+              </div>
+              </>
             )
 
             }

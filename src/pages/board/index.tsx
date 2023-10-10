@@ -17,7 +17,7 @@ const Board: React.FC = () => {
       return new PaintBoard(canvasRef)
     }
   }, [canvasRef])
-
+  
   // 工具类型
   const [toolType, setToolType] = useState<string>(CANVAS_ELE_TYPE.FREE_DRAW)
 

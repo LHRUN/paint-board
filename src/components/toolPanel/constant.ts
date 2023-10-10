@@ -6,10 +6,10 @@ export const typeSwitch = [
     type: CANVAS_ELE_TYPE.FREE_DRAW,
     text: 'tool.draw'
   },
-  {
-    type: CANVAS_ELE_TYPE.ERASER,
-    text: 'tool.eraser'
-  },
+  // {
+  //   type: CANVAS_ELE_TYPE.ERASER,
+  //   text: 'tool.eraser'
+  // },
   {
     type: CANVAS_ELE_TYPE.SELECT,
     text: 'tool.select'
@@ -50,6 +50,25 @@ export const styleSwitch = {
     }
   ]
 }
+
+export const BrushSwitch = [
+  {
+    type: "1",
+    text: 'renderer.render1'
+  },
+  {
+    type: "2",
+    text: 'renderer.render2'
+  },
+  {
+    type: "3",
+    text: 'renderer.render3'
+  },
+  {
+    type: "4",
+    text: 'renderer.render4'
+  }
+]
 
 export const CHANGE_COLOR_TYPE = {
   UNI: 'uni',

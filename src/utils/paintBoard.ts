@@ -1,9 +1,12 @@
+import * as THREE from 'three'
+
 import { ElementRect, ELEMENT_INSTANCE, MousePosition } from '@/types'
 import { Eraser, eraserRender } from './element/eraser'
 import {
   FreeDraw,
   FreeDrawStyle,
   freeDrawRender,
+  threejsRender,
   Material
 } from './element/freeDraw'
 import { CANVAS_ELE_TYPE, CommonWidth, RESIZE_TYPE } from './constants'
@@ -14,6 +17,7 @@ import { Cursor, CURSOR_TYPE } from './cursor'
 import { TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
 import { formatPublicUrl } from './common'
+import { vsCode, fsCode } from './shaderCode.glsl';
 
 type MOVE_ELE = FreeDraw | Eraser | null
 
@@ -32,6 +36,12 @@ export type HistoryState = Pick<
  * PaintBoard
  */
 export class PaintBoard {
+  scene: THREE.Scene
+  camera: THREE.OrthographicCamera
+  renderer: THREE.WebGLRenderer
+  //brush: THREE.RawShaderMaterial
+  brush: THREE.RawShaderMaterial
+
   canvas: HTMLCanvasElement
   context: CanvasRenderingContext2D
   // 历史操作记录
@@ -67,9 +77,72 @@ export class PaintBoard {
   }
 
   constructor(canvas: HTMLCanvasElement) {
+    // Webgl canvas initialization
+    this.scene = new THREE.Scene()
+    this.camera = new THREE.OrthographicCamera(
+      0, canvas.width, 0, canvas.height, -1.0, 1000
+    )
+
+    const renderer = new THREE.WebGLRenderer( {
+      canvas: canvas,
+      preserveDrawingBuffer: true,
+      antialias: true,
+      alpha: true,
+      premultipliedAlpha: false
+    })
+    renderer.setClearColor('#FFFFFF'); // Set background colour
+    renderer.setSize(canvas.width, canvas.height)
+    this.renderer = renderer
+
+    window.addEventListener("resize", () => {
+      const div = canvas.parentNode as HTMLDivElement
+      const width = div.clientWidth;
+      const height = div.clientHeight;
+      renderer.setSize(width, height); // Update size
+      this.camera.left = 0;
+      this.camera.right= width;
+      this.camera.top = 0;
+      this.camera.bottom = height;
+      this.camera.updateProjectionMatrix();
+    });
+
+    const Types = {
+      Vanilla: 0,
+      Stamp: 1,
+      Airbrush: 2,
+    }
+    const StampModes = {
+      EquiDistant: 0,
+      RatioDistant: 1,
+    }
+
+    // this.brush = new THREE.RawShaderMaterial({
+    this.brush = new THREE.RawShaderMaterial({
+      uniforms: {
+        type: {value: Types.Stamp},
+        alpha: {value: 1.0},
+        color: {value: [0.0, 0.0, 0.0]},
+        // Stamp
+        footprint: { value: new THREE.Texture()},
+        stampInterval: { value: 2.0 },
+        noiseFactor: { value: 0.0 },
+        rotationFactor: { value: 0.0 },
+        stampMode: {value: StampModes.RatioDistant},
+        // Airbrush
+        gradient: {value: new THREE.DataTexture() },
+      },
+      vertexShader: vsCode,
+      fragmentShader: fsCode,
+      side: THREE.DoubleSide,
+      transparent: true,
+      glslVersion: THREE.GLSL3,
+    });
+
     // 初始化配置
     this.canvas = canvas
-    this.context = canvas.getContext('2d') as CanvasRenderingContext2D
+    // this.context = canvas.getContext('2d') as CanvasRenderingContext2D
+    // Give it a fake context
+    this.context = document.createElement('canvas').getContext('2d') as CanvasRenderingContext2D
     this.initCanvasSize()
     this.initOriginPosition()
     const { top, left } = canvas.getBoundingClientRect()
@@ -252,6 +325,19 @@ export class PaintBoard {
         }
       })
 
+      this.history.each((ele) => {
+        if (ele?.layer && showLayerIds.has(ele.layer)) {
+          switch (ele?.type) {
+            case CANVAS_ELE_TYPE.FREE_DRAW:
+              threejsRender(this.scene, ele as FreeDraw, this.brush)
+              break
+            default:
+              break
+          }
+        }
+      })
+      this.renderer.render(this.scene, this.camera)
+
       if (this.select.selectElementIndex !== -1) {
         const rect = this.select.getCurSelectElement().rect
         drawResizeRect(this.context, rect)
@@ -289,6 +375,9 @@ export class PaintBoard {
    */
   cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
     this.context.clearRect(-(w / 2), -(w / 2), w, w)
+    this.scene.clear()
+    this.renderer.render(this.scene, this.camera)
+    this.renderer.dispose()
   }
 
   // 当前画笔颜色

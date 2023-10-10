@@ -26,5 +26,11 @@
   "info": {
     "welecome": "Welcome to star",
     "url": "desc/desc_en.png"
+  },
+  "renderer": {
+    "render1": "Brush1",
+    "render2": "Brush2",
+    "render3": "Brush3",
+    "render4": "Brush4"
   }
 }
