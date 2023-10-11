@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect} from 'react'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
@@ -56,7 +56,6 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
   }, [board?.currentLineColor])
 
 
-
   // 设置画笔类型
   const Types = {
     Vanilla: 0,
@@ -76,7 +75,9 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
       image.id = 'tgt';
       const imageurl = formatPublicUrl("data/brush1/" + type);
       image.src = imageurl;
-      const texture = new THREE.Texture(image);
+      const texture = new THREE.TextureLoader().load("data/brush1/" + type, ()=>{
+        board.render()
+      });
       document.getElementById('tgt')?.replaceWith(image);
       const new_brush = new THREE.RawShaderMaterial({
         uniforms: {
@@ -87,7 +88,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
           // Stamp
           footprint: { value: texture},
           stampInterval: { value: Interval * 2 },
-          noiseFactor: { value: stampnoise },
+          noiseFactor: { value: stampnoise * 0.01 },
           rotationFactor: { value: rotationfactor },
           stampMode: {value: StampModes.RatioDistant},
           // Airbrush
@@ -194,16 +195,24 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
     }
   }
 
+  // Manage file upload
+  const [upoloaded_img, setUploaded_img] = useState<boolean>(false);
+  const [upoloaded_csv, setUploaded_csv] = useState<boolean>(false);
   // Call image upload
   function uploadImage() {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = handleFileUpload;
-  
     input.click();
   }
-  
+  function uploadCsv() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'text/*';
+    input.onchange = handleFileUpload;
+    input.click();
+  }
   function handleFileUpload(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -224,6 +233,17 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
       }
     };
     xhr.send(formData);
+    if(file?.type == 'image/png'){
+      setUploaded_img(true);
+      setUploaded_csv(false);
+      board?.render()
+      console.log(file?.type);
+    }else if(file?.type == 'text/csv'){
+      setUploaded_csv(true);
+      console.log(file?.type);
+    }
+    board?.render()
+    console.log(upoloaded_img, upoloaded_csv);
   }
 
   // Read brushes
@@ -247,21 +267,19 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
     }
   }
 
-  // Upload image.
-  type filesitemtype = {
-    filepath: string,
-    size: number,
-    mimetype: string,
-    newFilename: string,
-    originalFilename: string
-    url:string
+  function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
   }
-  type filestype = {
-      url: string,
-      size: number,
-      mimetype: string,
-      newFilename: string,
-      originalFilename: string
+  async function splitData(): Promise<void> {
+    if(upoloaded_img && upoloaded_csv){
+      await sleep(3000); // 暂停执行 3 秒
+      alert("切割完毕！");
+    }else{
+      alert("请确认您已经上传了图片和csv文件，并稍后再点击切割");
+    }
+    
   }
 
 
@@ -460,13 +478,15 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
               <><div className='mt-3'>
                 <div>在这里上传含有所需要提取的笔刷的图片(png, jpg, etc.)</div>
                 <button className='btn btn-sm flex-grow' onClick={() => uploadImage()}>上传图片</button>
-                <span>={'>'}</span>
-                <button className='btn btn-sm flex-grow' onClick={() => uploadImage()}>切割图片</button>
+              </div>
+              <div>
+              <span>=========={'>'}</span>
+                <button className='btn btn-sm flex-grow' onClick={() => splitData()}>切割图片</button>
                 <span>={'>'}</span>
                 <button className='btn btn-sm flex-grow' onClick={() => handleBrushes()}>笔刷生成</button>
               </div>
               <div>
-              <div>笔刷列表</div>
+              <button className='btn btn-sm flex-grow' onClick={() => uploadCsv()}>上传Path信息</button>
                 {/* 类型切换 */}
               </div>
               </>

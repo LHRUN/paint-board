@@ -14,15 +14,26 @@ return res.status(400).send('No files were uploaded.');
 }
 
 const file = req.files.file;
-const destinationFolder = 'test.png';
-console.log(file.toString());
-fs.writeFile(destinationFolder, file, (error) => {
-if (error) {
-    console.error('Failed to write file:', error);
-} else {
-    console.log('File written successfully!');
+var destinationFile = "";
+if(file.mimetype == 'image/png'){
+  destinationFile = 'test.png';
+}else if(file.mimetype == "text/csv"){
+  destinationFile = "test.csv";
 }
-});
+
+function saveFileAsImage(fileData, filePath) {
+  const fileBuffer = Buffer.from(fileData.data, 'binary');
+  fs.writeFileSync(filePath, fileBuffer);
+}
+console.log(req.files);
+saveFileAsImage(file, destinationFile);
+// fs.writeFile(destinationFolder, file, (error) => {
+// if (error) {
+//     console.error('Failed to write file:', error);
+// } else {
+//     console.log('File written successfully!');
+// }
+// });
 //   file.mv(path.join(destinationFolder, file.name), (error) => {
 //     if (error) {
 //       console.error('Failed to move file:', error);
