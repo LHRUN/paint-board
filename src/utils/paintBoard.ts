@@ -122,6 +122,7 @@ export class PaintBoard {
         type: {value: Types.Stamp},
         alpha: {value: 1.0},
         color: {value: [0.0, 0.0, 0.0]},
+        uniRadius: {value: 4.0},
         // Stamp
         footprint: { value: new THREE.Texture()},
         stampInterval: { value: 2.0 },

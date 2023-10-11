@@ -171,7 +171,7 @@ export const threejsRender = (
     const { x: x, y: y } = instance.positions[i]
     position.push(x, y)
     const w = instance.lineWidths[i]
-    radius.push(w/2)
+    radius.push(w/2 + brush.uniforms.uniRadius.value)
   }
 
   const position0 = [...position];

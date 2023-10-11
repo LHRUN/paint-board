@@ -82,6 +82,7 @@ uniform int type;
 const int Vanilla = 0, Stamp = 1, Airbrush = 2;
 uniform vec3 color;
 uniform float alpha;
+uniform float uniRadius;
 // Stamp
 uniform mediump sampler2D footprint;
 uniform float stampInterval;
@@ -170,7 +171,7 @@ void main(){
         float A = 0.0;
         for(int i = 0; i < MAX_i; i++){
             float currStampLocalX = n2x(currIndex - index0);
-            // Apply roation and sample the footprint.
+            // Apply rotation and sample the footprint.
             vec2 pToCurrStamp = pLocal - vec2(currStampLocalX, 0.0);
             float currStampRadius = r0 - cosTheta * currStampLocalX;
             float angle = rotationFactor*radians(360.0*fract(sin(currIndex)*1.0));
@@ -218,7 +219,7 @@ void main(){
 }
 
 float x2n(float x){
-    if(stampMode == EquiDistance) return x / stampInterval;
+    if(stampMode == EquiDistance) return x / stampInterval / uniRadius;
     if(stampMode == RatioDistance){
         float L = distance(p0, p1);
         if(r0 == r1) return x/(stampInterval*r0);
@@ -227,7 +228,7 @@ float x2n(float x){
 }
 
 float n2x(float n){
-    if(stampMode == EquiDistance) return n * stampInterval;
+    if(stampMode == EquiDistance) return n * stampInterval * uniRadius;
     if(stampMode == RatioDistance){
         float L = distance(p0, p1);
         if(r0 == r1) return n * stampInterval * r0;

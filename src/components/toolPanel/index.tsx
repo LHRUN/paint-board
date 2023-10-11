@@ -12,12 +12,17 @@ import SaveIcon from '@/components/icons/save'
 import CleanIcon from '@/components/icons/clean'
 import CloseIcon from '../icons/close'
 import MenuIcon from '../icons/menu'
+import { formatPublicUrl } from '../../utils/common'
+// declare function require(path: string): any;
+// import * as image from '../../../public/data/brush1'
 
 import styles from './index.module.css'
 import fs from 'fs'
 
 import tgt from './tgt.json'
 import { Dictionary, List } from 'lodash'
+import * as THREE from 'three'
+import { vsCode, fsCode } from '../../utils/shaderCode.glsl';
 
 // import body from 'koa-body'
 // import koastatic from 'koa-static'
@@ -50,15 +55,55 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
     return ''
   }, [board?.currentLineColor])
 
+
+
   // 设置画笔类型
+  const Types = {
+    Vanilla: 0,
+    Stamp: 1,
+    Airbrush: 2,
+  }
+  const StampModes = {
+    EquiDistant: 0,
+    RatioDistant: 1,
+  }
   const [brushType, setBrushType] = useState<string>("1")
-  const handleBrushType = (type: string) => {
+  const handleBrushType = (type: string, Thickness: number, A: Number, R: Number, G: Number, B: Number, stampnoise: Number, rotationfactor: Number, Interval: number, Stampmode: number) => {
     if (board){
       setBrushType(type);
-      console.log(brushType);
       board.render();
+      const image = new Image();
+      image.id = 'tgt';
+      const imageurl = formatPublicUrl("data/brush1/" + type);
+      image.src = imageurl;
+      const texture = new THREE.Texture(image);
+      document.getElementById('tgt')?.replaceWith(image);
+      const new_brush = new THREE.RawShaderMaterial({
+        uniforms: {
+          type: {value: Types.Stamp},
+          alpha: {value: A},
+          color: {value: [R, G, B]},
+          uniRadius: {value: Thickness / 2},
+          // Stamp
+          footprint: { value: texture},
+          stampInterval: { value: Interval * 2 },
+          noiseFactor: { value: stampnoise },
+          rotationFactor: { value: rotationfactor },
+          stampMode: {value: StampModes.RatioDistant},
+          // Airbrush
+          gradient: {value: new THREE.DataTexture() },
+        },
+        vertexShader: vsCode,
+        fragmentShader: fsCode,
+        side: THREE.DoubleSide,
+        transparent: true,
+        glslVersion: THREE.GLSL3,
+      });
+      board.brush = new_brush;
+      board.render()
     }
   }
+
   // 改变画笔颜色
   const changeLineColor = (color: string, index: number, type: string) => {
     if (board) {
@@ -222,6 +267,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
 
   return (
     <>
+      <image id="tgt"></image>
       <div
         className={`fixed top-5 left-5 flex flex-col card shadow-xl overflow-visible ${
           showPanel ? 'p-5' : ''
@@ -366,14 +412,14 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
               
                 <div>
                   <div className="font-bold">笔刷列表</div>
-                {brushes.map(({ key, Thickness, Rvalue, Gvalue, Bvalue, Avalue, StampimageNoisefactor, Rotationrandomness}) => (
+                {brushes.map(({ key, Thickness, Rvalue, Gvalue, Bvalue, Avalue, StampimageNoisefactor, Rotationrandomness, Interval, Stampmode}) => (
                   <div className="btn-group flex">
                   <button
                     key={key}
                     className={`btn btn-sm flex-grow ${
                       brushType === key ? 'btn-active' : ''
                     }`}
-                    onClick={() => setBrushType(key)}
+                    onClick={() => handleBrushType(key, Thickness, Avalue, Rvalue, Gvalue, Bvalue, StampimageNoisefactor, Rotationrandomness, Interval, Stampmode)}
                   >
                     {key}
                   </button><br/><br/></div>
