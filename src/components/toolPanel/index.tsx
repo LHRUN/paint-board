@@ -67,28 +67,31 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
     RatioDistant: 1,
   }
   const [brushType, setBrushType] = useState<string>("1")
-  const handleBrushType = (type: string, Thickness: number, A: Number, R: Number, G: Number, B: Number, stampnoise: Number, rotationfactor: Number, Interval: number, Stampmode: number) => {
+  const handleBrushType = (type: string, Thickness: number, A: number, R: number, G: number, B: number, stampnoise: number, rotationfactor: number, Interval: number, Stampmode: number, Stampimage: number) => {
     if (board){
       setBrushType(type);
       board.render();
       const image = new Image();
       image.id = 'tgt';
-      const imageurl = formatPublicUrl("data/brush1/" + type);
+      const imageurl = formatPublicUrl("data/stamps/stamp" + Stampimage.toString() + ".png");
       image.src = imageurl;
-      const texture = new THREE.TextureLoader().load("data/brush1/" + type, ()=>{
+      // const texture = new THREE.TextureLoader().load("data/stamps/stamp" + Stampimage.toString() + ".png", ()=>{
+      //   board.render()
+      // });
+      const texture = new THREE.TextureLoader().load(imageurl, ()=>{
         board.render()
       });
       document.getElementById('tgt')?.replaceWith(image);
       const new_brush = new THREE.RawShaderMaterial({
         uniforms: {
           type: {value: Types.Stamp},
-          alpha: {value: A},
-          color: {value: [R, G, B]},
-          uniRadius: {value: Thickness / 2},
+          alpha: {value: A * 0.01},
+          color: {value: [R * 0.01 , G * 0.01 , B * 0.01 ]},
+          uniRadius: {value: Thickness},
           // Stamp
           footprint: { value: texture},
           stampInterval: { value: Interval * 2 },
-          noiseFactor: { value: stampnoise * 0.01 },
+          noiseFactor: { value: stampnoise},
           rotationFactor: { value: rotationfactor },
           stampMode: {value: StampModes.RatioDistant},
           // Airbrush
@@ -430,14 +433,14 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
               
                 <div>
                   <div className="font-bold">笔刷列表</div>
-                {brushes.map(({ key, Thickness, Rvalue, Gvalue, Bvalue, Avalue, StampimageNoisefactor, Rotationrandomness, Interval, Stampmode}) => (
+                {brushes.map(({ key, Thickness, Rvalue, Gvalue, Bvalue, Avalue, Noisefactor, Rotationrandomness, Interval, Stampmode, Stampimage}) => (
                   <div className="btn-group flex">
                   <button
                     key={key}
                     className={`btn btn-sm flex-grow ${
                       brushType === key ? 'btn-active' : ''
                     }`}
-                    onClick={() => handleBrushType(key, Thickness, Avalue, Rvalue, Gvalue, Bvalue, StampimageNoisefactor, Rotationrandomness, Interval, Stampmode)}
+                    onClick={() => handleBrushType(key, Thickness, Avalue, Rvalue, Gvalue, Bvalue, Noisefactor, Rotationrandomness, Interval, Stampmode, Stampimage)}
                   >
                     {key}
                   </button><br/><br/></div>
