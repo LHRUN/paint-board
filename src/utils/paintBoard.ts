@@ -225,9 +225,10 @@ export class PaintBoard {
           this.currentLineColor,
           this.currentLineWidth,
           this.layer.current,
-          this.currentFreeDrawStyle
+          this.currentFreeDrawStyle,
+          this.brush
         )
-        break
+        breaks
       case CANVAS_ELE_TYPE.ERASER:
         ele = new Eraser(this.cleanWidth, this.layer.current)
         break
@@ -330,7 +331,7 @@ export class PaintBoard {
         if (ele?.layer && showLayerIds.has(ele.layer)) {
           switch (ele?.type) {
             case CANVAS_ELE_TYPE.FREE_DRAW:
-              threejsRender(this.scene, ele as FreeDraw, this.brush)
+              threejsRender(this.scene, ele as FreeDraw, ele.brush)
               break
             default:
               break
@@ -386,7 +387,7 @@ export class PaintBoard {
   // 当前画笔宽度
   currentLineWidth = CommonWidth.W4
   // 当前画笔模式
-  currentFreeDrawStyle = FreeDrawStyle.Basic
+currentFreeDrawStyle = FreeDrawStyle.Basic
 
   /**
    * 修改画笔宽度

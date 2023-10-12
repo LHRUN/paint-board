@@ -35,6 +35,7 @@ export interface Material {
  * 自由画笔
  */
 export class FreeDraw extends CanvasElement {
+  brush: THREE.RawShaderMaterial
   // 鼠标移动位置记录
   positions: MousePosition[]
   // 当前绘线颜色
@@ -74,7 +75,8 @@ export class FreeDraw extends CanvasElement {
     colors: string[],
     width: number,
     layer: number,
-    style = FreeDrawStyle.Basic
+    style = FreeDrawStyle.Basic,
+    brush: THREE.RawShaderMaterial,
   ) {
     super(CANVAS_ELE_TYPE.FREE_DRAW, layer)
     this.positions = []
@@ -87,6 +89,7 @@ export class FreeDraw extends CanvasElement {
     if (this.style === FreeDrawStyle.Bubble) {
       this.bubbles = []
     }
+    this.brush = brush;
   }
 
   /**
