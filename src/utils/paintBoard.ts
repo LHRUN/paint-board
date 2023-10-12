@@ -18,6 +18,7 @@ import { TextElement, textRender } from './element/text'
 import { drawResizeRect, SelectElement } from './select'
 import { formatPublicUrl } from './common'
 import { vsCode, fsCode } from './shaderCode.glsl';
+import board from "@/pages/board";
 
 type MOVE_ELE = FreeDraw | Eraser | null
 
@@ -90,8 +91,10 @@ export class PaintBoard {
       alpha: true,
       premultipliedAlpha: false
     })
-    renderer.setClearColor('#FFFFFF'); // Set background colour
+    renderer.setClearColor('#FFFFFF') // Set background colour
     renderer.setSize(canvas.width, canvas.height)
+    renderer.sortObjects = false
+    renderer.autoClear = false
     this.renderer = renderer
 
     window.addEventListener("resize", () => {
@@ -228,7 +231,7 @@ export class PaintBoard {
           this.currentFreeDrawStyle,
           this.brush
         )
-        breaks
+        break
       case CANVAS_ELE_TYPE.ERASER:
         ele = new Eraser(this.cleanWidth, this.layer.current)
         break
@@ -332,13 +335,14 @@ export class PaintBoard {
           switch (ele?.type) {
             case CANVAS_ELE_TYPE.FREE_DRAW:
               threejsRender(this.scene, ele as FreeDraw, ele.brush)
+              this.renderer.render(this.scene, this.camera)
+              this.scene.clear()
               break
             default:
               break
           }
         }
       })
-      this.renderer.render(this.scene, this.camera)
 
       if (this.select.selectElementIndex !== -1) {
         const rect = this.select.getCurSelectElement().rect
@@ -378,7 +382,7 @@ export class PaintBoard {
   cleanCanvas(w = Number.MAX_SAFE_INTEGER) {
     this.context.clearRect(-(w / 2), -(w / 2), w, w)
     this.scene.clear()
-    this.renderer.render(this.scene, this.camera)
+    this.renderer.clear()
     this.renderer.dispose()
   }
 

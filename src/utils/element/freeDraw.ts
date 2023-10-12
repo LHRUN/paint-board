@@ -9,6 +9,7 @@ import { ElementRect, MousePosition } from '@/types'
 import { CanvasElement } from './element'
 
 import * as THREE from 'three'
+import board from "@/pages/board";
 
 export interface FreeDrawRect extends ElementRect {
   minX: number
@@ -163,7 +164,6 @@ export const threejsRender = (
   scene: THREE.Scene,
   instance: FreeDraw,
   brush: THREE.RawShaderMaterial,
-  //brush: THREE.RawShaderMaterial,
 )=>{
   const position:number[] = []
   const radius:number[] = []
