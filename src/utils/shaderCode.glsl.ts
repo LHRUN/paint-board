@@ -177,7 +177,8 @@ void main(){
             float angle = rotationFactor*radians(360.0*fract(sin(currIndex)*1.0));
             pToCurrStamp *= rotate(angle);
             vec2 textureCoordinate = (pToCurrStamp/currStampRadius + 1.0)/2.0;
-            float opacity = length(pToCurrStamp) > currStampRadius ? 0.0:0.5;
+            // float opacity = length(pToCurrStamp) > currStampRadius ? 0.0:0.5;
+            float opacity = texture(footprint, textureCoordinate).r;
             // Blend opacity.
             float opacityNoise = noiseFactor*fbm(textureCoordinate*50.0);
             opacity = clamp(opacity - opacityNoise, 0.0, 1.0) * alpha;

@@ -81,11 +81,13 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
       const texture = new THREE.TextureLoader().load(imageurl, ()=>{
         board.render()
       });
-      document.getElementById('tgt')?.replaceWith(image);
+
+      //# show stamp image
+      //document.getElementById('tgt')?.replaceWith(image);
       const new_brush = new THREE.RawShaderMaterial({
         uniforms: {
           type: {value: Types.Stamp},
-          alpha: {value: A * 0.01},
+          alpha: {value: 1},
           color: {value: [R * 0.01 , G * 0.01 , B * 0.01 ]},
           uniRadius: {value: Thickness},
           // Stamp
@@ -104,6 +106,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
         glslVersion: THREE.GLSL3,
       });
       board.brush = new_brush;
+      board.setFreeDrawWidth(Thickness*500);
       board.render()
     }
   }
@@ -261,7 +264,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
         console.log(key);
         brushlist.push(value);
         count += 1;
-        if (count == 8){
+        if (count == 12){
           break;
         }
       }
@@ -288,7 +291,7 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType}) => {
 
   return (
     <>
-      <image id="tgt"></image>
+
       <div
         className={`fixed top-5 left-5 flex flex-col card shadow-xl overflow-visible ${
           showPanel ? 'p-5' : ''
