@@ -102,18 +102,41 @@ export class PaintBoard {
   loadMaterial() {
     return new Promise<void>((resolve) => {
       this.cleanCanvas()
+      this.context.save()
+
+      // show loading text
+      const loadingText = 'material loading...'
+      this.context.font = `35px serif`
+      const textWidth = this.context.measureText(loadingText)?.width || 0
       const loadPos = this.transformPosition({
-        x: this.canvas.width / 2,
+        x: this.canvas.width / 2 - textWidth / 2,
         y: this.canvas.height / 2
       })
-      this.context.fillText('loading...', loadPos.x, loadPos.y)
+      this.context.fillText(loadingText, loadPos.x, loadPos.y)
+
+      // load material image
       const crayonImg = new Image()
       const imgurl = formatPublicUrl('pattern/crayon.png')
       crayonImg.src = imgurl
       crayonImg.onload = () => {
         this.loadMaterialState = true
         this.material.crayon = crayonImg
+        this.context.restore()
         resolve()
+      }
+      crayonImg.onerror = () => {
+        this.cleanCanvas()
+        const errorText = 'Material load failed, please try again'
+        this.context.fillStyle = '#ff0000'
+        this.context.font = `35px serif`
+        const textWidth = this.context.measureText(errorText)?.width || 0
+        const loadPos = this.transformPosition({
+          x: this.canvas.width / 2 - textWidth / 2,
+          y: this.canvas.height / 2
+        })
+        this.context.fillText(errorText, loadPos.x, loadPos.y)
+        this.loadMaterialState = false
+        this.context.restore()
       }
     })
   }
@@ -223,6 +246,7 @@ export class PaintBoard {
     }
     this.cleanCanvas()
     if (this.history.getCurrentStack()?.length ?? 0 > 0) {
+      // this.renderBackground()
       const showLayerIds = new Set(
         this.layer.stack.reduce<number[]>((acc, cur) => {
           return cur.show ? [...acc, cur.id] : acc
@@ -259,6 +283,17 @@ export class PaintBoard {
     }
     this.cache()
   }
+
+  /**
+   * 背景色
+   */
+  // renderBackground() {
+  //   this.context.save()
+  //   this.context.fillStyle = '#FFFFFF'
+  //   const w = Number.MAX_SAFE_INTEGER
+  //   this.context.fillRect(-(w / 2), -(w / 2), w, w)
+  //   this.context.restore()
+  // }
 
   /**
    * localStorage 缓存
@@ -421,7 +456,8 @@ export class PaintBoard {
       const position = this.transformPosition(rect)
       rect.x = position.x
       rect.y = position.y
-      const text = new TextElement(this.layer.current, value, rect)
+      const color = this?.currentLineColor?.[0] ?? '#000000'
+      const text = new TextElement(this.layer.current, value, rect, color)
       this.history.add(text)
       this.render()
     }
