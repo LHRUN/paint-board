@@ -1,3 +1,11 @@
+# 0.2.7 (2023-12-03)
+
+### Feat
+
+- add clean modal
+- Text rendering adds color
+- Change the material loading text
+
 # 0.2.6 (2023-09-29)
 
 ### Fix

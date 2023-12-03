@@ -25,5 +25,10 @@
   "info": {
     "welecome": "Welcome to star",
     "url": "desc/desc_en.png"
+  },
+  "cleanModal":{
+    "title": "Confirm clearing content?",
+    "confirm": "Confirmed",
+    "cancel": "Cancel"
   }
 }

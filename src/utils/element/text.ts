@@ -11,12 +11,19 @@ export class TextElement extends CanvasElement {
   value: string
   rect: ElementRect
   fontSize: number
+  color: string
 
-  constructor(layer: number, value: string, rect: ElementRect) {
+  constructor(
+    layer: number,
+    value: string,
+    rect: ElementRect,
+    color = '#000000'
+  ) {
     super(CANVAS_ELE_TYPE.TEXT, layer)
     this.value = value
     this.rect = rect
     this.fontSize = 25
+    this.color = color
   }
 }
 
@@ -119,6 +126,7 @@ export const textRender = (
 ) => {
   context.save()
   context.font = `${ele.fontSize}px serif`
+  context.fillStyle = ele.color || '#000000'
   // 因为fillText的坐标是文字的左下角，而其他记录的都是左上角，所以需要加上字体大小
   context.fillText(ele.value, ele.rect.x, ele.rect.y + ele.fontSize * 0.84)
   context.restore()

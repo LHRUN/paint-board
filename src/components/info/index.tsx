@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import InfoIcon from '@/components/icons/info'
-import Mask from '@/components/mask'
-import ZhIcon from '../icons/zh'
-import EnIcon from '../icons/en'
 import { BOARD_LOCAL_KEY, storage } from '@/utils/storage'
 import { formatPublicUrl } from '@/utils/common'
+
+import InfoIcon from '@/components/icons/info'
+import Mask from '@/components/mask'
+import ZhIcon from '@/components/icons/zh'
+import EnIcon from '@/components/icons/en'
+
 import styles from './index.module.css'
 
 /**
@@ -24,7 +26,7 @@ const Info: React.FC = () => {
     <>
       <div
         onClick={() => setShowModal(true)}
-        className="fixed bottom-5 left-5 cursor-pointer"
+        className="fixed bottom-5 left-5 cursor-pointer bg-white rounded-full"
       >
         <InfoIcon />
       </div>

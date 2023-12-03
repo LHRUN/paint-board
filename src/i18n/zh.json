@@ -25,5 +25,10 @@
   "info": {
     "welecome": "欢迎Star",
     "url": "desc/desc_zh.png"
+  },
+  "cleanModal":{
+    "title": "确认清除内容？",
+    "confirm": "确认",
+    "cancel": "取消"
   }
 }
