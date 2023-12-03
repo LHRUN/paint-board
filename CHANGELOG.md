@@ -1,3 +1,9 @@
+# 0.2.8 (2023-12-03)
+
+### Feat
+
+- add microsoft clarity
+
 # 0.2.7 (2023-12-03)
 
 ### Feat
