@@ -1,5 +1,6 @@
 .i18nBtn {
   box-sizing: border-box;
+  margin-left: 10px;
   cursor: pointer;
   border: solid 4px #7b8fa1;
   border-radius: 50%;

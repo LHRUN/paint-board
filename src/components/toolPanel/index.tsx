@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { CANVAS_ELE_TYPE, CommonWidth } from '@/utils/constants'
 import { PaintBoard } from '@/utils/paintBoard'
 import { FreeDrawStyle } from '@/utils/element/freeDraw'
-import Layer from '../layer'
 import { CHANGE_COLOR_TYPE, styleSwitch, typeSwitch } from './constant'
+
+import Layer from '../layer'
 import UndoIcon from '@/components/icons/undo'
 import RedoIcon from '@/components/icons/redo'
 import SaveIcon from '@/components/icons/save'
@@ -87,13 +88,6 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
   const redo = () => {
     if (board) {
       board.redo()
-    }
-  }
-
-  // 清除画布
-  const clean = () => {
-    if (board) {
-      board.clean()
     }
   }
 
@@ -321,11 +315,11 @@ const ToolPanel: React.FC<IProps> = ({ board, toolType, setToolType }) => {
                   </a>
                 </li>
                 <li>
-                  <a onClick={clean}>
+                  <label htmlFor="clean-modal">
                     <div className="tooltip" data-tip={t('operate.clean')}>
                       <CleanIcon />
                     </div>
-                  </a>
+                  </label>
                 </li>
                 <li>
                   <a onClick={saveImage}>
