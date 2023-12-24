@@ -1,3 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Hanalei+Fill:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Ruslan+Display:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Lobster:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Pacifico:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Gloria+Hallelujah:wght@400;700&display=swap');
+@import url('https://fonts.font.im/css?family=Permanent+Marker:wght@400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .noScrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .noScrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

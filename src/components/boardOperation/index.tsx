@@ -1,0 +1,167 @@
+import UndoIcon from '@/components/icons/undo.svg?react'
+import RedoIcon from '@/components/icons/redo.svg?react'
+import SaveIcon from '@/components/icons/save.svg?react'
+import CleanIcon from '@/components/icons/clean.svg?react'
+import UploadIcon from '@/components/icons/upload.svg?react'
+import CopyIcon from '@/components/icons/copy.svg?react'
+import TextIcon from '@/components/icons/text.svg?react'
+import DeleteIcon from '@/components/icons/delete.svg?react'
+import FileListIcon from '@/components/icons/fileList.svg?react'
+import CloseIcon from '@/components/icons/close.svg?react'
+import MenuIcon from '@/components/icons/menu.svg?react'
+import useBoardStore from '@/store/board'
+import { ActionMode } from '@/constants'
+import { paintBoard } from '@/utils/paintBoard'
+import { ChangeEvent, useState } from 'react'
+import { ImageElement } from '@/utils/element/image'
+import { useTranslation } from 'react-i18next'
+import FileList from './fileList'
+
+const BoardOperation = () => {
+  const { t } = useTranslation()
+  const { mode } = useBoardStore()
+  const [showFile, updateShowFile] = useState(false)
+  const [showOperation, setShowOperation] = useState(true)
+
+  const copyObject = () => {
+    paintBoard.copyObject()
+  }
+
+  const deleteObject = () => {
+    paintBoard.deleteObject()
+  }
+
+  // 点击后退
+  const undo = () => {
+    paintBoard.history?.undo()
+    paintBoard.triggerHook()
+  }
+
+  // 点击前进
+  const redo = () => {
+    paintBoard.history?.redo()
+    paintBoard.triggerHook()
+  }
+
+  const inputText = () => {
+    paintBoard.textElement?.loadText()
+  }
+
+  const uploadImage = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (fEvent) => {
+      const data = fEvent.target?.result
+      if (data) {
+        if (data && typeof data === 'string') {
+          const image = new ImageElement()
+          image.addImage(data)
+        }
+      }
+      e.target.value = ''
+    }
+    reader.readAsDataURL(file)
+  }
+
+  // 保存图片
+  const saveImage = () => {
+    paintBoard.saveImage()
+  }
+
+  return (
+    <>
+      <div className="fixed bottom-5 left-2/4 -translate-x-2/4 flex items-center bg-[#eef1ff] rounded-full xs:flex-col xs:right-5 xs:left-auto xs:translate-x-0 xs:justify-center">
+        {showOperation && (
+          <>
+            <div
+              onClick={undo}
+              className="tooltip cursor-pointer py-1.5 pl-3 pr-2 rounded-l-full hover:bg-slate-200 xs:pl-2 xs:rounded-l-none xs:rounded-t-full"
+              data-tip={t('operate.undo')}
+            >
+              <UndoIcon className="transform scale-x-[-1] scale-y-[1]" />
+            </div>
+            <div
+              onClick={redo}
+              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              data-tip={t('operate.redo')}
+            >
+              <RedoIcon />
+            </div>
+            {[ActionMode.SELECT, ActionMode.Board].includes(mode) && (
+              <>
+                <div
+                  onClick={copyObject}
+                  className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                  data-tip={t('operate.copy')}
+                >
+                  <CopyIcon />
+                </div>
+                <div
+                  onClick={deleteObject}
+                  className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                  data-tip={t('operate.delete')}
+                >
+                  <DeleteIcon />
+                </div>
+              </>
+            )}
+            <div
+              data-tip={t('operate.text')}
+              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              onClick={inputText}
+            >
+              <TextIcon />
+            </div>
+            <div
+              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              data-tip={t('operate.image')}
+            >
+              <label htmlFor="image-upload" className="cursor-pointer">
+                <UploadIcon />
+              </label>
+              <input
+                type="file"
+                id="image-upload"
+                className="hidden"
+                onChange={uploadImage}
+              />
+            </div>
+            <label
+              htmlFor="clean-modal"
+              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              data-tip={t('operate.clean')}
+            >
+              <CleanIcon />
+            </label>
+            <div
+              onClick={saveImage}
+              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              data-tip={t('operate.save')}
+            >
+              <SaveIcon />
+            </div>
+            <label
+              htmlFor="my-drawer-4"
+              className="cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
+              onClick={() => updateShowFile(true)}
+            >
+              <FileListIcon />
+            </label>
+          </>
+        )}
+        <label className="btn btn-circle swap swap-rotate w-7 h-7 min-h-0 my-1.5 mx-2 min-xs:hidden">
+          <input type="checkbox" onChange={() => setShowOperation((v) => !v)} />
+          <CloseIcon className="swap-on fill-current" />
+          <MenuIcon className="swap-off fill-current" />
+        </label>
+      </div>
+      {showFile && <FileList updateShow={updateShowFile} />}
+    </>
+  )
+}
+
+export default BoardOperation

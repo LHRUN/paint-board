@@ -1,26 +1,30 @@
 {
   "tool": {
-    "draw": "画笔",
+    "draw": "绘画",
     "eraser": "橡皮擦",
-    "select": "选择"
+    "select": "选择",
+    "board": "画板"
   },
   "style": {
-    "basic": "单色",
-    "shadow": "荧光",
-    "multicolor": "多色",
-    "spray": "喷雾",
-    "crayon": "蜡笔",
-    "bubble": "泡泡"
+    "basic": "基础",
+    "rainbow": "彩虹 ",
+    "shape": "多形状",
+    "material": "素材",
+    "pixels": "像素",
+    "multiColor": "多色",
+    "text": "文字",
+    "multiLine": "多线连接",
+    "reticulate": "网状"
   },
   "operate": {
-    "undo": "后退",
-    "redo": "前进",
+    "undo": "撤销",
+    "redo": "重做",
+    "copy": "复制",
+    "delete": "删除",
+    "text": "添加文字",
+    "image": "上传图片",
     "clean": "清除画板",
     "save": "保存为图片"
-  },
-  "layer": {
-    "add": "添加图层",
-    "delete": "删除图层"
   },
   "info": {
     "welecome": "欢迎Star",
@@ -30,5 +34,30 @@
     "title": "确认清除内容？",
     "confirm": "确认",
     "cancel": "取消"
+  },
+  "deleteFileModal": {
+    "title": "确认删除当前文件吗？",
+    "confirm": "确认",
+    "cancel": "取消"
+  },
+  "toast": {
+    "uploadFileFail": "上传失败，请重试"
+  },
+  "filters": {
+    "Sepia": "复古",
+    "Invert": "底片",
+    "BlackWhite": "黑白",
+    "Grayscale": "灰度",
+    "Blur": "模糊",
+    "Vintage": "古典",
+    "BlendColor": "混色",
+    "Brownie": "棕仙",
+    "Kodachrome": "胶片",
+    "Pixelate": "像素",
+    "Polaroid": "宝丽来",
+    "Technicolor": "彩色",
+    "Brightness": "增亮",
+    "Noise": "噪点",
+    "Convolute": "浮雕"
   }
 }

@@ -2,7 +2,25 @@
 module.exports = {
   content: ['./index.html', './src/**/*.{jsx,js,ts,tsx}'],
   theme: {
-    extend: {}
+    extend: {
+      fontFamily: {
+        georgia: ['Georgia', 'cursive'],
+        fredokaOne: ['Fredoka One', 'cursive'],
+        hanaleiFill: ['Hanalei Fill', 'cursive'],
+        ruslanDisplay: ['Ruslan Display', 'cursive'],
+        lobster: ['Lobster', 'cursive'],
+        pacifico: ['Pacifico', 'cursive'],
+        gloriaHallelujah: ['Gloria Hallelujah', 'cursive']
+      },
+      screens: {
+        xs: {
+          max: '750px'
+        },
+        'min-xs': {
+          min: '750px'
+        }
+      }
+    }
   },
   plugins: [require('daisyui')],
   daisyui: {

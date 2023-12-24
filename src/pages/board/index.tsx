@@ -1,162 +1,43 @@
-import React, { useMemo, useState, MouseEvent } from 'react'
-import { PaintBoard } from '@/utils/paintBoard'
-import { CANVAS_ELE_TYPE } from '@/utils/constants'
-import { useBackspace, useResizeEvent, useSpaceEvent } from '@/hooks/event'
-import { CURSOR_TYPE } from '@/utils/cursor'
-import { TextEdit } from '@/utils/element/text'
+import React, { useEffect, useRef, useState } from 'react'
+import { paintBoard } from '@/utils/paintBoard'
 
 import ToolPanel from '@/components/toolPanel'
 import Info from '@/components/info'
 import CleanModal from '@/components/cleanModal'
-
-const textEdit = new TextEdit()
+import BoardOperation from '@/components/boardOperation'
+import DeleteFileModal from '@/components/boardOperation/deleteFileModal'
 
 const Board: React.FC = () => {
-  // 初始化画板
-  const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null)
-  const board = useMemo(() => {
-    if (canvasRef) {
-      return new PaintBoard(canvasRef)
-    }
-  }, [canvasRef])
-
-  // 工具类型
-  const [toolType, setToolType] = useState<string>(CANVAS_ELE_TYPE.FREE_DRAW)
-
-  const handleToolType = (type: string) => {
-    if (board) {
-      if (type !== CANVAS_ELE_TYPE.SELECT) {
-        board.select.cancelSelectElement()
-      }
-      setToolType(type)
-      board.render()
-    }
-  }
-
-  // 是否按下空格
-  const isPressSpace = useSpaceEvent(
-    () => {
-      if (board) {
-        board.cursor.change(CURSOR_TYPE.POINTER)
-        board.initOriginPosition()
-      }
-    },
-    () => {
-      if (board) {
-        board.cursor.reset()
-      }
-    }
-  )
-
-  useResizeEvent(() => {
-    if (board) {
-      board.initCanvasSize()
-      board.context.translate(board.originTranslate.x, board.originTranslate.y)
-      board.render()
-    }
-  })
-
-  useBackspace(() => {
-    if (board) {
-      board.select.deleteSelectElement()
-    }
-  })
-
-  // 监听鼠标事件
-  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
-  const mouseDown = (event: MouseEvent) => {
-    if (board) {
-      const { clientX: x, clientY: y } = event
-      const position = {
-        x,
-        y
-      }
-      // 如果有文本编辑框，取消编辑
-      if (textEdit) {
-        board.addTextElement(textEdit.value, textEdit.rect)
-        textEdit.destroy()
-      }
-      switch (toolType) {
-        case CANVAS_ELE_TYPE.SELECT:
-          board.select.clickSelectElement(position)
-          break
-        case CANVAS_ELE_TYPE.FREE_DRAW:
-        case CANVAS_ELE_TYPE.ERASER:
-          if (!isPressSpace) {
-            board.recordCurrent(toolType)
-          }
-          break
-        default:
-          break
-      }
-      setIsMouseDown(true)
-    }
-  }
-  const dbClick = (event: MouseEvent) => {
-    if (board) {
-      const { clientX: x, clientY: y } = event
-      const position = {
-        x,
-        y
-      }
-      // 双击展示文字输入框
-      textEdit.showTextInput(position)
-    }
-  }
-  const mouseMove = (event: MouseEvent) => {
-    if (board) {
-      const { clientX: x, clientY: y } = event
-      if (isPressSpace && isMouseDown) {
-        board.dragCanvas({
-          x,
-          y
+  const canvasEl = useRef<HTMLCanvasElement>(null)
+  const [canvasLoaded, setCanvasLoaded] = useState(false)
+  useEffect(() => {
+    if (canvasEl.current) {
+      paintBoard
+        .initCanvas(canvasEl.current as HTMLCanvasElement)
+        .then((loaded) => {
+          setCanvasLoaded(loaded)
         })
-      } else {
-        switch (toolType) {
-          case CANVAS_ELE_TYPE.SELECT:
-            board.select.moveSelectElement({
-              x,
-              y
-            })
-            break
-          case CANVAS_ELE_TYPE.FREE_DRAW:
-          case CANVAS_ELE_TYPE.ERASER:
-            if (isMouseDown) {
-              board.currentAddPosition({
-                x,
-                y
-              })
-            }
-            break
-          default:
-            break
-        }
-      }
     }
-  }
-  const mouseUp = () => {
-    if (board) {
-      setIsMouseDown(false)
-      board.canvasMouseUp()
+    return () => {
+      paintBoard.removeCanvas()
     }
-  }
+  }, [])
 
   return (
     <div className="flex justify-center items-center flex-col w-screen h-screen">
-      <ToolPanel
-        board={board}
-        toolType={toolType}
-        setToolType={handleToolType}
-      />
       <canvas
-        ref={setCanvasRef}
-        onMouseDown={mouseDown}
-        onMouseMove={mouseMove}
-        onMouseUp={mouseUp}
-        onDoubleClick={dbClick}
+        className="fixed top-0 left-0 w-full h-full"
+        ref={canvasEl}
       ></canvas>
-      <Info />
-      <CleanModal board={board} />
+      {canvasLoaded && (
+        <>
+          <ToolPanel />
+          <Info />
+          <CleanModal />
+          <DeleteFileModal />
+          <BoardOperation />
+        </>
+      )}
     </div>
   )
 }

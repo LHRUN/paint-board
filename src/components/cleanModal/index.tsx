@@ -1,19 +1,12 @@
-import { FC } from 'react'
+import { paintBoard } from '@/utils/paintBoard'
 import { useTranslation } from 'react-i18next'
-import { PaintBoard } from '@/utils/paintBoard'
 
-interface IProps {
-  board: PaintBoard | undefined // 画板
-}
-
-const CleanModal: FC<IProps> = ({ board }) => {
+const CleanModal = () => {
   const { t } = useTranslation()
 
   // 清除画布
   const clean = () => {
-    if (board) {
-      board.clean()
-    }
+    paintBoard.history?.clean()
   }
 
   return (

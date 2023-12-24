@@ -1,0 +1,29 @@
+import { paintBoard } from '@/utils/paintBoard'
+import { CSSProperties, useEffect, useState } from 'react'
+
+const ZoomInfo = () => {
+  const [zoomValue, setZoomValue] = useState(
+    paintBoard.evnet?.wheelEvent.getZoomPercentage(false)
+  ) // 刷新数据
+  useEffect(() => {
+    paintBoard.evnet?.wheelEvent.setZoomHook((num: number) => {
+      setZoomValue(num)
+    })
+  }, [setZoomValue])
+
+  return (
+    <div
+      className="radial-progress bg-primary text-primary-content border-4 border-primary cursor-pointer ml-2"
+      style={
+        {
+          '--value': zoomValue,
+          '--size': '1.1rem',
+          '--thickness': '0.2rem'
+        } as CSSProperties
+      }
+      onClick={() => paintBoard.evnet?.wheelEvent.initZoom()}
+    ></div>
+  )
+}
+
+export default ZoomInfo

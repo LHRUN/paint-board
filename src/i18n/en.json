@@ -2,25 +2,29 @@
   "tool": {
     "draw": "Draw",
     "eraser": "Eraser",
-    "select": "Select"
+    "select": "Select",
+    "board": "Board"
   },
   "style": {
-    "basic": "Single",
-    "shadow": "Fluor",
-    "multicolor": "Multi",
-    "spray": "Spray",
-    "crayon": "Crayon",
-    "bubble": "Bubble"
+    "basic": "Basic",
+    "rainbow": "Rainbow",
+    "shape": "Shape",
+    "material": "Material",
+    "pixels": "Pixels",
+    "multiColor": "MultiColor",
+    "text": "Text",
+    "multiLine": "MultiLine",
+    "reticulate": "Reticulate"
   },
   "operate": {
     "undo": "undo",
     "redo": "redo",
+    "copy": "copy",
+    "delete": "delete",
+    "text": "add text",
+    "image": "upload image",
     "clean": "clean",
     "save": "Save as image"
-  },
-  "layer": {
-    "add": "add layer",
-    "delete": "delete layer"
   },
   "info": {
     "welecome": "Welcome to star",
@@ -30,5 +34,30 @@
     "title": "Confirm clearing content?",
     "confirm": "Confirmed",
     "cancel": "Cancel"
+  },
+  "deleteFileModal": {
+    "title": "Confirm deleting the current file?",
+    "confirm": "Confirmed",
+    "cancel": "Cancel"
+  },
+  "toast": {
+    "uploadFileFail": "Upload failed, please try again"
+  },
+  "filters": {
+    "Sepia": "Sepia",
+    "Invert": "Invert",
+    "BlackWhite": "BlackWhite",
+    "Grayscale": "Grayscale",
+    "Blur": "Blur",
+    "Vintage": "Vintage",
+    "BlendColor": "BlendColor",
+    "Brownie": "Brownie",
+    "Kodachrome": "Kodachrome",
+    "Pixelate": "Pixelate",
+    "Polaroid": "Polaroid",
+    "Technicolor": "Technicolor",
+    "Brightness": "Brightness",
+    "Noise": "Noise",
+    "Convolute": "Emboss"
   }
 }

@@ -1,34 +1,37 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BOARD_LOCAL_KEY, storage } from '@/utils/storage'
-import { formatPublicUrl } from '@/utils/common'
+import { formatPublicUrl } from '@/utils/common/index'
 
-import InfoIcon from '@/components/icons/info'
+import InfoIcon from '@/components/icons/info.svg?react'
 import Mask from '@/components/mask'
-import ZhIcon from '@/components/icons/zh'
-import EnIcon from '@/components/icons/en'
+import ZhIcon from '@/components/icons/zh.svg?react'
+import EnIcon from '@/components/icons/en.svg?react'
 
 import styles from './index.module.css'
+import ZoomInfo from '../zoomInfo'
+import useBoardStore from '@/store/board'
 
 /**
  * 操作指南弹窗
  */
 const Info: React.FC = () => {
-  const { i18n, t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const { language, updateLanguage } = useBoardStore()
   const [showModal, setShowModal] = useState<boolean>(false)
   const handleChangLang = () => {
-    const language = i18n.language === 'en' ? 'zh' : 'en'
-    storage.set(BOARD_LOCAL_KEY, language)
-    i18n.changeLanguage(language)
+    const newLanguage = language === 'en' ? 'zh' : 'en'
+    i18n.changeLanguage(newLanguage)
+    updateLanguage(newLanguage)
   }
 
   return (
     <>
-      <div
-        onClick={() => setShowModal(true)}
-        className="fixed bottom-5 left-5 cursor-pointer bg-white rounded-full"
-      >
-        <InfoIcon />
+      <div className="fixed bottom-5 left-5 flex flex-row justify-center items-center px-2.5 py-1.5 rounded-full bg-[#eef1ff]">
+        <InfoIcon
+          className="bg-white rounded-full cursor-pointer"
+          onClick={() => setShowModal(true)}
+        />
+        <ZoomInfo />
       </div>
       <Mask
         show={showModal}
@@ -51,7 +54,7 @@ const Info: React.FC = () => {
               {t('info.welecome')}⭐️
             </div>
             <span className={styles.i18nBtn} onClick={handleChangLang}>
-              {i18n.language === 'en' ? <EnIcon /> : <ZhIcon />}
+              {language === 'en' ? <EnIcon /> : <ZhIcon />}
             </span>
           </div>
 
