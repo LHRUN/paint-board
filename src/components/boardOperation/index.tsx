@@ -74,19 +74,19 @@ const BoardOperation = () => {
 
   return (
     <>
-      <div className="fixed bottom-5 left-2/4 -translate-x-2/4 flex items-center bg-[#eef1ff] rounded-full xs:flex-col xs:right-5 xs:left-auto xs:translate-x-0 xs:justify-center">
+      <div className="fixed bottom-5 left-2/4 -translate-x-2/4 flex items-center bg-[#eef1ff] rounded-full xs:flex-col xs:right-5 xs:left-auto xs:translate-x-0 xs:justify-normal xs:max-h-[70vh] overflow-y-auto noScrollbar">
         {showOperation && (
           <>
             <div
               onClick={undo}
-              className="tooltip cursor-pointer py-1.5 pl-3 pr-2 rounded-l-full hover:bg-slate-200 xs:pl-2 xs:rounded-l-none xs:rounded-t-full"
+              className="min-xs:tooltip cursor-pointer py-1.5 pl-3 pr-2 rounded-l-full hover:bg-slate-200 xs:pl-2 xs:rounded-l-none xs:rounded-t-full"
               data-tip={t('operate.undo')}
             >
               <UndoIcon className="transform scale-x-[-1] scale-y-[1]" />
             </div>
             <div
               onClick={redo}
-              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
               data-tip={t('operate.redo')}
             >
               <RedoIcon />
@@ -95,14 +95,14 @@ const BoardOperation = () => {
               <>
                 <div
                   onClick={copyObject}
-                  className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                  className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
                   data-tip={t('operate.copy')}
                 >
                   <CopyIcon />
                 </div>
                 <div
                   onClick={deleteObject}
-                  className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                  className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
                   data-tip={t('operate.delete')}
                 >
                   <DeleteIcon />
@@ -111,13 +111,13 @@ const BoardOperation = () => {
             )}
             <div
               data-tip={t('operate.text')}
-              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
               onClick={inputText}
             >
               <TextIcon />
             </div>
             <div
-              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
               data-tip={t('operate.image')}
             >
               <label htmlFor="image-upload" className="cursor-pointer">
@@ -132,14 +132,14 @@ const BoardOperation = () => {
             </div>
             <label
               htmlFor="clean-modal"
-              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
               data-tip={t('operate.clean')}
             >
               <CleanIcon />
             </label>
             <div
               onClick={saveImage}
-              className="tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+              className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
               data-tip={t('operate.save')}
             >
               <SaveIcon />

@@ -24,9 +24,9 @@ const Board: React.FC = () => {
   }, [])
 
   return (
-    <div className="flex justify-center items-center flex-col w-screen h-screen">
+    <div className="flex">
       <canvas
-        className="fixed top-0 left-0 w-full h-full"
+        className="fixed top-0 left-0 w-full h-full block"
         ref={canvasEl}
       ></canvas>
       {canvasLoaded && (

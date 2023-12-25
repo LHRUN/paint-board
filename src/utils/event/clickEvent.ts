@@ -29,7 +29,7 @@ export class CanvasClickEvent {
   initClickEvent() {
     const canvas = paintBoard.canvas
 
-    canvas?.on('mouse:down', () => {
+    canvas?.on('mouse:down', (e) => {
       this.isMouseDown = true
       if (this.isSpaceKeyDown) {
         return
@@ -102,15 +102,6 @@ export class CanvasClickEvent {
         this.currentElement = null
         paintBoard.history?.saveState()
       }
-    })
-
-    canvas?.on('touch:gesture', (e) => {
-      console.log('touch:gesture', e)
-    })
-
-    canvas?.on('touch:drag', (e) => {
-      console.log('touch:drag', e)
-      // canvas.relativePan(new fabric.Point(e.e.movementX, e.e.movementY))
     })
   }
 

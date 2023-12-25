@@ -1,7 +1,6 @@
 import { DrawShape } from '@/constants'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
-import { v4 as uuidv4 } from 'uuid'
 import { drawBubble } from './bubble'
 import { drawStar } from './star'
 import { drawLove } from './love'

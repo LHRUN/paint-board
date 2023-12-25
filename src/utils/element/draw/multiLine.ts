@@ -2,7 +2,6 @@ import useDrawStore from '@/store/draw'
 import { setObjectAttr } from '@/utils/common/draw'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
-import { v4 as uuidv4 } from 'uuid'
 
 export class MultiLineElement {
   lastTime = 0

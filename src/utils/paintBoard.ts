@@ -59,7 +59,7 @@ export class PaintBoard {
   removeCanvas() {
     if (this.canvas) {
       this?.canvas?.dispose()
-      this.evnet?.windowEvent.removeWindowEvent()
+      this.evnet?.removeEvent()
     }
   }
 

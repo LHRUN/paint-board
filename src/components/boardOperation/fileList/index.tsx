@@ -56,11 +56,11 @@ const FileList: FC<IProps> = ({ updateShow }) => {
           className="drawer-overlay"
           onClick={() => updateShow(false)}
         ></label>
-        <div className="h-full bg-white px-5 py-7 overflow-hidden max-w-[80%]">
+        <div className="h-screen bg-white px-5 py-7 overflow-hidden max-w-[80%]">
           <div className="font-fredokaOne text-2xl text-center">
             PAINT-BOARD LIST
           </div>
-          <div className="bg-[#eef1ff] rounded-2xl mt-5 py-2">
+          <div className="bg-[#eef1ff] rounded-2xl mt-5 py-2 w-max max-w-full">
             <div className="flex justify-end items-center px-4 pb-2">
               <AddFileIcon
                 className="hover:bg-slate-200 cursor-pointer p-1 rounded-lg w-9 h-9"
@@ -84,17 +84,17 @@ const FileList: FC<IProps> = ({ updateShow }) => {
                 onChange={(e) => handleUploadFile(e.target.files?.[0])}
               />
             </div>
-            <ul className="menu w-80 text-base-content my-2 mx-4 py-3 px-2 rounded-xl bg-white max-h-[70vh] overflow-y-auto noScrollbar flex-nowrap max-w-max">
+            <ul className="menu text-base-content my-2 mx-4 py-3 px-2 rounded-xl bg-white max-h-[70vh] xs:max-h-[40vh]  overflow-y-auto noScrollbar flex-nowrap max-w-full">
               {files.map((item) => (
                 <li
                   key={item.id}
-                  className="m-1 block rounded-lg overflow-hidden"
+                  className="my-1 block rounded-lg overflow-hidden"
                   onClick={() => updateCurFile(item.id)}
                 >
                   <a className={`${item.id === currentId ? 'active' : ''}`}>
                     <input
                       value={item.title}
-                      className="px-2 flex-1 w-full"
+                      className="px-2 max-w-full"
                       onChange={(e) =>
                         updateTitle(
                           (e.target as HTMLInputElement).value,

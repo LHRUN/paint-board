@@ -20,9 +20,9 @@ export class History {
           '_customType',
           'perPixelTargetFind'
         ])
-        return toObject.apply(this, [propertiesToInclude])
+        return toObject?.apply(this, [propertiesToInclude])
       }
-    })(fabric.Object.prototype.toObject)
+    })(fabric.Object.prototype?.toObject)
   }
 
   saveState() {

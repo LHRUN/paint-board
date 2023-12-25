@@ -1,8 +1,6 @@
 import { KeyCode } from '@/constants/event'
 import { paintBoard } from '../paintBoard'
-import { ActionMode } from '@/constants'
 import { ImageElement } from '../element/image'
-import useBoardStore from '@/store/board'
 import { fabric } from 'fabric'
 import useFileStore from '@/store/files'
 
@@ -15,12 +13,14 @@ export class WindowEvent {
     window.addEventListener('keydown', this.keydownFn)
     window.addEventListener('keyup', this.keyupFn)
     window.addEventListener('paste', this.pasteFn)
+    window.addEventListener('resize', this.resizeFn)
   }
 
   removeWindowEvent() {
     window.removeEventListener('keydown', this.keydownFn)
     window.removeEventListener('keyup', this.keyupFn)
     window.removeEventListener('paste', this.pasteFn)
+    window.removeEventListener('resize', this.resizeFn)
   }
 
   keydownFn(e: KeyboardEvent) {
@@ -83,6 +83,14 @@ export class WindowEvent {
           reader.readAsDataURL(blob)
         }
       }
+    }
+  }
+
+  resizeFn() {
+    const canvas = paintBoard.canvas
+    if (canvas) {
+      canvas.setWidth(window.innerWidth)
+      canvas.setHeight(window.innerHeight)
     }
   }
 }
