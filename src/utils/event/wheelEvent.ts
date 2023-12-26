@@ -7,8 +7,8 @@ import useDrawStore from '@/store/draw'
 import useFileStore from '@/store/files'
 
 let zoomHook: (zoom: number) => undefined
-const MIN_ZOOM = 0.3
-const MAX_ZOOM = 5
+export const MIN_ZOOM = 0.3
+export const MAX_ZOOM = 5
 
 export class CanvasWheelEvent {
   constructor() {
@@ -24,16 +24,21 @@ export class CanvasWheelEvent {
 
       // 根据滚轮方向调整缩放比例
       let zoom = canvas.getZoom()
-      zoom = delta > 0 ? zoom * 1.1 : zoom / 1.1
+      zoom = delta > 0 ? zoom * 1.05 : zoom / 1.05
 
       if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
         return
       }
 
+      const pointer = paintBoard.canvas?.getPointer(options.e)
+
       const canvasWidth = (canvas?.width || 1) / 2
       const canvasHeight = (canvas?.height || 1) / 2
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
-      canvas.zoomToPoint(new fabric.Point(canvasWidth, canvasHeight), zoom)
+      canvas.zoomToPoint(
+        { x: pointer?.x ?? canvasWidth, y: pointer?.y ?? canvasHeight },
+        zoom
+      )
       useFileStore.getState().updateZoom(zoom)
       options.e.preventDefault()
       options.e.stopPropagation()

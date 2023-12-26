@@ -29,7 +29,7 @@ export class History {
     const canvas = paintBoard?.canvas
     if (canvas) {
       this.states = this.states.slice(0, this.index + 1)
-      const state = canvas.toJSON()
+      const state = canvas.toDatalessJSON()
       this.states.push(state)
       this.index++
       useFileStore.getState().updateBoardData(state)

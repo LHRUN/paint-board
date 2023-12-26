@@ -67,7 +67,15 @@ export class CanvasClickEvent {
           canvas.relativePan(new fabric.Point(e.e.movementX, e.e.movementY))
           return
         }
-        if (useBoardStore.getState().mode === ActionMode.DRAW) {
+
+        if (paintBoard.evnet?.touchEvent.isTwoTouch) {
+          return
+        }
+
+        if (
+          useBoardStore.getState().mode === ActionMode.DRAW &&
+          this.currentElement
+        ) {
           switch (useDrawStore.getState().drawStyle) {
             case DrawStyle.Shape:
               this.currentElement?.addPosition(e.absolutePointer)

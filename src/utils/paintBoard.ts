@@ -36,7 +36,8 @@ export class PaintBoard {
         preserveObjectStacking: true,
         width: window.innerWidth,
         height: window.innerHeight,
-        allowTouchScrolling: true
+        enableRetinaScaling: true
+        // enablePointerEvents: true
       })
       fabric.Object.prototype.set({
         borderColor: '#65CC8A',
@@ -136,13 +137,14 @@ export class PaintBoard {
     this.canvas.isDrawingMode = isDrawingMode
     this.canvas.selection = selection
     fabric.Object.prototype.set(objectSet)
+
     this.canvas.forEachObject((obj) => {
-      console.log('obj', obj.type, obj)
       if (obj._customType === 'itext') {
         obj.selectable = objectSet.selectable
         obj.hoverCursor = objectSet.hoverCursor
       }
     })
+
     this.canvas.requestRenderAll()
   }
 
@@ -150,17 +152,53 @@ export class PaintBoard {
     if (!this.canvas) {
       return
     }
-    console.log('handleDrawStyle')
     const drawStyle = useDrawStore.getState().drawStyle
-    if (drawStyle === DrawStyle.Basic) {
-      renderPencilBrush()
-    } else if (drawStyle === DrawStyle.Material) {
-      this.canvas.isDrawingMode = true
-      material.render({})
-    } else if (drawStyle === DrawStyle.MultiColor) {
-      renderMultiColor({})
-    } else {
-      this.canvas.isDrawingMode = false
+    switch (drawStyle) {
+      case DrawStyle.Basic:
+        renderPencilBrush()
+        break
+      case DrawStyle.Material:
+        this.canvas.isDrawingMode = true
+        material.render({})
+        break
+      case DrawStyle.MultiColor:
+        renderMultiColor({})
+        break
+      default:
+        this.canvas.isDrawingMode = false
+        break
+    }
+  }
+
+  multipleTouchDisableAction(isDisable = true) {
+    if (this.canvas) {
+      switch (useBoardStore.getState().mode) {
+        case ActionMode.DRAW:
+          if (
+            [
+              DrawStyle.Basic,
+              DrawStyle.Material,
+              DrawStyle.MultiColor
+            ].includes(useDrawStore.getState().drawStyle)
+          ) {
+            this.canvas.isDrawingMode = !isDisable
+          }
+          break
+        case ActionMode.ERASE:
+          this.canvas.isDrawingMode = !isDisable
+          break
+        case ActionMode.Board:
+        case ActionMode.SELECT:
+          this.canvas.selection = !isDisable
+          fabric.Object.prototype.set({
+            selectable: !isDisable,
+            hoverCursor: isDisable ? 'default' : undefined
+          })
+          break
+        default:
+          break
+      }
+      this.canvas.discardActiveObject()
     }
   }
 
