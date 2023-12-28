@@ -3,10 +3,10 @@ import { CSSProperties, useEffect, useState } from 'react'
 
 const ZoomInfo = () => {
   const [zoomValue, setZoomValue] = useState(
-    paintBoard.evnet?.wheelEvent.getZoomPercentage(false)
+    paintBoard.evnet?.zoomEvent.getZoomPercentage(false)
   ) // 刷新数据
   useEffect(() => {
-    paintBoard.evnet?.wheelEvent.setZoomHook((num: number) => {
+    paintBoard.evnet?.zoomEvent.setZoomHook((num: number) => {
       setZoomValue(num)
     })
   }, [setZoomValue])
@@ -21,7 +21,7 @@ const ZoomInfo = () => {
           '--thickness': '0.2rem'
         } as CSSProperties
       }
-      onClick={() => paintBoard.evnet?.wheelEvent.initZoom()}
+      onClick={() => paintBoard.evnet?.zoomEvent.initZoom()}
     ></div>
   )
 }

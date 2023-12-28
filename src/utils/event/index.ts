@@ -1,12 +1,12 @@
 import { CanvasClickEvent } from './clickEvent'
 import { ObjectEvent } from './objectEvent'
 import { CanvasTouchEvent } from './touchEvent'
-import { CanvasWheelEvent } from './wheelEvent'
+import { CanvasZoomEvent } from './zoomEvent'
 import { WindowEvent } from './windowEvent'
 
 export class CanvasEvent {
   clickEvent: CanvasClickEvent
-  wheelEvent: CanvasWheelEvent
+  zoomEvent: CanvasZoomEvent
   objectEvent: ObjectEvent
   windowEvent: WindowEvent
   touchEvent: CanvasTouchEvent
@@ -15,8 +15,8 @@ export class CanvasEvent {
     const clickEvent = new CanvasClickEvent()
     this.clickEvent = clickEvent
 
-    const wheelEvent = new CanvasWheelEvent()
-    this.wheelEvent = wheelEvent
+    const zoomEvent = new CanvasZoomEvent()
+    this.zoomEvent = zoomEvent
 
     const objectEvent = new ObjectEvent()
     this.objectEvent = objectEvent
