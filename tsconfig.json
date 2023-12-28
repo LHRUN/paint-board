@@ -22,6 +22,5 @@
 		}
   },
   "include": ["src"],
-  "exclude": ["src/lib/eraser_brush.mixin.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

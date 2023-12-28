@@ -1,6 +1,8 @@
 import { History } from './history'
 import { DrawStyle, ActionMode } from '@/constants'
 import { fabric } from 'fabric'
+import '@/lib/eraser_brush.mixin.js'
+
 import { CanvasEvent } from './event'
 import { TextElement } from './element/text'
 import { material } from './element/draw/material'
@@ -12,8 +14,6 @@ import { renderMultiColor } from './element/draw/multiColor'
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
-
-import '@/lib/eraser_brush.mixin.ts'
 
 /**
  * PaintBoard
@@ -50,9 +50,9 @@ export class PaintBoard {
       // fabric.Object.prototype.objectCaching = false;
       fabric.Line.prototype.strokeLineJoin = 'round'
       fabric.Line.prototype.strokeLineCap = 'round'
+      this.evnet = new CanvasEvent()
       this.initCanvasStorage()
       this.handleMode()
-      this.evnet = new CanvasEvent()
       resolve(true)
     })
   }

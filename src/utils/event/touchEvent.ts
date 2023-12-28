@@ -36,7 +36,6 @@ export class CanvasTouchEvent {
       canvas.removeEventListener('touchend', this.touchEndFn)
     }
   }
-
   touchStartFn = (e: TouchEvent) => {
     e.preventDefault()
     const canvas = paintBoard.canvas
@@ -44,7 +43,6 @@ export class CanvasTouchEvent {
       return
     }
     const touches = e.touches
-
     if (touches.length === 2) {
       this.isTwoTouch = true
       paintBoard.multipleTouchDisableAction(true)
@@ -65,6 +63,7 @@ export class CanvasTouchEvent {
   }
   touchMoveFn = (e: TouchEvent) => {
     e.preventDefault()
+
     const canvas = paintBoard.canvas
     if (!canvas) {
       return

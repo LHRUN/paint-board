@@ -31,11 +31,13 @@ export class ObjectEvent {
           useBoardStore.getState().mode
         )
       ) {
-        const id = uuidv4()
-        ;(options as any).path.set({
-          id,
-          perPixelTargetFind: true
-        })
+        if (useBoardStore.getState().mode === ActionMode.DRAW) {
+          const id = uuidv4()
+          ;(options as any).path.set({
+            id,
+            perPixelTargetFind: true
+          })
+        }
         paintBoard.history?.saveState()
       }
     })

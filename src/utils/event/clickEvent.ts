@@ -29,7 +29,7 @@ export class CanvasClickEvent {
   initClickEvent() {
     const canvas = paintBoard.canvas
 
-    canvas?.on('mouse:down', (e) => {
+    canvas?.on('mouse:down', () => {
       this.isMouseDown = true
       if (this.isSpaceKeyDown) {
         return
