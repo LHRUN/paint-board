@@ -1,7 +1,7 @@
 import { History } from './history'
 import { DrawStyle, ActionMode } from '@/constants'
 import { fabric } from 'fabric'
-import '@/lib/eraser_brush.mixin.js'
+import 'fabric/src/mixins/eraser_brush.mixin.js'
 
 import { CanvasEvent } from './event'
 import { TextElement } from './element/text'

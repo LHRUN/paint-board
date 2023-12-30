@@ -4,7 +4,7 @@ import { rgbaToHex } from '@/utils/common/color'
 import useBoardStore from '@/store/board'
 import { debounce } from 'lodash'
 import { paintBoard } from '@/utils/paintBoard'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 
 const boardConfig = () => {
   const {
@@ -23,21 +23,15 @@ const boardConfig = () => {
   )
 
   useEffect(() => {
-    console.log('init bg')
     if (paintBoard.canvas) {
-      initBackground(paintBoard.canvas)
+      initBackground()
     }
   }, [])
 
   useEffect(() => {
-    const refreshFn = () => {
-      if (paintBoard.canvas) {
-        initBackground(paintBoard.canvas)
-      }
-    }
-    paintBoard.addHookFn(refreshFn)
+    paintBoard.addHookFn(initBackground)
     return () => {
-      paintBoard.removeHookFn(refreshFn)
+      paintBoard.removeHookFn(initBackground)
     }
   }, [initBackground])
 

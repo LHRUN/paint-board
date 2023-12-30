@@ -19,7 +19,7 @@ interface BoardState {
 interface BoardAction {
   updateMode: (mode: string) => void
   updateLanguage: (language: string) => void
-  initBackground: (canvas: fabric.Canvas) => void
+  initBackground: () => void
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
 }
@@ -49,8 +49,8 @@ const useBoardStore = create<BoardState & BoardAction>()(
           language
         })
       },
-      initBackground: (canvas) => {
-        const backgroundColor = canvas?.backgroundColor
+      initBackground: () => {
+        const backgroundColor = paintBoard?.canvas?.backgroundColor
         if (backgroundColor && typeof backgroundColor === 'string') {
           const type = getColorFormat(backgroundColor)
           if (type === 'hex') {
@@ -67,8 +67,8 @@ const useBoardStore = create<BoardState & BoardAction>()(
               backgroundOpacity: opacity
             })
           }
-        } else {
-          canvas.backgroundColor = 'rgba(255, 255, 255, 1)'
+        } else if (paintBoard?.canvas) {
+          paintBoard.canvas.backgroundColor = 'rgba(255, 255, 255, 1)'
         }
       },
       updateBackgroundColor: (color) => {

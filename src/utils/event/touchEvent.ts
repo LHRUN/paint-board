@@ -1,6 +1,7 @@
 import { paintBoard } from '../paintBoard'
 import { fabric } from 'fabric'
 import { MAX_ZOOM, MIN_ZOOM } from './zoomEvent'
+import { debounce } from 'lodash'
 
 export class CanvasTouchEvent {
   isTwoTouch = false
@@ -90,7 +91,7 @@ export class CanvasTouchEvent {
           new fabric.Point(this.zoomPoint.x, this.zoomPoint.y),
           zoom
         )
-        paintBoard.evnet?.zoomEvent.getZoomPercentage()
+        this.getZoomPercentage()
       }
 
       // 计算拖拽距离
@@ -118,4 +119,8 @@ export class CanvasTouchEvent {
       paintBoard.multipleTouchDisableAction(false)
     }
   }
+
+  getZoomPercentage = debounce(() => {
+    paintBoard.evnet?.zoomEvent.getZoomPercentage()
+  }, 500)
 }
