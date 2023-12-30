@@ -1,12 +1,11 @@
-import { MaterialSwitch } from '../../constant'
 import useDrawStore from '@/store/draw'
+import { MaterialSwitch } from '../constant'
 
 const MaterialConfig = () => {
   const { materialType, updateMaterialType, drawColors } = useDrawStore()
 
   return (
     <>
-      {/* 素材切换 */}
       <div className="mt-3">
         <div className="font-bold text-lg font-fredokaOne">Material Type</div>
         <div className="btn-group mt-1 flex">

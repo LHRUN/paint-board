@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { paintBoard } from '@/utils/paintBoard'
 
 import ToolPanel from '@/components/toolPanel'
-import Info from '@/components/info'
+import GuideInfo from '@/components/guideInfo'
 import CleanModal from '@/components/cleanModal'
 import BoardOperation from '@/components/boardOperation'
 import DeleteFileModal from '@/components/boardOperation/deleteFileModal'
@@ -32,7 +32,7 @@ const Board: React.FC = () => {
       {canvasLoaded && (
         <>
           <ToolPanel />
-          <Info />
+          <GuideInfo />
           <CleanModal />
           <DeleteFileModal />
           <BoardOperation />

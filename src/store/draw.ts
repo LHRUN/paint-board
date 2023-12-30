@@ -14,18 +14,18 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface DrawState {
-  drawWidth: number
-  drawColors: string[]
-  shadowWidth: number
-  shadowColor: string
-  drawTextValue: string
-  drawStyle: string
-  drawShapeCount: number
-  drawShape: string
-  materialType: string
-  eraserWidth: number
-  multiColorType: string
-  textFontFamily: string
+  drawWidth: number // draw brush width
+  drawColors: string[] // draw brush colors
+  shadowWidth: number // brush shadow blur
+  shadowColor: string // brush shadow color
+  drawTextValue: string // text draws the content
+  drawStyle: string // draw style
+  drawShapeCount: number // count of shape mode
+  drawShape: string // the shape of the shape mode
+  materialType: string // material brush type
+  eraserWidth: number // eraser width
+  multiColorType: string // 'col' | 'row' | 'circle'
+  textFontFamily: string // current text drawing font
 }
 
 interface DrawAction {
@@ -46,13 +46,13 @@ interface DrawAction {
 const useDrawStore = create<DrawState & DrawAction>()(
   persist(
     (set, get) => ({
-      drawWidth: 5,
+      drawWidth: 10,
       drawColors: ['#000000'],
       shadowWidth: 15,
       shadowColor: '#000000',
-      drawTextValue: 'DrawText',
-      drawStyle: DrawStyle.Text,
-      drawShapeCount: 1,
+      drawTextValue: 'draw',
+      drawStyle: DrawStyle.Basic,
+      drawShapeCount: 2,
       materialType: MATERIAL_TYPE.CRAYON,
       drawShape: DrawShape.Bubble,
       eraserWidth: 20,
@@ -148,7 +148,7 @@ const useDrawStore = create<DrawState & DrawAction>()(
       }
     }),
     {
-      name: 'PAINT-BOARD-DRAW-STORE' //存储的名称
+      name: 'PAINT-BOARD-DRAW-STORE'
     }
   )
 )

@@ -1,15 +1,22 @@
+/**
+ * generate random coordinates
+ * @param centerX center point x
+ * @param centerY center point y
+ * @param size area sice
+ * @param count generate count
+ * @returns random points
+ */
 export function generateRandomCoordinates(
   centerX: number,
   centerY: number,
   size: number,
   count: number
 ) {
-  const halfSize = size / 2 // 因为是中心，所以取半
+  // Because it's the center, take half
+  const halfSize = size / 2
   const points = []
 
   for (let i = 0; i < count; i++) {
-    // Math.random() 返回 [0, 1) 的随机数
-    // 通过它来随机生成矩形内的坐标点
     const randomX = Math.floor(centerX - halfSize + Math.random() * size)
     const randomY = Math.floor(centerY - halfSize + Math.random() * size)
     points.push({ x: randomX, y: randomY })

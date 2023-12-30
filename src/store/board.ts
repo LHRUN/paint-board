@@ -10,10 +10,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface BoardState {
-  mode: string
-  language: string
-  backgroundColor: string
-  backgroundOpacity: number
+  mode: string // operating mode
+  language: string // i18n language 'zh' 'en'
+  backgroundColor: string // canvas background color
+  backgroundOpacity: number // canvas background opacity
 }
 
 interface BoardAction {
@@ -99,7 +99,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
       }
     }),
     {
-      name: 'PAINT-BOARD-STORE' //存储的名称
+      name: 'PAINT-BOARD-STORE'
     }
   )
 )

@@ -5,7 +5,7 @@ import { fabric } from 'fabric'
 const initState = {}
 
 /**
- * 操作记录
+ * Operation History
  */
 export class History {
   states: Array<Partial<IBoardData>> = []
@@ -31,6 +31,9 @@ export class History {
       this.states = this.states.slice(0, this.index + 1)
       const state = canvas.toDatalessJSON()
       this.states.push(state)
+      if (this.states.length > 20) {
+        this.states.shift()
+      }
       this.index++
       useFileStore.getState().updateBoardData(state)
     }

@@ -13,10 +13,10 @@ const fontFamilyRadio: Record<string, string> = {
 
 interface IProps {
   fontFamily?: string
-  changeFontFamily?: (fontFamily: string) => void
+  updateFontFamily?: (fontFamily: string) => void
 }
 
-const FontFamilyConfg: FC<IProps> = ({ fontFamily, changeFontFamily }) => {
+const FontFamilyConfg: FC<IProps> = ({ fontFamily, updateFontFamily }) => {
   const { textFontFamily, updateTextFontFamily } = useDrawStore()
 
   return (
@@ -43,7 +43,7 @@ const FontFamilyConfg: FC<IProps> = ({ fontFamily, changeFontFamily }) => {
               checked={(fontFamily || textFontFamily) === fontFamilyRadio[key]}
               onChange={() => {
                 updateTextFontFamily(fontFamilyRadio[key])
-                changeFontFamily?.(fontFamilyRadio[key])
+                updateFontFamily?.(fontFamilyRadio[key])
               }}
             />
           </label>

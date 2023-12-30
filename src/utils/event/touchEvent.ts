@@ -2,6 +2,8 @@ import { paintBoard } from '../paintBoard'
 import { fabric } from 'fabric'
 import { MAX_ZOOM, MIN_ZOOM } from './zoomEvent'
 import { debounce } from 'lodash'
+import { brushMouseMixin } from '../common/brushMouseMixin'
+import useFileStore from '@/store/files'
 
 export class CanvasTouchEvent {
   isTwoTouch = false
@@ -19,7 +21,7 @@ export class CanvasTouchEvent {
   }
 
   initTouchEvent() {
-    const canvas = (paintBoard?.canvas as any)?.upperCanvasEl
+    const canvas = paintBoard?.canvas?.upperCanvasEl
     if (canvas) {
       canvas.addEventListener('touchstart', this.touchStartFn, {
         passive: false
@@ -30,7 +32,7 @@ export class CanvasTouchEvent {
   }
 
   removeTouchEvent() {
-    const canvas = (paintBoard?.canvas as any)?.upperCanvasEl
+    const canvas = paintBoard?.canvas?.upperCanvasEl
     if (canvas) {
       canvas.removeEventListener('touchstart', this.touchStartFn)
       canvas.removeEventListener('touchmove', this.touchMoveFn)
@@ -44,9 +46,11 @@ export class CanvasTouchEvent {
       return
     }
     const touches = e.touches
+
+    brushMouseMixin.updateIsOnePointDown(touches.length === 1)
+
     if (touches.length === 2) {
       this.isTwoTouch = true
-      paintBoard.multipleTouchDisableAction(true)
       const touch1 = touches[0]
       const touch2 = touches[1]
       this.startDistance = Math.hypot(
@@ -83,7 +87,7 @@ export class CanvasTouchEvent {
       const x = (touch1.pageX + touch2.pageX) / 2
       const y = (touch1.pageY + touch2.pageY) / 2
 
-      // 计算缩放比例
+      // Calculate zoom
       let zoom = this.startScale * (currentDistance / this.startDistance)
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
       if (this.zoomPoint) {
@@ -91,13 +95,13 @@ export class CanvasTouchEvent {
           new fabric.Point(this.zoomPoint.x, this.zoomPoint.y),
           zoom
         )
-        this.getZoomPercentage()
+        this.getZoomPercentage(zoom)
       }
 
-      // 计算拖拽距离
+      // Calculate drag distance
       const currentPan = new fabric.Point(x - this.startX, y - this.startY)
 
-      // 平移画布
+      // move canvas
       if (!this.isDragging) {
         this.isDragging = true
         this.lastPan = currentPan
@@ -109,6 +113,7 @@ export class CanvasTouchEvent {
           )
         )
         this.lastPan = currentPan
+        this.saveTransform()
       }
     }
   }
@@ -116,11 +121,18 @@ export class CanvasTouchEvent {
     this.isDragging = false
     if (this.isTwoTouch && e.touches.length === 0) {
       this.isTwoTouch = false
-      paintBoard.multipleTouchDisableAction(false)
     }
   }
 
-  getZoomPercentage = debounce(() => {
+  getZoomPercentage = debounce((zoom: number) => {
     paintBoard.evnet?.zoomEvent.getZoomPercentage()
+    useFileStore.getState().updateZoom(zoom)
+  }, 500)
+
+  saveTransform = debounce(() => {
+    const transform = paintBoard.canvas?.viewportTransform
+    if (transform) {
+      useFileStore.getState().updateTransform(transform)
+    }
   }, 500)
 }

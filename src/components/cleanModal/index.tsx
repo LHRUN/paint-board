@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 const CleanModal = () => {
   const { t } = useTranslation()
 
-  // 清除画布
+  // clean the current canvas
   const clean = () => {
     paintBoard.history?.clean()
   }

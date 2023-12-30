@@ -5,13 +5,13 @@ import useDrawStore from '@/store/draw'
 
 export function drawLeaf(point: fabric.Point, size: number) {
   if (useDrawStore.getState().drawShapeCount === 1) {
-    const star = drawLeafItem(size)
-    star.set({
+    const leaf = drawLeafItem(size)
+    leaf.set({
       left: point.x - size,
       top: point.y - size,
       fill: useDrawStore.getState().drawColors[0]
     })
-    return star
+    return leaf
   } else {
     const points = generateRandomCoordinates(
       point?.x,
@@ -19,20 +19,20 @@ export function drawLeaf(point: fabric.Point, size: number) {
       size * 3,
       useDrawStore.getState().drawShapeCount
     )
-    const stars = points.map((item, index) => {
+    const leafs = points.map((item, index) => {
       const color =
         index > useDrawStore.getState().drawColors.length - 1
           ? useDrawStore.getState().drawColors[0]
           : useDrawStore.getState().drawColors[index]
-      const star = drawLeafItem(size)
-      star.set({
+      const leaf = drawLeafItem(size)
+      leaf.set({
         left: item.x,
         top: item.y,
         fill: color
       })
-      return star
+      return leaf
     })
-    const group = new fabric.Group(stars)
+    const group = new fabric.Group(leafs)
     return group
   }
 }
@@ -43,15 +43,12 @@ function drawLeafItem(size: number) {
   const shape = new fabric.Path(path, {
     opacity: Math.random()
   })
-  // 获取形状的未缩放边界
   const boundingRect = shape.getBoundingRect()
 
-  // 计算缩放因子
   const scaleX = maxSize / boundingRect.width
   const scaleY = maxSize / boundingRect.height
   const scaleToFit = Math.min(scaleX, scaleY)
 
-  // 应用缩放因子
   shape.scale(scaleToFit)
   return shape
 }

@@ -1,20 +1,15 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { formatPublicUrl } from '@/utils/common/index'
+import useBoardStore from '@/store/board'
 
 import InfoIcon from '@/components/icons/info.svg?react'
 import Mask from '@/components/mask'
 import ZhIcon from '@/components/icons/zh.svg?react'
 import EnIcon from '@/components/icons/en.svg?react'
-
-import styles from './index.module.css'
 import ZoomInfo from '../zoomInfo'
-import useBoardStore from '@/store/board'
 
-/**
- * 操作指南弹窗
- */
-const Info: React.FC = () => {
+const GuideInfo: React.FC = () => {
   const { t, i18n } = useTranslation()
   const { language, updateLanguage } = useBoardStore()
   const [showModal, setShowModal] = useState<boolean>(false)
@@ -53,7 +48,10 @@ const Info: React.FC = () => {
               </a>
               {t('info.welecome')}⭐️
             </div>
-            <span className={styles.i18nBtn} onClick={handleChangLang}>
+            <span
+              className="box-border ml-5 cursor-pointer border-solid border-4 border-[#7b8fa1] rounded-full hover:border-[#567189]"
+              onClick={handleChangLang}
+            >
               {language === 'en' ? <EnIcon /> : <ZhIcon />}
             </span>
           </div>
@@ -69,4 +67,4 @@ const Info: React.FC = () => {
   )
 }
 
-export default Info
+export default GuideInfo

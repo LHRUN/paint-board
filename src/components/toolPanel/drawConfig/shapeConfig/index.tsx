@@ -1,5 +1,5 @@
-import { shapeSwitch } from '../../constant'
 import useDrawStore from '@/store/draw'
+import { shapeSwitch } from '../constant'
 
 const ShapeConfig = () => {
   const { drawShape, updateDrawShape, drawShapeCount, updateDrawShapeCount } =
@@ -7,7 +7,6 @@ const ShapeConfig = () => {
 
   return (
     <>
-      {/* 形状切换 */}
       <div className="mt-3">
         <div className="font-bold text-lg font-fredokaOne">Shape type</div>
         {Object.keys(shapeSwitch).map((lineKey) => (

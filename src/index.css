@@ -22,3 +22,28 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+.colorInput {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+}
+
+.colorInput::-webkit-color-swatch {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+}

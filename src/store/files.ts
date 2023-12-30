@@ -17,26 +17,26 @@ const storage: StateStorage = {
 }
 
 export interface IBoardData {
-  version: string
+  version: string // fabric version
   objects: fabric.Object[]
 }
 
 interface IFile {
-  id: string
-  title: string
-  boardVersion: string
-  zoom: number
-  viewportTransform?: number[]
+  id: string // file id
+  title: string // file title
+  boardVersion: string // paint board version
+  zoom: number // current canvas zoom
+  viewportTransform?: number[] // current canvas transform
   boardData?: Partial<IBoardData>
 }
 
 interface FileState {
-  currentId: string
-  files: IFile[]
+  currentId: string // current file id
+  files: IFile[] // file list
 }
 
 interface FileAction {
-  setCurrentFile: (newId: string) => void
+  updateCurrentFile: (newId: string) => void
   updateTitle: (newTitle: string, id: string) => void
   updateZoom: (newZoom: number) => void
   updateTransform: (newTransform: number[]) => void
@@ -63,7 +63,7 @@ const useFileStore = create<FileState & FileAction>()(
           zoom: 1
         }
       ],
-      setCurrentFile(newId) {
+      updateCurrentFile(newId) {
         const currentId = get().currentId
         if (newId !== currentId) {
           set({

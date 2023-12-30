@@ -11,7 +11,7 @@ import autoprefixer from 'autoprefixer'
 export default defineConfig({
   base: '/paint-board',
   server: {
-    host: '0.0.0.0' // 监听所有地址
+    host: '0.0.0.0'
   },
   plugins: [
     react(),

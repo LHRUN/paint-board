@@ -39,21 +39,20 @@ export function drawStar(point: fabric.Point, size: number) {
 
 function drawItemStar(size: number) {
   const height = getRandomInt(size, size * 2) * 2
-  // 计算五角星的顶点坐标
-  const width = height * (9 / 10) // 假设五角星的宽度是高度的9/10
+  // get the vertex coordinates of star
+  const width = height * (9 / 10) // assuming the width of star is 9/10ths of its height/10
   const centerX = width / 2
   const centerY = height / 2
-  const angle = Math.PI / 5 // 五角星的角度
+  const angle = Math.PI / 5 // Star's Angle
 
   const points = []
   for (let i = 0; i < 10; i++) {
-    const radius = i % 2 === 0 ? width / 2 : width / 4 // 交替使用两种半径
+    const radius = i % 2 === 0 ? width / 2 : width / 4 // Alternate between the two radiuses
     const x = centerX + radius * Math.cos(i * angle)
     const y = centerY + radius * Math.sin(i * angle)
     points.push({ x: x, y: y })
   }
 
-  // 创建五角星
   const star = new fabric.Polygon(points, {
     opacity: Math.random()
   })

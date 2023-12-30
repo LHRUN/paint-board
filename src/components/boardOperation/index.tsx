@@ -1,3 +1,10 @@
+import { ChangeEvent, useState } from 'react'
+import useBoardStore from '@/store/board'
+import { useTranslation } from 'react-i18next'
+import { ActionMode } from '@/constants'
+import { paintBoard } from '@/utils/paintBoard'
+import { ImageElement } from '@/utils/element/image'
+
 import UndoIcon from '@/components/icons/undo.svg?react'
 import RedoIcon from '@/components/icons/redo.svg?react'
 import SaveIcon from '@/components/icons/save.svg?react'
@@ -9,44 +16,42 @@ import DeleteIcon from '@/components/icons/delete.svg?react'
 import FileListIcon from '@/components/icons/fileList.svg?react'
 import CloseIcon from '@/components/icons/close.svg?react'
 import MenuIcon from '@/components/icons/menu.svg?react'
-import useBoardStore from '@/store/board'
-import { ActionMode } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
-import { ChangeEvent, useState } from 'react'
-import { ImageElement } from '@/utils/element/image'
-import { useTranslation } from 'react-i18next'
 import FileList from './fileList'
 
 const BoardOperation = () => {
   const { t } = useTranslation()
   const { mode } = useBoardStore()
-  const [showFile, updateShowFile] = useState(false)
-  const [showOperation, setShowOperation] = useState(true)
+  const [showFile, updateShowFile] = useState(false) // show file list draw
+  const [showOperation, setShowOperation] = useState(true) // mobile: show all operation
 
+  // copy activity object
   const copyObject = () => {
     paintBoard.copyObject()
   }
 
+  // delete activity object
   const deleteObject = () => {
     paintBoard.deleteObject()
   }
 
-  // 点击后退
+  // click undo
   const undo = () => {
     paintBoard.history?.undo()
     paintBoard.triggerHook()
   }
 
-  // 点击前进
+  // click redo
   const redo = () => {
     paintBoard.history?.redo()
     paintBoard.triggerHook()
   }
 
+  // load IText object
   const inputText = () => {
     paintBoard.textElement?.loadText()
   }
 
+  // upload image file
   const uploadImage = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) {
@@ -67,7 +72,7 @@ const BoardOperation = () => {
     reader.readAsDataURL(file)
   }
 
-  // 保存图片
+  // save as image
   const saveImage = () => {
     paintBoard.saveImage()
   }

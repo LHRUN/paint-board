@@ -1,7 +1,8 @@
 module.exports = {
   env: {
     browser: true,
-    es2021: true
+    es2021: true,
+    node: true
   },
   extends: [
     'eslint:recommended',
@@ -21,7 +22,8 @@ module.exports = {
     'prettier/prettier': ['error', { endOfLine: 'auto' }],
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
-    'react/no-unknown-property': ['error', { ignore: ['t', 'p-id'] }]
+    'react/no-unknown-property': ['error', { ignore: ['t', 'p-id'] }],
+    '@typescript-eslint/no-explicit-any': 'off'
   },
   settings: {
     react: {

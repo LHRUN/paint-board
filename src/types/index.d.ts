@@ -7,6 +7,13 @@ declare module 'fabric/fabric-impl' {
     _stateProperties: Record<string, any>
   }
 
+  export interface Canvas {
+    upperCanvasEl?: HTMLCanvasElement
+    _onMouseDownInDrawingMode: any
+    _onMouseMoveInDrawingMode: any
+    _onMouseUpInDrawingMode: any
+  }
+
   export interface IAllFilters {
     BlackWhite: {
       new (options?: any): IBaseFilter

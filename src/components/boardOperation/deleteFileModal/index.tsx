@@ -1,17 +1,16 @@
-import { ActionMode } from '@/constants'
 import useBoardStore from '@/store/board'
 import useFileStore from '@/store/files'
-import { paintBoard } from '@/utils/paintBoard'
 import { useTranslation } from 'react-i18next'
+
+import { ActionMode } from '@/constants'
+import { paintBoard } from '@/utils/paintBoard'
 
 const DeleteFileModal = () => {
   const { t } = useTranslation()
   const { files, deleteFile } = useFileStore()
   const { updateMode } = useBoardStore()
 
-  // 清除画布
-  const clean = () => {
-    // paintBoard.history?.clean()
+  const deleteCurrentFile = () => {
     if (files.length > 1) {
       deleteFile()
       paintBoard.initCanvasStorage()
@@ -34,7 +33,7 @@ const DeleteFileModal = () => {
             <label
               htmlFor="delete-file-modal"
               className="btn btn-active btn-primary btn-md w-2/5"
-              onClick={clean}
+              onClick={deleteCurrentFile}
             >
               {t('deleteFileModal.confirm')}
             </label>

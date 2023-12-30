@@ -45,7 +45,6 @@ function drawReticulate(points: fabric.Point[]) {
   const strokeWidth = Math.ceil(
     useDrawStore.getState().drawWidth / 3 / (paintBoard.canvas?.getZoom() ?? 1)
   )
-  // const strokeWidth = 5
 
   const lines: fabric.Line[] = []
   lines.push(

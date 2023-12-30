@@ -62,7 +62,6 @@ export class WindowEvent {
 
   pasteFn(e: ClipboardEvent) {
     if (e.clipboardData && e.clipboardData.items) {
-      console.log('paste')
       const items = e.clipboardData.items
       const item = Array.from(items).find(
         (item) => item.kind === 'file' && item.type.indexOf('image') !== -1

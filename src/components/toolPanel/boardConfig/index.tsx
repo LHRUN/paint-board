@@ -1,5 +1,4 @@
 import OpacityIcon from '@/components/icons/opacity.svg?react'
-import styles from './index.module.css'
 import { rgbaToHex } from '@/utils/common/color'
 import useBoardStore from '@/store/board'
 import { debounce } from 'lodash'
@@ -15,6 +14,7 @@ const boardConfig = () => {
     initBackground
   } = useBoardStore()
 
+  // save steps by debounce
   const saveHistory = useCallback(
     debounce(() => {
       paintBoard.render()
@@ -48,7 +48,7 @@ const boardConfig = () => {
                 updateBackgroundColor(e.target.value)
                 saveHistory()
               }}
-              className={styles.drawColor}
+              className="colorInput"
             />
           </div>
           <div className="divider divider-horizontal mx-3"></div>

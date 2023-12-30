@@ -4,7 +4,7 @@ import { CSSProperties, useEffect, useState } from 'react'
 const ZoomInfo = () => {
   const [zoomValue, setZoomValue] = useState(
     paintBoard.evnet?.zoomEvent.getZoomPercentage(false)
-  ) // 刷新数据
+  )
   useEffect(() => {
     paintBoard.evnet?.zoomEvent.setZoomHook((num: number) => {
       setZoomValue(num)

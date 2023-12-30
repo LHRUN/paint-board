@@ -20,9 +20,9 @@ export class CanvasZoomEvent {
     canvas?.on('mouse:wheel', (options) => {
       paintBoard.textElement?.resetText()
 
-      const delta = options.e.deltaY // 获取滚轮滚动的方向
+      const delta = options.e.deltaY // Get the direction in which the wheel scrolls
 
-      // 根据滚轮方向调整缩放比例
+      // Adjust the zoom ratio according to the direction of the scroll wheel
       let zoom = canvas.getZoom()
       zoom = delta > 0 ? zoom * 1.05 : zoom / 1.05
 

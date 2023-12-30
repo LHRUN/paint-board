@@ -34,23 +34,15 @@ export function getAlphaFromRgba(rgbaString: string) {
 }
 
 export function changeAlpha(rgbaColor: string, newAlpha: number) {
-  // 提取 RGBA 组件
   const match = rgbaColor.match(/rgba?\((.*?)\)/)
-
   if (!match) {
-    // 如果颜色字符串不符合 RGBA 格式，则直接返回
     return rgbaColor
   }
 
-  // 提取原始颜色的 RGB 部分和透明度
   const rgbPart = match[1].split(',').map((i) => i.trim())
-
-  // 限制新透明度值在 [0, 1] 范围内
   newAlpha = Math.min(1, Math.max(0, newAlpha))
 
-  // 构造带有新透明度的 RGBA 格式字符串
   const newRgbaColor = `rgba(${rgbPart[0]}, ${rgbPart[1]}, ${rgbPart[2]}, ${newAlpha})`
-
   return newRgbaColor
 }
 

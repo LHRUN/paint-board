@@ -1,18 +1,10 @@
 import useDrawStore from '@/store/draw'
+import { getDistance } from '@/utils/common'
 import { setObjectAttr } from '@/utils/common/draw'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 
 const minFontSize = 3
-
-// Georgia
-// Fredoka One
-// Hanalei Fill
-// Ruslan Display
-// Lobster
-// Pacifico
-// Gloria Hallelujah
-// Permanent Marker
 
 export class DrawTextElement {
   lastTime = 0
@@ -56,7 +48,7 @@ export class DrawTextElement {
 function drawText(el: DrawTextElement) {
   const points = el.points
   const mouse = points[points.length - 1]
-  const d = distance(el.position, mouse)
+  const d = getDistance(el.position as fabric.Point, mouse)
   const fontSize = minFontSize + d / 2
   const letter =
     useDrawStore.getState().drawTextValue[
@@ -86,22 +78,8 @@ function drawText(el: DrawTextElement) {
     if (el.counter > useDrawStore.getState().drawTextValue.length - 1) {
       el.counter = 0
     }
-    console.log('text add', text)
     return text
   }
-}
-
-function distance(position: { x: number; y: number }, mouse: fabric.Point) {
-  let xs = 0
-  let ys = 0
-
-  xs = mouse.x - position.x
-  xs = xs * xs
-
-  ys = mouse.y - position.y
-  ys = ys * ys
-
-  return Math.sqrt(xs + ys)
 }
 
 function textWidth(string: string, size: number) {

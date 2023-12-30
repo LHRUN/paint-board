@@ -2,6 +2,7 @@ import BringForWardIcon from '@/components/icons/layer/bringforward.svg?react'
 import SendBackWardIcon from '@/components/icons/layer/sendbackward.svg?react'
 import BringToFrontIcon from '@/components/icons/layer/bringtofront.svg?react'
 import SendToBackIcon from '@/components/icons/layer/sendtoback.svg?react'
+
 import { paintBoard } from '@/utils/paintBoard'
 
 const LayerConfig = () => {

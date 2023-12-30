@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
-import { CHANGE_COLOR_TYPE, styleSwitch } from '../constant'
-import styles from './index.module.css'
+import useDrawStore from '@/store/draw'
 import { DrawStyle } from '@/constants'
+import { styleSwitch } from './constant'
+
 import ShapeConfig from './shapeConfig'
 import ShadowConfig from './shadowConfig'
 import DrawTextConfig from './drawTextConfig'
-import useDrawStore from '@/store/draw'
 import MaterialConfig from './materialConfig'
 import MultiColorConfig from './multiColorConfig'
 
@@ -20,15 +20,14 @@ const DrawConfig = () => {
     updateDrawColors
   } = useDrawStore()
 
-  // 改变画笔颜色
-  const changeDrawColor = (color: string, index: number, type: string) => {
+  // update draw colors
+  const handleDrawColors = (color: string, index: number) => {
     const colors = [...drawColors]
     colors[index] = color
-    const newColor = type === CHANGE_COLOR_TYPE.UNI ? [color] : colors
-    updateDrawColors(newColor)
+    updateDrawColors(colors)
   }
 
-  // 删除画笔颜色
+  // delete draw color
   const deleteDrawColor = (index: number) => {
     const colors = [...drawColors]
     colors.splice(index, 1)
@@ -37,7 +36,7 @@ const DrawConfig = () => {
 
   return (
     <>
-      {/* 样式配置 */}
+      {/* style config */}
       <div className="mt-3">
         <div className="font-bold text-lg font-fredokaOne">Draw Style</div>
         {Object.keys(styleSwitch).map((lineKey) => (
@@ -73,7 +72,7 @@ const DrawConfig = () => {
           />
         </div>
       )}
-      {/* 颜色设置 */}
+      {/* color config */}
       {drawStyle !== DrawStyle.Rainbow && (
         <>
           <div className="form-control mt-3">
@@ -86,9 +85,9 @@ const DrawConfig = () => {
                       type="color"
                       value={color}
                       onChange={(e) => {
-                        changeDrawColor(e.target.value, i, 'double')
+                        handleDrawColors(e.target.value, i)
                       }}
-                      className={styles.drawColor}
+                      className="colorInput"
                     />
                     {drawColors.length > 1 && (
                       <span
@@ -106,11 +105,7 @@ const DrawConfig = () => {
                 <div
                   className="w-8 h-8 rounded-sm border-dashed border-2 border-black text-center leading-6 text-2xl box-border cursor-pointer"
                   onClick={() => {
-                    changeDrawColor(
-                      '#000000',
-                      drawColors.length,
-                      CHANGE_COLOR_TYPE.MULTI
-                    )
+                    handleDrawColors('#000000', drawColors.length)
                   }}
                 >
                   +

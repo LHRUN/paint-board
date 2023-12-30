@@ -1,15 +1,17 @@
-import { History } from './history'
-import { DrawStyle, ActionMode } from '@/constants'
 import { fabric } from 'fabric'
 import 'fabric/src/mixins/eraser_brush.mixin.js'
+import { History } from './history'
+import { DrawStyle, ActionMode } from '@/constants'
 
+import { v4 as uuidv4 } from 'uuid'
+import { isMobile } from './common'
 import { CanvasEvent } from './event'
 import { TextElement } from './element/text'
 import { material } from './element/draw/material'
-import { renderPencilBrush } from './element/draw/basic'
-import { v4 as uuidv4 } from 'uuid'
-import { getEraserWidth } from './common/draw'
 import { renderMultiColor } from './element/draw/multiColor'
+import { renderPencilBrush } from './element/draw/basic'
+import { brushMouseMixin } from './common/brushMouseMixin'
+import { getEraserWidth } from './common/draw'
 
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
@@ -50,9 +52,15 @@ export class PaintBoard {
       // fabric.Object.prototype.objectCaching = false;
       fabric.Line.prototype.strokeLineJoin = 'round'
       fabric.Line.prototype.strokeLineCap = 'round'
-      this.evnet = new CanvasEvent()
+
+      if (isMobile()) {
+        brushMouseMixin.initCanvas(this.canvas)
+      }
+
       this.initCanvasStorage()
       this.handleMode()
+
+      this.evnet = new CanvasEvent()
       resolve(true)
     })
   }
@@ -65,13 +73,12 @@ export class PaintBoard {
   }
 
   /**
-   * 初始化缓存
+   * Initialize the canvas cache
    */
   initCanvasStorage() {
     setTimeout(() => {
       const { files, currentId } = useFileStore.getState()
       const file = files?.find((item) => item?.id === currentId)
-      console.log('initCanvasStorage', file)
       if (file && this.canvas) {
         this.history = new History(file.boardData)
         this.canvas.loadFromJSON(file.boardData, () => {
@@ -90,9 +97,13 @@ export class PaintBoard {
           }
         })
       }
-    }, 1000)
+    }, 300)
   }
 
+  /**
+   * handle mode of operation
+   * @param mode current mode
+   */
   handleMode(mode: string = useBoardStore.getState().mode) {
     if (!this.canvas) {
       return
@@ -148,6 +159,9 @@ export class PaintBoard {
     this.canvas.requestRenderAll()
   }
 
+  /**
+   * handle draw style
+   */
   handleDrawStyle() {
     if (!this.canvas) {
       return
@@ -170,38 +184,41 @@ export class PaintBoard {
     }
   }
 
-  multipleTouchDisableAction(isDisable = true) {
-    if (this.canvas) {
-      switch (useBoardStore.getState().mode) {
-        case ActionMode.DRAW:
-          if (
-            [
-              DrawStyle.Basic,
-              DrawStyle.Material,
-              DrawStyle.MultiColor
-            ].includes(useDrawStore.getState().drawStyle)
-          ) {
-            this.canvas.isDrawingMode = !isDisable
-          }
-          break
-        case ActionMode.ERASE:
-          this.canvas.isDrawingMode = !isDisable
-          break
-        case ActionMode.Board:
-        case ActionMode.SELECT:
-          this.canvas.selection = !isDisable
-          fabric.Object.prototype.set({
-            selectable: !isDisable,
-            hoverCursor: isDisable ? 'default' : undefined
-          })
-          break
-        default:
-          break
-      }
-      this.canvas.discardActiveObject()
-    }
-  }
+  // multipleTouchDisableAction(isDisable = true) {
+  //   if (this.canvas) {
+  //     switch (useBoardStore.getState().mode) {
+  //       case ActionMode.DRAW:
+  //         if (
+  //           [
+  //             DrawStyle.Basic,
+  //             DrawStyle.Material,
+  //             DrawStyle.MultiColor
+  //           ].includes(useDrawStore.getState().drawStyle)
+  //         ) {
+  //           this.canvas.isDrawingMode = !isDisable
+  //         }
+  //         break
+  //       case ActionMode.ERASE:
+  //         this.canvas.isDrawingMode = !isDisable
+  //         break
+  //       case ActionMode.Board:
+  //       case ActionMode.SELECT:
+  //         this.canvas.selection = !isDisable
+  //         fabric.Object.prototype.set({
+  //           selectable: !isDisable,
+  //           hoverCursor: isDisable ? 'default' : undefined
+  //         })
+  //         break
+  //       default:
+  //         break
+  //     }
+  //     this.canvas.discardActiveObject()
+  //   }
+  // }
 
+  /**
+   * delete active objects
+   */
   deleteObject() {
     if (this.canvas) {
       const activeObjects = this.canvas.getActiveObjects()
@@ -215,6 +232,9 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * render and save history state
+   */
   render() {
     if (this.canvas) {
       this.canvas?.requestRenderAll()
@@ -223,7 +243,7 @@ export class PaintBoard {
   }
 
   /**
-   * 保存为图片
+   * save as Image
    */
   saveImage() {
     if (this.canvas) {
@@ -235,7 +255,7 @@ export class PaintBoard {
   }
 
   /**
-   * 复制对象
+   * copy active objects
    */
   copyObject() {
     const canvas = this.canvas
@@ -272,6 +292,9 @@ export class PaintBoard {
     })
   }
 
+  /**
+   * Moving active objects via fabric's bringForward method
+   */
   bringForWard() {
     const canvas = this.canvas
     if (canvas) {
@@ -283,6 +306,9 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * Moving active objects via fabric's sendBackwards method
+   */
   seendBackWard() {
     const canvas = this.canvas
     if (canvas) {
@@ -294,6 +320,9 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * Moving active objects via fabric's bringToFront method
+   */
   bringToFront() {
     const canvas = this.canvas
     if (canvas) {
@@ -305,6 +334,9 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * Moving active objects via fabric's sendToBack method
+   */
   sendToBack() {
     const canvas = this.canvas
     if (canvas) {
@@ -316,10 +348,18 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * Add hook fn to trigger on update
+   * @param fn hook fn
+   */
   addHookFn(fn: () => void) {
     this.hookFn.push(fn)
   }
 
+  /**
+   * remove trigger hook fn
+   * @param fn hook fn
+   */
   removeHookFn(fn: () => void) {
     const hookIndex = this.hookFn.findIndex((v) => v === fn)
     if (hookIndex > -1) {
@@ -327,6 +367,9 @@ export class PaintBoard {
     }
   }
 
+  /**
+   * trigger hook fn
+   */
   triggerHook() {
     this.hookFn.map((fn) => {
       fn?.()

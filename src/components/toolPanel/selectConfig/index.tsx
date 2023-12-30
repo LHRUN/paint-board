@@ -1,17 +1,19 @@
-import { paintBoard } from '@/utils/paintBoard'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { debounce } from 'lodash'
 import { useTranslation } from 'react-i18next'
+import { debounce } from 'lodash'
+import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { filtersCheckbox } from './constant'
 import { renderImageFilters } from '@/utils/element/image'
+
 import FontFamilyConfg from '../drawConfig/fontFamilyConfig'
 import LayerConfig from './layerConfig'
 
 const SelectConfig = () => {
   const { t } = useTranslation()
-  const [refreshCount, setRefresh] = useState(0) // 刷新数据
+  const [refreshCount, setRefresh] = useState(0) // refresh data
 
+  // activity opacity
   const opacityControl = useMemo(() => {
     let show = false
     let opacity = 1
@@ -32,6 +34,7 @@ const SelectConfig = () => {
     }
   }, [refreshCount])
 
+  // save steps by debounce
   const saveHistory = useCallback(
     debounce(() => {
       paintBoard.history?.saveState()
@@ -39,6 +42,7 @@ const SelectConfig = () => {
     []
   )
 
+  // update activity object opacity
   const updateObjectOpacity = (opacity: number) => {
     const objects = paintBoard.canvas?.getActiveObjects()
     if (objects?.length) {
@@ -47,7 +51,6 @@ const SelectConfig = () => {
       })
       paintBoard.canvas?.fire('selection:updated')
       paintBoard.canvas?.renderAll()
-      // paintBoard.render()
       saveHistory()
     }
   }
@@ -60,14 +63,15 @@ const SelectConfig = () => {
     }
   }, [setRefresh])
 
-  const changeFilters = (filter: string) => {
+  // update current image filters
+  const updateImageFilters = (filter: string) => {
     const image = paintBoard.canvas?.getActiveObject() as fabric.Image
     renderImageFilters(image, filter)
     paintBoard.render()
     setRefresh((v) => v + 1)
   }
 
-  const changeFontFamily = (fontFamily: string) => {
+  const updateFontFamily = (fontFamily: string) => {
     const text = paintBoard.canvas?.getActiveObject() as fabric.Object
     if (text?._customType === 'itext') {
       ;(text as fabric.IText).set('fontFamily', fontFamily)
@@ -129,7 +133,7 @@ const SelectConfig = () => {
                       paintBoard.canvas?.getActiveObject() as fabric.Image
                     )?.filters?.map((item: any) => item?.type ?? '') ?? []
                   ).includes(item.type)}
-                  onChange={() => changeFilters(item.type)}
+                  onChange={() => updateImageFilters(item.type)}
                   className="checkbox checkbox-success"
                 />
               </label>
@@ -143,7 +147,7 @@ const SelectConfig = () => {
       ) && (
         <FontFamilyConfg
           fontFamily={currentTextFontFamily}
-          changeFontFamily={changeFontFamily}
+          updateFontFamily={updateFontFamily}
         />
       )}
     </div>

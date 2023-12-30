@@ -1,5 +1,5 @@
 /**
- * 比较版本号
+ * compare version
  * @param v1
  * @param v2
  * @returns 0: v1 === v2; 1: v1 > v2; -1: v1 < v2
@@ -30,25 +30,25 @@ export const compareVersion = (v1: string, v2: string) => {
 }
 
 /**
- * 获取随机整数数
- * @param min 最小范围
- * @param max 最大范围
+ * get random integer
+ * @param min min range
+ * @param max max range
  */
 export const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 /**
- * 获取随机浮点数
- * @param min
- * @param max
+ * get random float
+ * @param min min range
+ * @param max max range
  */
 export const getRandomFloat = (min: number, max: number) => {
   return Math.random() * (max - min) + min
 }
 
 /**
- * 处理public文件夹下的静态文件路径
+ * handle static file paths in the public folder
  * @param originUrl
  * @returns publicDir + originUrl
  */
@@ -60,17 +60,17 @@ export const formatPublicUrl = (originUrl: string) => {
 }
 
 /**
- * 计算两点之间的距离
- * @param start 起点
- * @param end 终点
- * @returns 距离
+ * get the distance between two points
+ * @param start
+ * @param end
+ * @returns distance
  */
 export const getDistance = (start: fabric.Point, end: fabric.Point) => {
   return Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2))
 }
 
 /**
- * 移动端判断
+ * is it mobile
  */
 export const isMobile = () => {
   return /Mobi|Android|iPhone/i.test(navigator.userAgent)

@@ -11,7 +11,7 @@ export class TextElement {
   loadText() {
     const canvas = paintBoard?.canvas
     if (canvas) {
-      // 创建可编辑文本框
+      // Creating editable text input
       const text = new fabric.IText('Type here...', {
         left: canvas.getWidth() / 2,
         top: canvas.getHeight() / 2,
@@ -23,10 +23,10 @@ export class TextElement {
       canvas.add(text)
       canvas.setActiveObject(text)
 
-      text.enterEditing() // 进入编辑状态
-      text.selectAll() // 选择所有文字
+      text.enterEditing() // Enters editing state
+      text.selectAll() // Selects entire text
 
-      // 监听编辑完成事件，离开编辑状态时绘制文本
+      // Listen to the Edit Completed event to draw text when you leave the editing state.
       text.on('editing:exited', () => {
         setObjectAttr(text, 'itext')
         if (

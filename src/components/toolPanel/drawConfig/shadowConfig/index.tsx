@@ -1,4 +1,3 @@
-import styles from './index.module.css'
 import useDrawStore from '@/store/draw'
 
 const ShadowConfig = () => {
@@ -16,7 +15,7 @@ const ShadowConfig = () => {
             onChange={(e) => {
               updateShadowColor(e.target.value)
             }}
-            className={styles.drawColor}
+            className="colorInput"
           />
         </div>
         <input

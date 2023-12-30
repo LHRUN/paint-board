@@ -91,8 +91,8 @@ function renderCircle(
   context: CanvasRenderingContext2D,
   colors: string[]
 ) {
-  const radius = 10 // 每个圆的半径固定为 5
-  const padding = 5 // 圆与画布边缘的距离为 5，圆之间的距离为 10
+  const radius = 10
+  const padding = 5
   const n = colors.length
 
   const canvasWidth = 2 * padding + n * radius * 2 + (n - 1) * padding
@@ -102,7 +102,7 @@ function renderCircle(
   let x = padding + radius
   const y = padding + radius
 
-  // 画圆
+  // render circle
   for (let i = 0; i < n; i++) {
     context.beginPath()
     context.fillStyle = colors[i]

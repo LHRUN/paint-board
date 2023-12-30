@@ -1,12 +1,13 @@
+import { FC, useState } from 'react'
+import useFileStore from '@/store/files'
+import useBoardStore from '@/store/board'
+import { ActionMode } from '@/constants'
+import { paintBoard } from '@/utils/paintBoard'
+
 import AddFileIcon from '@/components/icons/addFile.svg?react'
 import RemoveFileIcon from '@/components/icons/removeFile.svg?react'
 import ExportFileIcon from '@/components/icons/exportFile.svg?react'
 import ImportFileIcon from '@/components/icons/importFile.svg?react'
-import useFileStore from '@/store/files'
-import { FC, useState } from 'react'
-import useBoardStore from '@/store/board'
-import { ActionMode } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
 import Toast from '@/components/toast'
 
 interface IProps {
@@ -17,22 +18,24 @@ const FileList: FC<IProps> = ({ updateShow }) => {
   const {
     files,
     currentId,
-    setCurrentFile,
+    updateCurrentFile,
     updateTitle,
     addFile,
     saveJSON,
     uploadFile
   } = useFileStore()
   const { updateMode } = useBoardStore()
-  const [showUploadFail, updateShowUploadFail] = useState(false)
+  const [showUploadFail, updateShowUploadFail] = useState(false) // upload file toast
 
-  const updateCurFile = (id: string) => {
-    setCurrentFile(id)
+  // update current file id
+  const updateCurrentFileId = (id: string) => {
+    updateCurrentFile(id)
     paintBoard.initCanvasStorage()
     updateMode(ActionMode.DRAW)
   }
 
-  const handleUploadFile = (file: File | undefined) => {
+  // update file
+  const handleUploadFile = (file?: File) => {
     uploadFile(file).then((res: boolean) => {
       if (res) {
         paintBoard.initCanvasStorage()
@@ -43,7 +46,6 @@ const FileList: FC<IProps> = ({ updateShow }) => {
           updateShowUploadFail(false)
         }, 1500)
       }
-      console.log('handleUploadFile', res)
     })
   }
 
@@ -89,7 +91,7 @@ const FileList: FC<IProps> = ({ updateShow }) => {
                 <li
                   key={item.id}
                   className="my-1 block rounded-lg overflow-hidden"
-                  onClick={() => updateCurFile(item.id)}
+                  onClick={() => updateCurrentFileId(item.id)}
                 >
                   <a className={`${item.id === currentId ? 'active' : ''}`}>
                     <input

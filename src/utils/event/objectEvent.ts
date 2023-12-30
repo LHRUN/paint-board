@@ -11,17 +11,14 @@ export class ObjectEvent {
   initObjectEvent() {
     const canvas = paintBoard?.canvas
     canvas?.on('selection:created', () => {
-      console.log('selection:created')
       paintBoard.triggerHook()
     })
 
     canvas?.on('selection:updated', () => {
-      console.log('selection:updated')
       paintBoard.triggerHook()
     })
 
     canvas?.on('selection:cleared', () => {
-      console.log('selection:cleared')
       paintBoard.triggerHook()
     })
 

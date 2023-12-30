@@ -13,20 +13,19 @@ export class ImageElement {
     fabric.Image.fromURL(
       data,
       (img) => {
-        console.log('upload', img)
         const center = {
           x: canvas.getWidth() / 2,
           y: canvas.getHeight() / 2
         }
-        // 计算缩放比例
+
+        // get scaling
         const scaleX = canvas.getWidth() / 2 / (img?.width || 1)
         const scaleY = canvas.getHeight() / 2 / (img?.height || 1)
-        const scale = Math.min(scaleX, scaleY, 1) // 确保图片不会比原尺寸大
+        const scale = Math.min(scaleX, scaleY, 1) // Make sure the image is not larger than the original size
 
-        // 应用计算得出的缩放比例并保持宽高比
         img.scale(scale)
 
-        // 设置图片位置
+        // set image position
         img.set({
           left: center.x - img.getScaledWidth() / 2,
           top: center.y - img.getScaledHeight() / 2
@@ -38,7 +37,7 @@ export class ImageElement {
         paintBoard.render()
       },
       {
-        crossOrigin: 'anonymous' // 指定跨域策略，如果您的图片来自于不同的域，可以需要这个
+        crossOrigin: 'anonymous'
       }
     )
   }
@@ -69,7 +68,7 @@ export function renderImageFilters(image: fabric.Image, filterType: string) {
           new fabric.Image.filters.Blur({
             blur: 0.5
           })
-        ) // 模糊
+        )
         break
       case 'Vintage':
         image.filters?.push(new fabric.Image.filters.Vintage())
@@ -80,7 +79,7 @@ export function renderImageFilters(image: fabric.Image, filterType: string) {
             color: '#66CC89',
             mode: 'diff'
           })
-        ) //盲目的
+        )
         break
       case 'Brownie':
         image.filters?.push(new fabric.Image.filters.Brownie())
