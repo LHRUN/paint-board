@@ -47,6 +47,7 @@ export class History {
       canvas.loadFromJSON(state, () => {
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(state)
+        paintBoard.triggerHook()
       })
     }
   }
@@ -59,6 +60,7 @@ export class History {
       canvas.loadFromJSON(state, () => {
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(state)
+        paintBoard.triggerHook()
       })
     }
   }

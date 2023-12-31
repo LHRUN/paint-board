@@ -48,7 +48,7 @@ const useDrawStore = create<DrawState & DrawAction>()(
     (set, get) => ({
       drawWidth: 10,
       drawColors: ['#000000'],
-      shadowWidth: 15,
+      shadowWidth: 0,
       shadowColor: '#000000',
       drawTextValue: 'draw',
       drawStyle: DrawStyle.Basic,

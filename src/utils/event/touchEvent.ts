@@ -47,7 +47,7 @@ export class CanvasTouchEvent {
     }
     const touches = e.touches
 
-    brushMouseMixin.updateIsOnePointDown(touches.length === 1)
+    brushMouseMixin.updateIsDisableDraw(touches.length >= 2)
 
     if (touches.length === 2) {
       this.isTwoTouch = true
@@ -95,7 +95,7 @@ export class CanvasTouchEvent {
           new fabric.Point(this.zoomPoint.x, this.zoomPoint.y),
           zoom
         )
-        this.getZoomPercentage(zoom)
+        paintBoard.evnet?.zoomEvent.updateZoomPercentage(true, zoom)
       }
 
       // Calculate drag distance
@@ -123,11 +123,6 @@ export class CanvasTouchEvent {
       this.isTwoTouch = false
     }
   }
-
-  getZoomPercentage = debounce((zoom: number) => {
-    paintBoard.evnet?.zoomEvent.getZoomPercentage()
-    useFileStore.getState().updateZoom(zoom)
-  }, 500)
 
   saveTransform = debounce(() => {
     const transform = paintBoard.canvas?.viewportTransform

@@ -45,7 +45,8 @@ export class PaintBoard {
         borderColor: '#65CC8A',
         cornerColor: '#65CC8A',
         cornerStyle: 'rect',
-        borderDashArray: [3, 3]
+        borderDashArray: [3, 3],
+        transparentCorners: false
         // objectCaching: false
         // noScaleCache: false
       })

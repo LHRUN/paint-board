@@ -3,7 +3,7 @@ import { CSSProperties, useEffect, useState } from 'react'
 
 const ZoomInfo = () => {
   const [zoomValue, setZoomValue] = useState(
-    paintBoard.evnet?.zoomEvent.getZoomPercentage(false)
+    paintBoard.evnet?.zoomEvent.handleZoomPercentage(false)
   )
   useEffect(() => {
     paintBoard.evnet?.zoomEvent.setZoomHook((num: number) => {

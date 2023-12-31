@@ -12,9 +12,12 @@ export class TextElement {
     const canvas = paintBoard?.canvas
     if (canvas) {
       // Creating editable text input
+      const viewportCenter = canvas.getVpCenter()
       const text = new fabric.IText('Type here...', {
-        left: canvas.getWidth() / 2,
-        top: canvas.getHeight() / 2,
+        originX: 'center',
+        originY: 'center',
+        left: viewportCenter.x,
+        top: viewportCenter.y,
         fill: useDrawStore.getState().drawColors[0],
         fontSize: 25 / (canvas?.getZoom() ?? 1),
         fontFamily: useDrawStore.getState().textFontFamily

@@ -5,6 +5,7 @@ import { ActionMode, DrawStyle } from '@/constants'
 import { getDrawWidth, getEraserWidth, getShadowWidth } from '../common/draw'
 import useDrawStore from '@/store/draw'
 import useFileStore from '@/store/files'
+import { debounce } from 'lodash'
 
 let zoomHook: (zoom: number) => undefined
 export const MIN_ZOOM = 0.3
@@ -30,19 +31,14 @@ export class CanvasZoomEvent {
         return
       }
 
-      const pointer = paintBoard.canvas?.getPointer(options.e)
-
-      const canvasWidth = (canvas?.width || 1) / 2
-      const canvasHeight = (canvas?.height || 1) / 2
+      const centerX = (canvas?.width || 1) / 2
+      const centerY = (canvas?.height || 1) / 2
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
-      canvas.zoomToPoint(
-        { x: pointer?.x ?? canvasWidth, y: pointer?.y ?? canvasHeight },
-        zoom
-      )
-      useFileStore.getState().updateZoom(zoom)
+      canvas.zoomToPoint({ x: centerX, y: centerY }, zoom)
+
       options.e.preventDefault()
       options.e.stopPropagation()
-      this.getZoomPercentage()
+      this.updateZoomPercentage(true, zoom)
     })
   }
 
@@ -52,12 +48,17 @@ export class CanvasZoomEvent {
       const canvasWidth = (canvas?.width || 1) / 2
       const canvasHeight = (canvas?.height || 1) / 2
       canvas.zoomToPoint(new fabric.Point(canvasWidth, canvasHeight), 1)
-      useFileStore.getState().updateZoom(1)
-      this.getZoomPercentage()
+      this.updateZoomPercentage(true, 1)
     }
   }
 
-  getZoomPercentage(triggerCb = true) {
+  updateZoomPercentage = debounce((triggerCb = true, zoom: number) => {
+    const percentage = this.handleZoomPercentage(triggerCb)
+    useFileStore.getState().updateZoom(zoom)
+    return percentage
+  }, 500)
+
+  handleZoomPercentage(triggerCb = true) {
     const canvas = paintBoard.canvas
     let percentage = 1
     if (canvas) {
@@ -89,7 +90,7 @@ const handleWidth = () => {
       break
     case ActionMode.DRAW:
       if (
-        [DrawStyle.Basic, DrawStyle.Material].includes(
+        [DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
           useDrawStore.getState().drawStyle
         )
       ) {

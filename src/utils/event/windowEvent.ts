@@ -14,6 +14,7 @@ export class WindowEvent {
     window.addEventListener('keyup', this.keyupFn)
     window.addEventListener('paste', this.pasteFn)
     window.addEventListener('resize', this.resizeFn)
+    window.addEventListener('orientationchange', this.resizeFn)
   }
 
   removeWindowEvent() {
@@ -21,6 +22,7 @@ export class WindowEvent {
     window.removeEventListener('keyup', this.keyupFn)
     window.removeEventListener('paste', this.pasteFn)
     window.removeEventListener('resize', this.resizeFn)
+    window.removeEventListener('orientationchange', this.resizeFn)
   }
 
   keydownFn(e: KeyboardEvent) {

@@ -37,13 +37,11 @@ const BoardOperation = () => {
   // click undo
   const undo = () => {
     paintBoard.history?.undo()
-    paintBoard.triggerHook()
   }
 
   // click redo
   const redo = () => {
     paintBoard.history?.redo()
-    paintBoard.triggerHook()
   }
 
   // load IText object

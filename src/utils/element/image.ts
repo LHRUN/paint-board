@@ -13,10 +13,7 @@ export class ImageElement {
     fabric.Image.fromURL(
       data,
       (img) => {
-        const center = {
-          x: canvas.getWidth() / 2,
-          y: canvas.getHeight() / 2
-        }
+        const viewportCenter = canvas.getVpCenter()
 
         // get scaling
         const scaleX = canvas.getWidth() / 2 / (img?.width || 1)
@@ -27,8 +24,8 @@ export class ImageElement {
 
         // set image position
         img.set({
-          left: center.x - img.getScaledWidth() / 2,
-          top: center.y - img.getScaledHeight() / 2
+          left: viewportCenter.x - img.getScaledWidth() / 2,
+          top: viewportCenter.y - img.getScaledHeight() / 2
         })
 
         setObjectAttr(img, 'image')

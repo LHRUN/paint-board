@@ -2,7 +2,7 @@ import { fabric } from 'fabric'
 import { isMobile } from './index'
 
 let isMouseDown = false
-let isOnePointDown = !isMobile()
+let isDisableDraw = isMobile()
 
 class BrushMouseMixin {
   canvas: fabric.Canvas | null = null
@@ -15,7 +15,7 @@ class BrushMouseMixin {
   private _initBrushMouse() {
     fabric.util.object.extend(this.canvas, {
       _onMouseDownInDrawingMode: function () {
-        if (!isOnePointDown) {
+        if (isDisableDraw) {
           return
         }
 
@@ -24,7 +24,7 @@ class BrushMouseMixin {
     })
     fabric.util.object.extend(this.canvas, {
       _onMouseMoveInDrawingMode: function (event: Event) {
-        if (!isOnePointDown) {
+        if (isDisableDraw) {
           return
         }
 
@@ -38,7 +38,7 @@ class BrushMouseMixin {
     })
     fabric.util.object.extend(this.canvas, {
       _onMouseUpInDrawingMode: function (event: Event) {
-        if (!isOnePointDown) {
+        if (isDisableDraw) {
           return
         }
 
@@ -48,8 +48,8 @@ class BrushMouseMixin {
     })
   }
 
-  updateIsOnePointDown(v: boolean) {
-    isOnePointDown = v
+  updateIsDisableDraw(v: boolean) {
+    isDisableDraw = v
   }
 }
 
