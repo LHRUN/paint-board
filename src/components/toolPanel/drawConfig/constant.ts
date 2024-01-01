@@ -60,6 +60,20 @@ export const styleSwitch: Record<string, Array<StyleSwitchType>> = {
       type: DrawStyle.Reticulate,
       text: 'style.reticulate'
     }
+  ],
+  line_4: [
+    {
+      type: DrawStyle.MultiPoint,
+      text: 'style.multiPoint'
+    },
+    {
+      type: DrawStyle.Wiggle,
+      text: 'style.wiggle'
+    },
+    {
+      type: DrawStyle.Thorn,
+      text: 'style.thorn'
+    }
   ]
 }
 

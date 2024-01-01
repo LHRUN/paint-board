@@ -14,7 +14,10 @@
     "multiColor": "MultiColor",
     "text": "Text",
     "multiLine": "MultiLine",
-    "reticulate": "Reticulate"
+    "reticulate": "Reticulate",
+    "multiPoint": "MultiPoint",
+    "wiggle": "Wiggle",
+    "thorn": "Thorn"
   },
   "operate": {
     "undo": "undo",

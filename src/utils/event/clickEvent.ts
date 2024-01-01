@@ -6,9 +6,13 @@ import { ShapeElement } from '../element/draw/shape'
 import { PixelsElement } from '../element/draw/pixels'
 import { DrawTextElement } from '../element/draw/text'
 import { MultiLineElement } from '../element/draw/multiLine'
+import { RainbowElement } from '../element/draw/rainbow'
+import { ThornElement } from '../element/draw/thorn'
+import { MultiPointElement } from '../element/draw/multiPoint'
+import { WiggleElement } from '../element/draw/wiggle'
+
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
-import { RainbowElement } from '../element/draw/rainbow'
 
 export class CanvasClickEvent {
   isMouseDown = false
@@ -20,6 +24,9 @@ export class CanvasClickEvent {
     | MultiLineElement
     | ReticulateElement
     | RainbowElement
+    | ThornElement
+    | MultiPointElement
+    | WiggleElement
     | null = null
 
   constructor() {
@@ -54,6 +61,15 @@ export class CanvasClickEvent {
             break
           case DrawStyle.Rainbow:
             currentElement = new RainbowElement()
+            break
+          case DrawStyle.Thorn:
+            currentElement = new ThornElement()
+            break
+          case DrawStyle.MultiPoint:
+            currentElement = new MultiPointElement()
+            break
+          case DrawStyle.Wiggle:
+            currentElement = new WiggleElement()
             break
           default:
             break
@@ -96,6 +112,15 @@ export class CanvasClickEvent {
               this.currentElement?.addPosition(e.absolutePointer)
               break
             case DrawStyle.Rainbow:
+              this.currentElement?.addPosition(e.absolutePointer)
+              break
+            case DrawStyle.Thorn:
+              this.currentElement?.addPosition(e.absolutePointer)
+              break
+            case DrawStyle.MultiPoint:
+              this.currentElement?.addPosition(e.absolutePointer)
+              break
+            case DrawStyle.Wiggle:
               this.currentElement?.addPosition(e.absolutePointer)
               break
             default:

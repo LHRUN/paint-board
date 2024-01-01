@@ -14,7 +14,10 @@
     "multiColor": "多色",
     "text": "文字",
     "multiLine": "多线连接",
-    "reticulate": "网状"
+    "reticulate": "网状",
+    "multiPoint": "多点连接",
+    "wiggle": "波浪曲线",
+    "thorn": "荆棘"
   },
   "operate": {
     "undo": "撤销",

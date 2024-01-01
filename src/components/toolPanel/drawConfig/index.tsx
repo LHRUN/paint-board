@@ -3,7 +3,8 @@ import useDrawStore from '@/store/draw'
 import { DrawStyle } from '@/constants'
 import { styleSwitch } from './constant'
 
-import ShapeConfig from './shapeConfig'
+import ShapeConutConfig from './shapeConfig/shapeConutConfig'
+import ShapeTypeConfig from './shapeConfig/shapeTypeConfig'
 import ShadowConfig from './shadowConfig'
 import DrawTextConfig from './drawTextConfig'
 import MaterialConfig from './materialConfig'
@@ -55,10 +56,14 @@ const DrawConfig = () => {
           </div>
         ))}
       </div>
-      {drawStyle === DrawStyle.Shape && <ShapeConfig />}
+      {drawStyle === DrawStyle.Shape && <ShapeTypeConfig />}
+      {(drawStyle === DrawStyle.Shape ||
+        drawStyle === DrawStyle.MultiPoint) && <ShapeConutConfig />}
       {drawStyle === DrawStyle.Material && <MaterialConfig />}
       {drawStyle === DrawStyle.MultiColor && <MultiColorConfig />}
-      {drawStyle !== DrawStyle.Text && (
+      {![DrawStyle.Text, DrawStyle.Wiggle, DrawStyle.Thorn].includes(
+        drawStyle
+      ) && (
         <div className="mt-3">
           <div className="font-bold text-lg font-fredokaOne">Draw Width</div>
           <input

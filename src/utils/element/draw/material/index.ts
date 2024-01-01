@@ -91,7 +91,6 @@ export class Material {
         blur: getShadowWidth(),
         offsetX: 0,
         offsetY: 0,
-        affectStroke: true,
         color: useDrawStore.getState().shadowColor
       })
     }
