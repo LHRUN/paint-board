@@ -2,40 +2,49 @@ import { Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { formatPublicUrl } from '@/utils/common'
 import { useTranslation } from 'react-i18next'
 
 const guideInfoList = [
   {
-    imageList: [formatPublicUrl('desc/drawMode.png')],
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/drawMode.png'
+    ],
     title: 'DrawMode',
     textList: ['line1', 'line2', 'line3', 'line4', 'line5']
   },
   {
-    imageList: [formatPublicUrl('desc/eraserMode.png')],
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/eraserMode.png'
+    ],
     title: 'EraserMode',
     textList: ['line1', 'line2']
   },
   {
-    imageList: [formatPublicUrl('desc/selectMode.png')],
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/selectMode.png'
+    ],
     title: 'SelectMode',
     textList: ['line1', 'line2', 'line3', 'line4', 'line5', 'line6']
   },
   {
-    imageList: [formatPublicUrl('desc/boardMode.png')],
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/boardMode.png'
+    ],
     title: 'BoardMode',
     textList: ['line1']
   },
   {
     imageList: [
-      // formatPublicUrl('desc/infoIcon.png'),
-      formatPublicUrl('desc/borderConfig.png')
+      // 'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/infoIcon.png'
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/borderConfig.png'
     ],
     title: 'BorderConfig',
     textList: ['line1', 'line2', 'line3', 'line4']
   },
   {
-    imageList: [formatPublicUrl('desc/files.png')],
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/files.png'
+    ],
     title: 'FileConfig',
     textList: ['line1']
   }

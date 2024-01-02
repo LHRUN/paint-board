@@ -12,7 +12,7 @@ import GuideInfoSwiper from './guideInfoSwiper'
 const GuideInfo: React.FC = () => {
   const { t, i18n } = useTranslation()
   const { language, updateLanguage } = useBoardStore()
-  const [showModal, setShowModal] = useState<boolean>(true)
+  const [showModal, setShowModal] = useState<boolean>(false)
   const handleChangLang = () => {
     const newLanguage = language === 'en' ? 'zh' : 'en'
     i18n.changeLanguage(newLanguage)

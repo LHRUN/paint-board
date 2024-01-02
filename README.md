@@ -1,8 +1,9 @@
-<h1 align="center">paint-board</h1>
+
+<div align="center">
+  <img width="180" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
+</div>
 <h4 align="center">
-
-  一款基于 canvas 的 Web 端多功能画板
-
+  一款支持多端的趣味艺术画板
 </h4>
 
 <div align="center">
@@ -28,7 +29,9 @@
 ## 预览
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
-![](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_image.png)
+<div align="center" style="width: 100%; display: flex;">
+  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="logo"/>
+</div>
 
 ## 功能列表
 已完成功能：
