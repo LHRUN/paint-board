@@ -60,7 +60,7 @@ const FileList: FC<IProps> = ({ updateShow }) => {
         ></label>
         <div className="h-screen bg-white px-5 py-7 overflow-hidden max-w-[80%]">
           <div className="font-fredokaOne text-2xl text-center">
-            PAINT-BOARD LIST
+            PAINT-BOARD FILES
           </div>
           <div className="bg-[#eef1ff] rounded-2xl mt-5 py-2 w-max max-w-full">
             <div className="flex justify-end items-center px-4 pb-2">
