@@ -32,7 +32,7 @@
   "info": {
     "welecome": "Welcome to star",
     "DrawMode": {
-      "line1": "Provides 12 different styles of brushes to meet the diversity of painting",
+      "line1": "Provides 12 different styles of brushes, including Basic Brush, Rainbow Brush, Multi-Shape Brush, Multi-Material Brush, Pixel Brush, Multi-Color Brush, Text Brush, Multi-Line Connection Brush, Reticulate Brush, Multi-Point Connection Brush, Wiggle Brush, Thorn Brush. Satisfy the diversified drawing",
       "line2": "All brushes support color and brush width configurations",
       "line3": "MultiShape allows flexible configuration of shape types and quantities",
       "line4": "Material and MultiColor allows you to adjust the material type of the brush",
