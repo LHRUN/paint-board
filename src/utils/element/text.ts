@@ -7,6 +7,7 @@ import { ActionMode } from '@/constants'
 
 export class TextElement {
   text: fabric.IText | null = null
+  isTextEditing = false
 
   loadText() {
     const canvas = paintBoard?.canvas
@@ -28,9 +29,11 @@ export class TextElement {
 
       text.enterEditing() // Enters editing state
       text.selectAll() // Selects entire text
+      this.isTextEditing = true
 
       // Listen to the Edit Completed event to draw text when you leave the editing state.
       text.on('editing:exited', () => {
+        this.isTextEditing = false
         setObjectAttr(text, 'itext')
         if (
           [ActionMode.DRAW, ActionMode.ERASE].includes(
@@ -48,6 +51,7 @@ export class TextElement {
     if (this?.text) {
       this.text.exitEditing()
       this.text = null
+      this.isTextEditing = false
     }
   }
 }

@@ -221,6 +221,9 @@ export class PaintBoard {
    * delete active objects
    */
   deleteObject() {
+    if (this.textElement.isTextEditing) {
+      return
+    }
     if (this.canvas) {
       const activeObjects = this.canvas.getActiveObjects()
       if (activeObjects?.length) {
