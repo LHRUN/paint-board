@@ -128,6 +128,7 @@ export class CanvasTouchEvent {
     const transform = paintBoard.canvas?.viewportTransform
     if (transform) {
       useFileStore.getState().updateTransform(transform)
+      paintBoard.disableCacheRender()
     }
   }, 500)
 }

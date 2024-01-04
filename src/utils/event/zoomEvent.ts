@@ -55,6 +55,7 @@ export class CanvasZoomEvent {
   updateZoomPercentage = debounce((triggerCb = true, zoom: number) => {
     const percentage = this.handleZoomPercentage(triggerCb)
     useFileStore.getState().updateZoom(zoom)
+    paintBoard.disableCacheRender()
     return percentage
   }, 500)
 

@@ -247,6 +247,22 @@ export class PaintBoard {
   }
 
   /**
+   * Refresh cache for rendering after zooming or dragging
+   */
+  disableCacheRender() {
+    console.log('disableCacheRender')
+    if (this.canvas) {
+      fabric.Object.prototype.set({
+        objectCaching: false
+      })
+      this.canvas.renderAll()
+      fabric.Object.prototype.set({
+        objectCaching: true
+      })
+    }
+  }
+
+  /**
    * save as Image
    */
   saveImage() {

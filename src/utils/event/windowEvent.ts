@@ -54,11 +54,13 @@ export class WindowEvent {
       if (paintBoard.canvas) {
         paintBoard.canvas.defaultCursor = 'default'
       }
+      paintBoard.handleMode()
+
       const transform = paintBoard.canvas?.viewportTransform
       if (transform) {
         useFileStore.getState().updateTransform(transform)
+        paintBoard.disableCacheRender()
       }
-      paintBoard.handleMode()
     }
   }
 
