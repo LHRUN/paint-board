@@ -8,12 +8,14 @@ import {
 import { paintBoard } from '@/utils/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { fabric } from 'fabric'
 
 interface BoardState {
   mode: string // operating mode
   language: string // i18n language 'zh' 'en'
   backgroundColor: string // canvas background color
   backgroundOpacity: number // canvas background opacity
+  isObjectCaching: boolean // fabric objectCaching
 }
 
 interface BoardAction {
@@ -22,6 +24,7 @@ interface BoardAction {
   initBackground: () => void
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
+  updateCacheState: () => void
 }
 
 const initLanguage = ['en', 'en-US', 'en-us'].includes(navigator.language)
@@ -35,6 +38,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
       language: initLanguage,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
+      isObjectCaching: false,
       updateMode: (mode) => {
         const oldMode = get().mode
         if (oldMode !== mode) {
@@ -96,6 +100,16 @@ const useBoardStore = create<BoardState & BoardAction>()(
           }
           return {}
         })
+      },
+      updateCacheState() {
+        const oldCacheState = get().isObjectCaching
+        set({
+          isObjectCaching: !oldCacheState
+        })
+        fabric.Object.prototype.set({
+          objectCaching: useBoardStore.getState().isObjectCaching
+        })
+        paintBoard?.canvas?.renderAll()
       }
     }),
     {

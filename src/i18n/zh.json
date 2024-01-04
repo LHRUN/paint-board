@@ -92,5 +92,8 @@
     "Brightness": "增亮",
     "Noise": "噪点",
     "Convolute": "浮雕"
+  },
+  "boardConfig": {
+    "cacheTip": "在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度"
   }
 }

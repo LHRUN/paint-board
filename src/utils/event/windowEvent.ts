@@ -3,6 +3,7 @@ import { paintBoard } from '../paintBoard'
 import { ImageElement } from '../element/image'
 import { fabric } from 'fabric'
 import useFileStore from '@/store/files'
+import useBoardStore from '@/store/board'
 
 export class WindowEvent {
   constructor() {
@@ -31,6 +32,11 @@ export class WindowEvent {
       case KeyCode.SPACE:
         paintBoard?.evnet?.clickEvent.setSpaceKeyDownState(true)
         if (canvas) {
+          if (!useBoardStore.getState().isObjectCaching) {
+            fabric.Object.prototype.set({
+              objectCaching: true
+            })
+          }
           canvas.defaultCursor = 'pointer'
           canvas.isDrawingMode = false
           canvas.selection = false
@@ -54,12 +60,16 @@ export class WindowEvent {
       if (paintBoard.canvas) {
         paintBoard.canvas.defaultCursor = 'default'
       }
-      paintBoard.handleMode()
 
       const transform = paintBoard.canvas?.viewportTransform
       if (transform) {
         useFileStore.getState().updateTransform(transform)
-        paintBoard.disableCacheRender()
+        if (!useBoardStore.getState().isObjectCaching) {
+          fabric.Object.prototype.set({
+            objectCaching: false
+          })
+        }
+        paintBoard.handleMode()
       }
     }
   }

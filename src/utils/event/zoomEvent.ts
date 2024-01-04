@@ -25,10 +25,16 @@ export class CanvasZoomEvent {
 
       // Adjust the zoom ratio according to the direction of the scroll wheel
       let zoom = canvas.getZoom()
-      zoom = delta > 0 ? zoom * 1.05 : zoom / 1.05
+      zoom = delta > 0 ? zoom * 1.1 : zoom / 1.1
 
       if (zoom < MIN_ZOOM || zoom > MAX_ZOOM) {
         return
+      }
+
+      if (!useBoardStore.getState().isObjectCaching) {
+        fabric.Object.prototype.set({
+          objectCaching: true
+        })
       }
 
       const centerX = (canvas?.width || 1) / 2
@@ -55,7 +61,12 @@ export class CanvasZoomEvent {
   updateZoomPercentage = debounce((triggerCb = true, zoom: number) => {
     const percentage = this.handleZoomPercentage(triggerCb)
     useFileStore.getState().updateZoom(zoom)
-    paintBoard.disableCacheRender()
+    if (!useBoardStore.getState().isObjectCaching) {
+      fabric.Object.prototype.set({
+        objectCaching: false
+      })
+    }
+    paintBoard.canvas?.requestRenderAll()
     return percentage
   }, 500)
 

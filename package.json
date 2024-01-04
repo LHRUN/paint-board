@@ -18,6 +18,7 @@
     "i18next": "^22.4.9",
     "idb-keyval": "^6.2.1",
     "immer": "^10.0.3",
+    "jsondiffpatch": "^0.6.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",

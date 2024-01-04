@@ -92,5 +92,8 @@
     "Brightness": "Brightness",
     "Noise": "Noise",
     "Convolute": "Emboss"
+  },
+  "boardConfig": {
+    "cacheTip": "In the presence of a large amount of drawing content, enabling caching will improve drawing performance, while disabling caching will improve canvas sharpness"
   }
 }

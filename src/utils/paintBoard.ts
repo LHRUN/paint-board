@@ -39,7 +39,6 @@ export class PaintBoard {
         width: window.innerWidth,
         height: window.innerHeight,
         enableRetinaScaling: true
-        // enablePointerEvents: true
       })
       fabric.Object.prototype.set({
         borderColor: '#65CC8A',
@@ -47,10 +46,7 @@ export class PaintBoard {
         cornerStyle: 'rect',
         borderDashArray: [3, 3],
         transparentCorners: false
-        // objectCaching: false
-        // noScaleCache: false
       })
-      // fabric.Object.prototype.objectCaching = false;
       fabric.Line.prototype.strokeLineJoin = 'round'
       fabric.Line.prototype.strokeLineCap = 'round'
 
@@ -81,7 +77,7 @@ export class PaintBoard {
       const { files, currentId } = useFileStore.getState()
       const file = files?.find((item) => item?.id === currentId)
       if (file && this.canvas) {
-        this.history = new History(file.boardData)
+        this.history = new History()
         this.canvas.loadFromJSON(file.boardData, () => {
           if (this.canvas) {
             if (file.viewportTransform) {
@@ -93,7 +89,10 @@ export class PaintBoard {
                 file.zoom
               )
             }
-            this.canvas.requestRenderAll()
+            fabric.Object.prototype.set({
+              objectCaching: useBoardStore.getState().isObjectCaching
+            })
+            this.canvas.renderAll()
             this.triggerHook()
           }
         })
@@ -185,38 +184,6 @@ export class PaintBoard {
     }
   }
 
-  // multipleTouchDisableAction(isDisable = true) {
-  //   if (this.canvas) {
-  //     switch (useBoardStore.getState().mode) {
-  //       case ActionMode.DRAW:
-  //         if (
-  //           [
-  //             DrawStyle.Basic,
-  //             DrawStyle.Material,
-  //             DrawStyle.MultiColor
-  //           ].includes(useDrawStore.getState().drawStyle)
-  //         ) {
-  //           this.canvas.isDrawingMode = !isDisable
-  //         }
-  //         break
-  //       case ActionMode.ERASE:
-  //         this.canvas.isDrawingMode = !isDisable
-  //         break
-  //       case ActionMode.Board:
-  //       case ActionMode.SELECT:
-  //         this.canvas.selection = !isDisable
-  //         fabric.Object.prototype.set({
-  //           selectable: !isDisable,
-  //           hoverCursor: isDisable ? 'default' : undefined
-  //         })
-  //         break
-  //       default:
-  //         break
-  //     }
-  //     this.canvas.discardActiveObject()
-  //   }
-  // }
-
   /**
    * delete active objects
    */
@@ -243,22 +210,6 @@ export class PaintBoard {
     if (this.canvas) {
       this.canvas?.requestRenderAll()
       this.history?.saveState()
-    }
-  }
-
-  /**
-   * Refresh cache for rendering after zooming or dragging
-   */
-  disableCacheRender() {
-    console.log('disableCacheRender')
-    if (this.canvas) {
-      fabric.Object.prototype.set({
-        objectCaching: false
-      })
-      this.canvas.renderAll()
-      fabric.Object.prototype.set({
-        objectCaching: true
-      })
     }
   }
 

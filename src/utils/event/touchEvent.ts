@@ -4,6 +4,7 @@ import { MAX_ZOOM, MIN_ZOOM } from './zoomEvent'
 import { debounce } from 'lodash'
 import { brushMouseMixin } from '../common/brushMouseMixin'
 import useFileStore from '@/store/files'
+import useBoardStore from '@/store/board'
 
 export class CanvasTouchEvent {
   isTwoTouch = false
@@ -91,6 +92,11 @@ export class CanvasTouchEvent {
       let zoom = this.startScale * (currentDistance / this.startDistance)
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
       if (this.zoomPoint) {
+        if (!useBoardStore.getState().isObjectCaching) {
+          fabric.Object.prototype.set({
+            objectCaching: true
+          })
+        }
         canvas.zoomToPoint(
           new fabric.Point(this.zoomPoint.x, this.zoomPoint.y),
           zoom
@@ -106,6 +112,11 @@ export class CanvasTouchEvent {
         this.isDragging = true
         this.lastPan = currentPan
       } else if (this.lastPan) {
+        if (!useBoardStore.getState().isObjectCaching) {
+          fabric.Object.prototype.set({
+            objectCaching: true
+          })
+        }
         canvas.relativePan(
           new fabric.Point(
             currentPan.x - this.lastPan.x,
@@ -128,7 +139,12 @@ export class CanvasTouchEvent {
     const transform = paintBoard.canvas?.viewportTransform
     if (transform) {
       useFileStore.getState().updateTransform(transform)
-      paintBoard.disableCacheRender()
+      if (!useBoardStore.getState().isObjectCaching) {
+        fabric.Object.prototype.set({
+          objectCaching: false
+        })
+      }
+      paintBoard.canvas?.requestRenderAll()
     }
   }, 500)
 }

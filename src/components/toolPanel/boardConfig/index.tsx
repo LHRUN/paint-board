@@ -4,6 +4,7 @@ import useBoardStore from '@/store/board'
 import { debounce } from 'lodash'
 import { paintBoard } from '@/utils/paintBoard'
 import { useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const boardConfig = () => {
   const {
@@ -11,8 +12,11 @@ const boardConfig = () => {
     backgroundOpacity,
     updateBackgroundColor,
     updateBackgroundOpacity,
-    initBackground
+    initBackground,
+    isObjectCaching,
+    updateCacheState
   } = useBoardStore()
+  const { t } = useTranslation()
 
   // save steps by debounce
   const saveHistory = useCallback(
@@ -65,6 +69,18 @@ const boardConfig = () => {
               saveHistory()
             }}
           />
+        </div>
+      </div>
+      <div className="form-control mt-3">
+        <div className="font-bold font-fredokaOne">Cache</div>
+        <div className="mt-1 flex items-start w-full">
+          <input
+            type="checkbox"
+            className="toggle toggle-success"
+            checked={isObjectCaching}
+            onChange={updateCacheState}
+          />
+          <div className="text-xs w-56 ml-3">{t('boardConfig.cacheTip')}</div>
         </div>
       </div>
     </>
