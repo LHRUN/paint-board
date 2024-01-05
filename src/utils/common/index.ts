@@ -73,5 +73,7 @@ export const getDistance = (start: fabric.Point, end: fabric.Point) => {
  * is it mobile
  */
 export const isMobile = () => {
-  return /Mobi|Android|iPhone/i.test(navigator.userAgent)
+  return /phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone|Mobi|Android|iPhone|iPad/i.test(
+    navigator.userAgent
+  )
 }

@@ -77,7 +77,6 @@ export class PaintBoard {
       const { files, currentId } = useFileStore.getState()
       const file = files?.find((item) => item?.id === currentId)
       if (file && this.canvas) {
-        this.history = new History()
         this.canvas.loadFromJSON(file.boardData, () => {
           if (this.canvas) {
             if (file.viewportTransform) {
@@ -94,6 +93,7 @@ export class PaintBoard {
             })
             this.canvas.renderAll()
             this.triggerHook()
+            this.history = new History()
           }
         })
       }

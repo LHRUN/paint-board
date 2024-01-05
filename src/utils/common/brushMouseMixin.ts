@@ -20,9 +20,7 @@ class BrushMouseMixin {
         }
 
         // fabric.Canvas.prototype._onMouseDownInDrawingMode.call(this, event)
-      }
-    })
-    fabric.util.object.extend(this.canvas, {
+      },
       _onMouseMoveInDrawingMode: function (event: Event) {
         if (isDisableDraw) {
           return
@@ -34,9 +32,7 @@ class BrushMouseMixin {
           isMouseDown = true
           fabric.Canvas.prototype._onMouseDownInDrawingMode.call(this, event)
         }
-      }
-    })
-    fabric.util.object.extend(this.canvas, {
+      },
       _onMouseUpInDrawingMode: function (event: Event) {
         if (isDisableDraw) {
           return

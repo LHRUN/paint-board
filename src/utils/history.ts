@@ -1,6 +1,8 @@
 import useFileStore, { IBoardData } from '@/store/files'
 import { paintBoard } from './paintBoard'
 import { fabric } from 'fabric'
+import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
+import { cloneDeep } from 'lodash'
 
 const initState = {}
 
@@ -8,11 +10,16 @@ const initState = {}
  * Operation History
  */
 export class History {
-  states: Array<Partial<IBoardData>> = []
+  diffs: Array<Delta> = []
+  canvasData: Partial<IBoardData> = {}
   index = 0
 
-  constructor(state = initState) {
-    this.states.push(state)
+  constructor() {
+    const canvas = paintBoard.canvas
+    if (canvas) {
+      const canvasJson = canvas.toDatalessJSON()
+      this.canvasData = canvasJson
+    }
     fabric.Object.prototype.toObject = (function (toObject) {
       return function (propertiesToInclude) {
         propertiesToInclude = (propertiesToInclude || []).concat([
@@ -28,25 +35,36 @@ export class History {
   saveState() {
     const canvas = paintBoard?.canvas
     if (canvas) {
-      this.states = this.states.slice(0, this.index + 1)
-      const state = canvas.toDatalessJSON()
-      this.states.push(state)
-      if (this.states.length > 20) {
-        this.states.shift()
+      this.diffs = this.diffs.slice(0, this.index + 1)
+      const canvasJson = canvas.toDatalessJSON()
+      const delta = diff(canvasJson, this.canvasData)
+      this.diffs.push(delta)
+      if (this.diffs.length > 50) {
+        this.diffs.shift()
+      } else {
+        this.index++
       }
-      this.index++
-      useFileStore.getState().updateBoardData(state)
+      this.canvasData = {
+        version: canvasJson?.version ?? '',
+        objects: cloneDeep(canvasJson?.objects ?? [])
+      }
+      useFileStore.getState().updateBoardData(canvasJson)
     }
   }
 
   undo() {
     const canvas = paintBoard?.canvas
     if (canvas && this.index > 0) {
+      const delta = this.diffs[this.index - 1]
       this.index--
-      const state = this.states[this.index]
-      canvas.loadFromJSON(state, () => {
+      const canvasJson = patch(this.canvasData, delta) as IBoardData
+      canvas.loadFromJSON(canvasJson, () => {
         canvas.requestRenderAll()
-        useFileStore.getState().updateBoardData(state)
+        useFileStore.getState().updateBoardData(canvasJson)
+        this.canvasData = {
+          version: canvasJson?.version ?? '',
+          objects: cloneDeep(canvasJson?.objects ?? [])
+        }
         paintBoard.triggerHook()
       })
     }
@@ -54,12 +72,17 @@ export class History {
 
   redo() {
     const canvas = paintBoard?.canvas
-    if (this.index < this.states.length - 1 && canvas) {
+    if (this.index < this.diffs.length && canvas) {
+      const delta = this.diffs[this.index]
       this.index++
-      const state = this.states[this.index]
-      canvas.loadFromJSON(state, () => {
+      const canvasJson = unpatch(this.canvasData, delta) as IBoardData
+      canvas.loadFromJSON(canvasJson, () => {
         canvas.requestRenderAll()
-        useFileStore.getState().updateBoardData(state)
+        useFileStore.getState().updateBoardData(canvasJson)
+        this.canvasData = {
+          version: canvasJson?.version ?? '',
+          objects: cloneDeep(canvasJson?.objects ?? [])
+        }
         paintBoard.triggerHook()
       })
     }
@@ -68,7 +91,18 @@ export class History {
   clean() {
     paintBoard?.canvas?.clear()
     this.index = 0
-    this.states = [initState]
+    this.diffs = []
+    this.canvasData = {}
     useFileStore.getState().updateBoardData(initState)
+  }
+
+  initHistory() {
+    const canvas = paintBoard.canvas
+    if (canvas) {
+      const canvasJson = canvas.toDatalessJSON()
+      this.canvasData = canvasJson
+      this.index = 0
+      this.diffs = []
+    }
   }
 }

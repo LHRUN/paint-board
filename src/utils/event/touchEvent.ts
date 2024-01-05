@@ -40,6 +40,7 @@ export class CanvasTouchEvent {
       canvas.removeEventListener('touchend', this.touchEndFn)
     }
   }
+
   touchStartFn = (e: TouchEvent) => {
     e.preventDefault()
     const canvas = paintBoard.canvas
