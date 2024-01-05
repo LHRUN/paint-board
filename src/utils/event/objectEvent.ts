@@ -2,10 +2,12 @@ import { paintBoard } from '../paintBoard'
 import { v4 as uuidv4 } from 'uuid'
 import useBoardStore from '@/store/board'
 import { ActionMode } from '@/constants'
+import { setObjectAttr } from '../common/draw'
 
 export class ObjectEvent {
   constructor() {
     this.initObjectEvent()
+    this.initTextEvent()
   }
 
   initObjectEvent() {
@@ -41,6 +43,27 @@ export class ObjectEvent {
     canvas?.on('object:modified', (e) => {
       if (e.action && e.target) {
         paintBoard.history?.saveState()
+      }
+    })
+  }
+
+  initTextEvent() {
+    const canvas = paintBoard?.canvas
+    canvas?.on('text:editing:entered', (e) => {
+      paintBoard.textElement.isTextEditing = true
+    })
+
+    canvas?.on('text:editing:exited', (e: { target: fabric.IText }) => {
+      const obj = e?.target
+      if (obj) {
+        paintBoard.textElement.isTextEditing = false
+        if (obj?._customType) {
+          setObjectAttr(obj, 'itext')
+        }
+        if (obj?._textBeforeEdit !== obj?.text) {
+          canvas.discardActiveObject()
+          paintBoard.render()
+        }
       }
     })
   }

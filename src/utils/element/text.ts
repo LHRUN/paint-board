@@ -29,21 +29,6 @@ export class TextElement {
 
       text.enterEditing() // Enters editing state
       text.selectAll() // Selects entire text
-      this.isTextEditing = true
-
-      // Listen to the Edit Completed event to draw text when you leave the editing state.
-      text.on('editing:exited', () => {
-        this.isTextEditing = false
-        setObjectAttr(text, 'itext')
-        if (
-          [ActionMode.DRAW, ActionMode.ERASE].includes(
-            useBoardStore.getState().mode
-          )
-        ) {
-          canvas.discardActiveObject()
-        }
-        paintBoard.render()
-      })
     }
   }
 
@@ -51,7 +36,6 @@ export class TextElement {
     if (this?.text) {
       this.text.exitEditing()
       this.text = null
-      this.isTextEditing = false
     }
   }
 }
