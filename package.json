@@ -12,7 +12,6 @@
     "lint:style": "stylelint --fix \"src/**/*.css\""
   },
   "dependencies": {
-    "classnames": "^2.3.2",
     "daisyui": "^2.46.1",
     "fabric": "^5.3.0",
     "i18next": "^22.4.9",
@@ -21,8 +20,6 @@
     "jsondiffpatch": "^0.6.0",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-i18next": "^12.1.5",
     "swiper": "^11.0.5",
