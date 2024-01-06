@@ -41,6 +41,12 @@ export class ObjectEvent {
       }
     })
     canvas?.on('object:modified', (e) => {
+      if (e.target?.type === 'i-text') {
+        const obj = e.target as fabric.IText
+        if (obj._textBeforeEdit === obj.text) {
+          return
+        }
+      }
       if (e.action && e.target) {
         paintBoard.history?.saveState()
       }
@@ -49,15 +55,15 @@ export class ObjectEvent {
 
   initTextEvent() {
     const canvas = paintBoard?.canvas
-    canvas?.on('text:editing:entered', (e) => {
+    canvas?.on('text:editing:entered', () => {
       paintBoard.textElement.isTextEditing = true
     })
 
-    canvas?.on('text:editing:exited', (e: { target: fabric.IText }) => {
-      const obj = e?.target
+    canvas?.on('text:editing:exited', (e) => {
+      const obj = e?.target as fabric.IText
       if (obj) {
         paintBoard.textElement.isTextEditing = false
-        if (obj?._customType) {
+        if (!obj?._customType) {
           setObjectAttr(obj, 'itext')
         }
         if (obj?._textBeforeEdit !== obj?.text) {

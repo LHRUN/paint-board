@@ -34,4 +34,8 @@ declare module 'fabric/fabric-impl' {
       new (options?: any): IBaseFilter
     }
   }
+
+  export interface IText {
+    _textBeforeEdit: string
+  }
 }

@@ -25,14 +25,14 @@ const FontFamilyConfg: FC<IProps> = ({ fontFamily, updateFontFamily }) => {
       <div>
         {Object.keys(fontFamilyRadio).map((key) => (
           <label
-            className="flex justify-between mt-2 w-full cursor-pointer"
+            className="flex justify-between items-center mt-2 w-full cursor-pointer"
             key={key}
           >
             <div
               style={{
-                fontFamily: `${fontFamilyRadio[key]}, cursive`,
-                fontSize: '14px'
+                fontFamily: `${fontFamilyRadio[key]}, cursive`
               }}
+              className="text-xs"
             >
               {fontFamilyRadio[key]}
             </div>

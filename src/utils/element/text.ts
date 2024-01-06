@@ -1,9 +1,6 @@
 import { fabric } from 'fabric'
 import { paintBoard } from '../paintBoard'
 import useDrawStore from '@/store/draw'
-import { setObjectAttr } from '../common/draw'
-import useBoardStore from '@/store/board'
-import { ActionMode } from '@/constants'
 
 export class TextElement {
   text: fabric.IText | null = null

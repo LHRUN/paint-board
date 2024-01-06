@@ -42,7 +42,7 @@ export class WindowEvent {
           canvas.selection = false
           fabric.Object.prototype.set({
             selectable: false,
-            hoverCursor: 'default'
+            hoverCursor: 'pointer'
           })
         }
         break
