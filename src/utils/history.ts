@@ -35,7 +35,7 @@ export class History {
   saveState() {
     const canvas = paintBoard?.canvas
     if (canvas) {
-      this.diffs = this.diffs.slice(0, this.index + 1)
+      this.diffs = this.diffs.slice(0, this.index)
       const canvasJson = canvas.toDatalessJSON()
       const delta = diff(canvasJson, this.canvasData)
       this.diffs.push(delta)
