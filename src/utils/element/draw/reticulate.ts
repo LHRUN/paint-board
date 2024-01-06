@@ -64,7 +64,7 @@ function drawReticulate(points: fabric.Point[]) {
 
   const limitDistance = 1000 / (paintBoard.canvas?.getZoom() ?? 1)
 
-  for (let i = 0; i < points.length; i = i + 2) {
+  for (let i = 0; i < points.length; i = i + 1) {
     const dx = points[i].x - points[points.length - 1].x
     const dy = points[i].y - points[points.length - 1].y
     const d = dx * dx + dy * dy
