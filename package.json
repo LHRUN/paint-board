@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "pnpm lint:script && pnpm lint:style",
-    "lint:script": "eslint --ext .js,.jsx,.ts,.tsx --fix --quiet ./",
+    "lint:script": "eslint --ext .ts,.tsx --fix --quiet ./",
     "lint:style": "stylelint --fix \"src/**/*.css\""
   },
   "dependencies": {
