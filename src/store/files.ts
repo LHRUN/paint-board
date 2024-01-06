@@ -159,7 +159,7 @@ const useFileStore = create<FileState & FileAction>()(
 
           const link = document.createElement('a')
           link.href = URL.createObjectURL(blob)
-          link.download = 'canvas.json'
+          link.download = 'paint-board.json'
 
           link.click()
           URL.revokeObjectURL(link.href)

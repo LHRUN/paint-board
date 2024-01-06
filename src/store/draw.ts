@@ -70,6 +70,11 @@ const useDrawStore = create<DrawState & DrawAction>()(
       updateDrawColors: (drawColors) => {
         set((state) => {
           switch (state.drawStyle) {
+            case DrawStyle.Basic:
+              if (paintBoard.canvas) {
+                paintBoard.canvas.freeDrawingBrush.color = drawColors[0]
+              }
+              break
             case DrawStyle.Material:
               if (state.drawColors[0] !== drawColors[0]) {
                 material.render({})
