@@ -4,7 +4,7 @@ declare module 'fabric/fabric-impl' {
   export interface Object {
     id: string
     _customType: string
-    _stateProperties: Record<string, any>
+    toObject_original: FabricObject.toObject
   }
 
   export interface Canvas {

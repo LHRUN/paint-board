@@ -1,5 +1,8 @@
 import { fabric } from 'fabric'
 import 'fabric/src/mixins/eraser_brush.mixin.js'
+import './common/fabricMixin/object'
+import { brushMouseMixin } from './common/fabricMixin/brushMouse'
+
 import { History } from './history'
 import { DrawStyle, ActionMode } from '@/constants'
 
@@ -10,7 +13,6 @@ import { TextElement } from './element/text'
 import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
-import { brushMouseMixin } from './common/brushMouseMixin'
 import { getEraserWidth } from './common/draw'
 
 import useFileStore from '@/store/files'
@@ -188,6 +190,7 @@ export class PaintBoard {
    * delete active objects
    */
   deleteObject() {
+    // Disable deletion in text input state
     if (this.textElement.isTextEditing) {
       return
     }

@@ -1,3 +1,9 @@
+/**
+ * hexToRgba
+ * @param hex hexadecimal color
+ * @param alpha
+ * @returns rgba
+ */
 export function hexToRgba(hex: string, alpha = 1) {
   const bigint = parseInt(hex.slice(1), 16)
   const r = (bigint >> 16) & 255
@@ -23,6 +29,11 @@ export function rgbaToHex(rgba: string) {
   return hex
 }
 
+/**
+ * get rgba alpha
+ * @param rgbaString rgba color
+ * @returns
+ */
 export function getAlphaFromRgba(rgbaString: string) {
   const match = rgbaString.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\)/)
 
@@ -33,6 +44,12 @@ export function getAlphaFromRgba(rgbaString: string) {
   }
 }
 
+/**
+ * Get the rgba of the new alpha
+ * @param rgbaColor
+ * @param newAlpha
+ * @returns newRgbaColor
+ */
 export function changeAlpha(rgbaColor: string, newAlpha: number) {
   const match = rgbaColor.match(/rgba?\((.*?)\)/)
   if (!match) {

@@ -30,6 +30,9 @@ export class WindowEvent {
     const canvas = paintBoard?.canvas
     switch (e.code) {
       case KeyCode.SPACE:
+        /**
+         * After pressing the SPACE key, change the mouse style, disable the drawing function, and open the drawing cache
+         */
         paintBoard?.evnet?.clickEvent.setSpaceKeyDownState(true)
         if (canvas) {
           if (!useBoardStore.getState().isObjectCaching) {
@@ -56,6 +59,9 @@ export class WindowEvent {
 
   keyupFn(e: KeyboardEvent) {
     if (e.code === KeyCode.SPACE) {
+      /**
+       * restores all states.
+       */
       paintBoard.evnet?.clickEvent.setSpaceKeyDownState(false)
       if (paintBoard.canvas) {
         paintBoard.canvas.defaultCursor = 'default'
@@ -76,6 +82,9 @@ export class WindowEvent {
 
   pasteFn(e: ClipboardEvent) {
     if (e.clipboardData && e.clipboardData.items) {
+      /**
+       * Paste Clipboard Image
+       */
       const items = e.clipboardData.items
       const item = Array.from(items).find(
         (item) => item.kind === 'file' && item.type.indexOf('image') !== -1
@@ -85,7 +94,6 @@ export class WindowEvent {
         if (blob) {
           const reader = new FileReader()
           reader.onload = (event) => {
-            console.log('event.target.result', event.target?.result)
             const data = event.target?.result
             if (data && typeof data === 'string') {
               const image = new ImageElement()

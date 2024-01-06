@@ -38,7 +38,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
       language: initLanguage,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
-      isObjectCaching: false,
+      isObjectCaching: true,
       updateMode: (mode) => {
         const oldMode = get().mode
         if (oldMode !== mode) {

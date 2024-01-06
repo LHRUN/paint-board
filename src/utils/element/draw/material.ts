@@ -13,7 +13,7 @@ export const MATERIAL_TYPE = {
 }
 
 export class Material {
-  initPromise: Promise<boolean[]> | null = null
+  initPromise: Promise<boolean[]> | null = null // Initialize promise
   crayonImage: HTMLImageElement | null = null
   carbonImage: HTMLImageElement | null = null
   clothImage: HTMLImageElement | null = null

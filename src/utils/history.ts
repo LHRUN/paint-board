@@ -1,8 +1,7 @@
 import useFileStore, { IBoardData } from '@/store/files'
 import { paintBoard } from './paintBoard'
-import { fabric } from 'fabric'
 import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, omit } from 'lodash'
 
 const initState = {}
 
@@ -20,16 +19,6 @@ export class History {
       const canvasJson = canvas.toDatalessJSON()
       this.canvasData = canvasJson
     }
-    fabric.Object.prototype.toObject = (function (toObject) {
-      return function (propertiesToInclude) {
-        propertiesToInclude = (propertiesToInclude || []).concat([
-          'id',
-          '_customType',
-          'perPixelTargetFind'
-        ])
-        return toObject?.apply(this, [propertiesToInclude])
-      }
-    })(fabric.Object.prototype?.toObject)
   }
 
   saveState() {
@@ -39,13 +28,15 @@ export class History {
       const canvasJson = canvas.toDatalessJSON()
       const delta = diff(canvasJson, this.canvasData)
       this.diffs.push(delta)
+
+      // More than 50 operations, remove initial state
       if (this.diffs.length > 50) {
         this.diffs.shift()
       } else {
         this.index++
       }
       this.canvasData = {
-        version: canvasJson?.version ?? '',
+        ...omit(canvasJson, 'objects'),
         objects: cloneDeep(canvasJson?.objects ?? [])
       }
       useFileStore.getState().updateBoardData(canvasJson)
@@ -62,7 +53,7 @@ export class History {
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(canvasJson)
         this.canvasData = {
-          version: canvasJson?.version ?? '',
+          ...omit(canvasJson, 'objects'),
           objects: cloneDeep(canvasJson?.objects ?? [])
         }
         paintBoard.triggerHook()
@@ -80,7 +71,7 @@ export class History {
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(canvasJson)
         this.canvasData = {
-          version: canvasJson?.version ?? '',
+          ...omit(canvasJson, 'objects'),
           objects: cloneDeep(canvasJson?.objects ?? [])
         }
         paintBoard.triggerHook()

@@ -27,7 +27,7 @@ export class CanvasClickEvent {
     | ThornElement
     | MultiPointElement
     | WiggleElement
-    | null = null
+    | null = null // The current mouse move draws the element
 
   constructor() {
     this.initClickEvent()
@@ -79,11 +79,13 @@ export class CanvasClickEvent {
     })
     canvas?.on('mouse:move', (e) => {
       if (this.isMouseDown) {
+        // Press space, drag the canvas, stop drawing.
         if (this.isSpaceKeyDown) {
           canvas.relativePan(new fabric.Point(e.e.movementX, e.e.movementY))
           return
         }
 
+        // two touch disabled drawing on mobile
         if (paintBoard.evnet?.touchEvent.isTwoTouch) {
           return
         }

@@ -19,6 +19,7 @@ const storage: StateStorage = {
 export interface IBoardData {
   version: string // fabric version
   objects: fabric.Object[]
+  background: string // canvas background color (rgba)
 }
 
 interface IFile {

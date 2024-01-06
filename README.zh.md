@@ -61,53 +61,12 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## 待完成功能
 + 多平台认证登录，数据同步
 
-<!-- ## 操作指南
-
-[![](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_youtube.jpg)](https://www.youtube.com/watch?v=tHZTK9X7BUQ "")
-
-<image src="/public/desc/desc_zh.png" width="70%" /> -->
-
 ## 本地启动
 ```
 git clone https://github.com/LHRUN/paint-board.git
 pnpm install
 pnpm dev
 ```
-
-<!-- ## 文件结构
-
-```bash
-├─components  
-│  ├─info // 帮助信息
-│  ├─layer // 多图层
-│  ├─mask // 蒙层
-│  ├─toolPanel // 工具面板
-│  └─icons
-│
-├─hooks
-│  └─event.ts // event hook
-├─pages
-│  └─board // 画板页
-│
-├─types
-│
-├─i18n
-│
-└─utils
-  ├─constants
-  ├─history.ts // 历史记录
-  ├─common.ts 
-  ├─layer.ts // 图层
-  ├─paintBoard.ts // 画本主逻辑
-  ├─storage.ts // 缓存
-  ├─cursor.ts // 鼠标光标
-  ├─select.ts // 选择元素
-  └─element
-     ├─eraser.ts // 橡皮擦
-     ├─element.ts // 基础元素
-     ├─freeDraw.ts // 画笔
-     └─text.ts // 文本元素
-``` -->
 
 ## 技术文章
 + Fabric.js 重构后

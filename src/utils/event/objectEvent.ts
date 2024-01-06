@@ -30,6 +30,9 @@ export class ObjectEvent {
           useBoardStore.getState().mode
         )
       ) {
+        /**
+         * record fabric brush object
+         */
         if (useBoardStore.getState().mode === ActionMode.DRAW) {
           const id = uuidv4()
           ;(options as any).path.set({
@@ -37,16 +40,20 @@ export class ObjectEvent {
             perPixelTargetFind: true
           })
         }
+
+        // Save fabric brush and fabric eraser operation state
         paintBoard.history?.saveState()
       }
     })
     canvas?.on('object:modified', (e) => {
+      // Prohibit recording if the change is due to IText input content
       if (e.target?.type === 'i-text') {
         const obj = e.target as fabric.IText
         if (obj._textBeforeEdit === obj.text) {
           return
         }
       }
+      // Usually operations that change the object such as dragging and zooming, record the operation
       if (e.action && e.target) {
         paintBoard.history?.saveState()
       }
@@ -63,9 +70,13 @@ export class ObjectEvent {
       const obj = e?.target as fabric.IText
       if (obj) {
         paintBoard.textElement.isTextEditing = false
+
+        // If there is no _customType, it means it is a new object.
         if (!obj?._customType) {
           setObjectAttr(obj, 'itext')
         }
+
+        // If the text changes, update the record
         if (obj?._textBeforeEdit !== obj?.text) {
           canvas.discardActiveObject()
           paintBoard.render()

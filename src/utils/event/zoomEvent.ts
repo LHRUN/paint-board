@@ -19,6 +19,7 @@ export class CanvasZoomEvent {
   initWheelEvent() {
     const canvas = paintBoard?.canvas
     canvas?.on('mouse:wheel', (options) => {
+      // Clear the current text input box
       paintBoard.textElement?.resetText()
 
       const delta = options.e.deltaY // Get the direction in which the wheel scrolls
@@ -48,6 +49,9 @@ export class CanvasZoomEvent {
     })
   }
 
+  /**
+   * Initialize zoom to 1
+   */
   initZoom() {
     const canvas = paintBoard.canvas
     if (canvas) {
@@ -58,6 +62,9 @@ export class CanvasZoomEvent {
     }
   }
 
+  /**
+   * Update current zoom percentage
+   */
   updateZoomPercentage = debounce((triggerCb = true, zoom: number) => {
     const percentage = this.handleZoomPercentage(triggerCb)
     useFileStore.getState().updateZoom(zoom)
@@ -91,6 +98,9 @@ export class CanvasZoomEvent {
   }
 }
 
+/**
+ * Change the drawing width after zooming
+ */
 const handleWidth = () => {
   const brush = paintBoard.canvas?.freeDrawingBrush
   if (!brush) {

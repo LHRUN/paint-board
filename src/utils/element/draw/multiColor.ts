@@ -101,7 +101,7 @@ function renderCircle(
   let x = padding + radius
   const y = padding + radius
 
-  // render circle
+  // render multi circle
   for (let i = 0; i < n; i++) {
     context.beginPath()
     context.fillStyle = colors[i]

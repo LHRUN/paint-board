@@ -1,5 +1,5 @@
 import { fabric } from 'fabric'
-import { isMobile } from './index'
+import { isMobile } from '../index'
 
 let isMouseDown = false
 let isDisableDraw = isMobile()

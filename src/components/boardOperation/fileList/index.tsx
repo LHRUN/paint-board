@@ -4,10 +4,10 @@ import useBoardStore from '@/store/board'
 import { ActionMode } from '@/constants'
 import { paintBoard } from '@/utils/paintBoard'
 
-import AddFileIcon from '@/components/icons/addFile.svg?react'
-import RemoveFileIcon from '@/components/icons/removeFile.svg?react'
-import ExportFileIcon from '@/components/icons/exportFile.svg?react'
-import ImportFileIcon from '@/components/icons/importFile.svg?react'
+import AddFileIcon from '@/components/icons/fileList/addFile.svg?react'
+import RemoveFileIcon from '@/components/icons/fileList/removeFile.svg?react'
+import ExportFileIcon from '@/components/icons/fileList/exportFile.svg?react'
+import ImportFileIcon from '@/components/icons/fileList/importFile.svg?react'
 import Toast from '@/components/toast'
 
 interface IProps {

@@ -2,18 +2,16 @@ import { paintBoard } from '../paintBoard'
 import { fabric } from 'fabric'
 import { MAX_ZOOM, MIN_ZOOM } from './zoomEvent'
 import { debounce } from 'lodash'
-import { brushMouseMixin } from '../common/brushMouseMixin'
+import { brushMouseMixin } from '../common/fabricMixin/brushMouse'
 import useFileStore from '@/store/files'
 import useBoardStore from '@/store/board'
 
 export class CanvasTouchEvent {
   isTwoTouch = false
   isDragging = false
-  startPinchZoom = 1
-  startDistance = 1
-  startX = 0
-  startY = 0
-  zoomPoint?: fabric.Point
+  startDistance = 1 // record the starting two-finger distance
+  startX = 0 // start center X
+  startY = 0 // start center Y
   startScale = 1
   lastPan?: fabric.Point
 
@@ -62,9 +60,6 @@ export class CanvasTouchEvent {
 
       this.startX = (touch1.pageX + touch2.pageX) / 2
       this.startY = (touch1.pageY + touch2.pageY) / 2
-
-      const point = new fabric.Point(this.startX, this.startY)
-      this.zoomPoint = point
       this.startScale = canvas.getZoom()
     }
   }
@@ -92,18 +87,13 @@ export class CanvasTouchEvent {
       // Calculate zoom
       let zoom = this.startScale * (currentDistance / this.startDistance)
       zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom))
-      if (this.zoomPoint) {
-        if (!useBoardStore.getState().isObjectCaching) {
-          fabric.Object.prototype.set({
-            objectCaching: true
-          })
-        }
-        canvas.zoomToPoint(
-          new fabric.Point(this.zoomPoint.x, this.zoomPoint.y),
-          zoom
-        )
-        paintBoard.evnet?.zoomEvent.updateZoomPercentage(true, zoom)
+      if (!useBoardStore.getState().isObjectCaching) {
+        fabric.Object.prototype.set({
+          objectCaching: true
+        })
       }
+      canvas.zoomToPoint(new fabric.Point(this.startX, this.startY), zoom)
+      paintBoard.evnet?.zoomEvent.updateZoomPercentage(true, zoom)
 
       // Calculate drag distance
       const currentPan = new fabric.Point(x - this.startX, y - this.startY)
