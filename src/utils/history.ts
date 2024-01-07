@@ -17,7 +17,10 @@ export class History {
     const canvas = paintBoard.canvas
     if (canvas) {
       const canvasJson = canvas.toDatalessJSON()
-      this.canvasData = canvasJson
+      this.canvasData = {
+        ...omit(canvasJson, 'objects'),
+        objects: cloneDeep(canvasJson?.objects ?? [])
+      }
     }
   }
 
