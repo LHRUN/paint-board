@@ -1,3 +1,9 @@
+# 1.1.0
+
+### Feat
+
+- dynamic loading clarity
+
 # 1.0.0
 
 ### Feat
