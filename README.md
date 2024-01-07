@@ -62,6 +62,8 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
     - Supports dragging and zooming the canvas after a two-finger press.
 + Multifile Configuration
   - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download
++ i18n
+  - Currently support English, Chinese language display
 
 ## Pending Features:
 + Multi-platform authentication login and data synchronization
