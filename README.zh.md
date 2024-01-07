@@ -46,6 +46,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - 所有绘制内容支持透明度配置
 + 画板配置
   - 画板支持配置背景颜色和透明度配置
+  - 支持绘画缓存，在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度
 + 多功能菜单
   - 左下角按钮实时显示当前缩放比例，点击即可重置缩放比例
   - 中间按钮列表按从左到右的功能分别为：撤销、反撤销、复制当前选择内容、删除当前选择内容、绘制文字、上传图片、清除绘制内容、保存为图片、打开文件列表
@@ -60,6 +61,10 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## 待完成功能
 + 多平台认证登录，数据同步
+
+## 视频演示
+
+[![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
 
 ## 本地启动
 ```

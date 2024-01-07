@@ -8,6 +8,7 @@
 
 </h4>
 
+
 <div align="center">
   <a href="https://github.com/LHRUN/paint-board/stargazers">
     <img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/>
@@ -49,6 +50,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - All drawings support transparency configurations.
 + Drawing Board Configuration
   - Drawing board support for configuring background color and transparency configurations.
+  - Supports painting caching, enabling caching will improve painting performance in the presence of large amounts of painted content, while disabling caching will improve canvas sharpness.
 + Multifunction Menu
   - The bottom left button shows the current zoom ratio in real time, click it to reset the zoom ratio.
   - The list of buttons in the center, in order from left to right, are: Undo, Redo, Copy Current Selection, Delete Current Selection, Draw Text, Upload Image, Clear Drawing, Save as Image, and Open File List.
@@ -64,6 +66,9 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## Pending Features:
 + Multi-platform authentication login and data synchronization
 
+## Video Demo
+
+[![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
 
 ## Quick Start
 ```
