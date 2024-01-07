@@ -2,11 +2,9 @@ import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import en from './en.json'
 import zh from './zh.json'
-import { BOARD_LOCAL_KEY, storage } from '@/utils/storage'
+import useBoardStore from '@/store/board'
 
-const lang =
-  storage.get(BOARD_LOCAL_KEY) ||
-  (['en', 'en-US', 'en-us'].includes(navigator.language) ? 'en' : 'zh')
+const lang = useBoardStore.getState().language
 
 i18n.use(initReactI18next).init({
   resources: {

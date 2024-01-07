@@ -1,9 +1,13 @@
-<h1 align="center">paint-board</h1>
+<div align="center">
+  <img width="180" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
+</div>
+
 <h4 align="center">
 
-  一款基于 canvas 的 Web 端多功能画板
+  A fun art drawing board that supports multi-end operation
 
 </h4>
+
 
 <div align="center">
   <a href="https://github.com/LHRUN/paint-board/stargazers">
@@ -23,120 +27,62 @@
   </a>
 </div>
 
-**简体中文** | [English](./README.en-US.md)
+**English** | [简体中文](./README.zh.md)
 
-## 预览
+## Preview
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
-![](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_image.png)
+<div align="center" style="width: 100%;">
+  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="logo"/>
+</div>
 
-## 功能列表
-已完成功能：
-+ 画笔
-  - 支持颜色变化，并可根据绘图速度实时调整线宽
-  - 提供多种画笔效果，荧光、多色、蜡笔、喷雾、泡泡...
-+ 橡皮擦
-  - 通过鼠标移动线性擦除内容
-+ 绘制文字
-  - 双击画板后输入文字可在指定位置绘制
-+ 画板拖拽
-  - 按住空格键后可以无限拖拽画板
-+ 选择模式
-  - 进入选择模式后，可以通过点击元素来进行元素框选，并通过按住手柄来缩放或移动元素，点击 Backspace 键可删除选中的元素
-+ 图层
-  - 画板内容是按照图层顺序进行显示，可以新增或者删除排序图层
-+ 提供撤销，反撤销，清除画板，内容保存为图像等功能
+## Completed Features:
++ Drawing Mode
+  - Provides 12 different styles of brushes, including Basic Brush, Rainbow Brush, Multi-Shape Brush, Multi-Material Brush, Pixel Brush, Multi-Color Brush, Text Brush, Multi-Line Connection Brush, Reticulate Brush, Multi-Point Connection Brush, Wiggle Brush, Thorn Brush. Satisfy the diversified drawing.
+  - All brushes support color and brush width configuration, in addition to multi-shape, multi-material, multi-color and other brushes support custom configuration.
++ Eraser Mode
+  - Eraser mode linearly erases all content and supports linear width configuration.
++ Select Mode
+  - In the selection mode, you can frame the drawing content by clicking on it. The click handle supports dragging, zooming and rotating operations, providing flexible editing.
+  - Selecting images supports multiple filter configurations.
+  - Support for font settings when selecting text.
+  - Layer settings are supported for all drawings, including Move Layer Up, Move Layer Down, Move to Top, and Move to Bottom.
+  - All drawings support transparency configurations.
++ Drawing Board Configuration
+  - Drawing board support for configuring background color and transparency configurations.
+  - Supports painting caching, enabling caching will improve painting performance in the presence of large amounts of painted content, while disabling caching will improve canvas sharpness.
++ Multifunction Menu
+  - The bottom left button shows the current zoom ratio in real time, click it to reset the zoom ratio.
+  - The list of buttons in the center, in order from left to right, are: Undo, Redo, Copy Current Selection, Delete Current Selection, Draw Text, Upload Image, Clear Drawing, Save as Image, and Open File List.
+  - PC:
+    - Hold down the Space key and click the left mouse button to move the canvas, scroll the mouse wheel to zoom the canvas.
+    - Press and hold the Backspace key to delete the selection.
+    - Press and hold Ctrl + V at the same time to paste the clipboard image.
+  - Mobile:
+    - Supports dragging and zooming the canvas after a two-finger press.
++ Multifile Configuration
+  - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download
++ i18n
+  - Currently support English, Chinese language display
 
-待完成功能：
-+ 移动端适配
-+ 背景颜色切换
-+ 图片绘制
-+ 画板缩放
-+ 认证登录 + 多画板
+## Pending Features:
++ Multi-platform authentication login and data synchronization
 
-## 操作指南
+## Video Demo
 
-[![](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_youtube.jpg)](https://www.youtube.com/watch?v=tHZTK9X7BUQ "")
+[![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
 
-<image src="/public/desc/desc_zh.png" width="70%" />
-
-## 本地启动
+## Quick Start
 ```
 git clone https://github.com/LHRUN/paint-board.git
 pnpm install
 pnpm dev
 ```
 
-## 文件结构
-
-```bash
-├─components  
-│  ├─info // 帮助信息
-│  ├─layer // 多图层
-│  ├─mask // 蒙层
-│  ├─toolPanel // 工具面板
-│  └─icons
-│
-├─hooks
-│  └─event.ts // event hook
-├─pages
-│  └─board // 画板页
-│
-├─types
-│
-├─i18n
-│
-└─utils
-  ├─constants
-  ├─history.ts // 历史记录
-  ├─common.ts 
-  ├─layer.ts // 图层
-  ├─paintBoard.ts // 画本主逻辑
-  ├─storage.ts // 缓存
-  ├─cursor.ts // 鼠标光标
-  ├─select.ts // 选择元素
-  └─element
-     ├─eraser.ts // 橡皮擦
-     ├─element.ts // 基础元素
-     ├─freeDraw.ts // 画笔
-     └─text.ts // 文本元素
-```
-
-## 画板设计
-1. 首先是需要建立一个 PaintBoard 画板类，所有画板上的操作和数据都在此处理，例如初始化数据，渲染元素，拖拽画板等
-```ts
-class PaintBoard {
-  canvas: HTMLCanvasElement
-  context: CanvasRenderingContext2D
-  ...
-  constructor(canvas: HTMLCanvasElement) {}
-  // 初始化
-  init() {}
-  // 渲染
-  render() {}
-  // 拖拽
-  drag() {}
-  ...
-}
-```
-2. 然后基于画板，根据用户当前的行为和当前画板的配置，建立并初始化当前行为的 canvas 绘图元素，比如画笔，橡皮擦，文字等等，比如以下基础类型
-```ts
-class CanvasElement {
-  type: string // 元素类型
-  layer: number // 图层
-  // ...
-  constructor(type: string, layer: number) {
-    this.type = type
-    this.layer = layer
-    // ...
-  }
-  // ...
-}
-```
-3. 最后根据渲染逻辑，还会封装一些通用的逻辑来改变canvas上最终的展示，比如撤回，反撤回，图层排序等
-
-## 技术文章
-+ [基于canvas实现的多功能画板](https://songlh.top/2022/09/21/%E5%9F%BA%E4%BA%8Ecanvas%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%9A%E5%8A%9F%E8%83%BD%E7%94%BB%E6%9D%BF/)
-+ [canvas画板之绘画元素的框选](https://songlh.top/2022/12/05/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%BB%98%E7%94%BB%E5%85%83%E7%B4%A0%E7%9A%84%E6%A1%86%E9%80%89/)
-+ [canvas画板之画笔的多种效果](https://songlh.top/2022/12/17/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%94%BB%E7%AC%94%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%95%88%E6%9E%9C/)
+## Document
++ After refactoring with Fabric.js
+  + writing...
++ Before refactoring with Fabric.js
+  - [Canvas Artistry：Mastering Selection, Dragging, and Scaling](https://songlh.top/2023/11/30/Canvas-Artistry1)
+  - [Canvas Artistry：Drawing magic with multiple effects](https://songlh.top/2023/12/01/Canvas-Artistry2)
 

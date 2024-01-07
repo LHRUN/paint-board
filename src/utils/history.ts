@@ -1,199 +1,102 @@
-import { ELEMENT_INSTANCE } from '@/types'
-import { cloneDeep } from 'lodash'
-import { at, compareVersion } from './common'
-import { CANVAS_ELE_TYPE } from './constants'
-import { updateRect, FreeDraw, initRect } from './element/freeDraw'
-import { HistoryState } from './paintBoard'
+import useFileStore, { IBoardData } from '@/store/files'
+import { paintBoard } from './paintBoard'
+import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
+import { cloneDeep, omit } from 'lodash'
 
-export enum EACH_ORDER_TYPE {
-  FIRST = 'first', // 顺序
-  LAST = 'last' // 倒序
-}
+const initState = {}
 
 /**
- * 历史记录栈
+ * Operation History
  */
-export class History<T> {
-  cacheStack: Array<T[]>
-  step: number
-  constructor(cacheStack: T[]) {
-    this.cacheStack = [cacheStack]
-    this.step = 0
-  }
+export class History {
+  diffs: Array<Delta> = []
+  canvasData: Partial<IBoardData> = {}
+  index = 0
 
-  /**
-   * 遍历cacheQueue
-   * @param cb 遍历执行回调
-   * @param order 倒叙 | 正序
-   */
-  each(cb?: (ele: T, i: number) => void, order = EACH_ORDER_TYPE.FIRST) {
-    const cur = this.getCurrentStack()
-
-    if (cur) {
-      if (order === EACH_ORDER_TYPE.FIRST) {
-        for (let i = 0; i < cur.length; i++) {
-          cb?.(cur[i], i)
-        }
-      } else if (order === EACH_ORDER_TYPE.LAST) {
-        for (let i = cur.length - 1; i >= 0; i--) {
-          cb?.(cur[i], i)
-        }
+  constructor() {
+    const canvas = paintBoard.canvas
+    if (canvas) {
+      const canvasJson = canvas.toDatalessJSON()
+      this.canvasData = {
+        ...omit(canvasJson, 'objects'),
+        objects: cloneDeep(canvasJson?.objects ?? [])
       }
     }
   }
 
-  /**
-   * 对缓存进行排序
-   */
-  sort(cb: (a: T, b: T) => number) {
-    const last = at(this.cacheStack)
-    last?.sort(cb)
-  }
+  saveState() {
+    const canvas = paintBoard?.canvas
+    if (canvas) {
+      this.diffs = this.diffs.slice(0, this.index)
+      const canvasJson = canvas.toDatalessJSON()
+      const delta = diff(canvasJson, this.canvasData)
+      this.diffs.push(delta)
 
-  /**
-   * 添加数据
-   */
-  add(data: T) {
-    // 如果在回退时添加数据就删除暂存数据
-    if (this.step !== this.cacheStack.length - 1) {
-      this.cacheStack.length = this.step + 1
+      // More than 50 operations, remove initial state
+      if (this.diffs.length > 50) {
+        this.diffs.shift()
+      } else {
+        this.index++
+      }
+      this.canvasData = {
+        ...omit(canvasJson, 'objects'),
+        objects: cloneDeep(canvasJson?.objects ?? [])
+      }
+      useFileStore.getState().updateBoardData(canvasJson)
     }
-
-    const last = at(this.cacheStack)
-    const newData = last ? [...cloneDeep(last), data] : [data]
-    this.cacheStack.push(newData)
-    this.step = this.cacheStack.length - 1
   }
 
-  /**
-   * 根据条件删除
-   * @param key 删除条件匹配的key
-   * @param value 删除条件匹配的值
-   */
-  delete<K extends keyof T>(key: K, value: T[K]) {
-    if (this.step !== this.cacheStack.length - 1) {
-      this.cacheStack.length = this.step + 1
-    }
-    const last = cloneDeep(at(this.cacheStack)) as T[]
-    const newData =
-      last?.filter((item) => {
-        if (item && Object.hasOwn(item, key)) {
-          return item[key] !== value
-        }
-        return false
-      }) ?? []
-    this.cacheStack.push(newData)
-    this.step = this.cacheStack.length - 1
-  }
-
-  /**
-   * 根据坐标删除
-   * @param index 下标
-   */
-  deleteByIndex(index: number) {
-    if (this.step !== this.cacheStack.length - 1) {
-      this.cacheStack.length = this.step + 1
-    }
-    const newData = cloneDeep(at(this.cacheStack)) as T[]
-    newData.splice(index, 1)
-    this.cacheStack.push(newData)
-    this.step = this.cacheStack.length - 1
-  }
-
-  /**
-   * 后退
-   */
   undo() {
-    if (this.step >= 1) {
-      this.step--
-      return this.cacheStack[this.step]
-    }
-  }
-
-  /**
-   * 前进
-   */
-  redo() {
-    if (this.step < this.cacheStack.length - 1) {
-      this.step++
-      return this.cacheStack[this.step]
-    }
-  }
-
-  /**
-   * 清空
-   */
-  clean() {
-    this.cacheStack = [[]]
-    this.step = 0
-  }
-
-  /**
-   * 获取当前层
-   */
-  getCurrentStack() {
-    return at(this.cacheStack, this.step < 0 ? 0 : this.step) as T[]
-  }
-
-  /**
-   * 缓存栈插入数据
-   * @param newData 插入数据
-   * @param replaceData 需替换的数据
-   * @returns 缓存栈
-   */
-  pushStack(newData: T[], replaceData?: T[]) {
-    if (this.step !== this.cacheStack.length - 1) {
-      this.cacheStack.length = this.step + 1
-    }
-    this.cacheStack.push(cloneDeep(newData))
-    if (replaceData) {
-      this.cacheStack[this.cacheStack.length - 2] = cloneDeep(replaceData)
-    }
-    this.step = this.cacheStack.length - 1
-    return this.cacheStack
-  }
-}
-
-/**
- * 处理历史缓存数据结构，主要用于版本兼容
- * @param stack
- */
-export const formatHistory = (
-  stack: ELEMENT_INSTANCE[],
-  state: HistoryState,
-  version: string
-) => {
-  if (state?.currentLineColor) {
-    state.currentLineColor = Array.isArray(state?.currentLineColor)
-      ? state.currentLineColor
-      : [state.currentLineColor]
-  }
-  stack.forEach((ele) => {
-    if (compareVersion(version, '0.2.0') < 0) {
-      // 兼容类型，类型已修改
-      if (ele.type === 'freeLine') {
-        ele.type = CANVAS_ELE_TYPE.FREE_DRAW
-      } else if (ele.type === 'cleanLine') {
-        ele.type = CANVAS_ELE_TYPE.ERASER
-      }
-
-      // 增加选择模式，兼容矩形数据
-      if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
-        initRect(<FreeDraw>ele)
-        ;(<FreeDraw>ele).positions.forEach((position) => {
-          updateRect(<FreeDraw>ele, position)
-        })
-      }
-    }
-
-    if (compareVersion(version, '0.2.1') < 0) {
-      // 画笔增加多色属性
-      if (ele.type === CANVAS_ELE_TYPE.FREE_DRAW) {
-        if (Reflect.has(ele, 'color')) {
-          Reflect.set(ele, 'colors', [Reflect.get(ele, 'color')])
-          Reflect.deleteProperty(ele, 'color')
+    const canvas = paintBoard?.canvas
+    if (canvas && this.index > 0) {
+      const delta = this.diffs[this.index - 1]
+      this.index--
+      const canvasJson = patch(this.canvasData, delta) as IBoardData
+      canvas.loadFromJSON(canvasJson, () => {
+        canvas.requestRenderAll()
+        useFileStore.getState().updateBoardData(canvasJson)
+        this.canvasData = {
+          ...omit(canvasJson, 'objects'),
+          objects: cloneDeep(canvasJson?.objects ?? [])
         }
-      }
+        paintBoard.triggerHook()
+      })
     }
-  })
+  }
+
+  redo() {
+    const canvas = paintBoard?.canvas
+    if (this.index < this.diffs.length && canvas) {
+      const delta = this.diffs[this.index]
+      this.index++
+      const canvasJson = unpatch(this.canvasData, delta) as IBoardData
+      canvas.loadFromJSON(canvasJson, () => {
+        canvas.requestRenderAll()
+        useFileStore.getState().updateBoardData(canvasJson)
+        this.canvasData = {
+          ...omit(canvasJson, 'objects'),
+          objects: cloneDeep(canvasJson?.objects ?? [])
+        }
+        paintBoard.triggerHook()
+      })
+    }
+  }
+
+  clean() {
+    paintBoard?.canvas?.clear()
+    this.index = 0
+    this.diffs = []
+    this.canvasData = {}
+    useFileStore.getState().updateBoardData(initState)
+  }
+
+  initHistory() {
+    const canvas = paintBoard.canvas
+    if (canvas) {
+      const canvasJson = canvas.toDatalessJSON()
+      this.canvasData = canvasJson
+      this.index = 0
+      this.diffs = []
+    }
+  }
 }
