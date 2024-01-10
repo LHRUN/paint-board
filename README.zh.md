@@ -77,6 +77,7 @@ pnpm dev
 
 ## 技术文章
 + Fabric.js 重构后
+  - [画板探秘系列：画板中的时光倒流术](https://songlh.top/2024/01/09/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E7%94%BB%E6%9D%BF%E4%B8%AD%E7%9A%84%E6%97%B6%E5%85%89%E5%80%92%E6%B5%81%E6%9C%AF/)
   - 编写中...
 + Fabric.js 重构前
   - [基于canvas实现的多功能画板](https://songlh.top/2022/09/21/%E5%9F%BA%E4%BA%8Ecanvas%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%9A%E5%8A%9F%E8%83%BD%E7%94%BB%E6%9D%BF/)
