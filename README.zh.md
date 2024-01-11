@@ -29,7 +29,7 @@
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 <div align="center" style="width: 100%;">
-  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="logo"/>
+  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="preview"/>
 </div>
 
 ## 已完成功能
@@ -74,6 +74,15 @@ git clone https://github.com/LHRUN/paint-board.git
 pnpm install
 pnpm dev
 ```
+
+## 联系我
+
+如果你有任何建议或者有好的想法，欢迎随时与我联系！
+
++ Email: song.lhlh@gmail.com
++ Telegram: https://t.me/longhao_song
++ 微信：
+  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
 
 ## 技术文章
 + Fabric.js 重构后

@@ -33,7 +33,7 @@
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 <div align="center" style="width: 100%;">
-  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="logo"/>
+  <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="preview"/>
 </div>
 
 ## Completed Features:
@@ -78,6 +78,15 @@ git clone https://github.com/LHRUN/paint-board.git
 pnpm install
 pnpm dev
 ```
+
+## Contact me
+
+If you have any suggestions or good ideas, welcome to contact me at any time!
+
++ Email: song.lhlh@gmail.com
++ Telegram: https://t.me/longhao_song
++ WeChat:
+  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
 
 ## Document
 + After refactoring with Fabric.js
