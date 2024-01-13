@@ -1,0 +1,19 @@
+# dependencies
+node_modules
+
+# build outputs
+dist
+
+# configurations
+.github
+.vscode
+
+# documentation
+README.md
+README.zh.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+
+# macOS system files
+.DS_Store

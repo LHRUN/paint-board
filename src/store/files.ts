@@ -49,7 +49,7 @@ interface FileAction {
 }
 
 const initId = uuidv4()
-export const BOARD_VERSION = '1.1.0'
+export const BOARD_VERSION = '1.2.0'
 
 const useFileStore = create<FileState & FileAction>()(
   persist(
