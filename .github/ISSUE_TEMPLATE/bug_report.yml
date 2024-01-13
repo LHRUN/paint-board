@@ -1,0 +1,28 @@
+name: "\U0001F41E Bug Report"
+description: Report an issue with paint-board
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你花费时间填写该问题报告 (Thank you for taking the time to fill out this bug report)
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 问题描述 (Description of the problem)
+      placeholder: 请描述您的问题 (Please describe your problem)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 如何复现该问题 (How to reproduce the problem)
+      placeholder: 请提供该问题的具体复现步骤，便于我们快速定位问题 (Please provide specific steps to reproduce the problem so that we can quickly locate the problem)
+    validations:
+      required: true
+  - type: textarea
+    id: system-info
+    attributes:
+      label: 操作系统和浏览器信息 (Operating System and Browser Information)
+      placeholder: 请填写该问题的运行环境，便于我们快速定位问题 (Please fill in the operating environment of the problem, so that we can quickly locate the problem)
+    validations:
+      required: true
