@@ -67,8 +67,10 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## Pending Features:
 + Multi-platform authentication login and data synchronization
++ Drawing of common shapes
++ AI Drawing
 
-## Video Demo
+## V1.0.0 Video Demo
 
 [![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
 
@@ -79,6 +81,20 @@ pnpm install
 pnpm dev
 ```
 
+### Docker Support
+
+1. Build a Docker image with the name `paint-board`.
+```sh
+docker build -t paint-board .
+```
+
+2. Start a docker container.
+```sh
+docker run -d -p 8080:80 --name paint-board paint-board
+```
+
+3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
+
 ## Contact me
 
 If you have any suggestions or good ideas, welcome to contact me at any time!
@@ -88,6 +104,12 @@ If you have any suggestions or good ideas, welcome to contact me at any time!
 + WeChat:
   - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
 
+## Contributing
+
+I'm glad you're interested in contributing to PAINT BOARD. If you find a bug and want to fix it, please submit it in an Issue first. For new feature additions, please contact us in Discussions, or directly through the contact details provided above, and read the Contribution Guidelines below before contributing. Thank you for your support!
+
+[Contribution Guidelines](./CONTRIBUTING.md)
+
 ## Document
 + After refactoring with Fabric.js
   - [Exploring the Canvas Series: The Art of Time Reversal in the Canvas](https://songlh.top/2024/01/10/Exploring-the-Canvas-Series-The-Art-of-Time-Reversal-in-the-Canvas/)
@@ -96,3 +118,6 @@ If you have any suggestions or good ideas, welcome to contact me at any time!
   - [Canvas Artistry：Mastering Selection, Dragging, and Scaling](https://songlh.top/2023/11/30/Canvas-Artistry1)
   - [Canvas Artistry：Drawing magic with multiple effects](https://songlh.top/2023/12/01/Canvas-Artistry2)
 
+## License
+
+MIT License. See the [LICENSE](https://github.com/LHRUN/paint-board/blob/main/LICENSE) file.

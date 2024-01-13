@@ -63,8 +63,10 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## 待完成功能
 + 多平台认证登录，数据同步
++ 常用图形的绘制
++ AI 绘制
 
-## 视频演示
+## V1.0.0 视频演示
 
 [![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
 
@@ -75,6 +77,20 @@ pnpm install
 pnpm dev
 ```
 
+### Docker 支持
+
+1. 构建 Docker 镜像，镜像名称为 `paint-board`。
+```sh
+docker build -t paint-board .
+```
+
+2. 启动 docker 容器。
+```sh
+docker run -d -p 8080:80 --name paint-board paint-board
+```
+
+3. 在浏览器打开 `http://localhost:8080/paint-board/` 即可访问。
+
 ## 联系我
 
 如果你有任何建议或者有好的想法，欢迎随时与我联系！
@@ -84,6 +100,12 @@ pnpm dev
 + 微信：
   - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
 
+## 贡献
+
+我很高兴你有兴趣对 PAINT BOARD 做出贡献。如果你发现了 BUG 并希望进行修复，请先在 Issue 中提出。对于新功能的增加，请先在 Discussions 中与我们进行沟通，或者直接通过以上提供的联系方式联系，进行贡献前请阅读以下贡献指南。感谢你的支持！
+
+[贡献指南](./CONTRIBUTING.md)
+
 ## 技术文章
 + Fabric.js 重构后
   - [画板探秘系列：画板中的时光倒流术](https://songlh.top/2024/01/09/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E7%94%BB%E6%9D%BF%E4%B8%AD%E7%9A%84%E6%97%B6%E5%85%89%E5%80%92%E6%B5%81%E6%9C%AF/)
@@ -92,3 +114,7 @@ pnpm dev
   - [基于canvas实现的多功能画板](https://songlh.top/2022/09/21/%E5%9F%BA%E4%BA%8Ecanvas%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%A4%9A%E5%8A%9F%E8%83%BD%E7%94%BB%E6%9D%BF/)
   - [canvas画板之绘画元素的框选](https://songlh.top/2022/12/05/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%BB%98%E7%94%BB%E5%85%83%E7%B4%A0%E7%9A%84%E6%A1%86%E9%80%89/)
   - [canvas画板之画笔的多种效果](https://songlh.top/2022/12/17/canvas%E7%94%BB%E6%9D%BF%E4%B9%8B%E7%94%BB%E7%AC%94%E7%9A%84%E5%A4%9A%E7%A7%8D%E6%95%88%E6%9E%9C/)
+
+## License
+
+MIT License. See the [LICENSE](https://github.com/LHRUN/paint-board/blob/main/LICENSE) file.
