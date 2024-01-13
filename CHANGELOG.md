@@ -1,3 +1,14 @@
+# 1.2.0
+
+### Feat
+
+- add docker support
+
+### Docs
+
+- add CONTRIBUTING.md
+- add Issues template
+
 # 1.1.0
 
 ### Feat
