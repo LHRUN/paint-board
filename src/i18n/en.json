@@ -27,7 +27,8 @@
     "text": "add text",
     "image": "upload image",
     "clean": "clean",
-    "save": "Save as image"
+    "save": "Save as image",
+    "fileList": "File List"
   },
   "info": {
     "welecome": "Welcome to star",
