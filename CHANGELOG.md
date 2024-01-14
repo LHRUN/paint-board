@@ -1,3 +1,9 @@
+# 1.2.1
+
+### Fix
+
+- fix bottom operation tooltip display
+
 # 1.2.0
 
 ### Feat

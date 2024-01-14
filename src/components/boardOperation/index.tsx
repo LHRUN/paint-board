@@ -77,7 +77,7 @@ const BoardOperation = () => {
 
   return (
     <>
-      <div className="fixed bottom-5 left-2/4 -translate-x-2/4 flex items-center bg-[#eef1ff] rounded-full xs:flex-col xs:right-5 xs:left-auto xs:translate-x-0 xs:justify-normal xs:max-h-[70vh] overflow-y-auto noScrollbar">
+      <div className="fixed bottom-5 left-2/4 -translate-x-2/4 flex items-center bg-[#eef1ff] rounded-full xs:flex-col xs:right-5 xs:left-auto xs:translate-x-0 xs:justify-normal xs:max-h-[70vh] xs:overflow-y-auto xs:noScrollbar">
         {showOperation && (
           <>
             <div
@@ -149,7 +149,8 @@ const BoardOperation = () => {
             </div>
             <label
               htmlFor="my-drawer-4"
-              className="cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
+              className="min-xs:tooltip cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
+              data-tip={t('operate.fileList')}
               onClick={() => updateShowFile(true)}
             >
               <FileListIcon />

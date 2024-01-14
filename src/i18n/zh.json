@@ -27,7 +27,8 @@
     "text": "添加文字",
     "image": "上传图片",
     "clean": "清除画板",
-    "save": "保存为图片"
+    "save": "保存为图片",
+    "fileList": "文件列表"
   },
   "info": {
     "welecome": "欢迎Star",
