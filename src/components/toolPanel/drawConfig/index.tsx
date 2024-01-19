@@ -66,15 +66,20 @@ const DrawConfig = () => {
       ) && (
         <div className="mt-3">
           <div className="font-bold text-lg font-fredokaOne">Draw Width</div>
-          <input
-            type="range"
-            min="5"
-            max="30"
-            step="1"
-            value={drawWidth}
-            className="range range-primary range-xs"
-            onChange={(e) => updateDrawWidth(Number(e.target.value))}
-          />
+          <div className="flex items-center">
+            <div className="text-lg font-fredokaOne mr-2 text-primary-focus">
+              {drawWidth}
+            </div>
+            <input
+              type="range"
+              min="5"
+              max="30"
+              step="1"
+              value={drawWidth}
+              className="range range-primary range-xs"
+              onChange={(e) => updateDrawWidth(Number(e.target.value))}
+            />
+          </div>
         </div>
       )}
       {/* color config */}
