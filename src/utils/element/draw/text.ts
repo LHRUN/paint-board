@@ -43,6 +43,10 @@ export class DrawTextElement {
     this.group.addWithUpdate(drawText(this))
     paintBoard.canvas?.requestRenderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawText(el: DrawTextElement) {

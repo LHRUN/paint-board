@@ -6,7 +6,7 @@ import { fabric } from 'fabric'
 import { filtersCheckbox } from './constant'
 import { renderImageFilters } from '@/utils/element/image'
 
-import FontFamilyConfg from '../drawConfig/fontFamilyConfig'
+import FontFamilyConfg from '../drawConfig/freeStyleConfig/fontFamilyConfig'
 import LayerConfig from './layerConfig'
 
 const SelectConfig = () => {

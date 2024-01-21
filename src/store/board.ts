@@ -1,4 +1,5 @@
 import { ActionMode } from '@/constants'
+import { DrawType } from '@/constants/draw'
 import {
   changeAlpha,
   getAlphaFromRgba,
@@ -12,6 +13,7 @@ import { fabric } from 'fabric'
 
 interface BoardState {
   mode: string // operating mode
+  drawType: string // draw type
   language: string // i18n language 'zh' 'en'
   backgroundColor: string // canvas background color
   backgroundOpacity: number // canvas background opacity
@@ -20,6 +22,7 @@ interface BoardState {
 
 interface BoardAction {
   updateMode: (mode: string) => void
+  updateDrawType: (drawType: string) => void
   updateLanguage: (language: string) => void
   initBackground: () => void
   updateBackgroundColor: (color: string) => void
@@ -35,6 +38,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
   persist(
     (set, get) => ({
       mode: ActionMode.DRAW,
+      drawType: DrawType.FreeStyle,
       language: initLanguage,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
@@ -45,6 +49,14 @@ const useBoardStore = create<BoardState & BoardAction>()(
           paintBoard.handleMode(mode)
           set({
             mode
+          })
+        }
+      },
+      updateDrawType: (drawType) => {
+        const oldDrawType = get().drawType
+        if (oldDrawType !== drawType) {
+          set({
+            drawType
           })
         }
       },

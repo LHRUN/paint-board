@@ -6,7 +6,7 @@ const DrawTextConfig = () => {
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-lg font-fredokaOne">Draw Text</div>
+      <div className="font-bold text-base font-fredokaOne">Draw Text</div>
       <div className="flex justify-between px-3 py-1.5 rounded-lg bg-primary cursor-pointer">
         <input
           value={drawTextValue}

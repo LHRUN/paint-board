@@ -38,6 +38,10 @@ export class ThornElement {
     this.group.addWithUpdate(drawThorn(this, curPoint))
     paintBoard.canvas?.renderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawThorn(el: ThornElement, curPoint: fabric.Point) {

@@ -1,4 +1,4 @@
-import { DrawShape } from '@/constants'
+import { DrawShape } from '@/constants/draw'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { drawBubble } from './bubble'
@@ -78,5 +78,9 @@ export class ShapeElement {
       this.group.addWithUpdate(currentDrawEle)
       paintBoard.canvas?.requestRenderAll()
     }
+  }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
   }
 }

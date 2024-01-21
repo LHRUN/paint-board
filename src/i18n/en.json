@@ -5,6 +5,10 @@
     "select": "Select",
     "board": "Board"
   },
+  "drawType": {
+    "freeStyle": "FreeStyle",
+    "shape": "Shape"
+  },
   "style": {
     "basic": "Basic",
     "rainbow": "Rainbow",

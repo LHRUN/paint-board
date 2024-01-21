@@ -21,7 +21,9 @@ const FontFamilyConfg: FC<IProps> = ({ fontFamily, updateFontFamily }) => {
 
   return (
     <>
-      <div className="font-bold text-lg font-fredokaOne mt-3">Font Family</div>
+      <div className="font-bold text-base font-fredokaOne mt-3">
+        Font Family
+      </div>
       <div>
         {Object.keys(fontFamilyRadio).map((key) => (
           <label

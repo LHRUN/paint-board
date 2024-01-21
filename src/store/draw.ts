@@ -1,4 +1,4 @@
-import { DrawShape, DrawStyle } from '@/constants'
+import { DrawShape, DrawStyle } from '@/constants/draw'
 import {
   getDrawWidth,
   getEraserWidth,

@@ -38,6 +38,10 @@ export class ReticulateElement {
     this.group.addWithUpdate(drawReticulate(this.points))
     paintBoard.canvas?.requestRenderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawReticulate(points: fabric.Point[]) {

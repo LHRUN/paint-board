@@ -5,6 +5,10 @@
     "select": "选择",
     "board": "画板"
   },
+  "drawType": {
+    "freeStyle": "自由绘画",
+    "shape": "形状绘画"
+  },
   "style": {
     "basic": "基础",
     "rainbow": "彩虹 ",

@@ -6,13 +6,13 @@ const shapeTypeConfig = () => {
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-lg font-fredokaOne">Shape type</div>
+      <div className="font-bold text-base font-fredokaOne">Shape type</div>
       {Object.keys(shapeSwitch).map((lineKey) => (
         <div key={lineKey} className="btn-group mt-1 flex">
           {shapeSwitch[lineKey].map(({ type, icon }) => (
             <button
               key={type}
-              className={`btn btn-sm flex-grow ${
+              className={`btn btn-xs flex-grow text-white ${
                 drawShape === type ? 'btn-active' : ''
               }`}
               onClick={() => {

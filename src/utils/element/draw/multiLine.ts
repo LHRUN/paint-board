@@ -37,6 +37,10 @@ export class MultiLineElement {
     this.group.addWithUpdate(drawMultiLine(this.points))
     paintBoard.canvas?.renderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawMultiLine(points: fabric.Point[]) {

@@ -33,6 +33,10 @@ export class RainbowElement {
     this.group.addWithUpdate(drawRainbow(this.points))
     paintBoard.canvas?.requestRenderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawRainbow(points: fabric.Point[]) {

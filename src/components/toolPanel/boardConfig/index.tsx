@@ -44,7 +44,7 @@ const boardConfig = () => {
       <div className="form-control mt-3">
         <div className="font-bold font-fredokaOne">Background</div>
         <div className="mt-1 flex items-center w-full">
-          <div className="w-8 h-8">
+          <div className="w-7 h-7">
             <input
               type="color"
               value={rgbaToHex(backgroundColor || '')}

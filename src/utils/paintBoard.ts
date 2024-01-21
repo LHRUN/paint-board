@@ -4,7 +4,8 @@ import './common/fabricMixin/object'
 import { brushMouseMixin } from './common/fabricMixin/brushMouse'
 
 import { History } from './history'
-import { DrawStyle, ActionMode } from '@/constants'
+import { ActionMode } from '@/constants'
+import { DrawStyle, DrawType } from '@/constants/draw'
 
 import { v4 as uuidv4 } from 'uuid'
 import { isMobile } from './common'
@@ -120,6 +121,7 @@ export class PaintBoard {
     switch (mode) {
       case ActionMode.DRAW:
         if (
+          useBoardStore.getState().drawType === DrawType.FreeStyle &&
           [DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
             useDrawStore.getState().drawStyle
           )

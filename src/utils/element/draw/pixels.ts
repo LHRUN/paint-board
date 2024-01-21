@@ -29,6 +29,10 @@ export class PixelsElement {
     this.group.addWithUpdate(drawPixels(newPoint.x, newPoint.y))
     paintBoard.canvas?.requestRenderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawPixels(x: number, y: number) {

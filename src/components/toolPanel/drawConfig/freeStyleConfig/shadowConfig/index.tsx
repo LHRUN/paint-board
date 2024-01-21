@@ -6,9 +6,9 @@ const ShadowConfig = () => {
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-lg font-fredokaOne">Shadow</div>
+      <div className="font-bold text-base font-fredokaOne">Shadow</div>
       <div className="flex mt-1 items-center">
-        <div className="w-8 h-8 mr-2 cursor-pointer">
+        <div className="w-7 h-7 cursor-pointer">
           <input
             type="color"
             value={shadowColor}
@@ -17,6 +17,10 @@ const ShadowConfig = () => {
             }}
             className="colorInput"
           />
+        </div>
+        <div className="divider divider-horizontal mx-1"></div>
+        <div className="text-lg font-fredokaOne mr-2 text-primary-focus">
+          {shadowWidth}
         </div>
         <input
           type="range"

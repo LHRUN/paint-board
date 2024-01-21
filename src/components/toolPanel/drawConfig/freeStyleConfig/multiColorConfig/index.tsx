@@ -13,12 +13,14 @@ const MultiColorConfig = () => {
   return (
     <>
       <div className="mt-3">
-        <div className="font-bold text-lg font-fredokaOne">MultiColor Type</div>
+        <div className="font-bold text-base font-fredokaOne">
+          MultiColor Type
+        </div>
         <div className="btn-group mt-1 flex">
           {MultiColorSwitch.map((item, index) => (
             <button
               key={index}
-              className={`btn btn-sm flex-grow ${
+              className={`btn btn-xs flex-grow ${
                 multiColorType === item ? 'btn-active' : ''
               }`}
               onClick={() => {
@@ -26,7 +28,7 @@ const MultiColorConfig = () => {
               }}
             >
               {item === MultiColorType.COL && (
-                <div className="flex w-4/6 h-5/6 rounded-lg overflow-hidden ">
+                <div className="flex w-4/6 h-4/6 rounded-lg overflow-hidden ">
                   {drawColors.map((color, index) => (
                     <div
                       className="h-full flex-1"
@@ -39,7 +41,7 @@ const MultiColorConfig = () => {
                 </div>
               )}
               {item === MultiColorType.ROW && (
-                <div className="flex flex-col w-4/6 h-5/6 rounded-lg overflow-hidden ">
+                <div className="flex flex-col w-4/6 h-4/6 rounded-lg overflow-hidden ">
                   {drawColors.map((color, index) => (
                     <div
                       className="h-full flex-1"
@@ -52,10 +54,10 @@ const MultiColorConfig = () => {
                 </div>
               )}
               {item === MultiColorType.CIRCLE && (
-                <div className="w-4/6 h-5/6 relative">
+                <div className="w-4/6 h-4/6 relative">
                   {drawColors.map((color, index) => (
                     <div
-                      className="h-6 w-6 rounded-full absolute top-0"
+                      className="h-4 w-4 rounded-full absolute top-0"
                       style={{
                         backgroundColor: color,
                         left: `${index * 5}px`

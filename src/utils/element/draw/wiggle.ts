@@ -39,6 +39,10 @@ export class WiggleElement {
     this.group.addWithUpdate(drawWiggle(this, curPoint))
     paintBoard.canvas?.renderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawWiggle(el: WiggleElement, curPoint: fabric.Point) {

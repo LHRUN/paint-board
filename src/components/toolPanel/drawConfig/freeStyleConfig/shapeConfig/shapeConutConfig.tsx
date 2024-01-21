@@ -5,7 +5,7 @@ const ShapeConfig = () => {
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-lg font-fredokaOne">Count</div>
+      <div className="font-bold text-base font-fredokaOne">Count</div>
       <input
         type="range"
         min="1"

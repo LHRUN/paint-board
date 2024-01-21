@@ -46,6 +46,10 @@ export class MultiPointElement {
     this.group.addWithUpdate(drawMultiPoint(this))
     paintBoard.canvas?.renderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawMultiPoint(el: MultiPointElement) {
