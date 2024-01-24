@@ -15,6 +15,8 @@ interface BoardState {
   mode: string // operating mode
   drawType: string // draw type
   language: string // i18n language 'zh' 'en'
+  canvasWidth: number // canvas width 0.1 ~ 1
+  canvasHeight: number // canvas height 0.1 ~ 1
   backgroundColor: string // canvas background color
   backgroundOpacity: number // canvas background opacity
   isObjectCaching: boolean // fabric objectCaching
@@ -25,6 +27,8 @@ interface BoardAction {
   updateDrawType: (drawType: string) => void
   updateLanguage: (language: string) => void
   initBackground: () => void
+  updateCanvasWidth: (width: number) => void
+  updateCanvasHeight: (height: number) => void
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
   updateCacheState: () => void
@@ -40,6 +44,8 @@ const useBoardStore = create<BoardState & BoardAction>()(
       mode: ActionMode.DRAW,
       drawType: DrawType.FreeStyle,
       language: initLanguage,
+      canvasWidth: 1,
+      canvasHeight: 1,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
       isObjectCaching: true,
@@ -85,6 +91,24 @@ const useBoardStore = create<BoardState & BoardAction>()(
           }
         } else if (paintBoard?.canvas) {
           paintBoard.canvas.backgroundColor = 'rgba(255, 255, 255, 1)'
+        }
+      },
+      updateCanvasWidth: (width) => {
+        const oldWidth = get().canvasWidth
+        if (oldWidth !== width) {
+          set({
+            canvasWidth: width
+          })
+          paintBoard.updateCanvasWidth(width)
+        }
+      },
+      updateCanvasHeight: (height) => {
+        const oldHeight = get().canvasHeight
+        if (oldHeight !== height) {
+          set({
+            canvasHeight: height
+          })
+          paintBoard.updateCanvasHeight(height)
         }
       },
       updateBackgroundColor: (color) => {

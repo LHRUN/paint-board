@@ -3,6 +3,7 @@ import { persist, createJSONStorage, StateStorage } from 'zustand/middleware'
 import { get, set, del } from 'idb-keyval'
 import { v4 as uuidv4 } from 'uuid'
 import { produce } from 'immer'
+import useBoardStore from './board'
 
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
@@ -28,6 +29,8 @@ interface IFile {
   boardVersion: string // paint board version
   zoom: number // current canvas zoom
   viewportTransform?: number[] // current canvas transform
+  canvasWidth: number // canvas width
+  canvasHeight: number // canvas Height
   boardData?: Partial<IBoardData>
 }
 
@@ -41,6 +44,8 @@ interface FileAction {
   updateTitle: (newTitle: string, id: string) => void
   updateZoom: (newZoom: number) => void
   updateTransform: (newTransform: number[]) => void
+  updateCanvasWidth: (width: number) => void
+  updateCanvasHeight: (height: number) => void
   updateBoardData: (data: Partial<IBoardData>) => void
   addFile: () => void
   deleteFile: () => void
@@ -61,7 +66,9 @@ const useFileStore = create<FileState & FileAction>()(
           title: 'paint-board',
           boardVersion: BOARD_VERSION,
           boardData: {},
-          zoom: 1
+          zoom: 1,
+          canvasWidth: 1,
+          canvasHeight: 1
         }
       ],
       updateCurrentFile(newId) {
@@ -121,6 +128,32 @@ const useFileStore = create<FileState & FileAction>()(
           )
         }
       },
+      updateCanvasWidth(width) {
+        const files = get().files
+        const updateIndex = files?.findIndex(
+          (file) => file.id === get().currentId
+        )
+        if (updateIndex > -1) {
+          set(
+            produce((state) => {
+              state.files[updateIndex].canvasWidth = width
+            })
+          )
+        }
+      },
+      updateCanvasHeight(height) {
+        const files = get().files
+        const updateIndex = files?.findIndex(
+          (file) => file.id === get().currentId
+        )
+        if (updateIndex > -1) {
+          set(
+            produce((state) => {
+              state.files[updateIndex].canvasHeight = height
+            })
+          )
+        }
+      },
       addFile() {
         const id = uuidv4()
         set(
@@ -130,7 +163,9 @@ const useFileStore = create<FileState & FileAction>()(
               title: 'empty title',
               boardVersion: BOARD_VERSION,
               boardData: {},
-              zoom: 1
+              zoom: 1,
+              canvasWidth: useBoardStore.getState().canvasWidth,
+              canvasHeight: useBoardStore.getState().canvasHeight
             })
           })
         )
@@ -182,7 +217,9 @@ const useFileStore = create<FileState & FileAction>()(
                         id,
                         title: json?.title,
                         boardVersion: json?.boardVersion || BOARD_VERSION,
-                        boardData: json?.boardData
+                        boardData: json?.boardData,
+                        canvasWidth: json?.canvasWidth || 1,
+                        canvasHeight: json?.canvasHeight || 1
                       })
                       state.currentId = state.files[0].id
                     })

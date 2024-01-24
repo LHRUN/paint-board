@@ -19,6 +19,7 @@ import { getEraserWidth } from './common/draw'
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
+import { debounce } from 'lodash'
 
 /**
  * PaintBoard
@@ -39,8 +40,6 @@ export class PaintBoard {
       this.canvas = new fabric.Canvas(canvasEl, {
         selectionColor: 'rgba(101, 204, 138, 0.3)',
         preserveObjectStacking: true,
-        width: window.innerWidth,
-        height: window.innerHeight,
         enableRetinaScaling: true
       })
       fabric.Object.prototype.set({
@@ -91,6 +90,14 @@ export class PaintBoard {
                 file.zoom
               )
             }
+
+            this.canvas.setWidth(window.innerWidth * (file?.canvasWidth || 1))
+            useBoardStore.getState().updateCanvasWidth(file?.canvasWidth || 1)
+            this.canvas.setHeight(
+              window.innerHeight * (file?.canvasHeight || 1)
+            )
+            useBoardStore.getState().updateCanvasHeight(file?.canvasHeight || 1)
+
             fabric.Object.prototype.set({
               objectCaching: useBoardStore.getState().isObjectCaching
             })
@@ -351,6 +358,20 @@ export class PaintBoard {
       fn?.()
     })
   }
+
+  updateCanvasWidth = debounce((width) => {
+    if (this.canvas) {
+      this.canvas.setWidth(window.innerWidth * width)
+      useFileStore.getState().updateCanvasWidth(width)
+    }
+  }, 500)
+
+  updateCanvasHeight = debounce((height) => {
+    if (this.canvas) {
+      this.canvas.setHeight(window.innerHeight * height)
+      useFileStore.getState().updateCanvasHeight(height)
+    }
+  }, 500)
 }
 
 export const paintBoard = new PaintBoard()

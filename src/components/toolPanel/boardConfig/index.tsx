@@ -12,6 +12,10 @@ const boardConfig = () => {
     backgroundOpacity,
     updateBackgroundColor,
     updateBackgroundOpacity,
+    canvasWidth,
+    canvasHeight,
+    updateCanvasWidth,
+    updateCanvasHeight,
     initBackground,
     isObjectCaching,
     updateCacheState
@@ -72,6 +76,47 @@ const boardConfig = () => {
         </div>
       </div>
       <div className="form-control mt-3">
+        <div className="font-bold font-fredokaOne">Canvas Size</div>
+        <div className="mt-1 flex items-center w-full">
+          <div className="text-sm font-fredokaOne w-12 mr-2 shrink-0">
+            Width
+          </div>
+          <div className="text-sm font-fredokaOne mr-2 text-primary-focus w-9 shrink-0">
+            {(canvasWidth * 100).toFixed(0) + '%'}
+          </div>
+          <input
+            className="range range-primary range-xs"
+            type="range"
+            min="0.1"
+            max="1"
+            step="0.01"
+            value={String(canvasWidth)}
+            onChange={(e) => {
+              updateCanvasWidth(Number(e.target.value))
+            }}
+          />
+        </div>
+        <div className="mt-1 flex items-center w-full">
+          <div className="text-sm font-fredokaOne w-12 mr-2 shrink-0">
+            Height
+          </div>
+          <div className="text-sm font-fredokaOne mr-2 text-primary-focus w-9 shrink-0">
+            {(canvasHeight * 100).toFixed(0) + '%'}
+          </div>
+          <input
+            className="range range-primary range-xs"
+            type="range"
+            min="0.1"
+            max="1"
+            step="0.01"
+            value={String(canvasHeight)}
+            onChange={(e) => {
+              updateCanvasHeight(Number(e.target.value))
+            }}
+          />
+        </div>
+      </div>
+      <div className="form-control mt-3">
         <div className="font-bold font-fredokaOne">Cache</div>
         <div className="mt-1 flex items-start w-full">
           <input
@@ -80,7 +125,7 @@ const boardConfig = () => {
             checked={isObjectCaching}
             onChange={updateCacheState}
           />
-          <div className="text-xs w-56 ml-3">{t('boardConfig.cacheTip')}</div>
+          <div className="text-xs w-40 ml-3">{t('boardConfig.cacheTip')}</div>
         </div>
       </div>
     </>

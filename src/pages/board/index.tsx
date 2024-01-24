@@ -24,11 +24,10 @@ const Board: React.FC = () => {
   }, [])
 
   return (
-    <div className="flex">
-      <canvas
-        className="fixed top-0 left-0 w-full h-full block"
-        ref={canvasEl}
-      ></canvas>
+    <div>
+      <div className="w-screen h-screen flex justify-center items-center bg-slate-100">
+        <canvas className="w-full h-full block" ref={canvasEl}></canvas>
+      </div>
       {canvasLoaded && (
         <>
           <ToolPanel />

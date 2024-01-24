@@ -110,8 +110,10 @@ export class WindowEvent {
   resizeFn() {
     const canvas = paintBoard.canvas
     if (canvas) {
-      canvas.setWidth(window.innerWidth)
-      canvas.setHeight(window.innerHeight)
+      canvas.setWidth(window.innerWidth * useBoardStore.getState().canvasWidth)
+      canvas.setHeight(
+        window.innerHeight * useBoardStore.getState().canvasHeight
+      )
     }
   }
 }

@@ -50,7 +50,7 @@ const FileList: FC<IProps> = ({ updateShow }) => {
   }
 
   return (
-    <div className="drawer drawer-end fixed">
+    <div className="drawer drawer-end fixed top-0">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
       <div className="drawer-side">
         <label
