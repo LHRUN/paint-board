@@ -9,9 +9,11 @@ declare module 'fabric/fabric-impl' {
 
   export interface Canvas {
     upperCanvasEl?: HTMLCanvasElement
+    contextTop: CanvasRenderingContext2D
     _onMouseDownInDrawingMode: any
     _onMouseMoveInDrawingMode: any
     _onMouseUpInDrawingMode: any
+    _currentTransform: any
   }
 
   export interface IAllFilters {

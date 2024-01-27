@@ -1,6 +1,7 @@
 import BackgroundConfig from './backgroundConfig'
 import CanvasSizeConfig from './canvasSizeConfig'
 import CacheConfig from './cacheConfig'
+import GuideLineCOnfig from './guideLineConfig'
 
 const boardConfig = () => {
   return (
@@ -8,6 +9,7 @@ const boardConfig = () => {
       <BackgroundConfig />
       <CanvasSizeConfig />
       <CacheConfig />
+      <GuideLineCOnfig />
     </>
   )
 }

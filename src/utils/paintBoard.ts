@@ -2,6 +2,7 @@ import { fabric } from 'fabric'
 import 'fabric/src/mixins/eraser_brush.mixin.js'
 import './common/fabricMixin/object'
 import { brushMouseMixin } from './common/fabricMixin/brushMouse'
+import { alignGuideLine } from './common/fabricMixin/alignGuideLine.js'
 
 import { History } from './history'
 import { ActionMode } from '@/constants'
@@ -56,6 +57,7 @@ export class PaintBoard {
       if (isMobile()) {
         brushMouseMixin.initCanvas(this.canvas)
       }
+      alignGuideLine.init(this.canvas)
 
       this.initCanvasStorage()
       this.handleMode()

@@ -10,6 +10,7 @@ import {
 import { paintBoard } from '@/utils/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { alignGuideLine } from '@/utils/common/fabricMixin/alignGuideLine'
 
 interface BoardState {
   mode: string // operating mode
@@ -20,6 +21,7 @@ interface BoardState {
   backgroundColor: string // canvas background color
   backgroundOpacity: number // canvas background opacity
   isObjectCaching: boolean // fabric objectCaching
+  openGuideLine: boolean // does the guide line show
 }
 
 interface BoardAction {
@@ -32,6 +34,7 @@ interface BoardAction {
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
   updateCacheState: () => void
+  updateOpenGuideLine: () => void
 }
 
 const initLanguage = ['en', 'en-US', 'en-us'].includes(navigator.language)
@@ -49,6 +52,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
       isObjectCaching: true,
+      openGuideLine: true,
       updateMode: (mode) => {
         const oldMode = get().mode
         if (oldMode !== mode) {
@@ -147,6 +151,13 @@ const useBoardStore = create<BoardState & BoardAction>()(
           objectCaching: useBoardStore.getState().isObjectCaching
         })
         paintBoard?.canvas?.renderAll()
+      },
+      updateOpenGuideLine() {
+        const newOpenGuideLine = !get().openGuideLine
+        set({
+          openGuideLine: newOpenGuideLine
+        })
+        alignGuideLine.updateOpenState(newOpenGuideLine)
       }
     }),
     {
