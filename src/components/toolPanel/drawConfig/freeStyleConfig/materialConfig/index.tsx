@@ -1,5 +1,5 @@
 import useDrawStore from '@/store/draw'
-import { MaterialSwitch } from '../constant'
+import { MaterialSwitch } from './constant'
 
 const MaterialConfig = () => {
   const { materialType, updateMaterialType, drawColors } = useDrawStore()

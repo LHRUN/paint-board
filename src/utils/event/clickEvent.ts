@@ -3,7 +3,9 @@ import { fabric } from 'fabric'
 import { ActionMode } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 import { ShapeStyle } from '@/constants/shape'
+import { IInk } from '@/services/autodraw'
 import { paintBoard } from '../paintBoard'
+
 import { ShapeElement } from '../element/draw/shape'
 import { PixelsElement } from '../element/draw/pixels'
 import { DrawTextElement } from '../element/draw/text'
@@ -13,9 +15,6 @@ import { ThornElement } from '../element/draw/thorn'
 import { MultiPointElement } from '../element/draw/multiPoint'
 import { WiggleElement } from '../element/draw/wiggle'
 
-import useDrawStore from '@/store/draw'
-import useBoardStore from '@/store/board'
-import useShapeStore from '@/store/shape'
 import { RectShape } from '../element/shape/rect'
 import { CircleShape } from '../element/shape/circle'
 import { LineShape } from '../element/shape/line'
@@ -35,6 +34,13 @@ import { SearchShape } from '../element/shape/search'
 import { InfoOutlineShape } from '../element/shape/infoOutline'
 import { HeartShape } from '../element/shape/heart'
 import { AlertShape } from '../element/shape/alert'
+
+import useDrawStore from '@/store/draw'
+import useBoardStore from '@/store/board'
+import useShapeStore from '@/store/shape'
+import { autoDrawData } from '../autodraw'
+
+let updateInkHook: ((ink: IInk[]) => void) | null = null
 
 export class CanvasClickEvent {
   isMouseDown = false
@@ -70,6 +76,9 @@ export class CanvasClickEvent {
     | HeartShape
     | AlertShape
     | null = null // The current mouse move draws the element
+
+  mouseDownTime = 0
+  autoDrawInk: Array<Array<number>> = [[], [], []] // google auto draw ink
 
   constructor() {
     this.initClickEvent()
@@ -178,6 +187,12 @@ export class CanvasClickEvent {
             case DrawStyle.Wiggle:
               currentElement = new WiggleElement()
               break
+            case DrawStyle.Basic:
+              if (useDrawStore.getState().openAutoDraw) {
+                autoDrawData.resetLoadedSVG()
+                this.mouseDownTime = new Date().getTime()
+              }
+              break
             default:
               break
           }
@@ -199,6 +214,16 @@ export class CanvasClickEvent {
         }
 
         if (
+          this.mouseDownTime &&
+          e.absolutePointer?.x &&
+          e.absolutePointer?.y
+        ) {
+          this.autoDrawInk[0].push(e.absolutePointer?.x)
+          this.autoDrawInk[1].push(e.absolutePointer?.y)
+          this.autoDrawInk[2].push(new Date().getTime() - this.mouseDownTime)
+        }
+
+        if (
           useBoardStore.getState().mode === ActionMode.DRAW &&
           this.currentElement
         ) {
@@ -208,6 +233,14 @@ export class CanvasClickEvent {
     })
     canvas?.on('mouse:up', (e) => {
       this.isMouseDown = false
+      if (this.autoDrawInk?.[0]?.length > 3) {
+        autoDrawData.addInk([...this.autoDrawInk])
+        console.log('autoDrawData.inks', autoDrawData.inks)
+        updateInkHook?.([...autoDrawData.inks])
+        this.autoDrawInk = [[], [], []]
+        this.mouseDownTime = 0
+      }
+
       if (this.currentElement) {
         let isDestroy = false
         if (this.startPoint && e.absolutePointer) {
@@ -228,5 +261,9 @@ export class CanvasClickEvent {
 
   setSpaceKeyDownState(isSpaceKeyDown: boolean) {
     this.isSpaceKeyDown = isSpaceKeyDown
+  }
+
+  changeInkHookFn(fn: (ink: IInk[]) => void) {
+    updateInkHook = fn
   }
 }

@@ -118,7 +118,10 @@ const handleWidth = () => {
         )
       ) {
         brush.width = getDrawWidth()
-        if (useDrawStore.getState().drawStyle === DrawStyle.Basic) {
+        if (
+          useDrawStore.getState().drawStyle === DrawStyle.Basic &&
+          brush.shadow
+        ) {
           ;(brush.shadow as fabric.Shadow).blur = getShadowWidth()
         }
       }

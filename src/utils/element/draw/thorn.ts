@@ -61,7 +61,7 @@ function drawThorn(el: ThornElement, curPoint: fabric.Point) {
     originX: 'center',
     originY: 'center',
     fill: useDrawStore.getState().drawColors[0],
-    opacity: 0.5,
+    opacity: Math.random(),
     rx: distance * 5 + minSize,
     ry: minSize
   })

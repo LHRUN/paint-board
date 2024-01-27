@@ -1,3 +1,4 @@
+import { fabric } from 'fabric'
 import { ActionMode } from '@/constants'
 import { DrawType } from '@/constants/draw'
 import {
@@ -9,7 +10,6 @@ import {
 import { paintBoard } from '@/utils/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { fabric } from 'fabric'
 
 interface BoardState {
   mode: string // operating mode
@@ -64,6 +64,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
           set({
             drawType
           })
+          paintBoard.handleMode()
         }
       },
       updateLanguage(language) {

@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid'
 import useBoardStore from '@/store/board'
 import { ActionMode } from '@/constants'
 import { setObjectAttr } from '../common/draw'
+import useDrawStore from '@/store/draw'
+import { DrawStyle, DrawType } from '@/constants/draw'
+import { autoDrawData } from '../autodraw'
 
 export class ObjectEvent {
   constructor() {
@@ -25,20 +28,25 @@ export class ObjectEvent {
     })
 
     canvas?.on('path:created', (options) => {
-      if (
-        [ActionMode.DRAW, ActionMode.ERASE].includes(
-          useBoardStore.getState().mode
-        )
-      ) {
+      const { mode, drawType } = useBoardStore.getState()
+      if ([ActionMode.DRAW, ActionMode.ERASE].includes(mode)) {
         /**
          * record fabric brush object
          */
-        if (useBoardStore.getState().mode === ActionMode.DRAW) {
+        if (mode === ActionMode.DRAW) {
           const id = uuidv4()
           ;(options as any).path.set({
             id,
             perPixelTargetFind: true
           })
+          const { openAutoDraw, drawStyle } = useDrawStore.getState()
+          if (
+            openAutoDraw &&
+            drawType === DrawType.FreeStyle &&
+            drawStyle === DrawStyle.Basic
+          ) {
+            autoDrawData.addPath((options as any).path)
+          }
         }
 
         // Save fabric brush and fabric eraser operation state

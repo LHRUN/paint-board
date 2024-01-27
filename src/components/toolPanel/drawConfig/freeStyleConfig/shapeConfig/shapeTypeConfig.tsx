@@ -1,5 +1,5 @@
 import useDrawStore from '@/store/draw'
-import { shapeSwitch } from '../constant'
+import { shapeSwitch } from './constant'
 
 const shapeTypeConfig = () => {
   const { drawShape, updateDrawShape } = useDrawStore()

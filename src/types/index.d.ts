@@ -38,4 +38,8 @@ declare module 'fabric/fabric-impl' {
   export interface IText {
     _textBeforeEdit: string
   }
+
+  export interface Path {
+    lineCoords: any
+  }
 }

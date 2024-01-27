@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, splitVendorChunkPlugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import viteEslint from 'vite-plugin-eslint'
 import svgr from 'vite-plugin-svgr'
@@ -18,7 +18,8 @@ export default defineConfig({
     viteEslint({
       failOnError: false
     }),
-    svgr()
+    svgr(),
+    splitVendorChunkPlugin()
   ],
   resolve: {
     alias: {

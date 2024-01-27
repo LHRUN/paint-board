@@ -8,6 +8,7 @@ import { ActionMode } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 
 import { v4 as uuidv4 } from 'uuid'
+import { debounce } from 'lodash'
 import { isMobile } from './common'
 import { CanvasEvent } from './event'
 import { TextElement } from './element/text'
@@ -15,11 +16,11 @@ import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
 import { getEraserWidth } from './common/draw'
+import { autoDrawData } from './autodraw'
 
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
-import { debounce } from 'lodash'
 
 /**
  * PaintBoard
@@ -193,6 +194,19 @@ export class PaintBoard {
         this.canvas.isDrawingMode = false
         break
     }
+  }
+
+  handleAutoDrawData() {
+    if (
+      useBoardStore.getState().mode === ActionMode.DRAW &&
+      useBoardStore.getState().drawType === DrawType.FreeStyle &&
+      useDrawStore.getState().drawStyle === DrawStyle.Basic &&
+      useDrawStore.getState().openAutoDraw
+    ) {
+      return
+    }
+    autoDrawData.clearDraw()
+    autoDrawData.resetLoadedSVG()
   }
 
   /**

@@ -100,5 +100,10 @@
   },
   "boardConfig": {
     "cacheTip": "In the presence of a large amount of drawing content, enabling caching will improve drawing performance, while disabling caching will improve canvas sharpness"
+  },
+  "request": {
+    "tip": "Please feel free to draw...",
+    "loading": "Loading data, please wait...",
+    "error": "Something went wrong. Please try again later."
   }
 }

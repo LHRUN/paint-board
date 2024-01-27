@@ -76,7 +76,7 @@ function drawMultiPoint(el: MultiPointElement) {
       left: item.x,
       top: item.y,
       radius,
-      shadow: el.shadow,
+      // shadow: el.shadow,
       fill: useDrawStore.getState().drawColors[0]
     })
   })
