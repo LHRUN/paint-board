@@ -23,6 +23,7 @@ export class CircleShape {
       strokeWidth,
       fill: getFillStyle(),
       strokeUniform: true,
+      strokeLineCap: 'round',
       strokeDashArray: getShapeBorder(strokeWidth)
     })
 

@@ -24,6 +24,7 @@ export class TriangleShape {
       strokeWidth,
       fill: getFillStyle(),
       strokeUniform: true,
+      strokeLineCap: 'round',
       strokeDashArray: getShapeBorder(strokeWidth)
     })
 

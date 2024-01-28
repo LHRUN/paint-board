@@ -27,6 +27,7 @@ export class AlertShape {
       strokeWidth,
       fill: getFillStyle(),
       strokeUniform: true,
+      strokeLineCap: 'round',
       strokeDashArray: getShapeBorder(strokeWidth)
     })
     paintBoard.canvas?.add(path)

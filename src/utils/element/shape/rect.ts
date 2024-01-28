@@ -25,8 +25,8 @@ export class RectShape {
       stroke: useShapeStore.getState().borderColor,
       strokeWidth,
       fill: getFillStyle(),
-      fillRule: '',
       strokeUniform: true,
+      strokeLineCap: 'round',
       strokeDashArray: getShapeBorder(strokeWidth)
     })
 

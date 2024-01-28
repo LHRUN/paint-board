@@ -24,7 +24,8 @@ export class LineShape {
         strokeWidth,
         originX: 'center',
         originY: 'center',
-        strokeDashArray: getShapeBorder(strokeWidth + 5)
+        strokeDashArray: getShapeBorder(strokeWidth + 5),
+        strokeLineCap: 'round'
       }
     )
     paintBoard.canvas?.add(shape)

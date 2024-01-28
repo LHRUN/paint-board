@@ -16,9 +16,9 @@ export const getShapeBorder = (base = 5) => {
 
   switch (borderType) {
     case ShapeBorderType.Dashed:
-      return [base * 3, base]
+      return [base * 3, base * 2]
     case ShapeBorderType.Dotted:
-      return [base, base]
+      return [base, base * 3]
     default:
       return undefined
   }
