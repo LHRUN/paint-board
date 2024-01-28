@@ -6,6 +6,7 @@ import FontFamilyConfg from '../drawConfig/freeStyleConfig/fontFamilyConfig'
 import LayerConfig from './layerConfig'
 import OpacityConfig from './opacityConfig'
 import ImageFilterConfig from './imageFilterConfig'
+import FontStyleConfig from './fontStyleConfig'
 
 const SelectConfig = () => {
   const [refreshCount, setRefresh] = useState(0) // refresh data
@@ -52,6 +53,9 @@ const SelectConfig = () => {
         <ImageFilterConfig />
       )}
 
+      {paintBoard.canvas?.getActiveObject()?._customType === 'itext' && (
+        <FontStyleConfig refreshCount={refreshCount} />
+      )}
       {['drawText', 'itext'].includes(
         paintBoard.canvas?.getActiveObject()?._customType as string
       ) && (

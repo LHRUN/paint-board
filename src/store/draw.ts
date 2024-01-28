@@ -27,6 +27,7 @@ interface DrawState {
   multiColorType: string // 'col' | 'row' | 'circle'
   textFontFamily: string // current text drawing font
   openAutoDraw: boolean // autodraw toggle state
+  fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
 }
 
 interface DrawAction {
@@ -43,6 +44,7 @@ interface DrawAction {
   updateMultiColorType: (multiColorType: string) => void
   updateTextFontFamily: (fontFamily: string) => void
   updateAutoDrawState: () => void
+  updateFontStyles: (type: string) => void
 }
 
 const useDrawStore = create<DrawState & DrawAction>()(
@@ -61,6 +63,7 @@ const useDrawStore = create<DrawState & DrawAction>()(
       multiColorType: MultiColorType.COL,
       textFontFamily: 'Georgia',
       openAutoDraw: false,
+      fontStyles: [],
       updateDrawWidth(drawWidth) {
         const oldDrawWidth = get().drawWidth
         if (oldDrawWidth !== drawWidth && paintBoard.canvas) {
@@ -158,6 +161,18 @@ const useDrawStore = create<DrawState & DrawAction>()(
         const newOpenAutoDraw = !get().openAutoDraw
         set({
           openAutoDraw: newOpenAutoDraw
+        })
+      },
+      updateFontStyles(type) {
+        const fontStyles = [...get().fontStyles]
+        const typeIndex = fontStyles.findIndex((item) => item === type)
+        if (typeIndex !== -1) {
+          fontStyles.splice(typeIndex, 1)
+        } else {
+          fontStyles.push(type)
+        }
+        set({
+          fontStyles
         })
       }
     }),

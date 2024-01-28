@@ -98,6 +98,12 @@
     "Noise": "Noise",
     "Convolute": "Emboss"
   },
+  "fontStyle": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underLine": "UnderLine",
+    "lineThrough": "LineThrough"
+  },
   "boardConfig": {
     "cacheTip": "In the presence of a large amount of drawing content, enabling caching will improve drawing performance, while disabling caching will improve canvas sharpness"
   },

@@ -47,7 +47,7 @@ export class PaintBoard {
       fabric.Object.prototype.set({
         borderColor: '#65CC8A',
         cornerColor: '#65CC8A',
-        cornerStyle: 'rect',
+        cornerStyle: 'circle',
         borderDashArray: [3, 3],
         transparentCorners: false
       })

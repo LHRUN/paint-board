@@ -98,6 +98,12 @@
     "Noise": "噪点",
     "Convolute": "浮雕"
   },
+  "fontStyle": {
+    "bold": "粗体",
+    "italic": "斜体",
+    "underLine": "下划线",
+    "lineThrough": "删除线"
+  },
   "boardConfig": {
     "cacheTip": "在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度"
   },
