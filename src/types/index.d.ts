@@ -44,4 +44,13 @@ declare module 'fabric/fabric-impl' {
   export interface Path {
     lineCoords: any
   }
+
+  export interface Polyline {
+    _setPositionDimensions: (options: IObjectOptions) => void
+    __corner: number
+  }
+
+  export interface Control {
+    pointIndex: number
+  }
 }

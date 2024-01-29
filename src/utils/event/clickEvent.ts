@@ -253,6 +253,9 @@ export class CanvasClickEvent {
         }
         if (!isDestroy) {
           paintBoard.history?.saveState()
+          if (this.currentElement instanceof LineShape) {
+            this.currentElement?.mouseUp()
+          }
         }
         this.currentElement = null
       }
