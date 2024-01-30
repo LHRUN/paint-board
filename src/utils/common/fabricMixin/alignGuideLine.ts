@@ -17,7 +17,7 @@ class AlignGuideLine {
   updateOpenState(newState: boolean) {
     this.openAlignGuideLine = newState
   }
-  init(canvas: fabric.Canvas) {
+  init(canvas: fabric.Canvas, openAlignGuideLine: boolean) {
     const ctx = canvas.getSelectionContext()
     const aligningLineOffset = 5
     const aligningLineMargin = 4
@@ -25,6 +25,7 @@ class AlignGuideLine {
     const aligningLineColor = 'rgb(102, 204, 138)'
     let viewportTransform: number[] | undefined
     let zoom = 1
+    this.openAlignGuideLine = openAlignGuideLine
 
     function drawVerticalLine(coords: VerticalLine) {
       drawLine(

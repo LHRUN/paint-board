@@ -235,7 +235,6 @@ export class CanvasClickEvent {
       this.isMouseDown = false
       if (this.autoDrawInk?.[0]?.length > 3) {
         autoDrawData.addInk([...this.autoDrawInk])
-        console.log('autoDrawData.inks', autoDrawData.inks)
         updateInkHook?.([...autoDrawData.inks])
         this.autoDrawInk = [[], [], []]
         this.mouseDownTime = 0
