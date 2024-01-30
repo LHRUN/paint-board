@@ -2,6 +2,7 @@ import useFileStore, { IBoardData } from '@/store/files'
 import { paintBoard } from './paintBoard'
 import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
 import { cloneDeep, omit } from 'lodash'
+import { handleCanvasJSONLoaded } from './common/loadCanvas'
 
 const initState = {}
 
@@ -53,6 +54,8 @@ export class History {
       this.index--
       const canvasJson = patch(this.canvasData, delta) as IBoardData
       canvas.loadFromJSON(canvasJson, () => {
+        handleCanvasJSONLoaded(canvas)
+
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(canvasJson)
         this.canvasData = {
@@ -71,7 +74,9 @@ export class History {
       this.index++
       const canvasJson = unpatch(this.canvasData, delta) as IBoardData
       canvas.loadFromJSON(canvasJson, () => {
+        handleCanvasJSONLoaded(canvas)
         canvas.requestRenderAll()
+
         useFileStore.getState().updateBoardData(canvasJson)
         this.canvasData = {
           ...omit(canvasJson, 'objects'),

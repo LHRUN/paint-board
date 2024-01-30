@@ -18,6 +18,7 @@ import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
 import { getEraserWidth } from './common/draw'
 import { autoDrawData } from './autodraw'
+import { handleCanvasJSONLoaded } from './common/loadCanvas'
 
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
@@ -57,7 +58,7 @@ export class PaintBoard {
       if (isMobile()) {
         brushMouseMixin.initCanvas(this.canvas)
       }
-      alignGuideLine.init(this.canvas)
+      alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
       this.initCanvasStorage()
       this.handleMode()
@@ -101,6 +102,8 @@ export class PaintBoard {
             )
             useBoardStore.getState().updateCanvasHeight(file?.canvasHeight || 1)
 
+            handleCanvasJSONLoaded(this.canvas)
+
             fabric.Object.prototype.set({
               objectCaching: useBoardStore.getState().isObjectCaching
             })
@@ -132,9 +135,12 @@ export class PaintBoard {
       case ActionMode.DRAW:
         if (
           useBoardStore.getState().drawType === DrawType.FreeStyle &&
-          [DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
-            useDrawStore.getState().drawStyle
-          )
+          [
+            DrawStyle.Basic,
+            DrawStyle.Material,
+            DrawStyle.MultiColor,
+            DrawStyle.Ribbon
+          ].includes(useDrawStore.getState().drawStyle)
         ) {
           isDrawingMode = true
           this.handleDrawStyle()
@@ -191,6 +197,8 @@ export class PaintBoard {
         break
       case DrawStyle.MultiColor:
         renderMultiColor({})
+        break
+      case DrawStyle.Ribbon:
         break
       default:
         this.canvas.isDrawingMode = false
