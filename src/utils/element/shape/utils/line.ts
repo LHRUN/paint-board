@@ -19,7 +19,6 @@ export const polygonPositionHandler: fabric.Control['positionHandler'] =
     fabricObject: fabric.Polyline
   ) {
     const points = fabricObject.points as fabric.Point[]
-
     const x = points[this.pointIndex].x - fabricObject.pathOffset.x
     const y = points[this.pointIndex].y - fabricObject.pathOffset.y
     return fabric.util.transformPoint(

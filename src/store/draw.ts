@@ -28,6 +28,7 @@ interface DrawState {
   textFontFamily: string // current text drawing font
   openAutoDraw: boolean // autodraw toggle state
   fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
+  shapeLinePointCount: number // Number of line segment turning points
 }
 
 interface DrawAction {
@@ -45,6 +46,7 @@ interface DrawAction {
   updateTextFontFamily: (fontFamily: string) => void
   updateAutoDrawState: () => void
   updateFontStyles: (type: string) => void
+  updateShapeLinePointCount: (count: number) => void
 }
 
 const useDrawStore = create<DrawState & DrawAction>()(
@@ -64,6 +66,7 @@ const useDrawStore = create<DrawState & DrawAction>()(
       textFontFamily: 'Georgia',
       openAutoDraw: false,
       fontStyles: [],
+      shapeLinePointCount: 5,
       updateDrawWidth(drawWidth) {
         const oldDrawWidth = get().drawWidth
         if (oldDrawWidth !== drawWidth && paintBoard.canvas) {
@@ -174,6 +177,14 @@ const useDrawStore = create<DrawState & DrawAction>()(
         set({
           fontStyles
         })
+      },
+      updateShapeLinePointCount(count) {
+        const oldCount = get().shapeLinePointCount
+        if (count !== oldCount) {
+          set({
+            shapeLinePointCount: count
+          })
+        }
       }
     }),
     {

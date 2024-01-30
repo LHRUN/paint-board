@@ -8,6 +8,7 @@ import {
   anchorWrapper,
   polygonPositionHandler
 } from './utils/line'
+import useDrawStore from '@/store/draw'
 
 export class LineShape {
   shapeInstance: fabric.Polyline | undefined
@@ -23,22 +24,23 @@ export class LineShape {
 
     const strokeWidth = getShapeBorderWidth()
 
-    const line = new fabric.Polyline(
-      [
-        { x: this.startX, y: this.startY },
-        { x: this.startX, y: this.startY },
-        { x: this.startX, y: this.startY }
-      ],
-      {
-        stroke: useShapeStore.getState().borderColor,
-        strokeWidth,
-        originX: 'center',
-        originY: 'center',
-        strokeDashArray: getShapeBorder(strokeWidth + 5),
-        strokeLineCap: 'round',
-        fill: 'transparent'
-      }
-    )
+    const points = []
+    for (let i = 0; i < useDrawStore.getState().shapeLinePointCount; i++) {
+      points.push({
+        x: this.startX,
+        y: this.startY
+      })
+    }
+
+    const line = new fabric.Polyline(points, {
+      stroke: useShapeStore.getState().borderColor,
+      strokeWidth,
+      originX: 'center',
+      originY: 'center',
+      strokeDashArray: getShapeBorder(strokeWidth + 5),
+      strokeLineCap: 'round',
+      fill: 'transparent'
+    })
 
     paintBoard.canvas?.add(line)
     this.shapeInstance = line
@@ -51,12 +53,17 @@ export class LineShape {
       return
     }
     const points = this.shapeInstance.points as fabric.Point[]
-    points[1] = {
-      ...point,
-      x: (point.x + this.startX) / 2,
-      y: (point.y + this.startY) / 2
-    } as fabric.Point
-    points[2] = point
+    const len = points.length
+    const averageX = (point.x - this.startX) / (len - 1)
+    const averageY = (point.y - this.startY) / (len - 1)
+    for (let index = 1; index < len; index++) {
+      points[index] = {
+        ...point,
+        x: this.startX + averageX * index,
+        y: this.startY + averageY * index
+      } as fabric.Point
+    }
+
     this.shapeInstance.set({
       points
     })
