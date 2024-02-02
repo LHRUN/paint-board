@@ -1,7 +1,7 @@
-import useDrawStore from '@/store/draw'
+import useShapeStore from '@/store/shape'
 
 const PointCountConfig = () => {
-  const { shapeLinePointCount, updateShapeLinePointCount } = useDrawStore()
+  const { shapeLinePointCount, updateShapeLinePointCount } = useShapeStore()
 
   return (
     <div className="mt-3">

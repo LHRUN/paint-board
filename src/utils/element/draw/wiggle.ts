@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { getDistance } from '@/utils/common'
 import useDrawStore from '@/store/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class WiggleElement {
   lastTime = 0
@@ -17,7 +18,7 @@ export class WiggleElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'wiggle')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.WIGGLE)
   }
 
   addPosition(point: fabric.Point | undefined) {

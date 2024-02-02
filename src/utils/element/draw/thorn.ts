@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { getDistance } from '@/utils/common'
 import useDrawStore from '@/store/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class ThornElement {
   lastTime = 0
@@ -16,7 +17,7 @@ export class ThornElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'thorn')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.THORN)
   }
 
   addPosition(point: fabric.Point | undefined) {

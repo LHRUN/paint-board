@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class RectShape {
   shapeInstance: fabric.Rect | undefined
@@ -34,7 +35,7 @@ export class RectShape {
     this.shapeInstance = shape
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(shape, 'shapeRect')
+    setObjectAttr(shape, ELEMENT_CUSTOM_TYPE.SHAPE_RECT)
   }
 
   addPosition(point: fabric.Point | undefined) {

@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class ArrowOutlineShape {
   shapeInstance: fabric.Path | undefined
@@ -34,7 +35,7 @@ export class ArrowOutlineShape {
     this.shapeInstance = path
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(path, 'shapeArrowOutline')
+    setObjectAttr(path, ELEMENT_CUSTOM_TYPE.SHAPE_ARROW_OUTLINE)
   }
 
   addPosition(point: fabric.Point | undefined) {

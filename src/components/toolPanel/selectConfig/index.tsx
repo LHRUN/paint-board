@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { paintBoard } from '@/utils/paintBoard'
-import { fabric } from 'fabric'
+import { ELEMENT_CUSTOM_TYPE, SHAPE_ELEMENT_CUSTOM_TYPE } from '@/constants'
 
-import FontFamilyConfg from '../drawConfig/freeStyleConfig/fontFamilyConfig'
 import LayerConfig from './layerConfig'
 import OpacityConfig from './opacityConfig'
 import ImageFilterConfig from './imageFilterConfig'
 import FontStyleConfig from './fontStyleConfig'
+import SelectShapeConfig from './selectShapeConfig'
+import SelectFontFamilyConfig from './selectFontFamilyConfig'
 
 const SelectConfig = () => {
   const [refreshCount, setRefresh] = useState(0) // refresh data
@@ -19,51 +20,26 @@ const SelectConfig = () => {
     }
   }, [setRefresh])
 
-  const updateFontFamily = (fontFamily: string) => {
-    const text = paintBoard.canvas?.getActiveObject() as fabric.Object
-    if (text?._customType === 'itext') {
-      ;(text as fabric.IText).set('fontFamily', fontFamily)
-    } else if (text?._customType === 'drawText') {
-      ;(text as fabric.Group)._objects.forEach((obj) => {
-        ;(obj as fabric.Text).set('fontFamily', fontFamily)
-      })
-    }
-    paintBoard.render()
-    setRefresh((v) => v + 1)
-  }
-
-  const currentTextFontFamily = useMemo(() => {
-    const text = paintBoard.canvas?.getActiveObject() as fabric.Object
-    if (text?._customType === 'itext') {
-      return (text as fabric.IText)?.fontFamily || ''
-    } else if (text?._customType === 'drawText') {
-      const drawText = text as fabric.Group
-      return (drawText._objects?.[0] as fabric.Text)?.fontFamily || ''
-    }
-    return ''
-  }, [refreshCount])
-
   return (
     <div className="form-control">
       <OpacityConfig refreshCount={refreshCount} />
 
       {paintBoard.canvas?.getActiveObject() && <LayerConfig />}
 
-      {paintBoard.canvas?.getActiveObject()?.type === 'image' && (
-        <ImageFilterConfig />
-      )}
+      {paintBoard.canvas?.getActiveObject()?._customType ===
+        ELEMENT_CUSTOM_TYPE.IMAGE && <ImageFilterConfig />}
 
-      {paintBoard.canvas?.getActiveObject()?._customType === 'itext' && (
+      {paintBoard.canvas?.getActiveObject()?._customType ===
+        ELEMENT_CUSTOM_TYPE.I_TEXT && (
         <FontStyleConfig refreshCount={refreshCount} />
       )}
-      {['drawText', 'itext'].includes(
+      {[ELEMENT_CUSTOM_TYPE.DRAW_TEXT, ELEMENT_CUSTOM_TYPE.I_TEXT].includes(
         paintBoard.canvas?.getActiveObject()?._customType as string
-      ) && (
-        <FontFamilyConfg
-          fontFamily={currentTextFontFamily}
-          updateFontFamily={updateFontFamily}
-        />
-      )}
+      ) && <SelectFontFamilyConfig refreshCount={refreshCount} />}
+
+      {Object.values(SHAPE_ELEMENT_CUSTOM_TYPE).includes(
+        paintBoard.canvas?.getActiveObject()?._customType as string
+      ) && <SelectShapeConfig refreshCount={refreshCount} />}
     </div>
   )
 }

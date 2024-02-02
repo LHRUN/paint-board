@@ -1,3 +1,4 @@
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useDrawStore from '@/store/draw'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getRandomInt } from '@/utils/common/index'
@@ -15,7 +16,7 @@ export class PixelsElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'pixels')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.PIXELS)
   }
 
   addPosition(point: fabric.Point | undefined) {

@@ -1,3 +1,4 @@
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useDrawStore from '@/store/draw'
 import { setObjectAttr } from '@/utils/common/draw'
 import { paintBoard } from '@/utils/paintBoard'
@@ -15,7 +16,7 @@ export class MultiLineElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'multiLine')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.MULTI_LINE)
   }
 
   addPosition(point: fabric.Point | undefined) {

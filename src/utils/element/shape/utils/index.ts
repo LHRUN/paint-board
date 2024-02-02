@@ -1,24 +1,20 @@
 import { ShapeBorderType, ShapeFillType } from '@/constants/shape'
 import useShapeStore from '@/store/shape'
-import { paintBoard } from '@/utils/paintBoard'
 
 export const getShapeBorderWidth = () => {
-  let borderWidth = useShapeStore.getState().borderWidth
-  const zoom = paintBoard.canvas?.getZoom()
-  if (zoom) {
-    borderWidth = borderWidth / zoom
-  }
+  const borderWidth = useShapeStore.getState().borderWidth
   return borderWidth
 }
 
 export const getShapeBorder = (base = 5) => {
   const borderType = useShapeStore.getState().borderType
+  const value = Math.round(base)
 
   switch (borderType) {
     case ShapeBorderType.Dashed:
-      return [base * 3, base * 2]
+      return [value * 3, value * 2]
     case ShapeBorderType.Dotted:
-      return [base, base * 3]
+      return [value, value * 3]
     default:
       return undefined
   }

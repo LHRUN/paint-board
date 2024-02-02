@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class EllipseShape {
   shapeInstance: fabric.Ellipse | undefined
@@ -32,7 +33,7 @@ export class EllipseShape {
     this.shapeInstance = shape
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(shape, 'shapeEllipse')
+    setObjectAttr(shape, ELEMENT_CUSTOM_TYPE.SHAPE_ELLIPSE)
   }
 
   addPosition(point: fabric.Point | undefined) {

@@ -1,7 +1,15 @@
+import { FC } from 'react'
 import useShapeStore from '@/store/shape'
 import { FillTypeSwitch } from './constant'
 
-const FillStyleConfig = () => {
+interface IProps {
+  fillColor?: string
+  updateFillColor?: (fillColor: string) => void
+  fillType?: string
+  updateFillType?: (fillType: string) => void
+}
+
+const FillStyleConfig: FC<IProps> = (props) => {
   const { fillColor, updateFillColor, fillType, updateFillType } =
     useShapeStore()
 
@@ -12,9 +20,10 @@ const FillStyleConfig = () => {
         <div className="w-7 h-7 cursor-pointer">
           <input
             type="color"
-            value={fillColor}
+            value={props?.fillColor || fillColor}
             onChange={(e) => {
               updateFillColor(e.target.value)
+              props?.updateFillColor?.(e.target.value)
             }}
             className="colorInput"
           />
@@ -25,10 +34,11 @@ const FillStyleConfig = () => {
             <button
               key={type}
               className={`tab tab-xs flex-grow text-[#eef1ff] ${
-                fillType === type ? 'tab-active' : ''
+                (props?.fillType || fillType) === type ? 'tab-active' : ''
               }`}
               onClick={() => {
                 updateFillType(type)
+                props?.updateFillType?.(type)
               }}
             >
               {icon({})}

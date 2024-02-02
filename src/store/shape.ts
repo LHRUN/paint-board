@@ -9,6 +9,7 @@ interface ShapeState {
   borderWidth: number // border width
   fillColor: string // shape fill color
   fillType: string // shape fill type
+  shapeLinePointCount: number // Number of line segment turning points
 }
 
 interface ShapeAction {
@@ -18,6 +19,7 @@ interface ShapeAction {
   updateBorderWidth: (borderWidth: number) => void
   updateFillColor: (fillColor: string) => void
   updateFillType: (fillType: string) => void
+  updateShapeLinePointCount: (count: number) => void
 }
 
 const useShapeStore = create<ShapeState & ShapeAction>()(
@@ -29,6 +31,7 @@ const useShapeStore = create<ShapeState & ShapeAction>()(
       borderWidth: 3,
       fillColor: '#FFFFFF',
       fillType: ShapeFillType.Transparent,
+      shapeLinePointCount: 3,
       updateShapeStyle(shapeStyle) {
         const oldShapeStyle = get().shapeStyle
         if (oldShapeStyle !== shapeStyle) {
@@ -74,6 +77,14 @@ const useShapeStore = create<ShapeState & ShapeAction>()(
         if (oldFillType !== fillType) {
           set({
             fillType
+          })
+        }
+      },
+      updateShapeLinePointCount(count) {
+        const oldCount = get().shapeLinePointCount
+        if (count !== oldCount) {
+          set({
+            shapeLinePointCount: count
           })
         }
       }

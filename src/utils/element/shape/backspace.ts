@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class BackspaceShape {
   shapeInstance: fabric.Object | undefined
@@ -34,7 +35,7 @@ export class BackspaceShape {
     this.shapeInstance = path
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(path, 'shapeBackspace')
+    setObjectAttr(path, ELEMENT_CUSTOM_TYPE.SHAPE_BACKSPACE)
   }
 
   addPosition(point: fabric.Point | undefined) {

@@ -3,6 +3,7 @@ import { setObjectAttr } from '@/utils/common/draw'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { generateRandomCoordinates } from './shape/util'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class MultiPointElement {
   lastTime = 0
@@ -24,7 +25,7 @@ export class MultiPointElement {
       color: useDrawStore.getState().drawColors[0]
     })
 
-    setObjectAttr(group, 'multiPoint')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.MULTI_POINT)
   }
 
   addPosition(point: fabric.Point | undefined) {

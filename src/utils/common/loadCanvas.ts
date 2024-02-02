@@ -4,6 +4,7 @@ import {
   anchorWrapper,
   polygonPositionHandler
 } from '../element/shape/utils/line'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 /**
  * Handling canvas json loaded data
@@ -12,7 +13,7 @@ import {
  */
 export const handleCanvasJSONLoaded = (canvas: fabric.Canvas) => {
   canvas.getObjects().forEach((obj) => {
-    if (obj._customType === 'shapeLine') {
+    if (obj._customType === ELEMENT_CUSTOM_TYPE.SHAPE_LINE) {
       const points = (obj as fabric.Polyline).points as fabric.Point[]
       const lastControl = points.length - 1
       obj.controls = points.reduce(function (acc, point, index) {

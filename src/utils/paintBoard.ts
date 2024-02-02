@@ -5,7 +5,7 @@ import { brushMouseMixin } from './common/fabricMixin/brushMouse'
 import { alignGuideLine } from './common/fabricMixin/alignGuideLine.js'
 
 import { History } from './history'
-import { ActionMode } from '@/constants'
+import { ActionMode, ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 
 import { v4 as uuidv4 } from 'uuid'
@@ -135,12 +135,9 @@ export class PaintBoard {
       case ActionMode.DRAW:
         if (
           useBoardStore.getState().drawType === DrawType.FreeStyle &&
-          [
-            DrawStyle.Basic,
-            DrawStyle.Material,
-            DrawStyle.MultiColor,
-            DrawStyle.Ribbon
-          ].includes(useDrawStore.getState().drawStyle)
+          [DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
+            useDrawStore.getState().drawStyle
+          )
         ) {
           isDrawingMode = true
           this.handleDrawStyle()
@@ -170,7 +167,7 @@ export class PaintBoard {
     fabric.Object.prototype.set(objectSet)
 
     this.canvas.forEachObject((obj) => {
-      if (obj._customType === 'itext') {
+      if (obj._customType === ELEMENT_CUSTOM_TYPE.I_TEXT) {
         obj.selectable = objectSet.selectable
         obj.hoverCursor = objectSet.hoverCursor
       }
@@ -197,8 +194,6 @@ export class PaintBoard {
         break
       case DrawStyle.MultiColor:
         renderMultiColor({})
-        break
-      case DrawStyle.Ribbon:
         break
       default:
         this.canvas.isDrawingMode = false

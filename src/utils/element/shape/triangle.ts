@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class TriangleShape {
   shapeInstance: fabric.Triangle | undefined
@@ -32,7 +33,7 @@ export class TriangleShape {
     this.shapeInstance = shape
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(shape, 'shapeTriangle')
+    setObjectAttr(shape, ELEMENT_CUSTOM_TYPE.SHAPE_TRIANGLE)
   }
 
   addPosition(point: fabric.Point | undefined) {

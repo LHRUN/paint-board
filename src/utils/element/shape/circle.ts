@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { setObjectAttr } from '@/utils/common/draw'
 import { getFillStyle, getShapeBorder, getShapeBorderWidth } from './utils'
 import useShapeStore from '@/store/shape'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class CircleShape {
   shapeInstance: fabric.Circle | undefined
@@ -31,7 +32,7 @@ export class CircleShape {
     this.shapeInstance = shape
     this.startX = point.x
     this.startY = point.y
-    setObjectAttr(shape, 'shapeCircle')
+    setObjectAttr(shape, ELEMENT_CUSTOM_TYPE.SHAPE_CIRCLE)
   }
 
   addPosition(point: fabric.Point | undefined) {

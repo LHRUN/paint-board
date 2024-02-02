@@ -1,7 +1,13 @@
 import useShapeStore from '@/store/shape'
 import { borderTypeSwitch } from './constant'
+import { FC } from 'react'
 
-const BorderTypeConfig = () => {
+interface IProps {
+  borderType?: string
+  updateBorderType?: (borderType: string) => void
+}
+
+const BorderTypeConfig: FC<IProps> = (props) => {
   const { borderType, updateBorderType } = useShapeStore()
 
   return (
@@ -13,10 +19,11 @@ const BorderTypeConfig = () => {
             <button
               key={type}
               className={`btn btn-xs flex-grow ${
-                borderType === type ? 'btn-active' : ''
+                (props.borderType || borderType) === type ? 'btn-active' : ''
               }`}
               onClick={() => {
                 updateBorderType(type)
+                props?.updateBorderType?.(type)
               }}
             >
               {icon({})}

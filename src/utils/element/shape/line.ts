@@ -8,7 +8,7 @@ import {
   anchorWrapper,
   polygonPositionHandler
 } from './utils/line'
-import useDrawStore from '@/store/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class LineShape {
   shapeInstance: fabric.Polyline | undefined
@@ -25,7 +25,7 @@ export class LineShape {
     const strokeWidth = getShapeBorderWidth()
 
     const points = []
-    for (let i = 0; i < useDrawStore.getState().shapeLinePointCount; i++) {
+    for (let i = 0; i < useShapeStore.getState().shapeLinePointCount; i++) {
       points.push({
         x: this.startX,
         y: this.startY
@@ -45,7 +45,7 @@ export class LineShape {
     paintBoard.canvas?.add(line)
     this.shapeInstance = line
 
-    setObjectAttr(line, 'shapeLine')
+    setObjectAttr(line, ELEMENT_CUSTOM_TYPE.SHAPE_LINE)
   }
 
   addPosition(point: fabric.Point | undefined) {
