@@ -259,6 +259,13 @@ export class CanvasClickEvent {
         this.currentElement = null
       }
     })
+
+    canvas?.on('mouse:dblclick', (e) => {
+      if (e?.absolutePointer) {
+        const { x, y } = e.absolutePointer
+        paintBoard.textElement?.loadText(x, y)
+      }
+    })
   }
 
   setSpaceKeyDownState(isSpaceKeyDown: boolean) {
