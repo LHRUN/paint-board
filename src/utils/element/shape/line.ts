@@ -39,7 +39,8 @@ export class LineShape {
       originY: 'center',
       strokeDashArray: getShapeBorder(strokeWidth + 5),
       strokeLineCap: 'round',
-      fill: 'transparent'
+      fill: 'transparent',
+      objectCaching: false
     })
 
     paintBoard.canvas?.add(line)
@@ -52,6 +53,7 @@ export class LineShape {
     if (!point || !this.shapeInstance) {
       return
     }
+
     const points = this.shapeInstance.points as fabric.Point[]
     const len = points.length
     const averageX = (point.x - this.startX) / (len - 1)
@@ -59,8 +61,8 @@ export class LineShape {
     for (let index = 1; index < len; index++) {
       points[index] = {
         ...point,
-        x: this.startX + averageX * index,
-        y: this.startY + averageY * index
+        x: Math.round(this.startX + averageX * index),
+        y: Math.round(this.startY + averageY * index)
       } as fabric.Point
     }
 
