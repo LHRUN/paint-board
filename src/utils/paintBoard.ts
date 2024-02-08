@@ -39,7 +39,7 @@ export class PaintBoard {
   }
 
   initCanvas(canvasEl: HTMLCanvasElement) {
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       this.canvas = new fabric.Canvas(canvasEl, {
         selectionColor: 'rgba(101, 204, 138, 0.3)',
         preserveObjectStacking: true,
@@ -60,7 +60,7 @@ export class PaintBoard {
       }
       alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
-      this.initCanvasStorage()
+      await this.initCanvasStorage()
       this.handleMode()
 
       this.evnet = new CanvasEvent()
@@ -79,41 +79,51 @@ export class PaintBoard {
    * Initialize the canvas cache
    */
   initCanvasStorage() {
-    setTimeout(() => {
-      const { files, currentId } = useFileStore.getState()
-      const file = files?.find((item) => item?.id === currentId)
-      if (file && this.canvas) {
-        this.canvas.loadFromJSON(file.boardData, () => {
-          if (this.canvas) {
-            if (file.viewportTransform) {
-              this.canvas.setViewportTransform(file.viewportTransform)
-            }
-            if (file?.zoom && this.canvas.width && this.canvas.height) {
-              this.canvas.zoomToPoint(
-                new fabric.Point(this.canvas.width / 2, this.canvas.height / 2),
-                file.zoom
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const { files, currentId } = useFileStore.getState()
+        const file = files?.find((item) => item?.id === currentId)
+        if (file && this.canvas) {
+          this.canvas.loadFromJSON(file.boardData, () => {
+            if (this.canvas) {
+              if (file.viewportTransform) {
+                this.canvas.setViewportTransform(file.viewportTransform)
+              }
+              if (file?.zoom && this.canvas.width && this.canvas.height) {
+                this.canvas.zoomToPoint(
+                  new fabric.Point(
+                    this.canvas.width / 2,
+                    this.canvas.height / 2
+                  ),
+                  file.zoom
+                )
+              }
+
+              this.canvas.setWidth(window.innerWidth * (file?.canvasWidth || 1))
+              useBoardStore.getState().updateCanvasWidth(file?.canvasWidth || 1)
+              this.canvas.setHeight(
+                window.innerHeight * (file?.canvasHeight || 1)
               )
+              useBoardStore
+                .getState()
+                .updateCanvasHeight(file?.canvasHeight || 1)
+
+              handleCanvasJSONLoaded(this.canvas)
+
+              fabric.Object.prototype.set({
+                objectCaching: useBoardStore.getState().isObjectCaching
+              })
+              this.canvas.renderAll()
+              this.triggerHook()
+              this.history = new History()
             }
-
-            this.canvas.setWidth(window.innerWidth * (file?.canvasWidth || 1))
-            useBoardStore.getState().updateCanvasWidth(file?.canvasWidth || 1)
-            this.canvas.setHeight(
-              window.innerHeight * (file?.canvasHeight || 1)
-            )
-            useBoardStore.getState().updateCanvasHeight(file?.canvasHeight || 1)
-
-            handleCanvasJSONLoaded(this.canvas)
-
-            fabric.Object.prototype.set({
-              objectCaching: useBoardStore.getState().isObjectCaching
-            })
-            this.canvas.renderAll()
-            this.triggerHook()
-            this.history = new History()
-          }
-        })
-      }
-    }, 300)
+            resolve(true)
+          })
+        } else {
+          resolve(true)
+        }
+      }, 300)
+    })
   }
 
   /**
