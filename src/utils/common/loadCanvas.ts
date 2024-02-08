@@ -4,6 +4,11 @@ import {
   anchorWrapper,
   polygonPositionHandler
 } from '../element/shape/utils/line'
+import {
+  actionHandler as arrowActionHandler,
+  anchorWrapper as arrowAnchorWrapper,
+  pathPositionHandler
+} from '../element/shape/utils/arrowLine'
 import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 /**
@@ -28,6 +33,25 @@ export const handleCanvasJSONLoaded = (canvas: fabric.Canvas) => {
         })
         return acc
       }, {} as Record<string, fabric.Control>)
+    }
+
+    if (obj._customType === ELEMENT_CUSTOM_TYPE.SHAPE_ARROW_LINE) {
+      const paths = (obj as fabric.Path).path
+      console.log('paths', paths)
+      obj.controls = paths
+        .slice(0, paths.length - 4)
+        .reduce(function (acc, point, index) {
+          acc['p' + index] = new fabric.Control({
+            positionHandler: pathPositionHandler,
+            actionHandler: arrowAnchorWrapper(
+              index > 0 ? index - 1 : paths.length - 5,
+              arrowActionHandler
+            ),
+            actionName: 'pathEndPoint',
+            pointIndex: index
+          })
+          return acc
+        }, {} as Record<string, fabric.Control>)
     }
   })
 }

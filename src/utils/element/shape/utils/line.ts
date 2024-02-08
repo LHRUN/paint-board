@@ -22,7 +22,7 @@ export const polygonPositionHandler: fabric.Control['positionHandler'] =
     const x = points[this.pointIndex].x - fabricObject.pathOffset.x
     const y = points[this.pointIndex].y - fabricObject.pathOffset.y
     return fabric.util.transformPoint(
-      { x: x, y: y } as fabric.Point,
+      { x, y } as fabric.Point,
       fabric.util.multiplyTransformMatrices(
         fabricObject.canvas?.viewportTransform as number[],
         fabricObject.calcTransformMatrix()
@@ -53,8 +53,10 @@ export const actionHandler: fabric.Control['actionHandler'] = function (
         (mouseLocalPosition.y * polygonBaseSize.y) / size.y +
         polygon.pathOffset.y
     } as fabric.Point
-  ;(polygon.points as fabric.Point[])[currentControl.pointIndex] =
-    finalPointPosition
+
+  const points = polygon.points as fabric.Point[]
+  points[currentControl.pointIndex] = finalPointPosition
+
   return true
 }
 

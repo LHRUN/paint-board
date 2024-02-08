@@ -25,6 +25,7 @@ export const SHAPE_ELEMENT_CUSTOM_TYPE = {
   SHAPE_CIRCLE: 'shapeCircle',
   SHAPE_ELLIPSE: 'shapeEllipse',
   SHAPE_TRIANGLE: 'shapeTriangle',
+  SHAPE_ARROW_LINE: 'shapeArrowLine',
   SHAPE_ARROW_OUTLINE: 'shapeArrowOutline',
   SHAPE_CLOUD: 'shapeCloud',
   SHAPE_TOOLTIPS: 'shapeTooltips',

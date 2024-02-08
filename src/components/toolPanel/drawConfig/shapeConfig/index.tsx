@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import useShapeStore from '@/store/shape'
 import { ShapeStyle } from '@/constants/shape'
 
@@ -9,15 +10,18 @@ import ShapeStyleConfig from './shapeStyleConfig'
 
 const ShapeDrawConfig = () => {
   const { shapeStyle } = useShapeStore()
+  const isLine = useMemo(() => {
+    return [ShapeStyle.Line, ShapeStyle.ArrowLine].includes(shapeStyle)
+  }, [shapeStyle])
 
   return (
     <>
       <ShapeStyleConfig />
-      {shapeStyle === ShapeStyle.Line && <PointCountConfig />}
+      {isLine && <PointCountConfig />}
 
       <BorderTypeConfig />
       <BorderStyleConfig />
-      {shapeStyle !== ShapeStyle.Line && <FillStyleConfig />}
+      {!isLine && <FillStyleConfig />}
     </>
   )
 }

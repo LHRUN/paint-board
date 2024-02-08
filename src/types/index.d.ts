@@ -4,6 +4,7 @@ declare module 'fabric/fabric-impl' {
   export interface Object {
     id: string
     _customType: string
+    __corner: number
     toObject_original: FabricObject.toObject
   }
 
@@ -43,11 +44,25 @@ declare module 'fabric/fabric-impl' {
 
   export interface Path {
     lineCoords: any
+    path: {
+      0: string
+      1: number
+      2: number
+    }[]
+    _setPath: (
+      path:
+        | string
+        | {
+            0: string
+            1: number
+            2: number
+          }[],
+      options?: IPathOptions
+    ) => void
   }
 
   export interface Polyline {
     _setPositionDimensions: (options: IObjectOptions) => void
-    __corner: number
   }
 
   export interface Control {

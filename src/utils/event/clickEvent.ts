@@ -39,6 +39,7 @@ import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
 import useShapeStore from '@/store/shape'
 import { autoDrawData } from '../autodraw'
+import { ArrowLineShape } from '../element/shape/arrowLine'
 
 let updateInkHook: ((ink: IInk[]) => void) | null = null
 
@@ -75,6 +76,7 @@ export class CanvasClickEvent {
     | InfoOutlineShape
     | HeartShape
     | AlertShape
+    | ArrowLineShape
     | null = null // The current mouse move draws the element
 
   mouseDownTime = 0
@@ -112,6 +114,9 @@ export class CanvasClickEvent {
               break
             case ShapeStyle.Triangle:
               currentElement = new TriangleShape(e.absolutePointer)
+              break
+            case ShapeStyle.ArrowLine:
+              currentElement = new ArrowLineShape(e.absolutePointer)
               break
             case ShapeStyle.ArrowOutline:
               currentElement = new ArrowOutlineShape(e.absolutePointer)
@@ -251,10 +256,13 @@ export class CanvasClickEvent {
           }
         }
         if (!isDestroy) {
-          paintBoard.history?.saveState()
-          if (this.currentElement instanceof LineShape) {
+          if (
+            this.currentElement instanceof LineShape ||
+            this.currentElement instanceof ArrowLineShape
+          ) {
             this.currentElement?.mouseUp()
           }
+          paintBoard.history?.saveState()
         }
         this.currentElement = null
       }

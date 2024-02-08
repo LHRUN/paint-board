@@ -6,7 +6,8 @@ fabric.Object.prototype.toObject = function (propertiesToInclude) {
   propertiesToInclude = (propertiesToInclude || []).concat([
     'id',
     '_customType',
-    'perPixelTargetFind'
+    'perPixelTargetFind',
+    'selectable'
   ])
 
   const obj = this.toObject_original(propertiesToInclude)
