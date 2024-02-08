@@ -163,7 +163,9 @@ const SelectShapeConfig: FC<IProps> = ({ refreshCount }) => {
         borderWidth={currentBorderWidth}
         updateBorderWidth={updateBorderWidth}
       />
-      {Object.values(omit(SHAPE_ELEMENT_CUSTOM_TYPE, 'SHAPE_LINE')).includes(
+      {Object.values(
+        omit(SHAPE_ELEMENT_CUSTOM_TYPE, ['SHAPE_LINE', 'SHAPE_ARROW_LINE'])
+      ).includes(
         paintBoard.canvas?.getActiveObject()?._customType as string
       ) && (
         <FillStyleConfig
