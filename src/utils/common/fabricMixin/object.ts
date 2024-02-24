@@ -7,7 +7,7 @@ fabric.Object.prototype.toObject = function (propertiesToInclude) {
     'id',
     '_customType',
     'perPixelTargetFind',
-    'selectable'
+    'objectCaching'
   ])
 
   const obj = this.toObject_original(propertiesToInclude)

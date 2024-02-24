@@ -30,9 +30,9 @@ export class ArrowLineShape {
     }
 
     pathStr += ` M ${this.startX} ${this.startY}`
-    pathStr += ` L ${this.startX - 10} ${this.startY + 10}`
+    pathStr += ` L ${this.startX - 5} ${this.startY + 5}`
     pathStr += ` M ${this.startX} ${this.startY}`
-    pathStr += ` L ${this.startX + 10} ${this.startY + 10}`
+    pathStr += ` L ${this.startX + 5} ${this.startY + 5}`
 
     const line = new fabric.Path(pathStr, {
       stroke: useShapeStore.getState().borderColor,
@@ -42,7 +42,8 @@ export class ArrowLineShape {
       strokeDashArray: getShapeBorder(strokeWidth + 5),
       strokeLineCap: 'round',
       fill: 'transparent',
-      objectCaching: false
+      objectCaching: false,
+      perPixelTargetFind: true
     })
     setObjectAttr(line, ELEMENT_CUSTOM_TYPE.SHAPE_ARROW_LINE)
 
@@ -80,6 +81,7 @@ export class ArrowLineShape {
     if (!this.shapeLine) {
       return
     }
+
     const paths = this.shapeLine.path
     this.shapeLine.controls = paths
       .slice(0, paths.length - 4)
@@ -95,6 +97,8 @@ export class ArrowLineShape {
         })
         return acc
       }, {} as Record<string, fabric.Control>)
+
+    this.shapeLine.setCoords()
   }
 
   destroy() {

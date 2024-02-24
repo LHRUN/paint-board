@@ -29,7 +29,8 @@ export class LightningShape {
       fill: getFillStyle(),
       strokeUniform: true,
       strokeLineCap: 'round',
-      strokeDashArray: getShapeBorder(strokeWidth)
+      strokeDashArray: getShapeBorder(strokeWidth),
+      perPixelTargetFind: true
     })
     paintBoard.canvas?.add(path)
     this.shapeInstance = path
@@ -54,6 +55,8 @@ export class LightningShape {
       left,
       top
     })
+
+    this.shapeInstance.setCoords()
     paintBoard.canvas?.requestRenderAll()
   }
 

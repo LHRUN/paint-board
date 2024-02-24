@@ -60,10 +60,11 @@ export class PaintBoard {
       }
       alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
-      await this.initCanvasStorage()
+      this.evnet = new CanvasEvent()
       this.handleMode()
 
-      this.evnet = new CanvasEvent()
+      await this.initCanvasStorage()
+
       resolve(true)
     })
   }
@@ -72,6 +73,7 @@ export class PaintBoard {
     if (this.canvas) {
       this?.canvas?.dispose()
       this.evnet?.removeEvent()
+      this.canvas = null
     }
   }
 

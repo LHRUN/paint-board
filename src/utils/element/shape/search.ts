@@ -29,7 +29,8 @@ export class SearchShape {
       fill: getFillStyle(),
       strokeUniform: true,
       strokeLineCap: 'round',
-      strokeDashArray: getShapeBorder(strokeWidth)
+      strokeDashArray: getShapeBorder(strokeWidth),
+      perPixelTargetFind: true
     })
     paintBoard.canvas?.add(path)
     this.shapeInstance = path
@@ -54,6 +55,8 @@ export class SearchShape {
       left,
       top
     })
+
+    this.shapeInstance.setCoords()
     paintBoard.canvas?.requestRenderAll()
   }
 

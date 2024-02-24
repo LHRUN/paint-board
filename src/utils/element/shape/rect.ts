@@ -28,7 +28,8 @@ export class RectShape {
       fill: getFillStyle(),
       strokeUniform: true,
       strokeLineCap: 'round',
-      strokeDashArray: getShapeBorder(strokeWidth)
+      strokeDashArray: getShapeBorder(strokeWidth),
+      perPixelTargetFind: true
     })
 
     paintBoard.canvas?.add(shape)
@@ -54,6 +55,8 @@ export class RectShape {
       left,
       top
     })
+
+    this.shapeInstance.setCoords()
     paintBoard.canvas?.requestRenderAll()
   }
 

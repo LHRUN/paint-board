@@ -25,7 +25,8 @@ export class CircleShape {
       fill: getFillStyle(),
       strokeUniform: true,
       strokeLineCap: 'round',
-      strokeDashArray: getShapeBorder(strokeWidth)
+      strokeDashArray: getShapeBorder(strokeWidth),
+      perPixelTargetFind: true
     })
 
     paintBoard.canvas?.add(shape)
@@ -51,6 +52,8 @@ export class CircleShape {
       left,
       top
     })
+
+    this.shapeInstance.setCoords()
     paintBoard.canvas?.requestRenderAll()
   }
 
