@@ -67,12 +67,15 @@
   },
   "info": {
     "welecome": "Welcome to star",
-    "DrawMode": {
+    "FreeStyle": {
       "line1": "Provides 12 different styles of brushes, including Basic Brush, Rainbow Brush, Multi-Shape Brush, Multi-Material Brush, Pixel Brush, Multi-Color Brush, Text Brush, Multi-Line Connection Brush, Reticulate Brush, Multi-Point Connection Brush, Wiggle Brush, Thorn Brush. Satisfy the diversified drawing",
       "line2": "All brushes support color and brush width configurations",
       "line3": "MultiShape allows flexible configuration of shape types and quantities",
       "line4": "Material and MultiColor allows you to adjust the material type of the brush",
       "line5": "Text drawing support for cyclic text and font configuration"
+    },
+    "ShapeDraw": {
+      "line1": "A variety of common shapes are provided for drawing, with support for multi-point segments and arrows. The shapes support border and fill styles."
     },
     "EraserMode": {
       "line1": "Eraser mode linearly erases all content",
@@ -87,7 +90,10 @@
       "line6": "All drawings support transparency configurations"
     },
     "BoardMode": {
-      "line1": "Drawing board support for configuring background color and transparency configurations"
+      "line1": "Drawing board support for configuring background color and transparency configurations",
+      "line2": "The drawing board supports customized width and height configurations",
+      "line3": "Support for drawing cache enable. Enabling caching will improve drawing performance in the presence of large amounts of drawing content, while disabling caching will improve canvas clarity.",
+      "line4": "Supports guide line on and off"
     },
     "BorderConfig": {
       "line1": "The bottom left button shows the current zoom ratio in real time, click it to reset the zoom ratio",
