@@ -44,9 +44,9 @@ const AutoDrawPanel = () => {
             /SCORESINKS: (.*) Service_Recognize:/
           )[1]
         ).reduce((acc: string[], result: any[]) => {
-          const cur = ImageDataJson?.[result?.[0]]?.map(
-            (collection: { src: string }) => collection.src
-          )
+          const cur = (
+            ImageDataJson as Record<string, Array<{ src: string }>>
+          )?.[result?.[0]]?.map((collection: { src: string }) => collection.src)
           return acc.concat(cur || [])
         }, [])
         updateSVGImages(newSVGImages)

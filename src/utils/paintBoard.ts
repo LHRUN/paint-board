@@ -185,6 +185,8 @@ export class PaintBoard {
       }
     })
 
+    this.handleAutoDrawData()
+
     this.canvas.requestRenderAll()
   }
 
@@ -211,6 +213,7 @@ export class PaintBoard {
         this.canvas.isDrawingMode = false
         break
     }
+    this.handleAutoDrawData()
   }
 
   handleAutoDrawData() {

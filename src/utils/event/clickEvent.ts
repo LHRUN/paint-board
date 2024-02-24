@@ -1,11 +1,12 @@
-import { ReticulateElement } from './../element/draw/reticulate'
 import { fabric } from 'fabric'
 import { ActionMode } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 import { ShapeStyle } from '@/constants/shape'
 import { IInk } from '@/services/autodraw'
 import { paintBoard } from '../paintBoard'
+import { autoDrawData } from '../autodraw'
 
+import { ReticulateElement } from '../element/draw/reticulate'
 import { ShapeElement } from '../element/draw/shape'
 import { PixelsElement } from '../element/draw/pixels'
 import { DrawTextElement } from '../element/draw/text'
@@ -34,14 +35,13 @@ import { SearchShape } from '../element/shape/search'
 import { InfoOutlineShape } from '../element/shape/infoOutline'
 import { HeartShape } from '../element/shape/heart'
 import { AlertShape } from '../element/shape/alert'
+import { ArrowLineShape } from '../element/shape/arrowLine'
 
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
 import useShapeStore from '@/store/shape'
-import { autoDrawData } from '../autodraw'
-import { ArrowLineShape } from '../element/shape/arrowLine'
 
-let updateInkHook: ((ink: IInk[]) => void) | null = null
+export let updateInkHook: ((ink: IInk[]) => void) | null = null
 
 export class CanvasClickEvent {
   isMouseDown = false

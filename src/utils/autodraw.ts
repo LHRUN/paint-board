@@ -5,8 +5,8 @@ import useDrawStore from '@/store/draw'
 
 class AutoDrawData {
   inks: IInk[] = []
-  paths: fabric.Path[] = []
-  oldSVG: fabric.Object | null = null
+  paths: fabric.Path[] = [] // array of path objects on the board
+  oldSVG: fabric.Object | null = null // previous image, used to replace
   curLeft = 0
   curTop = 0
   curSize = 0
@@ -14,26 +14,33 @@ class AutoDrawData {
   addPath(path: fabric.Path) {
     this.paths.push(path)
   }
+
   clearPath() {
     this.paths = []
   }
+
   addInk(ink: IInk) {
     this.inks.push(ink)
   }
+
   clearInks() {
     this.inks = []
   }
+
   resetLoadedSVG() {
     this.oldSVG = null
     this.curLeft = 0
     this.curTop = 0
     this.curSize = 0
   }
+
   clearDraw() {
     this.clearPath()
     this.clearInks()
   }
+
   replaceSVGImg(src: string) {
+    // replace old autodraw image
     if (this.oldSVG && paintBoard.canvas) {
       paintBoard.canvas.remove(this.oldSVG)
 
@@ -52,7 +59,8 @@ class AutoDrawData {
           left: this.curLeft,
           top: this.curTop,
           scaleX: this.curSize / options.width,
-          scaleY: this.curSize / options.height
+          scaleY: this.curSize / options.height,
+          perPixelTargetFind: true
         })
 
         this.oldSVG = loadedObjects
@@ -60,8 +68,10 @@ class AutoDrawData {
         paintBoard.canvas?.add(loadedObjects)
         paintBoard.render()
       })
+      return
     }
 
+    // First click on autodraw image
     if (src && this.paths?.length && paintBoard.canvas) {
       let left = Number.MAX_SAFE_INTEGER
       let top = Number.MAX_SAFE_INTEGER
@@ -80,6 +90,7 @@ class AutoDrawData {
 
       fabric.loadSVGFromURL(src, (objects, options) => {
         const stroke = useDrawStore.getState().drawColors[0]
+
         objects.forEach((obj) => {
           obj.set({
             fill: 'transparent',
@@ -93,7 +104,8 @@ class AutoDrawData {
           left,
           top,
           scaleX: size / options.width,
-          scaleY: size / options.height
+          scaleY: size / options.height,
+          perPixelTargetFind: true
         })
 
         this.oldSVG = loadedObjects
