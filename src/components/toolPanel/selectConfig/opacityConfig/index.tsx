@@ -1,13 +1,15 @@
 import { paintBoard } from '@/utils/paintBoard'
 import { debounce } from 'lodash'
-import { useCallback } from 'react'
-import { useMemo, FC } from 'react'
+import { useCallback, useMemo, FC } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface IProps {
   refreshCount: number
 }
 
 const OpacityConfig: FC<IProps> = ({ refreshCount }) => {
+  const { t } = useTranslation()
+
   // activity opacity
   const opacityControl = useMemo(() => {
     let show = false
@@ -54,7 +56,9 @@ const OpacityConfig: FC<IProps> = ({ refreshCount }) => {
     <>
       {opacityControl.show && (
         <>
-          <div className="font-bold font-fredokaOne mt-3">Opacity</div>
+          <div className="font-bold font-fredokaOne mt-3 text-sm">
+            {t('title.opacity')}
+          </div>
           <div className="mt-1 flex items-center w-full">
             <input
               className="range range-primary range-xs"

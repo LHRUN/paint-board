@@ -1,5 +1,6 @@
 import useDrawStore from '@/store/draw'
 import { MultiColorType } from '@/utils/element/draw/multiColor'
+import { useTranslation } from 'react-i18next'
 
 const MultiColorSwitch = [
   MultiColorType.COL,
@@ -9,12 +10,13 @@ const MultiColorSwitch = [
 
 const MultiColorConfig = () => {
   const { multiColorType, updateMultiColorType, drawColors } = useDrawStore()
+  const { t } = useTranslation()
 
   return (
     <>
       <div className="mt-3">
-        <div className="font-bold text-base font-fredokaOne">
-          MultiColor Type
+        <div className="font-bold text-sm font-fredokaOne">
+          {t('title.multiColorType')}
         </div>
         <div className="btn-group mt-1 flex">
           {MultiColorSwitch.map((item, index) => (

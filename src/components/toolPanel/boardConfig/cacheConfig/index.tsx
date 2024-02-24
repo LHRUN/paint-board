@@ -7,7 +7,9 @@ const CacheConfig = () => {
 
   return (
     <div className="form-control mt-3">
-      <div className="font-bold font-fredokaOne">Cache</div>
+      <div className="font-bold font-fredokaOne text-sm">
+        {t('title.drawCache')}
+      </div>
       <div className="mt-1 flex items-start w-full">
         <input
           type="checkbox"

@@ -1,4 +1,5 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import useBoardStore from '@/store/board'
 
 import { paintBoard } from '@/utils/paintBoard'
@@ -6,7 +7,6 @@ import { debounce } from 'lodash'
 import { rgbaToHex } from '@/utils/common/color'
 
 import OpacityIcon from '@/components/icons/opacity.svg?react'
-import { useEffect } from 'react'
 
 const BackgroundConfig = () => {
   const {
@@ -16,6 +16,7 @@ const BackgroundConfig = () => {
     updateBackgroundOpacity,
     initBackground
   } = useBoardStore()
+  const { t } = useTranslation()
 
   // save steps by debounce
   const saveHistory = useCallback(
@@ -40,7 +41,9 @@ const BackgroundConfig = () => {
 
   return (
     <div className="form-control mt-3">
-      <div className="font-bold font-fredokaOne">Background</div>
+      <div className="font-bold font-fredokaOne text-sm">
+        {t('title.canvasBackground')}
+      </div>
       <div className="mt-1 flex items-center w-full">
         <div className="w-7 h-7">
           <input

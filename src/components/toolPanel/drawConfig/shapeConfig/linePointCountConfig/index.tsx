@@ -1,17 +1,21 @@
 import useShapeStore from '@/store/shape'
+import { useTranslation } from 'react-i18next'
 
 const PointCountConfig = () => {
   const { shapeLinePointCount, updateShapeLinePointCount } = useShapeStore()
+  const { t } = useTranslation()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Point Count</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.shapeLinePointCount')}
+      </div>
       <input
         type="range"
         min="2"
         max="5"
         value={shapeLinePointCount}
-        className="range range-primary range-xs"
+        className="range range-primary range-xs mt-1"
         step="1"
         onChange={(e) => updateShapeLinePointCount(Number(e.target.value))}
       />

@@ -65,7 +65,9 @@ const FontStyleConfig: FC<IProps> = ({ refreshCount }) => {
 
   return (
     <>
-      <div className="font-bold font-fredokaOne mt-3">Font Style</div>
+      <div className="font-bold font-fredokaOne mt-3 text-sm">
+        {t('title.fontStyle')}
+      </div>
       <div className="flex flex-row flex-wrap items-center w-56 mt-2">
         {fontStyleCheckbox.map((item, index) => (
           <label

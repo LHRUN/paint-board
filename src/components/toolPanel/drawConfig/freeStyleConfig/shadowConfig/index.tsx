@@ -1,12 +1,16 @@
 import useDrawStore from '@/store/draw'
+import { useTranslation } from 'react-i18next'
 
 const ShadowConfig = () => {
+  const { t } = useTranslation()
   const { shadowColor, updateShadowColor, shadowWidth, updateShadowWidth } =
     useDrawStore()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Shadow</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.shadow')}
+      </div>
       <div className="flex mt-1 items-center">
         <div className="w-7 h-7 cursor-pointer">
           <input

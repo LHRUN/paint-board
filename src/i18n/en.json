@@ -5,6 +5,37 @@
     "select": "Select",
     "board": "Board"
   },
+  "title": {
+    "drawType": "Draw Type",
+    "drawStyle": "Draw Style",
+    "drawWidth": "Draw Width",
+    "drawColor": "Draw Color",
+    "shadow": "Shadow",
+    "AI": "AI",
+    "shapeType": "Shape Type",
+    "shapeCount": "Shape Count",
+    "materialType": "Material Type",
+    "multiColorType": "MultiColor Type",
+    "drawText": "Draw Text",
+    "fontFamily": "Font Family",
+    "shapeLinePointCount": "Point Count",
+    "borderType": "Border Type",
+    "borderStyle": "Border Style",
+    "fillStyle": "Fill Style",
+    "eraserWidth": "Eraser Width",
+    "opacity": "Opacity",
+    "layer": "Layer",
+    "imageFilters": "Image Filters",
+    "fontStyle": "Font Style",
+    "canvasBackground": "Canvas Background",
+    "canvasSize": "Canvas Size",
+    "drawCache": "Draw Cache",
+    "guideLine": "GuideLine"
+  },
+  "canvasSize": {
+    "width": "Width",
+    "height": "Height"
+  },
   "drawType": {
     "freeStyle": "FreeStyle",
     "shape": "Shape"

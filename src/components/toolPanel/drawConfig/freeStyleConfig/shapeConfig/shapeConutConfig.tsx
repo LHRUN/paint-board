@@ -1,11 +1,15 @@
 import useDrawStore from '@/store/draw'
+import { useTranslation } from 'react-i18next'
 
 const ShapeConfig = () => {
   const { drawShapeCount, updateDrawShapeCount } = useDrawStore()
+  const { t } = useTranslation()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Count</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.shapeCount')}
+      </div>
       <input
         type="range"
         min="1"

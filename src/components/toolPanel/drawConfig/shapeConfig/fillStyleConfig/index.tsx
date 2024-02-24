@@ -1,5 +1,6 @@
 import { FC } from 'react'
 import useShapeStore from '@/store/shape'
+import { useTranslation } from 'react-i18next'
 import { FillTypeSwitch } from './constant'
 
 interface IProps {
@@ -10,12 +11,15 @@ interface IProps {
 }
 
 const FillStyleConfig: FC<IProps> = (props) => {
+  const { t } = useTranslation()
   const { fillColor, updateFillColor, fillType, updateFillType } =
     useShapeStore()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Fill Style</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.fillStyle')}
+      </div>
       <div className="flex mt-1 items-center">
         <div className="w-7 h-7 cursor-pointer">
           <input

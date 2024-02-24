@@ -16,7 +16,9 @@ const ImageFilterConfig = () => {
 
   return (
     <>
-      <div className="font-bold font-fredokaOne mt-3">Image Filters</div>
+      <div className="font-bold font-fredokaOne mt-3 text-sm">
+        {t('title.imageFilters')}
+      </div>
       <div className="flex flex-row flex-wrap w-72 items-center justify-between">
         {filtersCheckbox.map((item, index) => (
           <label key={index} className="cursor-pointer label inline-flex w-32">

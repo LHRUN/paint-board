@@ -1,13 +1,17 @@
 import useDrawStore from '@/store/draw'
 import { MaterialSwitch } from './constant'
+import { useTranslation } from 'react-i18next'
 
 const MaterialConfig = () => {
   const { materialType, updateMaterialType, drawColors } = useDrawStore()
+  const { t } = useTranslation()
 
   return (
     <>
       <div className="mt-3">
-        <div className="font-bold text-base font-fredokaOne">Material Type</div>
+        <div className="font-bold text-sm font-fredokaOne">
+          {t('title.materialType')}
+        </div>
         <div className="btn-group mt-1 flex">
           {MaterialSwitch.map(({ type, image }, index) => (
             <button

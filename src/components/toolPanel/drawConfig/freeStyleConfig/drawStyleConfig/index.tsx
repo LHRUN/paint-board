@@ -8,7 +8,9 @@ const DrawStyleConfig = () => {
 
   return (
     <div className="mt-2">
-      <div className="font-bold text-base font-fredokaOne">Draw Style</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.drawStyle')}
+      </div>
       {Object.keys(styleSwitch).map((lineKey) => (
         <div key={lineKey} className="btn-group mt-1 flex">
           {styleSwitch[lineKey].map(({ type, text }) => (

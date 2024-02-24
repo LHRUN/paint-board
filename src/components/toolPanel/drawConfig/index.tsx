@@ -12,7 +12,9 @@ const DrawConfig = () => {
 
   return (
     <>
-      <div className="font-bold text-base font-fredokaOne mt-2">Draw Type</div>
+      <div className="font-bold text-sm font-fredokaOne mt-2">
+        {t('title.drawType')}
+      </div>
       <div className="btn-group flex mt-1">
         {DrawTypeSwitch.map(({ type, text }) => (
           <button

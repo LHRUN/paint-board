@@ -1,4 +1,5 @@
 import useShapeStore from '@/store/shape'
+import { useTranslation } from 'react-i18next'
 import { FC } from 'react'
 
 interface IProps {
@@ -9,12 +10,15 @@ interface IProps {
 }
 
 const BorderStyleConfig: FC<IProps> = (props) => {
+  const { t } = useTranslation()
   const { borderColor, updateBorderColor, borderWidth, updateBorderWidth } =
     useShapeStore()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Border Style</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.borderStyle')}
+      </div>
       <div className="flex mt-1 items-center">
         <div className="w-7 h-7 cursor-pointer">
           <input

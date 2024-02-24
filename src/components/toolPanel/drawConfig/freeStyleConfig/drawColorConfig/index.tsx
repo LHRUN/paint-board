@@ -1,8 +1,10 @@
 import AddColorIcon from '@/components/icons/addColor.svg?react'
 import useDrawStore from '@/store/draw'
+import { useTranslation } from 'react-i18next'
 
 const DrawColorConfig = () => {
   const { drawColors, updateDrawColors } = useDrawStore()
+  const { t } = useTranslation()
 
   // update draw colors
   const handleDrawColors = (color: string, index: number) => {
@@ -20,8 +22,10 @@ const DrawColorConfig = () => {
 
   return (
     <div className="form-control mt-3">
-      <div className="font-bold text-base font-fredokaOne">Draw Color</div>
-      <div className="mt-1 flex items-center w-full">
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.drawColor')}
+      </div>
+      <div className="mt-2 flex items-center w-full">
         {drawColors.map((color, i) => {
           return (
             <div className="w-7 h-7 mr-2 indicator" key={i}>

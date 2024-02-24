@@ -1,11 +1,13 @@
 import useDrawStore from '@/store/draw'
+import { useTranslation } from 'react-i18next'
 
 const DrawAIConfig = () => {
   const { openAutoDraw, updateAutoDrawState } = useDrawStore()
+  const { t } = useTranslation()
 
   return (
     <div className="form-control mt-3">
-      <div className="font-bold font-fredokaOne">AI</div>
+      <div className="font-fredokaOne text-sm">{t('title.AI')}</div>
       <div className="mt-1 flex items-start w-full">
         <a
           href="https://www.autodraw.com/"

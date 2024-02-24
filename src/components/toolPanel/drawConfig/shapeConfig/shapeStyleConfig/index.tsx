@@ -1,12 +1,16 @@
 import useShapeStore from '@/store/shape'
 import { shapeStyleSwitch } from './constant'
+import { useTranslation } from 'react-i18next'
 
 const ShapeStyleConfig = () => {
   const { shapeStyle, updateShapeStyle } = useShapeStore()
+  const { t } = useTranslation()
 
   return (
     <div className="mt-3">
-      <div className="font-bold text-base font-fredokaOne">Shape Type</div>
+      <div className="font-bold text-sm font-fredokaOne">
+        {t('title.shapeType')}
+      </div>
       {Object.keys(shapeStyleSwitch).map((lineKey) => (
         <div key={lineKey} className="btn-group mt-1 flex">
           {shapeStyleSwitch[lineKey].map(({ type, icon }) => (
