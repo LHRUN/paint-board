@@ -37,16 +37,24 @@ const FontStyleConfig: FC<IProps> = ({ refreshCount }) => {
     const obj = paintBoard.canvas?.getActiveObject() as fabric.IText
     switch (type) {
       case FontStyle.BOLD:
-        obj.fontWeight = obj.fontWeight === 'bold' ? 'normal' : 'bold'
+        obj.set({
+          fontWeight: obj.fontWeight === 'bold' ? 'normal' : 'bold'
+        })
         break
       case FontStyle.ITALIC:
-        obj.fontStyle = obj.fontStyle === 'italic' ? 'normal' : 'italic'
+        obj.set({
+          fontStyle: obj.fontStyle === 'italic' ? 'normal' : 'italic'
+        })
         break
       case FontStyle.UNDER_LINE:
-        obj.underline = !obj.underline
+        obj.set({
+          underline: !obj.underline
+        })
         break
       case FontStyle.LINE_THROUGH:
-        obj.linethrough = !obj.linethrough
+        obj.set({
+          linethrough: !obj.linethrough
+        })
         break
       default:
         break
