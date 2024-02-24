@@ -96,6 +96,10 @@ const useBoardStore = create<BoardState & BoardAction>()(
           }
         } else if (paintBoard?.canvas) {
           paintBoard.canvas.backgroundColor = 'rgba(255, 255, 255, 1)'
+          set({
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            backgroundOpacity: 1
+          })
         }
       },
       updateCanvasWidth: (width) => {

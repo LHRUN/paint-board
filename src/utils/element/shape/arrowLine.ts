@@ -25,7 +25,7 @@ export class ArrowLineShape {
     const strokeWidth = getShapeBorderWidth()
 
     let pathStr = `M ${this.startX} ${this.startY}`
-    for (let i = 0; i < useShapeStore.getState().shapeLinePointCount; i++) {
+    for (let i = 0; i < useShapeStore.getState().shapeLinePointCount - 1; i++) {
       pathStr += ` L ${this.startX} ${this.startY}`
     }
 

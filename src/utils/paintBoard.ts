@@ -106,6 +106,8 @@ export class PaintBoard {
               this.canvas.setHeight(
                 window.innerHeight * (file?.canvasHeight || 1)
               )
+              useBoardStore.getState().initBackground()
+
               useBoardStore
                 .getState()
                 .updateCanvasHeight(file?.canvasHeight || 1)

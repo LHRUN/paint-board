@@ -37,7 +37,6 @@ export const handleCanvasJSONLoaded = (canvas: fabric.Canvas) => {
 
     if (obj._customType === ELEMENT_CUSTOM_TYPE.SHAPE_ARROW_LINE) {
       const paths = (obj as fabric.Path).path
-      console.log('paths', paths)
       obj.controls = paths
         .slice(0, paths.length - 4)
         .reduce(function (acc, point, index) {

@@ -27,12 +27,6 @@ const BackgroundConfig = () => {
   )
 
   useEffect(() => {
-    if (paintBoard.canvas) {
-      initBackground()
-    }
-  }, [])
-
-  useEffect(() => {
     paintBoard.addHookFn(initBackground)
     return () => {
       paintBoard.removeHookFn(initBackground)
