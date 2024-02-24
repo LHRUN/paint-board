@@ -9,7 +9,7 @@ const PointCountConfig = () => {
       <input
         type="range"
         min="2"
-        max="6"
+        max="5"
         value={shapeLinePointCount}
         className="range range-primary range-xs"
         step="1"
@@ -20,7 +20,6 @@ const PointCountConfig = () => {
         <span>3</span>
         <span>4</span>
         <span>5</span>
-        <span>6</span>
       </div>
     </div>
   )
