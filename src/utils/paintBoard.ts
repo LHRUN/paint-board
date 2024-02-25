@@ -1,6 +1,5 @@
 import { fabric } from 'fabric'
 import 'fabric/src/mixins/eraser_brush.mixin.js'
-import './common/fabricMixin/object'
 import { brushMouseMixin } from './common/fabricMixin/brushMouse'
 import { alignGuideLine } from './common/fabricMixin/alignGuideLine.js'
 
