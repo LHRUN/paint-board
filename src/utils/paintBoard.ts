@@ -1,12 +1,14 @@
 import { fabric } from 'fabric'
 import 'fabric/src/mixins/eraser_brush.mixin.js'
-import './common/fabricMixin/object'
 import { brushMouseMixin } from './common/fabricMixin/brushMouse'
+import { alignGuideLine } from './common/fabricMixin/alignGuideLine.js'
 
 import { History } from './history'
-import { DrawStyle, ActionMode } from '@/constants'
+import { ActionMode, ELEMENT_CUSTOM_TYPE } from '@/constants'
+import { DrawStyle, DrawType } from '@/constants/draw'
 
 import { v4 as uuidv4 } from 'uuid'
+import { debounce } from 'lodash'
 import { isMobile } from './common'
 import { CanvasEvent } from './event'
 import { TextElement } from './element/text'
@@ -14,6 +16,8 @@ import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
 import { getEraserWidth } from './common/draw'
+import { autoDrawData } from './autodraw'
+import { handleCanvasJSONLoaded } from './common/loadCanvas'
 
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
@@ -34,18 +38,16 @@ export class PaintBoard {
   }
 
   initCanvas(canvasEl: HTMLCanvasElement) {
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>(async (resolve) => {
       this.canvas = new fabric.Canvas(canvasEl, {
         selectionColor: 'rgba(101, 204, 138, 0.3)',
         preserveObjectStacking: true,
-        width: window.innerWidth,
-        height: window.innerHeight,
         enableRetinaScaling: true
       })
       fabric.Object.prototype.set({
         borderColor: '#65CC8A',
         cornerColor: '#65CC8A',
-        cornerStyle: 'rect',
+        cornerStyle: 'circle',
         borderDashArray: [3, 3],
         transparentCorners: false
       })
@@ -55,11 +57,13 @@ export class PaintBoard {
       if (isMobile()) {
         brushMouseMixin.initCanvas(this.canvas)
       }
-
-      this.initCanvasStorage()
-      this.handleMode()
+      alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
       this.evnet = new CanvasEvent()
+      this.handleMode()
+
+      await this.initCanvasStorage()
+
       resolve(true)
     })
   }
@@ -68,6 +72,7 @@ export class PaintBoard {
     if (this.canvas) {
       this?.canvas?.dispose()
       this.evnet?.removeEvent()
+      this.canvas = null
     }
   }
 
@@ -75,31 +80,53 @@ export class PaintBoard {
    * Initialize the canvas cache
    */
   initCanvasStorage() {
-    setTimeout(() => {
-      const { files, currentId } = useFileStore.getState()
-      const file = files?.find((item) => item?.id === currentId)
-      if (file && this.canvas) {
-        this.canvas.loadFromJSON(file.boardData, () => {
-          if (this.canvas) {
-            if (file.viewportTransform) {
-              this.canvas.setViewportTransform(file.viewportTransform)
-            }
-            if (file?.zoom && this.canvas.width && this.canvas.height) {
-              this.canvas.zoomToPoint(
-                new fabric.Point(this.canvas.width / 2, this.canvas.height / 2),
-                file.zoom
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const { files, currentId } = useFileStore.getState()
+        const file = files?.find((item) => item?.id === currentId)
+        if (file && this.canvas) {
+          this.canvas.loadFromJSON(file.boardData, () => {
+            if (this.canvas) {
+              if (file.viewportTransform) {
+                this.canvas.setViewportTransform(file.viewportTransform)
+              }
+              if (file?.zoom && this.canvas.width && this.canvas.height) {
+                this.canvas.zoomToPoint(
+                  new fabric.Point(
+                    this.canvas.width / 2,
+                    this.canvas.height / 2
+                  ),
+                  file.zoom
+                )
+              }
+
+              this.canvas.setWidth(window.innerWidth * (file?.canvasWidth || 1))
+              useBoardStore.getState().updateCanvasWidth(file?.canvasWidth || 1)
+              this.canvas.setHeight(
+                window.innerHeight * (file?.canvasHeight || 1)
               )
+              useBoardStore.getState().initBackground()
+
+              useBoardStore
+                .getState()
+                .updateCanvasHeight(file?.canvasHeight || 1)
+
+              handleCanvasJSONLoaded(this.canvas)
+
+              fabric.Object.prototype.set({
+                objectCaching: useBoardStore.getState().isObjectCaching
+              })
+              this.canvas.renderAll()
+              this.triggerHook()
+              this.history = new History()
             }
-            fabric.Object.prototype.set({
-              objectCaching: useBoardStore.getState().isObjectCaching
-            })
-            this.canvas.renderAll()
-            this.triggerHook()
-            this.history = new History()
-          }
-        })
-      }
-    }, 300)
+            resolve(true)
+          })
+        } else {
+          resolve(true)
+        }
+      }, 300)
+    })
   }
 
   /**
@@ -120,6 +147,7 @@ export class PaintBoard {
     switch (mode) {
       case ActionMode.DRAW:
         if (
+          useBoardStore.getState().drawType === DrawType.FreeStyle &&
           [DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
             useDrawStore.getState().drawStyle
           )
@@ -152,11 +180,13 @@ export class PaintBoard {
     fabric.Object.prototype.set(objectSet)
 
     this.canvas.forEachObject((obj) => {
-      if (obj._customType === 'itext') {
+      if (obj._customType === ELEMENT_CUSTOM_TYPE.I_TEXT) {
         obj.selectable = objectSet.selectable
         obj.hoverCursor = objectSet.hoverCursor
       }
     })
+
+    this.handleAutoDrawData()
 
     this.canvas.requestRenderAll()
   }
@@ -184,6 +214,20 @@ export class PaintBoard {
         this.canvas.isDrawingMode = false
         break
     }
+    this.handleAutoDrawData()
+  }
+
+  handleAutoDrawData() {
+    if (
+      useBoardStore.getState().mode === ActionMode.DRAW &&
+      useBoardStore.getState().drawType === DrawType.FreeStyle &&
+      useDrawStore.getState().drawStyle === DrawStyle.Basic &&
+      useDrawStore.getState().openAutoDraw
+    ) {
+      return
+    }
+    autoDrawData.clearDraw()
+    autoDrawData.resetLoadedSVG()
   }
 
   /**
@@ -349,6 +393,20 @@ export class PaintBoard {
       fn?.()
     })
   }
+
+  updateCanvasWidth = debounce((width) => {
+    if (this.canvas) {
+      this.canvas.setWidth(window.innerWidth * width)
+      useFileStore.getState().updateCanvasWidth(width)
+    }
+  }, 500)
+
+  updateCanvasHeight = debounce((height) => {
+    if (this.canvas) {
+      this.canvas.setHeight(window.innerHeight * height)
+      useFileStore.getState().updateCanvasHeight(height)
+    }
+  }, 500)
 }
 
 export const paintBoard = new PaintBoard()

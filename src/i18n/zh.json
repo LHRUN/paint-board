@@ -5,6 +5,41 @@
     "select": "选择",
     "board": "画板"
   },
+  "title": {
+    "drawType": "绘画类型",
+    "drawStyle": "绘画风格",
+    "drawWidth": "画笔宽度",
+    "drawColor": "画笔颜色",
+    "shadow": "阴影",
+    "AI": "AI",
+    "shapeType": "形状类型",
+    "shapeCount": "形状数量",
+    "materialType": "素材类型",
+    "multiColorType": "多色类型",
+    "drawText": "文字内容",
+    "fontFamily": "字体",
+    "shapeLinePointCount": "线段端点",
+    "borderType": "边框类型",
+    "borderStyle": "边框样式",
+    "fillStyle": "填充样式",
+    "eraserWidth": "橡皮擦宽度",
+    "opacity": "透明度",
+    "layer": "图层",
+    "imageFilters": "图像滤镜",
+    "fontStyle": "字体样式",
+    "canvasBackground": "画板背景",
+    "canvasSize": "画板尺寸",
+    "drawCache": "绘制缓存",
+    "guideLine": "辅助线"
+  },
+  "canvasSize": {
+    "width": "宽度",
+    "height": "高度"
+  },
+  "drawType": {
+    "freeStyle": "自由绘画",
+    "shape": "形状绘画"
+  },
   "style": {
     "basic": "基础",
     "rainbow": "彩虹 ",
@@ -32,12 +67,15 @@
   },
   "info": {
     "welecome": "欢迎Star",
-    "DrawMode": {
+    "FreeStyle": {
       "line1": "提供了 12 种不同风格的画笔，包括基本画笔，彩虹画笔，多形状画笔，多素材画笔，像素画笔，多色画笔，文字画笔，多线连接画笔，网状画笔，多点连接画笔，波浪曲线画笔，荆棘画笔。满足多样化的绘画",
       "line2": "所有画笔均支持颜色和画笔宽度的配置",
       "line3": "多形状可以灵活配置形状类型和数量",
       "line4": "素材和多色可以调整画笔的素材类型",
       "line5": "文字绘制支持循环文案配置和字体修改"
+    },
+    "ShapeDraw": {
+      "line1": "提供了多种常见形状的绘制, 并支持多端点线段以及箭头. 并且这些形状均支持边框和填充的样式配置"
     },
     "EraserMode": {
       "line1": "橡皮擦模式可以线性擦除所有内容",
@@ -52,7 +90,10 @@
       "line6": "所有绘制内容支持透明度配置"
     },
     "BoardMode": {
-      "line1": "画板支持配置背景颜色和透明度配置"
+      "line1": "画板支持配置背景颜色和透明度配置",
+      "line2": "画板支持自定义宽高配置",
+      "line3": "支持绘制缓存开启. 在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度",
+      "line4": "支持辅助线的开启与关闭"
     },
     "BorderConfig": {
       "line1": "左下角按钮实时显示当前缩放比例，点击即可重置缩放比例",
@@ -94,7 +135,18 @@
     "Noise": "噪点",
     "Convolute": "浮雕"
   },
+  "fontStyle": {
+    "bold": "粗体",
+    "italic": "斜体",
+    "underLine": "下划线",
+    "lineThrough": "删除线"
+  },
   "boardConfig": {
     "cacheTip": "在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度"
+  },
+  "request": {
+    "tip": "请自由绘画...",
+    "loading": "正在加载数据，请稍候...",
+    "error": "出错了。请稍后再试。"
   }
 }

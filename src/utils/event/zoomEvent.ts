@@ -1,7 +1,8 @@
 import useBoardStore from '@/store/board'
 import { paintBoard } from '../paintBoard'
 import { fabric } from 'fabric'
-import { ActionMode, DrawStyle } from '@/constants'
+import { ActionMode } from '@/constants'
+import { DrawStyle } from '@/constants/draw'
 import { getDrawWidth, getEraserWidth, getShadowWidth } from '../common/draw'
 import useDrawStore from '@/store/draw'
 import useFileStore from '@/store/files'
@@ -117,7 +118,10 @@ const handleWidth = () => {
         )
       ) {
         brush.width = getDrawWidth()
-        if (useDrawStore.getState().drawStyle === DrawStyle.Basic) {
+        if (
+          useDrawStore.getState().drawStyle === DrawStyle.Basic &&
+          brush.shadow
+        ) {
           ;(brush.shadow as fabric.Shadow).blur = getShadowWidth()
         }
       }
