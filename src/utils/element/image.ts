@@ -1,6 +1,7 @@
 import { fabric } from 'fabric'
 import { paintBoard } from '../paintBoard'
 import { setObjectAttr } from '../common/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class ImageElement {
   image: fabric.Image | null = null
@@ -28,7 +29,7 @@ export class ImageElement {
           top: viewportCenter.y - img.getScaledHeight() / 2
         })
 
-        setObjectAttr(img, 'image')
+        setObjectAttr(img, ELEMENT_CUSTOM_TYPE.IMAGE)
 
         canvas.add(img)
         paintBoard.render()

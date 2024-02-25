@@ -1,4 +1,6 @@
+import { fabric } from 'fabric'
 import { ActionMode } from '@/constants'
+import { DrawType } from '@/constants/draw'
 import {
   changeAlpha,
   getAlphaFromRgba,
@@ -8,23 +10,31 @@ import {
 import { paintBoard } from '@/utils/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { fabric } from 'fabric'
+import { alignGuideLine } from '@/utils/common/fabricMixin/alignGuideLine'
 
 interface BoardState {
   mode: string // operating mode
+  drawType: string // draw type
   language: string // i18n language 'zh' 'en'
+  canvasWidth: number // canvas width 0.1 ~ 1
+  canvasHeight: number // canvas height 0.1 ~ 1
   backgroundColor: string // canvas background color
   backgroundOpacity: number // canvas background opacity
   isObjectCaching: boolean // fabric objectCaching
+  openGuideLine: boolean // does the guide line show
 }
 
 interface BoardAction {
   updateMode: (mode: string) => void
+  updateDrawType: (drawType: string) => void
   updateLanguage: (language: string) => void
   initBackground: () => void
+  updateCanvasWidth: (width: number) => void
+  updateCanvasHeight: (height: number) => void
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
   updateCacheState: () => void
+  updateOpenGuideLine: () => void
 }
 
 const initLanguage = ['en', 'en-US', 'en-us'].includes(navigator.language)
@@ -35,10 +45,14 @@ const useBoardStore = create<BoardState & BoardAction>()(
   persist(
     (set, get) => ({
       mode: ActionMode.DRAW,
+      drawType: DrawType.FreeStyle,
       language: initLanguage,
+      canvasWidth: 1,
+      canvasHeight: 1,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
       isObjectCaching: true,
+      openGuideLine: false,
       updateMode: (mode) => {
         const oldMode = get().mode
         if (oldMode !== mode) {
@@ -46,6 +60,15 @@ const useBoardStore = create<BoardState & BoardAction>()(
           set({
             mode
           })
+        }
+      },
+      updateDrawType: (drawType) => {
+        const oldDrawType = get().drawType
+        if (oldDrawType !== drawType) {
+          set({
+            drawType
+          })
+          paintBoard.handleMode()
         }
       },
       updateLanguage(language) {
@@ -73,6 +96,28 @@ const useBoardStore = create<BoardState & BoardAction>()(
           }
         } else if (paintBoard?.canvas) {
           paintBoard.canvas.backgroundColor = 'rgba(255, 255, 255, 1)'
+          set({
+            backgroundColor: 'rgba(255, 255, 255, 1)',
+            backgroundOpacity: 1
+          })
+        }
+      },
+      updateCanvasWidth: (width) => {
+        const oldWidth = get().canvasWidth
+        if (oldWidth !== width) {
+          set({
+            canvasWidth: width
+          })
+          paintBoard.updateCanvasWidth(width)
+        }
+      },
+      updateCanvasHeight: (height) => {
+        const oldHeight = get().canvasHeight
+        if (oldHeight !== height) {
+          set({
+            canvasHeight: height
+          })
+          paintBoard.updateCanvasHeight(height)
         }
       },
       updateBackgroundColor: (color) => {
@@ -110,6 +155,13 @@ const useBoardStore = create<BoardState & BoardAction>()(
           objectCaching: useBoardStore.getState().isObjectCaching
         })
         paintBoard?.canvas?.renderAll()
+      },
+      updateOpenGuideLine() {
+        const newOpenGuideLine = !get().openGuideLine
+        set({
+          openGuideLine: newOpenGuideLine
+        })
+        alignGuideLine.updateOpenState(newOpenGuideLine)
       }
     }),
     {

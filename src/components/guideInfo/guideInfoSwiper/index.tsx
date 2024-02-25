@@ -7,31 +7,38 @@ import { useTranslation } from 'react-i18next'
 const guideInfoList = [
   {
     imageList: [
-      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/drawMode.png'
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/guideInfo/drawMode_freeStyle_1.3.0.png'
     ],
-    title: 'DrawMode',
+    title: 'FreeStyle',
     textList: ['line1', 'line2', 'line3', 'line4', 'line5']
   },
   {
     imageList: [
-      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/eraserMode.png'
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/guideInfo/drawMode_shape_1.3.0.png'
+    ],
+    title: 'ShapeDraw',
+    textList: ['line1']
+  },
+  {
+    imageList: [
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/guideInfo/eraserMode_1.3.0.png'
     ],
     title: 'EraserMode',
     textList: ['line1', 'line2']
   },
   {
     imageList: [
-      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/selectMode.png'
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/guideInfo/selectMode_1.3.0.png'
     ],
     title: 'SelectMode',
     textList: ['line1', 'line2', 'line3', 'line4', 'line5', 'line6']
   },
   {
     imageList: [
-      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/boardMode.png'
+      'https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/guideInfo/boardMode_1.3.0.png'
     ],
     title: 'BoardMode',
-    textList: ['line1']
+    textList: ['line1', 'line2', 'line3', 'line4']
   },
   {
     imageList: [

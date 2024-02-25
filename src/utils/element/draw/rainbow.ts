@@ -1,3 +1,4 @@
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useDrawStore from '@/store/draw'
 import { setObjectAttr } from '@/utils/common/draw'
 import { paintBoard } from '@/utils/paintBoard'
@@ -16,7 +17,7 @@ export class RainbowElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'rainbow')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.RAINBOW)
   }
 
   addPosition(point: fabric.Point | undefined) {
@@ -32,6 +33,10 @@ export class RainbowElement {
 
     this.group.addWithUpdate(drawRainbow(this.points))
     paintBoard.canvas?.requestRenderAll()
+  }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
   }
 }
 

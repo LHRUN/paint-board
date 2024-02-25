@@ -30,20 +30,20 @@ const ToolPanel: FC = () => {
       </label>
       {showPanel && (
         <div className="max-h-[100%] overflow-y-auto noScrollbar">
-          {/* switch mode btns */}
-          <div className="btn-group flex">
+          {/* switch mode tabs */}
+          <div className="tabs tabs-boxed bg-[#333C4D]">
             {modeSwitch.map(({ type, text }) => (
-              <button
+              <a
                 key={type}
-                className={`btn btn-sm flex-grow font-fredokaOne ${
-                  mode === type ? 'btn-active' : ''
+                className={`tab tab-sm flex-grow font-fredokaOne text-white ${
+                  mode === type ? 'tab-active' : ''
                 }`}
                 onClick={() => {
                   updateMode(type)
                 }}
               >
                 {t(text)}
-              </button>
+              </a>
             ))}
           </div>
           {mode === ActionMode.DRAW && <DrawConfig />}

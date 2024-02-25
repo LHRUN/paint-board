@@ -1,4 +1,4 @@
-import { DrawShape } from '@/constants'
+import { DrawShape } from '@/constants/draw'
 import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { drawBubble } from './bubble'
@@ -13,6 +13,7 @@ import { drawLeaf } from './leaf'
 import { drawFlower } from './flower'
 import useDrawStore from '@/store/draw'
 import { setObjectAttr } from '@/utils/common/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class ShapeElement {
   lastTime = 0
@@ -25,7 +26,7 @@ export class ShapeElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'shape')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.SHAPE)
   }
 
   addPosition(point: fabric.Point | undefined) {
@@ -78,5 +79,9 @@ export class ShapeElement {
       this.group.addWithUpdate(currentDrawEle)
       paintBoard.canvas?.requestRenderAll()
     }
+  }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
   }
 }

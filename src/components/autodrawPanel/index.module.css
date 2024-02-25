@@ -1,0 +1,7 @@
+.arrowLeft {
+  background: linear-gradient(270deg, transparent 20%, rgb(238 241 255) 80%);
+}
+
+.arrowRight {
+  background: linear-gradient(90deg, transparent 20%, rgb(238 241 255) 80%);
+}

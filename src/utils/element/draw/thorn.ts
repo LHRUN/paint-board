@@ -3,6 +3,7 @@ import { paintBoard } from '@/utils/paintBoard'
 import { fabric } from 'fabric'
 import { getDistance } from '@/utils/common'
 import useDrawStore from '@/store/draw'
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 export class ThornElement {
   lastTime = 0
@@ -16,7 +17,7 @@ export class ThornElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'thorn')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.THORN)
   }
 
   addPosition(point: fabric.Point | undefined) {
@@ -38,6 +39,10 @@ export class ThornElement {
     this.group.addWithUpdate(drawThorn(this, curPoint))
     paintBoard.canvas?.renderAll()
   }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
+  }
 }
 
 function drawThorn(el: ThornElement, curPoint: fabric.Point) {
@@ -57,7 +62,7 @@ function drawThorn(el: ThornElement, curPoint: fabric.Point) {
     originX: 'center',
     originY: 'center',
     fill: useDrawStore.getState().drawColors[0],
-    opacity: 0.5,
+    opacity: Math.random(),
     rx: distance * 5 + minSize,
     ry: minSize
   })

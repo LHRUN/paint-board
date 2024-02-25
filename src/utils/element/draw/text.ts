@@ -1,3 +1,4 @@
+import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useDrawStore from '@/store/draw'
 import { getDistance } from '@/utils/common'
 import { setObjectAttr } from '@/utils/common/draw'
@@ -20,7 +21,7 @@ export class DrawTextElement {
     paintBoard.canvas?.add(group)
     this.group = group
 
-    setObjectAttr(group, 'drawText')
+    setObjectAttr(group, ELEMENT_CUSTOM_TYPE.DRAW_TEXT)
   }
 
   addPosition(point: fabric.Point | undefined) {
@@ -42,6 +43,10 @@ export class DrawTextElement {
 
     this.group.addWithUpdate(drawText(this))
     paintBoard.canvas?.requestRenderAll()
+  }
+
+  destroy() {
+    paintBoard.canvas?.remove(this.group)
   }
 }
 

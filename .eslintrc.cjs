@@ -24,7 +24,8 @@ module.exports = {
     'arrow-body-style': 'off',
     'prefer-arrow-callback': 'off',
     'react/no-unknown-property': ['error', { ignore: ['t', 'p-id'] }],
-    '@typescript-eslint/no-explicit-any': 'off'
+    '@typescript-eslint/no-explicit-any': 'off',
+    'no-async-promise-executor': 'off'
   },
   settings: {
     react: {

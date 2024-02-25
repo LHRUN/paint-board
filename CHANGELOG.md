@@ -1,3 +1,26 @@
+# 1.3.0
+
+### Feat
+
+- Drawing
+  - Provides a variety of common shapes drawing, support for multiple endpoints line segments and arrows, and support for the configuration of the border and fill styles.
+  - Added Google AutoDraw feature to Basic Drawing.
+- Font
+  - Supports font drawing by double-clicking.
+  - Add font style configuration.
+- Board
+  - The drawing board supports customized width and height configurations.
+  - Added Guide Line drawing feature.
+- Optimisation
+  - All fonts support i18n.
+  - All inputs can now display content in real time.
+  - Adjusting Tool Panel Styles.
+
+### Fix
+
+- Fix zoom progress component initialization error.
+- Fix the error of initializing the display of the background color of the drawing board.
+
 # 1.2.1
 
 ### Fix
