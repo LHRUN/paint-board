@@ -38,19 +38,24 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## Completed Features:
 + Drawing Mode
-  - Provides 12 different styles of brushes, including Basic Brush, Rainbow Brush, Multi-Shape Brush, Multi-Material Brush, Pixel Brush, Multi-Color Brush, Text Brush, Multi-Line Connection Brush, Reticulate Brush, Multi-Point Connection Brush, Wiggle Brush, Thorn Brush. Satisfy the diversified drawing.
-  - All brushes support color and brush width configuration, in addition to multi-shape, multi-material, multi-color and other brushes support custom configuration.
+  - FreeStyle
+    - Provides 12 different styles of brushes, including Basic Brush, Rainbow Brush, Multi-Shape Brush, Multi-Material Brush, Pixel Brush, Multi-Color Brush, Text Brush, Multi-Line Connection Brush, Reticulate Brush, Multi-Point Connection Brush, Wiggle Brush, Thorn Brush. Satisfy the diversified drawing.
+    - All brushes support color and brush width configuration, in addition to multi-shape, multi-material, multi-color and other brushes support custom configuration.
+  - ShapeDraw
+    - A variety of common shapes are provided for drawing, with support for multi-point segments and arrows. The shapes support border and fill styles.
 + Eraser Mode
   - Eraser mode linearly erases all content and supports linear width configuration.
 + Select Mode
   - In the selection mode, you can frame the drawing content by clicking on it. The click handle supports dragging, zooming and rotating operations, providing flexible editing.
   - Selecting images supports multiple filter configurations.
-  - Support for font settings when selecting text.
+  - Supports font and style settings when selecting text.
   - Layer settings are supported for all drawings, including Move Layer Up, Move Layer Down, Move to Top, and Move to Bottom.
   - All drawings support transparency configurations.
 + Drawing Board Configuration
   - Drawing board support for configuring background color and transparency configurations.
+  - The drawing board supports customized width and height configurations.
   - Supports painting caching, enabling caching will improve painting performance in the presence of large amounts of painted content, while disabling caching will improve canvas sharpness.
+  - Added Guide Line drawing feature.
 + Multifunction Menu
   - The bottom left button shows the current zoom ratio in real time, click it to reset the zoom ratio.
   - The list of buttons in the center, in order from left to right, are: Undo, Redo, Copy Current Selection, Delete Current Selection, Draw Text, Upload Image, Clear Drawing, Save as Image, and Open File List.
@@ -61,14 +66,13 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - Mobile:
     - Supports dragging and zooming the canvas after a two-finger press.
 + Multifile Configuration
-  - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download
+  - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download.
 + i18n
-  - Currently support English, Chinese language display
+  - Currently support English, Chinese language display.
 
-## Pending Features:
+## Future Plans
 + Multi-platform authentication login and data synchronization
-+ Drawing of common shapes
-+ AI Drawing
++ AI Enhanced Drawing
 
 ## V1.0.0 Video Demo
 
@@ -101,8 +105,18 @@ If you have any suggestions or good ideas, welcome to contact me at any time!
 
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
++ Twiter: https://twitter.com/Song_LongHao
 + WeChat:
-  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
+  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1449.jpeg" alt="wechat"/>
+
+### Buy the author a coffee.
+
+👋 If you think my project is cool and want to support my development work, feel free to buy me a cup of coffee with Alipay or WeChat ~
+
+<div>
+  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1446.jpeg" alt="wechat"/>
+  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1447.jpeg" alt="wechat"/>
+</div>
 
 ## Contributing
 
