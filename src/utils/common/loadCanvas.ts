@@ -10,6 +10,27 @@ import {
   pathPositionHandler
 } from '../element/shape/utils/arrowLine'
 import { ELEMENT_CUSTOM_TYPE } from '@/constants'
+import { paintBoard } from '../paintBoard'
+import { IBoardData } from '@/store/files'
+
+/**
+ * get fabric.js canvas JSON data
+ * @returns JSON
+ */
+export const getCanvasJSON = (): Partial<IBoardData> => {
+  const canvas = paintBoard?.canvas
+  if (canvas) {
+    return (
+      canvas.toDatalessJSON([
+        'id',
+        '_customType',
+        'perPixelTargetFind',
+        'objectCaching'
+      ]) ?? {}
+    )
+  }
+  return {}
+}
 
 /**
  * Handling canvas json loaded data

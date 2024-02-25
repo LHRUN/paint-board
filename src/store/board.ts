@@ -52,7 +52,7 @@ const useBoardStore = create<BoardState & BoardAction>()(
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
       isObjectCaching: true,
-      openGuideLine: true,
+      openGuideLine: false,
       updateMode: (mode) => {
         const oldMode = get().mode
         if (oldMode !== mode) {
