@@ -74,9 +74,11 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + Multi-platform authentication login and data synchronization
 + AI Enhanced Drawing
 
-## V1.0.0 Video Demo
+## V1.3.0 Video Demo
 
-[![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
+<a href="https://www.bilibili.com/video/BV1dJ4m1h7vg">
+  <img width="500" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.3.0_demo_bilibili.png"/>
+</a>
 
 ## Quick Start
 ```
