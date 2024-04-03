@@ -97,6 +97,14 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 3. 在浏览器打开 `http://localhost:8080/paint-board/` 即可访问。
 
+## 浏览器支持
+
+建议使用最新版谷歌浏览器, 以下是最低版本支持
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| :--: | :--: | :--: | :--: |
+| 80+ | 80+ | 70+ | 13+ |
+
 ## 联系我
 
 如果你有任何建议或者有好的想法，欢迎随时与我联系！
