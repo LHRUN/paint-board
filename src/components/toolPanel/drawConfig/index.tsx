@@ -19,8 +19,8 @@ const DrawConfig = () => {
         {DrawTypeSwitch.map(({ type, text }) => (
           <button
             key={type}
-            className={`btn btn-xs flex-grow font-fredokaOne ${
-              drawType === type ? 'btn-active' : ''
+            className={`btn btn-xs flex-grow font-fredokaOne font-normal ${
+              drawType === type ? 'btn-active font-semibold' : ''
             }`}
             onClick={() => {
               updateDrawType(type)
