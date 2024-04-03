@@ -101,6 +101,14 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
 
+## Browser support
+
+We recommend using the latest version of Google Chrome, the following is the minimum version support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| :--: | :--: | :--: | :--: |
+| 80+ | 80+ | 70+ | 13+ |
+
 ## Contact me
 
 If you have any suggestions or good ideas, welcome to contact me at any time!

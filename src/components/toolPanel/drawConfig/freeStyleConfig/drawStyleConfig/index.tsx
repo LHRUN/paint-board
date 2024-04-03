@@ -16,8 +16,8 @@ const DrawStyleConfig = () => {
           {styleSwitch[lineKey].map(({ type, text }) => (
             <button
               key={type}
-              className={`btn btn-xs flex-grow font-fredokaOne text-xs ${
-                drawStyle === type ? 'btn-active' : ''
+              className={`btn btn-xs flex-grow font-fredokaOne text-xs font-normal ${
+                drawStyle === type ? 'btn-active font-semibold' : ''
               }`}
               onClick={() => updateDrawStyle(type)}
             >

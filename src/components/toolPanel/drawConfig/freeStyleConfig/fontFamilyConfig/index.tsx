@@ -34,7 +34,7 @@ const FontFamilyConfg: FC<IProps> = ({ fontFamily, updateFontFamily }) => {
           >
             <div
               style={{
-                fontFamily: `${fontFamilyRadio[key]}, cursive`
+                fontFamily: `${fontFamilyRadio[key]}`
               }}
               className="text-xs"
             >
