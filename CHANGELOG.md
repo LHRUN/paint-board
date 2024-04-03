@@ -1,3 +1,13 @@
+# 1.3.1
+
+### Feat
+
+- update font family
+
+### Docs
+
+- README adds browser support
+
 # 1.3.0
 
 ### Feat

@@ -74,9 +74,11 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + Multi-platform authentication login and data synchronization
 + AI Enhanced Drawing
 
-## V1.0.0 Video Demo
+## V1.3.0 Video Demo
 
-[![v1.0.0 demo youtube](https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.0.0_demo_youtube.jpg)](https://www.youtube.com/watch?v=zzWaR0wvz0s "")
+<a href="https://www.bilibili.com/video/BV1dJ4m1h7vg">
+  <img width="500" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/v1.3.0_demo_bilibili.png"/>
+</a>
 
 ## Quick Start
 ```
@@ -98,6 +100,14 @@ docker run -d -p 8080:80 --name paint-board paint-board
 ```
 
 3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
+
+## Browser support
+
+We recommend using the latest version of Google Chrome, the following is the minimum version support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
+| :--: | :--: | :--: | :--: |
+| 80+ | 80+ | 70+ | 13+ |
 
 ## Contact me
 

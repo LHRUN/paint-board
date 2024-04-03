@@ -35,7 +35,7 @@ const ToolPanel: FC = () => {
             {modeSwitch.map(({ type, text }) => (
               <a
                 key={type}
-                className={`tab tab-sm flex-grow font-fredokaOne text-white ${
+                className={`tab tab-sm flex-grow font-fredokaOne text-white font-medium ${
                   mode === type ? 'tab-active' : ''
                 }`}
                 onClick={() => {

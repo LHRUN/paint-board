@@ -4,13 +4,20 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        georgia: ['Georgia', 'cursive'],
-        fredokaOne: ['Fredoka One', 'cursive'],
-        hanaleiFill: ['Hanalei Fill', 'cursive'],
-        ruslanDisplay: ['Ruslan Display', 'cursive'],
-        lobster: ['Lobster', 'cursive'],
-        pacifico: ['Pacifico', 'cursive'],
-        gloriaHallelujah: ['Gloria Hallelujah', 'cursive']
+        georgia: ['Georgia'],
+        fredokaOne: [
+          'Fredoka One',
+          'PingFang SC',
+          'Microsoft Yahei',
+          'Helvetica',
+          'Arial',
+          'sans-serif'
+        ],
+        hanaleiFill: ['Hanalei Fill'],
+        ruslanDisplay: ['Ruslan Display'],
+        lobster: ['Lobster'],
+        pacifico: ['Pacifico'],
+        gloriaHallelujah: ['Gloria Hallelujah']
       },
       screens: {
         xs: {
