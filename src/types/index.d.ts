@@ -68,4 +68,8 @@ declare module 'fabric/fabric-impl' {
   export interface Control {
     pointIndex: number
   }
+
+  export interface Image {
+    src: string
+  }
 }

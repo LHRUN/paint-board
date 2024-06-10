@@ -11,6 +11,10 @@ import { paintBoard } from '@/utils/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { alignGuideLine } from '@/utils/common/fabricMixin/alignGuideLine'
+import {
+  updateCanvasBackgroundImage,
+  handleBackgroundImageWhenCanvasSizeChange
+} from '@/utils/common/background'
 
 interface BoardState {
   mode: string // operating mode
@@ -19,7 +23,9 @@ interface BoardState {
   canvasWidth: number // canvas width 0.1 ~ 1
   canvasHeight: number // canvas height 0.1 ~ 1
   backgroundColor: string // canvas background color
-  backgroundOpacity: number // canvas background opacity
+  backgroundOpacity: number // canvas background color opacity
+  hasBackgroundImage: boolean // canvas background image
+  backgroundImageOpacity: number // canvas background Image opacity
   isObjectCaching: boolean // fabric objectCaching
   openGuideLine: boolean // does the guide line show
 }
@@ -33,6 +39,9 @@ interface BoardAction {
   updateCanvasHeight: (height: number) => void
   updateBackgroundColor: (color: string) => void
   updateBackgroundOpacity: (opacity: number) => void
+  updateBackgroundImage: (image: string) => void
+  updateBackgroundImageOpacity: (opacity: number) => void
+  cleanBackgroundImage: () => void
   updateCacheState: () => void
   updateOpenGuideLine: () => void
 }
@@ -51,6 +60,8 @@ const useBoardStore = create<BoardState & BoardAction>()(
       canvasHeight: 1,
       backgroundColor: 'rgba(255, 255, 255, 1)',
       backgroundOpacity: 1,
+      hasBackgroundImage: false,
+      backgroundImageOpacity: 1,
       isObjectCaching: true,
       openGuideLine: false,
       updateMode: (mode) => {
@@ -101,6 +112,21 @@ const useBoardStore = create<BoardState & BoardAction>()(
             backgroundOpacity: 1
           })
         }
+
+        const backgroundImage = paintBoard?.canvas
+          ?.backgroundImage as fabric.Image
+        if (backgroundImage) {
+          handleBackgroundImageWhenCanvasSizeChange()
+          set({
+            hasBackgroundImage: true,
+            backgroundOpacity: backgroundImage.opacity
+          })
+        } else {
+          set({
+            hasBackgroundImage: false,
+            backgroundOpacity: 1
+          })
+        }
       },
       updateCanvasWidth: (width) => {
         const oldWidth = get().canvasWidth
@@ -141,6 +167,45 @@ const useBoardStore = create<BoardState & BoardAction>()(
             return {
               backgroundOpacity: opacity,
               backgroundColor: newColor
+            }
+          }
+          return {}
+        })
+      },
+      updateBackgroundImage: (image) => {
+        const canvas = paintBoard.canvas
+        const oldBackgroundImage = canvas?.backgroundImage as fabric.Image
+        if (canvas && image !== oldBackgroundImage?.src) {
+          updateCanvasBackgroundImage(image)
+          set({
+            hasBackgroundImage: true
+          })
+        }
+      },
+      cleanBackgroundImage: () => {
+        set({
+          hasBackgroundImage: false
+        })
+        const canvas = paintBoard.canvas
+        if (canvas) {
+          canvas.setBackgroundImage(null as unknown as string, () => {
+            paintBoard.render()
+          })
+        }
+      },
+      updateBackgroundImageOpacity: (opacity) => {
+        set((state) => {
+          const canvas = paintBoard.canvas
+          if (canvas && opacity !== state.backgroundImageOpacity) {
+            const backgroundImage = canvas?.backgroundImage as fabric.Image
+            if (backgroundImage) {
+              backgroundImage.set({
+                opacity
+              })
+            }
+
+            return {
+              backgroundImageOpacity: opacity
             }
           }
           return {}

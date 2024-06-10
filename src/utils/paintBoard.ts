@@ -18,6 +18,7 @@ import { renderPencilBrush } from './element/draw/basic'
 import { getEraserWidth } from './common/draw'
 import { autoDrawData } from './autodraw'
 import { handleCanvasJSONLoaded } from './common/loadCanvas'
+import { handleBackgroundImageWhenCanvasSizeChange } from './common/background'
 
 import useFileStore from '@/store/files'
 import useDrawStore from '@/store/draw'
@@ -42,7 +43,8 @@ export class PaintBoard {
       this.canvas = new fabric.Canvas(canvasEl, {
         selectionColor: 'rgba(101, 204, 138, 0.3)',
         preserveObjectStacking: true,
-        enableRetinaScaling: true
+        enableRetinaScaling: true,
+        backgroundVpt: false
       })
       fabric.Object.prototype.set({
         borderColor: '#65CC8A',
@@ -85,6 +87,7 @@ export class PaintBoard {
         const { files, currentId } = useFileStore.getState()
         const file = files?.find((item) => item?.id === currentId)
         if (file && this.canvas) {
+          this.canvas.clear()
           this.canvas.loadFromJSON(file.boardData, () => {
             if (this.canvas) {
               if (file.viewportTransform) {
@@ -397,6 +400,7 @@ export class PaintBoard {
   updateCanvasWidth = debounce((width) => {
     if (this.canvas) {
       this.canvas.setWidth(window.innerWidth * width)
+      handleBackgroundImageWhenCanvasSizeChange()
       useFileStore.getState().updateCanvasWidth(width)
     }
   }, 500)
@@ -404,6 +408,7 @@ export class PaintBoard {
   updateCanvasHeight = debounce((height) => {
     if (this.canvas) {
       this.canvas.setHeight(window.innerHeight * height)
+      handleBackgroundImageWhenCanvasSizeChange()
       useFileStore.getState().updateCanvasHeight(height)
     }
   }, 500)

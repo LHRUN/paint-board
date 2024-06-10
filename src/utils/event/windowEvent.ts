@@ -4,6 +4,7 @@ import { ImageElement } from '../element/image'
 import { fabric } from 'fabric'
 import useFileStore from '@/store/files'
 import useBoardStore from '@/store/board'
+import { handleBackgroundImageWhenCanvasSizeChange } from '../common/background'
 
 export class WindowEvent {
   constructor() {
@@ -114,6 +115,7 @@ export class WindowEvent {
       canvas.setHeight(
         window.innerHeight * useBoardStore.getState().canvasHeight
       )
+      handleBackgroundImageWhenCanvasSizeChange()
     }
   }
 }

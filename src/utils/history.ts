@@ -1,8 +1,10 @@
 import useFileStore, { IBoardData } from '@/store/files'
 import { paintBoard } from './paintBoard'
 import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
-import { cloneDeep, omit } from 'lodash'
+import { cloneDeep } from 'lodash'
 import { getCanvasJSON, handleCanvasJSONLoaded } from './common/loadCanvas'
+import useBoardStore from '@/store/board'
+import { handleBackgroundImageWhenCanvasSizeChange } from './common/background'
 
 const initState = {}
 
@@ -18,10 +20,7 @@ export class History {
     const canvas = paintBoard.canvas
     if (canvas) {
       const canvasJson = getCanvasJSON()
-      this.canvasData = {
-        ...omit(canvasJson, 'objects'),
-        objects: cloneDeep(canvasJson?.objects ?? [])
-      }
+      this.canvasData = cloneDeep(canvasJson ?? {})
     }
   }
 
@@ -39,10 +38,7 @@ export class History {
       } else {
         this.index++
       }
-      this.canvasData = {
-        ...omit(canvasJson, 'objects'),
-        objects: cloneDeep(canvasJson?.objects ?? [])
-      }
+      this.canvasData = cloneDeep(canvasJson ?? {})
       useFileStore.getState().updateBoardData(canvasJson)
     }
   }
@@ -58,11 +54,12 @@ export class History {
 
         canvas.requestRenderAll()
         useFileStore.getState().updateBoardData(canvasJson)
-        this.canvasData = {
-          ...omit(canvasJson, 'objects'),
-          objects: cloneDeep(canvasJson?.objects ?? [])
-        }
+        this.canvasData = cloneDeep(canvasJson ?? {})
         paintBoard.triggerHook()
+
+        if ((delta as unknown as IBoardData)?.backgroundImage) {
+          handleBackgroundImageWhenCanvasSizeChange()
+        }
       })
     }
   }
@@ -78,11 +75,12 @@ export class History {
         canvas.requestRenderAll()
 
         useFileStore.getState().updateBoardData(canvasJson)
-        this.canvasData = {
-          ...omit(canvasJson, 'objects'),
-          objects: cloneDeep(canvasJson?.objects ?? [])
-        }
+        this.canvasData = cloneDeep(canvasJson ?? {})
         paintBoard.triggerHook()
+
+        if ((delta as unknown as IBoardData)?.backgroundImage) {
+          handleBackgroundImageWhenCanvasSizeChange()
+        }
       })
     }
   }
@@ -93,6 +91,8 @@ export class History {
     this.diffs = []
     this.canvasData = {}
     useFileStore.getState().updateBoardData(initState)
+    useBoardStore.getState().updateBackgroundColor('#ffffff')
+    useBoardStore.getState().cleanBackgroundImage()
   }
 
   initHistory() {

@@ -2,6 +2,8 @@ import AddColorIcon from '@/components/icons/addColor.svg?react'
 import useDrawStore from '@/store/draw'
 import { useTranslation } from 'react-i18next'
 
+import ClearIcon from '@/components/icons/clear.svg?react'
+
 const DrawColorConfig = () => {
   const { drawColors, updateDrawColors } = useDrawStore()
   const { t } = useTranslation()
@@ -28,7 +30,7 @@ const DrawColorConfig = () => {
       <div className="mt-2 flex items-center w-full">
         {drawColors.map((color, i) => {
           return (
-            <div className="w-7 h-7 mr-2 indicator" key={i}>
+            <div className="w-7 h-7 mr-2 relative" key={i}>
               <input
                 type="color"
                 value={color}
@@ -38,13 +40,10 @@ const DrawColorConfig = () => {
                 className="colorInput"
               />
               {drawColors.length > 1 && (
-                <span
+                <ClearIcon
                   onClick={() => deleteDrawColor(i)}
-                  className="indicator-item badge badge-secondary w-3 h-3 p-0 text-sm bg-black text-white border-black cursor-pointer block text-center"
-                  style={{ lineHeight: '0.5rem' }}
-                >
-                  x
-                </span>
+                  className="absolute top-[-6px] right-[-6px] rounded-full w-3 h-3 cursor-pointer"
+                />
               )}
             </div>
           )
