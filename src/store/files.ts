@@ -21,6 +21,7 @@ export interface IBoardData {
   version: string // fabric version
   objects: fabric.Object[]
   background: string // canvas background color (rgba)
+  backgroundImage: fabric.Image
 }
 
 interface IFile {
@@ -54,7 +55,7 @@ interface FileAction {
 }
 
 const initId = uuidv4()
-export const BOARD_VERSION = '1.3.1'
+export const BOARD_VERSION = '1.4.0'
 
 const useFileStore = create<FileState & FileAction>()(
   persist(

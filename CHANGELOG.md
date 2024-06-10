@@ -1,3 +1,7 @@
+# 1.4.0
+
+- add canvas background image
+
 # 1.3.1
 
 ### Feat

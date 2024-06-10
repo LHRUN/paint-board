@@ -90,7 +90,7 @@
       "line6": "All drawings support transparency configurations"
     },
     "BoardMode": {
-      "line1": "Drawing board support for configuring background color and transparency configurations",
+      "line1": "The drawing board supports background configuration, including colour, background image, and transparency",
       "line2": "The drawing board supports customized width and height configurations",
       "line3": "Support for drawing cache enable. Enabling caching will improve drawing performance in the presence of large amounts of drawing content, while disabling caching will improve canvas clarity.",
       "line4": "Supports guide line on and off"

@@ -52,7 +52,7 @@ const GuideInfo: React.FC = () => {
               className="ml-5 cursor-pointer border-solid border-4 border-[#7b8fa1] rounded-full hover:border-[#567189] flex items-center justify-center"
               onClick={handleChangLang}
             >
-              {language === 'en' ? <EnIcon /> : <ZhIcon />}
+              {language === 'en' ? <ZhIcon /> : <EnIcon />}
             </span>
           </div>
           <GuideInfoSwiper />

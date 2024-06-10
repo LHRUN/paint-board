@@ -52,7 +52,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - Layer settings are supported for all drawings, including Move Layer Up, Move Layer Down, Move to Top, and Move to Bottom.
   - All drawings support transparency configurations.
 + Drawing Board Configuration
-  - Drawing board support for configuring background color and transparency configurations.
+  - The drawing board supports background configuration, including colour, background image, and transparency.
   - The drawing board supports customized width and height configurations.
   - Supports painting caching, enabling caching will improve painting performance in the presence of large amounts of painted content, while disabling caching will improve canvas sharpness.
   - Added Guide Line drawing feature.
