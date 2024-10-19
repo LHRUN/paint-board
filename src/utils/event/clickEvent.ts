@@ -2,9 +2,7 @@ import { fabric } from 'fabric'
 import { ActionMode } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 import { ShapeStyle } from '@/constants/shape'
-import { IInk } from '@/services/autodraw'
 import { paintBoard } from '../paintBoard'
-import { autoDrawData } from '../autodraw'
 
 import { ReticulateElement } from '../element/draw/reticulate'
 import { ShapeElement } from '../element/draw/shape'
@@ -41,8 +39,6 @@ import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
 import useShapeStore from '@/store/shape'
 
-export let updateInkHook: ((ink: IInk[]) => void) | null = null
-
 export class CanvasClickEvent {
   isMouseDown = false
   isSpaceKeyDown = false
@@ -78,9 +74,6 @@ export class CanvasClickEvent {
     | AlertShape
     | ArrowLineShape
     | null = null // The current mouse move draws the element
-
-  mouseDownTime = 0
-  autoDrawInk: Array<Array<number>> = [[], [], []] // google auto draw ink
 
   constructor() {
     this.initClickEvent()
@@ -192,12 +185,6 @@ export class CanvasClickEvent {
             case DrawStyle.Wiggle:
               currentElement = new WiggleElement()
               break
-            case DrawStyle.Basic:
-              if (useDrawStore.getState().openAutoDraw) {
-                autoDrawData.resetLoadedSVG()
-                this.mouseDownTime = new Date().getTime()
-              }
-              break
             default:
               break
           }
@@ -219,16 +206,6 @@ export class CanvasClickEvent {
         }
 
         if (
-          this.mouseDownTime &&
-          e.absolutePointer?.x &&
-          e.absolutePointer?.y
-        ) {
-          this.autoDrawInk[0].push(e.absolutePointer?.x)
-          this.autoDrawInk[1].push(e.absolutePointer?.y)
-          this.autoDrawInk[2].push(new Date().getTime() - this.mouseDownTime)
-        }
-
-        if (
           useBoardStore.getState().mode === ActionMode.DRAW &&
           this.currentElement
         ) {
@@ -238,12 +215,6 @@ export class CanvasClickEvent {
     })
     canvas?.on('mouse:up', (e) => {
       this.isMouseDown = false
-      if (this.autoDrawInk?.[0]?.length > 3) {
-        autoDrawData.addInk([...this.autoDrawInk])
-        updateInkHook?.([...autoDrawData.inks])
-        this.autoDrawInk = [[], [], []]
-        this.mouseDownTime = 0
-      }
 
       if (this.currentElement) {
         let isDestroy = false
@@ -278,9 +249,5 @@ export class CanvasClickEvent {
 
   setSpaceKeyDownState(isSpaceKeyDown: boolean) {
     this.isSpaceKeyDown = isSpaceKeyDown
-  }
-
-  changeInkHookFn(fn: (ink: IInk[]) => void) {
-    updateInkHook = fn
   }
 }

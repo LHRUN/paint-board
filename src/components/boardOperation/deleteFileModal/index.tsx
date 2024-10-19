@@ -32,14 +32,14 @@ const DeleteFileModal = () => {
           <div className="w-64 flex justify-between mt-10">
             <label
               htmlFor="delete-file-modal"
-              className="btn btn-active btn-primary btn-md w-2/5"
+              className="btn btn-active btn-primary btn-sm w-2/5"
               onClick={deleteCurrentFile}
             >
               {t('deleteFileModal.confirm')}
             </label>
             <label
               htmlFor="delete-file-modal"
-              className="btn btn-active btn-ghost btn-md w-2/5"
+              className="btn btn-active btn-ghost btn-sm w-2/5"
             >
               {t('deleteFileModal.cancel')}
             </label>

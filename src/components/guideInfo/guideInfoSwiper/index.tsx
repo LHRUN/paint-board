@@ -74,7 +74,7 @@ const GuideInfoSwiper = () => {
     >
       {guideInfoList.map((item, index) => (
         <SwiperSlide key={index}>
-          <div className="max-h-[50vh] overflow-y-auto">
+          <div className="max-h-[50vh] overflow-y-auto noScrollbar">
             <div className="flex w-full rounded-2xl p-3 bg-[#66CC8920] box-border justify-between">
               <div className="shrink-0 w-[49%] flex flex-col items-center justify-start">
                 {item.imageList.map((imageUrl, index) => (

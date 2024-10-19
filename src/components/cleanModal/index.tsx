@@ -23,14 +23,14 @@ const CleanModal = () => {
           <div className="w-64 flex justify-between mt-10">
             <label
               htmlFor="clean-modal"
-              className="btn btn-active btn-primary btn-md w-2/5"
+              className="btn btn-active btn-primary btn-sm w-2/5"
               onClick={clean}
             >
               {t('cleanModal.confirm')}
             </label>
             <label
               htmlFor="clean-modal"
-              className="btn btn-active btn-ghost btn-md w-2/5"
+              className="btn btn-active btn-ghost btn-sm w-2/5"
             >
               {t('cleanModal.cancel')}
             </label>

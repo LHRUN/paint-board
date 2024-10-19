@@ -51,3 +51,21 @@
 body {
   overflow: hidden;
 }
+
+.btn:not(.btn-active):hover {
+  color: #ffffff80;
+  background-color: hsl(var(--n, var(--n)) / var(--tw-bg-opacity));
+  border-color: hsl(var(--n, var(--n)) / var(--tw-border-opacity));
+}
+
+.tab:not(.tab-active):hover {
+  color: #ffffff80;
+}
+
+.radial-progress:hover::after {
+  opacity: 0.5;
+}
+
+.radial-progress:hover::before {
+  opacity: 0.5;
+}
