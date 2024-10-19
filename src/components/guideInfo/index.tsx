@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import useBoardStore from '@/store/board'
 
 import InfoIcon from '@/components/icons/info.svg?react'
-import ZhIcon from '@/components/icons/zh.svg?react'
-import EnIcon from '@/components/icons/en.svg?react'
 import ZoomInfo from '../zoomInfo'
 import Mask from '@/components/mask'
 import GuideInfoSwiper from './guideInfoSwiper'
@@ -23,7 +21,7 @@ const GuideInfo: React.FC = () => {
     <>
       <div className="fixed bottom-5 left-5 flex flex-row justify-center items-center px-2.5 py-1.5 rounded-full bg-[#eef1ff]">
         <InfoIcon
-          className="bg-white rounded-full cursor-pointer"
+          className="bg-white rounded-full cursor-pointer hover:opacity-70"
           onClick={() => setShowModal(true)}
         />
         <ZoomInfo />
@@ -40,20 +38,40 @@ const GuideInfo: React.FC = () => {
               repo:
               <a
                 className="link link-primary inline-block ml-1 mr-3 break-all"
-                href="https://github.com/LHRUN/paint-board.git"
+                href="https://github.com/LHRUN/paint-board"
                 target="_blank"
                 rel="noreferrer"
               >
-                https://github.com/LHRUN/paint-board.git
+                github.com/LHRUN/paint-board
               </a>
               {t('info.welecome')}⭐️
             </div>
-            <span
-              className="ml-5 cursor-pointer border-solid border-4 border-[#7b8fa1] rounded-full hover:border-[#567189] flex items-center justify-center"
+
+            <div
+              className={`ml-5 h-8 w-8 rounded-full cursor-pointer relative shrink-0 hover:opacity-80 ${
+                language === 'en' ? 'bg-primary-content' : 'bg-primary'
+              }`}
               onClick={handleChangLang}
             >
-              {language === 'en' ? <ZhIcon /> : <EnIcon />}
-            </span>
+              <span
+                className={`w-6 h-6 transition-all duration-500 absolute top-1 left-1 text-neutral-content text-center origin-center ${
+                  language === 'en'
+                    ? 'opacity-100 rotate-0'
+                    : 'opacity-0 -rotate-45'
+                }`}
+              >
+                中
+              </span>
+              <span
+                className={`w-6 h-6 transition-all duration-500 absolute top-1 left-1 text-primary-content text-center text-base origin-center ${
+                  language === 'zh'
+                    ? 'opacity-100 rotate-0'
+                    : 'opacity-0 rotate-45'
+                }`}
+              >
+                En
+              </span>
+            </div>
           </div>
           <GuideInfoSwiper />
         </div>

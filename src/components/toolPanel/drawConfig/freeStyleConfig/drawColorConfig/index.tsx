@@ -30,7 +30,7 @@ const DrawColorConfig = () => {
       <div className="mt-2 flex items-center w-full">
         {drawColors.map((color, i) => {
           return (
-            <div className="w-7 h-7 mr-2 relative" key={i}>
+            <div className="w-7 h-7 mr-2 relative group" key={i}>
               <input
                 type="color"
                 value={color}
@@ -42,7 +42,7 @@ const DrawColorConfig = () => {
               {drawColors.length > 1 && (
                 <ClearIcon
                   onClick={() => deleteDrawColor(i)}
-                  className="absolute top-[-6px] right-[-6px] rounded-full w-3 h-3 cursor-pointer"
+                  className="absolute top-[-6px] right-[-6px] rounded-full w-3 h-3 cursor-pointer inline-block xl:hidden group-hover:inline-block hover:opacity-80"
                 />
               )}
             </div>
@@ -50,7 +50,7 @@ const DrawColorConfig = () => {
         })}
         {drawColors.length < 5 && (
           <AddColorIcon
-            className="cursor-pointer"
+            className="cursor-pointer hover:opacity-60"
             onClick={() => {
               handleDrawColors('#000000', drawColors.length)
             }}
