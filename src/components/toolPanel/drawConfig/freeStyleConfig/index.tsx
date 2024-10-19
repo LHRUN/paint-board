@@ -1,7 +1,5 @@
 import useDrawStore from '@/store/draw'
-import useBoardStore from '@/store/board'
-import { ActionMode } from '@/constants'
-import { DrawStyle, DrawType } from '@/constants/draw'
+import { DrawStyle } from '@/constants/draw'
 
 import ShapeConutConfig from './shapeConfig/shapeConutConfig'
 import ShapeTypeConfig from './shapeConfig/shapeTypeConfig'
@@ -12,11 +10,9 @@ import MultiColorConfig from './multiColorConfig'
 import DrawWidthConfig from './drawWidthConfig'
 import DrawColorConfig from './drawColorConfig'
 import DrawStyleConfig from './drawStyleConfig'
-import DrawAIConfig from './drawAIConfig'
 
 const FreeDrawConfig = () => {
   const { drawStyle } = useDrawStore()
-  const { mode, drawType } = useBoardStore()
 
   return (
     <>
@@ -36,9 +32,6 @@ const FreeDrawConfig = () => {
         drawStyle
       ) && <ShadowConfig />}
       {drawStyle === DrawStyle.Text && <DrawTextConfig />}
-      {mode === ActionMode.DRAW &&
-        drawType === DrawType.FreeStyle &&
-        drawStyle === DrawStyle.Basic && <DrawAIConfig />}
     </>
   )
 }

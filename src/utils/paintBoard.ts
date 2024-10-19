@@ -16,7 +16,6 @@ import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
 import { getEraserWidth } from './common/draw'
-import { autoDrawData } from './autodraw'
 import { handleCanvasJSONLoaded } from './common/loadCanvas'
 import { handleBackgroundImageWhenCanvasSizeChange } from './common/background'
 
@@ -189,8 +188,6 @@ export class PaintBoard {
       }
     })
 
-    this.handleAutoDrawData()
-
     this.canvas.requestRenderAll()
   }
 
@@ -217,20 +214,6 @@ export class PaintBoard {
         this.canvas.isDrawingMode = false
         break
     }
-    this.handleAutoDrawData()
-  }
-
-  handleAutoDrawData() {
-    if (
-      useBoardStore.getState().mode === ActionMode.DRAW &&
-      useBoardStore.getState().drawType === DrawType.FreeStyle &&
-      useDrawStore.getState().drawStyle === DrawStyle.Basic &&
-      useDrawStore.getState().openAutoDraw
-    ) {
-      return
-    }
-    autoDrawData.clearDraw()
-    autoDrawData.resetLoadedSVG()
   }
 
   /**
