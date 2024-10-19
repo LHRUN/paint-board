@@ -1,4 +1,13 @@
+# 1.4.1
+
+### Feat
+
+- update some styles
+- remove autodraw
+
 # 1.4.0
+
+### Feat
 
 - add canvas background image
 
