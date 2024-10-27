@@ -151,7 +151,7 @@
   },
   "uploadImage": {
     "removeBackground": "去除背景",
-    "webGPUTip": "本浏览器不支持WebGPU, 要使用去除背景请升级浏览器至最新版本",
+    "webGPUTip": "本浏览器不支持WebGPU, 要使用去除背景功能请使用最新版谷歌浏览器",
     "removeBackgroundLoading": "去除背景功能加载中",
     "removeBackgroundFailed": "去除背景功能加载失败",
     "removeBackgroundSuccess": "去除背景功能加载成功",
