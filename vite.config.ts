@@ -10,6 +10,14 @@ import autoprefixer from 'autoprefixer'
 // https://vitejs.dev/config/
 export default defineConfig({
   base: '/paint-board',
+  optimizeDeps: {
+    esbuildOptions: { supported: { bigint: true } },
+  },
+  esbuild: {
+    supported: {
+      bigint: true
+    }
+  },
   server: {
     host: '0.0.0.0'
   },

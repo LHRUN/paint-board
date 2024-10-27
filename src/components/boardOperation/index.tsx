@@ -3,7 +3,6 @@ import useBoardStore from '@/store/board'
 import { useTranslation } from 'react-i18next'
 import { ActionMode } from '@/constants'
 import { paintBoard } from '@/utils/paintBoard'
-import { ImageElement } from '@/utils/element/image'
 
 import UndoIcon from '@/components/icons/boardOperation/undo.svg?react'
 import RedoIcon from '@/components/icons/boardOperation/redo.svg?react'
@@ -17,12 +16,20 @@ import FileListIcon from '@/components/icons/boardOperation/fileList.svg?react'
 import CloseIcon from '@/components/icons/close.svg?react'
 import MenuIcon from '@/components/icons/menu.svg?react'
 import FileList from './fileList'
+import DownloadImage from './downloadImage'
+import UploadImage from './uploadImage'
 
 const BoardOperation = () => {
   const { t } = useTranslation()
   const { mode } = useBoardStore()
   const [showFile, updateShowFile] = useState(false) // show file list draw
   const [showOperation, setShowOperation] = useState(true) // mobile: show all operation
+
+  const [downloadImageURL, setDownloadImageURL] = useState('')
+  const [showDownloadModal, setShowDownloadModal] = useState(false)
+
+  const [uploadImageURL, setUploadImageURL] = useState('')
+  const [showUploadModal, setShowUploadModal] = useState(false)
 
   // copy activity object
   const copyObject = () => {
@@ -61,8 +68,8 @@ const BoardOperation = () => {
       const data = fEvent.target?.result
       if (data) {
         if (data && typeof data === 'string') {
-          const image = new ImageElement()
-          image.addImage(data)
+          setUploadImageURL(data)
+          setShowUploadModal(true)
         }
       }
       e.target.value = ''
@@ -72,7 +79,11 @@ const BoardOperation = () => {
 
   // save as image
   const saveImage = () => {
-    paintBoard.saveImage()
+    if (paintBoard.canvas) {
+      const url = paintBoard.canvas.toDataURL()
+      setDownloadImageURL(url)
+      setShowDownloadModal(true)
+    }
   }
 
   return (
@@ -129,6 +140,7 @@ const BoardOperation = () => {
               <input
                 type="file"
                 id="image-upload"
+                accept=".jpeg, .jpg, .png"
                 className="hidden"
                 onChange={uploadImage}
               />
@@ -164,6 +176,18 @@ const BoardOperation = () => {
         </label>
       </div>
       {showFile && <FileList updateShow={updateShowFile} />}
+      {showDownloadModal && downloadImageURL && (
+        <DownloadImage
+          url={downloadImageURL}
+          showModal={showDownloadModal}
+          setShowModal={setShowDownloadModal}
+        />
+      )}
+      <UploadImage
+        url={uploadImageURL}
+        showModal={showUploadModal}
+        setShowModal={setShowUploadModal}
+      />
     </>
   )
 }

@@ -101,7 +101,7 @@ const BackgroundConfig = () => {
       </div>
       <div className="mt-3 flex items-center w-full">
         <label
-          htmlFor="image-upload"
+          htmlFor="background-image-upload"
           className="shrink-0 cursor-pointer rounded relative hover:bg-slate-200"
         >
           {hasBackgroundImage ? (
@@ -118,7 +118,8 @@ const BackgroundConfig = () => {
         </label>
         <input
           type="file"
-          id="image-upload"
+          id="background-image-upload"
+          accept=".jpeg, .jpg, .png"
           className="hidden"
           onChange={uploadImage}
         />

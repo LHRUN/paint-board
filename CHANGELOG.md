@@ -1,3 +1,11 @@
+# 1.5.0
+
+### Feat
+
+- save as image supports custom configurations. Rotate, Scale, Crop
+- add transformers.js
+- support removing background for uploading images (browser needs to support WebGPU)
+
 # 1.4.1
 
 ### Feat
