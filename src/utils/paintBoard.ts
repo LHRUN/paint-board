@@ -247,18 +247,6 @@ export class PaintBoard {
   }
 
   /**
-   * save as Image
-   */
-  saveImage() {
-    if (this.canvas) {
-      const link = document.createElement('a')
-      link.href = this.canvas.toDataURL()
-      link.download = 'paint-board.png'
-      link.click()
-    }
-  }
-
-  /**
    * copy active objects
    */
   copyObject() {

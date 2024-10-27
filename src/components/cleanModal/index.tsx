@@ -26,13 +26,13 @@ const CleanModal = () => {
               className="btn btn-active btn-primary btn-sm w-2/5"
               onClick={clean}
             >
-              {t('cleanModal.confirm')}
+              {t('confirm')}
             </label>
             <label
               htmlFor="clean-modal"
               className="btn btn-active btn-ghost btn-sm w-2/5"
             >
-              {t('cleanModal.cancel')}
+              {t('cancel')}
             </label>
           </div>
         </label>

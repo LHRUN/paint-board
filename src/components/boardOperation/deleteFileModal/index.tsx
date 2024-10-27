@@ -35,13 +35,13 @@ const DeleteFileModal = () => {
               className="btn btn-active btn-primary btn-sm w-2/5"
               onClick={deleteCurrentFile}
             >
-              {t('deleteFileModal.confirm')}
+              {t('confirm')}
             </label>
             <label
               htmlFor="delete-file-modal"
               className="btn btn-active btn-ghost btn-sm w-2/5"
             >
-              {t('deleteFileModal.cancel')}
+              {t('cancel')}
             </label>
           </div>
         </label>
