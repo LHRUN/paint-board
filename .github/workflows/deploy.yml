@@ -37,4 +37,5 @@ jobs:
           git config --local user.email $USER_EMAIL
           git add --all
           git commit -m "Deploy to GitHub Pages"
+          git branch -M main
           git push --force https://$COMMIT_SECRET@github.com/$GITHUB_REPOSITORY.git main:gh-pages
