@@ -51,14 +51,9 @@ export default defineConfig({
         short_name: 'paint-board',
         start_url: '/paint-board/',
         display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#ffffff',
+        background_color: '#eef1ff',
+        theme_color: '#eef1ff',
         icons: [
-          {
-            src: '/paint-board/pwa-32.png',
-            sizes: '32x32',
-            type: 'image/png'
-          },
           {
             src: '/paint-board/pwa-192.png',
             sizes: '192x192',
