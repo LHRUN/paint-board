@@ -67,6 +67,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - 支持多个画布切换，每个画布可自定义标题、增加、删除，并提供上传和下载功能。
 + 国际化
   - 目前支持中文，英文两种语言展示。
++ 支持 PWA, 可离线访问
 
 ## 未来计划
 + 多平台认证登录，数据同步。
