@@ -1,3 +1,13 @@
+# 1.5.1
+
+### Feat
+
+- add PWA
+
+### CI
+
+- integrate Dockerfile with GitHub Actions for GitHub Pages deployment
+
 # 1.5.0
 
 ### Feat
