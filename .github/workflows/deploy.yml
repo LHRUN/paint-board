@@ -9,7 +9,7 @@ jobs:
       COMMIT_SECRET: ${{secrets.COMMIT_SECRET}}
       USER_NAME: songlh
       USER_EMAIL: song.lhlh@gmail.com
-      PUBLISH_DIR: ./dist
+      DOCKER_DIR: /app/dist
       GITHUB_REPOSITORY: paint-board
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Copy build output
         run: |
           container_id=$(docker create paint-board)
-          docker cp $container_id:${PUBLISH_DIR} ./dist
+          docker cp $container_id:${DOCKER_DIR} ./dist
           docker rm $container_id
 
       - name: Deploy to GitHub Pages
