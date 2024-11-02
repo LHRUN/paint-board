@@ -1,4 +1,4 @@
-FROM node:16-alpine as build-stage
+FROM node:18-alpine as build-stage
 LABEL maintainer="Leo 'song.lhlh@gmail.com'"
 
 WORKDIR /app

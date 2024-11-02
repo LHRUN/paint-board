@@ -71,6 +71,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download.
 + i18n
   - Currently support English, Chinese language display.
++ PWA support, offline access
 
 ## Future Plans
 + Multi-platform authentication login and data synchronization

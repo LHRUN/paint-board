@@ -1,10 +1,10 @@
-name: deploy gh-page
+name: Deploy to GitHub Page
 on:
   push:
     branches: [main]
 jobs:
   build:
-    name: build and deploy gh-page
+    name: build and deploy
     env:
       COMMIT_SECRET: ${{secrets.COMMIT_SECRET}}
       USER_NAME: songlh
@@ -13,29 +13,28 @@ jobs:
       GITHUB_REPOSITORY: paint-board
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repository main branch
-        uses: actions/checkout@main
-      - name: with node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 18.x
-      - name: npm install
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker image
         run: |
-          npm install -g pnpm
-          pnpm install
-      - name: npm run build
+          docker build --target build-stage -t paint-board .
+
+      - name: Copy build output
         run: |
-          pnpm build
-      - name: commit files
+          container_id=$(docker create paint-board)
+          docker cp $container_id:${PUBLISH_DIR} ./dist
+          docker rm $container_id
+
+      - name: Deploy to GitHub Pages
         run: |
-          cd $PUBLISH_DIR
+          cd ./dist
           git init
           git config --local user.name $USER_NAME
           git config --local user.email $USER_EMAIL
-          git status
-          git remote add origin https://$COMMIT_SECRET@github.com/$GITHUB_REPOSITORY.git
-          git checkout -b gh-pages
           git add --all
-          git commit -m "deploy to github pages"
-          git push origin gh-pages -f
-          echo deploy gh-pages complete
+          git commit -m "Deploy to GitHub Pages"
+          git push --force https://$COMMIT_SECRET@github.com/$GITHUB_REPOSITORY.git main:gh-pages
