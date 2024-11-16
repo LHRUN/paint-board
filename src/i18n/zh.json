@@ -159,5 +159,10 @@
     "removeBackgroundProcessingSuccess": "去除背景处理成功",
     "restore": "还原",
     "upload": "上传"
+  },
+  "downloadImage": {
+    "rotate": "旋转",
+    "scale": "缩放",
+    "size": "尺寸"
   }
 }
