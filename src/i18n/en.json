@@ -159,5 +159,10 @@
     "removeBackgroundProcessingSuccess": "Remove Background Processing Success",
     "restore": "Restore",
     "upload": "Upload"
+  },
+  "downloadImage": {
+    "rotate": "Rotate",
+    "scale": "Scale",
+    "size": "Size"
   }
 }

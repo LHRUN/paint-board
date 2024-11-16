@@ -8,6 +8,7 @@ import { canvasPreview } from './canvasPreview'
 import Mask from '@/components/mask'
 import ImageRotate from '@/components/icons/boardOperation/image-rotate.svg?react'
 import ImageScale from '@/components/icons/boardOperation/image-scale.svg?react'
+import ImageSize from '@/components/icons/boardOperation/image-size.svg?react'
 
 import 'react-image-crop/dist/ReactCrop.css'
 
@@ -21,6 +22,7 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
   const { t } = useTranslation()
   const [saveImageRotate, updateSaveImageRotate] = useState(0)
   const [saveImageScale, updateSaveImageScale] = useState(1)
+  const [saveImageSize, updateSaveImageSize] = useState(1)
 
   const [completedCrop, setCompletedCrop] = useState<Crop | undefined>()
   const [crop, setCrop] = useState<Crop | undefined>()
@@ -71,8 +73,8 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
     const scaleY = image.naturalHeight / image.height
 
     const offscreen = new OffscreenCanvas(
-      completedCrop.width * scaleX,
-      completedCrop.height * scaleY
+      completedCrop.width * scaleX * saveImageSize,
+      completedCrop.height * scaleY * saveImageSize
     )
     const ctx = offscreen.getContext('2d')
     if (!ctx) {
@@ -140,7 +142,12 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
           <div className="w-full flex justify-between">
             <div className="w-[48%]">
               <div className="flex items-center">
-                <ImageRotate className="mr-[6px] shrink-0" />
+                <div
+                  className="mr-[6px] shrink-0 tooltip"
+                  data-tip={t('downloadImage.rotate')}
+                >
+                  <ImageRotate />
+                </div>
                 <input
                   className="range range-primary range-xs"
                   type="range"
@@ -155,7 +162,12 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
               </div>
 
               <div className="flex items-center mt-3">
-                <ImageScale className="mr-[12px] shrink-0" />
+                <div
+                  className="mr-[12px] shrink-0 tooltip"
+                  data-tip={t('downloadImage.scale')}
+                >
+                  <ImageScale />
+                </div>
                 <input
                   className="range range-primary range-xs"
                   type="range"
@@ -168,9 +180,33 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
                   }}
                 />
               </div>
+
+              <div className="flex items-center flex-wrap mt-3 gap-y-2">
+                <div
+                  className="mr-[12px] shrink-0 tooltip"
+                  data-tip={t('downloadImage.size')}
+                >
+                  <ImageSize />
+                </div>
+                <div className="tabs tabs-boxed bg-[#333C4D] shrink-0">
+                  {[1, 2, 3].map((value) => (
+                    <a
+                      key={value}
+                      className={`tab tab-sm flex-grow font-fredokaOne font-normal text-white ${
+                        saveImageSize === value ? 'tab-active' : ''
+                      }`}
+                      onClick={() => {
+                        updateSaveImageSize(value)
+                      }}
+                    >
+                      {`${value}x`}
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
 
-            <div className="w-[48%] flex flex-wrap gap-4">
+            <div className="w-[48%] flex flex-wrap gap-x-4 gap-y-2 h-fit">
               <button
                 className="btn btn-ghost btn-outline btn-sm"
                 onClick={() => setShowModal(false)}
