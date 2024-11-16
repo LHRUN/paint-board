@@ -1,3 +1,9 @@
+# 1.5.2
+
+### Feat
+
+- add download image size config
+
 # 1.5.1
 
 ### Feat
