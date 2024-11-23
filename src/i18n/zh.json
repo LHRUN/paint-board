@@ -151,14 +151,24 @@
   },
   "uploadImage": {
     "removeBackground": "去除背景",
-    "webGPUTip": "本浏览器不支持WebGPU, 要使用去除背景功能请使用最新版谷歌浏览器",
+    "removeBackgroundGpuTip": "本浏览器不支持WebGPU, 要使用去除背景功能请使用最新版谷歌浏览器",
     "removeBackgroundLoading": "去除背景功能加载中",
     "removeBackgroundFailed": "去除背景功能加载失败",
     "removeBackgroundSuccess": "去除背景功能加载成功",
     "removeBackgroundProcessing": "去除背景处理中",
     "removeBackgroundProcessingSuccess": "去除背景处理成功",
     "restore": "还原",
-    "upload": "上传"
+    "upload": "上传",
+    "imageSegmentation": "图像分割",
+    "clearPoints": "清除标记点",
+    "imageSegmentationLoading": "图像分割功能加载中",
+    "imageSegmentationFailed": "图像分割功能加载失败",
+    "imageSegmentationSuccess": "图像分割功能加载成功",
+    "imageSegmentationProcessing": "处理图像中",
+    "imageSegmentationProcessed": "图像处理成功, 可点击图像进行标记, 绿色蒙层区域就是分割区域",
+    "imageSegmentationGpuTip": "本浏览器不支持WebGPU, 要使用图像分割功能请使用最新版谷歌浏览器",
+    "positivePoint": "正标记",
+    "negativePoint": "负标记"
   },
   "downloadImage": {
     "rotate": "旋转",

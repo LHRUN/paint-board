@@ -151,14 +151,24 @@
   },
   "uploadImage": {
     "removeBackground": "Remove Background",
-    "webGPUTip": "WebGPU is not supported in this browser, to use the remove background function, please use the latest version of Google Chrome",
+    "removeBackgroundGpuTip": "WebGPU is not supported in this browser, to use the remove background function, please use the latest version of Google Chrome",
     "removeBackgroundLoading": "Remove background function loading",
     "removeBackgroundFailed": "Remove background function failed to load",
     "removeBackgroundSuccess": "Remove background function loaded successfully",
     "removeBackgroundProcessing": "Remove Background Processing",
     "removeBackgroundProcessingSuccess": "Remove Background Processing Success",
     "restore": "Restore",
-    "upload": "Upload"
+    "upload": "Upload",
+    "imageSegmentation": "Image Segmentation",
+    "clearPoints": "Clear Points",
+    "imageSegmentationLoading": "Image Segmentation function Loading",
+    "imageSegmentationFailed": "Image Segmentation function failed to load",
+    "imageSegmentationSuccess": "Image Segmentation function loaded successfully",
+    "imageSegmentationProcessing": "Image Processing...",
+    "imageSegmentationProcessed": "The image has been processed successfully, you can click on the image to mark it, the green mask area is the segmentation area.",
+    "imageSegmentationGpuTip": "WebGPU is not supported in this browser, to use the image segmentation function, please use the latest version of Google Chrome.",
+    "positivePoint": "Positive",
+    "negativePoint": "Negative"
   },
   "downloadImage": {
     "rotate": "Rotate",
