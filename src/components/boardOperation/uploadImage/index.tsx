@@ -9,13 +9,11 @@ import {
   Processor
 } from '@huggingface/transformers'
 import { ImageElement } from '@/utils/element/image'
+import { cropTransparent } from '@/utils/common/cropTransparent'
 
 import Mask from '@/components/mask'
+import ImageSegmentation from './imageSegmentation'
 import InfoOutline from '@/components/icons/info-outline.svg?react'
-
-interface NavigatorWithGPU extends Navigator {
-  gpu: unknown
-}
 
 interface IProps {
   url: string
@@ -37,6 +35,8 @@ type RemoveBackgroundStatusType =
 
 const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
   const { t } = useTranslation()
+  const [showImageSegmentationModal, setShowImageSegmentationModal] =
+    useState(false)
 
   const [removeBackgroundStatus, setRemoveBackgroundStatus] =
     useState<RemoveBackgroundStatusType>()
@@ -51,7 +51,7 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
       case REMOVE_BACKGROUND_STATUS.LOADING:
         return 'uploadImage.removeBackgroundLoading'
       case REMOVE_BACKGROUND_STATUS.NO_SUPPORT_WEBGPU:
-        return 'uploadImage.webGPUTip'
+        return 'uploadImage.removeBackgroundGpuTip'
       case REMOVE_BACKGROUND_STATUS.LOAD_ERROR:
         return 'uploadImage.removeBackgroundFailed'
       case REMOVE_BACKGROUND_STATUS.LOAD_SUCCESS:
@@ -76,9 +76,9 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
         ) {
           return
         }
+
         setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOADING)
-        console.log('loading')
-        if (!(navigator as NavigatorWithGPU)?.gpu) {
+        if (!navigator?.gpu) {
           setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.NO_SUPPORT_WEBGPU)
           return
         }
@@ -96,10 +96,11 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
         setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOAD_ERROR)
       }
     })()
-  }, [showModal, modelRef, processorRef])
+  }, [showModal])
 
   const handleCancel = () => {
     setShowModal(false)
+    setShowImageSegmentationModal(false)
     setShowOriginImage(true)
     setProcessedImage('')
   }
@@ -162,7 +163,9 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
       image.addImage(url)
       handleCancel()
     } else if (processedImage) {
-      image.addImage(processedImage)
+      cropTransparent(processedImage).then((url) => {
+        image.addImage(url)
+      })
       handleCancel()
     }
   }
@@ -175,15 +178,15 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
       }}
     >
       <div className="p-6 bg-[#eef1ff] card shadow-xl overflow-auto">
-        <div className="flex items-center gap-x-3 w-[50vw] max-w-[400px]">
-          <button className="btn btn-primary btn-sm" onClick={uploadImage}>
-            {t('uploadImage.upload')}
-          </button>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 w-[50vw] max-w-[400px]">
           <button
             className="btn btn-ghost btn-outline btn-sm"
             onClick={handleCancel}
           >
             {t('cancel')}
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={uploadImage}>
+            {t('uploadImage.upload')}
           </button>
           <button
             className={`btn btn-primary btn-sm ${
@@ -200,6 +203,12 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
             {showOriginImage
               ? t('uploadImage.removeBackground')
               : t('uploadImage.restore')}
+          </button>
+          <button
+            className="btn btn-sm btn-primary"
+            onClick={() => setShowImageSegmentationModal(true)}
+          >
+            {t('uploadImage.imageSegmentation')}
           </button>
         </div>
         <div className="text-xs text-base-content mt-2 w-[50vw] max-w-[400px] flex">
@@ -222,6 +231,13 @@ const UploadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
             />
           )}
         </div>
+
+        <ImageSegmentation
+          url={url}
+          showModal={showImageSegmentationModal}
+          setShowModal={setShowImageSegmentationModal}
+          cancelUploadImageModal={handleCancel}
+        />
       </div>
     </Mask>
   )

@@ -106,6 +106,8 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
     if (hiddenAnchorRef.current) {
       hiddenAnchorRef.current.href = blobUrlRef.current
       hiddenAnchorRef.current.click()
+
+      setShowModal(false)
     }
   }
 
@@ -141,7 +143,31 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
         {completedCrop && (
           <div className="w-full flex justify-between">
             <div className="w-[48%]">
-              <div className="flex items-center">
+              <div className="flex items-center flex-wrap gap-y-2">
+                <div
+                  className="mr-[12px] shrink-0 tooltip"
+                  data-tip={t('downloadImage.size')}
+                >
+                  <ImageSize />
+                </div>
+                <div className="tabs tabs-boxed bg-[#333C4D] shrink-0">
+                  {[1, 2, 3].map((value) => (
+                    <a
+                      key={value}
+                      className={`tab tab-sm flex-grow font-fredokaOne font-normal text-white ${
+                        saveImageSize === value ? 'tab-active' : ''
+                      }`}
+                      onClick={() => {
+                        updateSaveImageSize(value)
+                      }}
+                    >
+                      {`${value}x`}
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center mt-3">
                 <div
                   className="mr-[6px] shrink-0 tooltip"
                   data-tip={t('downloadImage.rotate')}
@@ -179,30 +205,6 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
                     updateSaveImageScale(Number(e.target.value))
                   }}
                 />
-              </div>
-
-              <div className="flex items-center flex-wrap mt-3 gap-y-2">
-                <div
-                  className="mr-[12px] shrink-0 tooltip"
-                  data-tip={t('downloadImage.size')}
-                >
-                  <ImageSize />
-                </div>
-                <div className="tabs tabs-boxed bg-[#333C4D] shrink-0">
-                  {[1, 2, 3].map((value) => (
-                    <a
-                      key={value}
-                      className={`tab tab-sm flex-grow font-fredokaOne font-normal text-white ${
-                        saveImageSize === value ? 'tab-active' : ''
-                      }`}
-                      onClick={() => {
-                        updateSaveImageSize(value)
-                      }}
-                    >
-                      {`${value}x`}
-                    </a>
-                  ))}
-                </div>
               </div>
             </div>
 

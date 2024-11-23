@@ -1,5 +1,11 @@
 import { Object as FabricObject, IAllFilters } from 'fabric/fabric-impl'
 
+declare global {
+  interface Navigator {
+    gpu?: any
+  }
+}
+
 declare module 'fabric/fabric-impl' {
   export interface Object {
     id: string

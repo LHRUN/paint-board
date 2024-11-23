@@ -1,3 +1,8 @@
+# 1.5.3
+
+- upload image
+  -  add image segmentation 
+
 # 1.5.2
 
 ### Feat
