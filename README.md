@@ -59,7 +59,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + Multifunction Menu
   - The bottom left button shows the current zoom ratio in real time, click it to reset the zoom ratio.
   - The list of buttons in the center, in order from left to right, are: Undo, Redo, Copy Current Selection, Delete Current Selection, Draw Text, Upload Image, Clear Drawing, Save as Image, and Open File List.
-    - Support removing background for uploading images (browser needs to support WebGPU)
+    - Upload images with support for background remove, image segmentation. This function needs WebGPU support in your browser.
     - Save as image supports custom configurations. Rotate, Scale, Crop
   - PC:
     - Hold down the Space key and click the left mouse button to move the canvas, scroll the mouse wheel to zoom the canvas.
