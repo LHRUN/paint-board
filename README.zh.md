@@ -136,6 +136,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 ## 技术文章
 + Fabric.js 重构后
+  - [画板探秘系列：结合 Transformers.js 实现图像智能处理](https://songlh.top/2024/11/23/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E7%BB%93%E5%90%88%20Transformers.js%20%E5%AE%9E%E7%8E%B0%E5%9B%BE%E5%83%8F%E6%99%BA%E8%83%BD%E5%A4%84%E7%90%86/)
   - [画板探秘系列：画板中的时光倒流术](https://songlh.top/2024/01/09/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E7%94%BB%E6%9D%BF%E4%B8%AD%E7%9A%84%E6%97%B6%E5%85%89%E5%80%92%E6%B5%81%E6%9C%AF/)
   - [画板探秘系列：创意画笔第一期](https://songlh.top/2024/04/11/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E5%88%9B%E6%84%8F%E7%94%BB%E7%AC%94%E7%AC%AC%E4%B8%80%E6%9C%9F/)
   - [画板探秘系列：创意画笔第二期](https://songlh.top/2024/04/12/%E7%94%BB%E6%9D%BF%E6%8E%A2%E7%A7%98%E7%B3%BB%E5%88%97%EF%BC%9A%E5%88%9B%E6%84%8F%E7%94%BB%E7%AC%94%E7%AC%AC%E4%BA%8C%E6%9C%9F/)
