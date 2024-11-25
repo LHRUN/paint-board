@@ -174,5 +174,9 @@
     "rotate": "Rotate",
     "scale": "Scale",
     "size": "Size"
+  },
+  "eraserConfig": {
+    "eraser": "Eraser",
+    "erasable": "Erasable"
   }
 }
