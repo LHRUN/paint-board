@@ -51,6 +51,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
   - Supports font and style settings when selecting text.
   - Layer settings are supported for all drawings, including Move Layer Up, Move Layer Down, Move to Top, and Move to Bottom.
   - All drawings support transparency configurations.
+  - All drawings support eraser or not erasable configuration.
 + Drawing Board Configuration
   - The drawing board supports background configuration, including colour, background image, and transparency.
   - The drawing board supports customized width and height configurations.
