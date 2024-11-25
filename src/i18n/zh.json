@@ -174,5 +174,9 @@
     "rotate": "旋转",
     "scale": "缩放",
     "size": "尺寸"
+  },
+  "eraserConfig": {
+    "eraser": "橡皮擦",
+    "erasable": "可擦除"
   }
 }

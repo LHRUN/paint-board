@@ -4,6 +4,7 @@ import { ELEMENT_CUSTOM_TYPE, SHAPE_ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 import LayerConfig from './layerConfig'
 import OpacityConfig from './opacityConfig'
+import EraserConfig from './eraserConfig'
 import ImageFilterConfig from './imageFilterConfig'
 import FontStyleConfig from './fontStyleConfig'
 import SelectShapeConfig from './selectShapeConfig'
@@ -23,6 +24,8 @@ const SelectConfig = () => {
   return (
     <div className="form-control">
       <OpacityConfig refreshCount={refreshCount} />
+
+      <EraserConfig refreshCount={refreshCount} />
 
       {paintBoard.canvas?.getActiveObject() && <LayerConfig />}
 

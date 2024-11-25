@@ -1,4 +1,12 @@
+# 1.5.4
+
+### Feat
+
+- add eraser config
+
 # 1.5.3
+
+### Feat
 
 - upload image
   -  add image segmentation 
