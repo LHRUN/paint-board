@@ -1,33 +1,29 @@
 <div align="center">
-  <img width="180" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
+  <img width="240" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
 </div>
 
 <h4 align="center">
-
   A fun art drawing board that supports multi-end operation
-
 </h4>
 
-
 <div align="center">
-  <a href="https://github.com/LHRUN/paint-board/stargazers">
-    <img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board">
-    <img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board">
-    <img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" />
-  </a>
-  <a href="https://github.com/LHRUN/paint-board/releases">
-    <img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" />
-  </a>
+  <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
+  <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
-**English** | [简体中文](./README.zh.md)
+<br>
+
+<p align="center">
+  <strong>English</strong> / 
+  <a href="./readmes/README.zh_cn.md">中文(简体)</a> / 
+  <a href="./readmes/README.zh_tw.md">中文(繁体)</a> / 
+  <a href="./readmes/README.ja.md">日本語</a> / 
+  <a href="./readmes/README.ko.md">한국어</a>
+</p>
+
 
 ## Preview
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
@@ -71,8 +67,8 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + Multifile Configuration
   - Support multiple canvas switching, each canvas can be customized title, add, delete, and provide upload and download.
 + i18n
-  - Currently support English, Chinese language display.
-+ PWA support, offline access
+  - Support 中文(简体), 中文(繁体), English, 日本語, 한국어.
++ PWA support, offline access.
 
 ## Future Plans
 + Multi-platform authentication login and data synchronization

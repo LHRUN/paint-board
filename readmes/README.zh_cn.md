@@ -1,29 +1,28 @@
 <div align="center">
-  <img width="180" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
+  <img width="240" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/logo.png" alt="logo"/>
 </div>
 <h4 align="center">
   一款支持多端操作的趣味艺术画板
 </h4>
 
 <div align="center">
-  <a href="https://github.com/LHRUN/paint-board/stargazers">
-    <img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board">
-    <img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/>
-  </a>
-  <a href="https://github.com/LHRUN/paint-board">
-    <img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" />
-  </a>
-  <a href="https://github.com/LHRUN/paint-board/releases">
-    <img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" />
-  </a>
+  <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
+  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
+  <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
-**简体中文** | [English](./README.md)
+<br>
+
+<p align="center">
+  <strong>中文(简体)</strong> / 
+  <a href="../README.md">English</a> / 
+  <a href="./README.zh_tw.md">中文(繁体)</a> / 
+  <a href="./README.ja.md">日本語</a> / 
+  <a href="./README.ko.md">한국어</a>
+</p>
+
 
 ## 预览
 Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
@@ -67,7 +66,7 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 + 多文件配置
   - 支持多个画布切换，每个画布可自定义标题、增加、删除，并提供上传和下载功能。
 + 国际化
-  - 目前支持中文，英文两种语言展示。
+  - 支持中文(简体), 中文(繁体), English, 日本語, 한국어。
 + 支持 PWA, 可离线访问
 
 ## 未来计划
