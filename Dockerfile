@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . ./
 
 RUN echo "https://registry.npmmirror.com" > .npmrc && \
-    npm install -g pnpm && \
+    npm install -g pnpm@8.7.6 && \
     pnpm install --frozen-lockfile && \
     pnpm build
 
