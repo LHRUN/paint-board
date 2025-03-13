@@ -1,0 +1,182 @@
+{
+  "confirm": "確認",
+  "cancel": "取消",
+  "download": "下載",
+  "reset": "重置",
+  "tool": {
+    "draw": "繪畫",
+    "eraser": "橡皮擦",
+    "select": "選擇",
+    "board": "畫板"
+  },
+  "title": {
+    "drawType": "繪畫類型",
+    "drawStyle": "繪畫風格",
+    "drawWidth": "畫筆寬度",
+    "drawColor": "畫筆顏色",
+    "shadow": "陰影",
+    "AI": "AI",
+    "shapeType": "形狀類型",
+    "shapeCount": "形狀數量",
+    "materialType": "素材類型",
+    "multiColorType": "多色類型",
+    "drawText": "文字內容",
+    "fontFamily": "字體",
+    "shapeLinePointCount": "線段端點",
+    "borderType": "邊框類型",
+    "borderStyle": "邊框樣式",
+    "fillStyle": "填充樣式",
+    "eraserWidth": "橡皮擦寬度",
+    "opacity": "透明度",
+    "layer": "圖層",
+    "imageFilters": "圖像濾鏡",
+    "fontStyle": "字體樣式",
+    "canvasBackground": "畫板背景",
+    "canvasSize": "畫板尺寸",
+    "drawCache": "繪製緩存",
+    "guideLine": "輔助線"
+  },
+  "canvasSize": {
+    "width": "寬度",
+    "height": "高度"
+  },
+  "drawType": {
+    "freeStyle": "自由繪畫",
+    "shape": "形狀繪畫"
+  },
+  "style": {
+    "basic": "基礎",
+    "rainbow": "彩虹 ",
+    "shape": "多形狀",
+    "material": "素材",
+    "pixels": "像素",
+    "multiColor": "多色",
+    "text": "文字",
+    "multiLine": "多線連接",
+    "reticulate": "網狀",
+    "multiPoint": "多點連接",
+    "wiggle": "波浪曲線",
+    "thorn": "荊棘"
+  },
+  "operate": {
+    "undo": "撤銷",
+    "redo": "重做",
+    "copy": "複製",
+    "delete": "刪除",
+    "text": "添加文字",
+    "image": "上傳圖片",
+    "clean": "清除畫板",
+    "save": "保存爲圖片",
+    "fileList": "文件列表"
+  },
+  "info": {
+    "welecome": "歡迎Star",
+    "FreeStyle": {
+      "line1": "提供了 12 種不同風格的畫筆，包括基本畫筆，彩虹畫筆，多形狀畫筆，多素材畫筆，像素畫筆，多色畫筆，文字畫筆，多線連接畫筆，網狀畫筆，多點連接畫筆，波浪曲線畫筆，荊棘畫筆。滿足多樣化的繪畫",
+      "line2": "所有畫筆均支持顏色和畫筆寬度的配置",
+      "line3": "多形狀可以靈活配置形狀類型和數量",
+      "line4": "素材和多色可以調整畫筆的素材類型",
+      "line5": "文字繪製支持循環文案配置和字體修改"
+    },
+    "ShapeDraw": {
+      "line1": "提供了多種常見形狀的繪製, 並支持多端點線段以及箭頭. 並且這些形狀均支持邊框和填充的樣式配置"
+    },
+    "EraserMode": {
+      "line1": "橡皮擦模式可以線性擦除所有內容",
+      "line2": "支持線性寬度配置"
+    },
+    "SelectMode": {
+      "line1": "在選擇模式下，可以通過點擊繪畫內容進行框選",
+      "line2": "點擊手柄支持拖拽、縮放和旋轉操作，提供靈活的編輯方式",
+      "line3": "選擇圖片支持多種濾鏡配置",
+      "line4": "選擇文字時，支持字體設置",
+      "line5": "所有繪製內容均支持圖層設置，包括向上移動層級、向下移動層級、移動至頂層和移動至底層",
+      "line6": "所有繪製內容支持透明度配置"
+    },
+    "BoardMode": {
+      "line1": "畫板支持配置背景配置, 包括顏色, 背景圖, 透明度",
+      "line2": "畫板支持自定義寬高配置",
+      "line3": "支持繪製緩存開啓. 在存在大量繪製內容的情況下，啓用緩存將提高繪製性能，而禁用緩存則會提升畫布清晰度",
+      "line4": "支持輔助線的開啓與關閉"
+    },
+    "BorderConfig": {
+      "line1": "左下角按鈕實時顯示當前縮放比例，點擊即可重置縮放比例",
+      "line2": "中間按鈕列表按從左到右的順序分別爲：撤銷、反撤銷、複製當前選擇內容、刪除當前選擇內容、繪製文字、上傳圖片、清除繪製內容、保存爲圖片、打開文件列表",
+      "line3": "電腦端：按住 Space 鍵並點擊鼠標左鍵可移動畫布，滾動鼠標滾輪實現畫布縮放，按住 Backspace 鍵可刪除已選內容，同時按住 Ctrl 鍵 + V 鍵可粘貼剪貼板圖片",
+      "line4": "移動端：支持雙指按壓後拖拽和縮放畫布"
+    },
+    "FileConfig": {
+      "line1": "多文件配置：支持多個畫布切換，每個畫布可自定義標題、增加、刪除，並提供上傳和下載功能"
+    }
+  },
+  "cleanModal":{
+    "title": "確認清除內容？"
+  },
+  "deleteFileModal": {
+    "title": "確認刪除當前文件嗎？"
+  },
+  "toast": {
+    "uploadFileFail": "上傳失敗，請重試"
+  },
+  "filters": {
+    "Sepia": "復古",
+    "Invert": "底片",
+    "BlackWhite": "黑白",
+    "Grayscale": "灰度",
+    "Blur": "模糊",
+    "Vintage": "古典",
+    "BlendColor": "混色",
+    "Brownie": "棕仙",
+    "Kodachrome": "膠片",
+    "Pixelate": "像素",
+    "Polaroid": "寶麗來",
+    "Technicolor": "彩色",
+    "Brightness": "增亮",
+    "Noise": "噪點",
+    "Convolute": "浮雕"
+  },
+  "fontStyle": {
+    "bold": "粗體",
+    "italic": "斜體",
+    "underLine": "下劃線",
+    "lineThrough": "刪除線"
+  },
+  "boardConfig": {
+    "cacheTip": "在存在大量繪製內容的情況下，啓用緩存將提高繪製性能，而禁用緩存則會提升畫布清晰度"
+  },
+  "request": {
+    "tip": "請自由繪畫...",
+    "loading": "正在加載數據，請稍候...",
+    "error": "出錯了。請稍後再試。"
+  },
+  "uploadImage": {
+    "removeBackground": "去除背景",
+    "removeBackgroundGpuTip": "本瀏覽器不支持WebGPU, 要使用去除背景功能請使用最新版谷歌瀏覽器",
+    "removeBackgroundLoading": "去除背景功能加載中",
+    "removeBackgroundFailed": "去除背景功能加載失敗",
+    "removeBackgroundSuccess": "去除背景功能加載成功",
+    "removeBackgroundProcessing": "去除背景處理中",
+    "removeBackgroundProcessingSuccess": "去除背景處理成功",
+    "restore": "還原",
+    "upload": "上傳",
+    "imageSegmentation": "圖像分割",
+    "clearPoints": "清除標記點",
+    "imageSegmentationLoading": "圖像分割功能加載中",
+    "imageSegmentationFailed": "圖像分割功能加載失敗",
+    "imageSegmentationSuccess": "圖像分割功能加載成功",
+    "imageSegmentationProcessing": "處理圖像中",
+    "imageSegmentationProcessed": "圖像處理成功, 可點擊圖像進行標記, 綠色蒙層區域就是分割區域",
+    "imageSegmentationGpuTip": "本瀏覽器不支持WebGPU, 要使用圖像分割功能請使用最新版谷歌瀏覽器",
+    "positivePoint": "正標記",
+    "negativePoint": "負標記"
+  },
+  "downloadImage": {
+    "rotate": "旋轉",
+    "scale": "縮放",
+    "size": "尺寸"
+  },
+  "eraserConfig": {
+    "eraser": "橡皮擦",
+    "erasable": "可擦除"
+  }
+}
