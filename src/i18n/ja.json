@@ -1,0 +1,182 @@
+{
+  "confirm": "確認",
+  "cancel": "キャンセル",
+  "download": "ダウンロード",
+  "reset": "リセット",
+  "tool": {
+    "draw": "描画",
+    "eraser": "消しゴム",
+    "select": "選択",
+    "board": "ボード"
+  },
+  "title": {
+    "drawType": "描画タイプ",
+    "drawStyle": "描画スタイル",
+    "drawWidth": "描画幅",
+    "drawColor": "描画色",
+    "shadow": "影",
+    "AI": "AI",
+    "shapeType": "図形タイプ",
+    "shapeCount": "図形数",
+    "materialType": "素材タイプ",
+    "multiColorType": "マルチカラータイプ",
+    "drawText": "テキスト描画",
+    "fontFamily": "フォントファミリー",
+    "shapeLinePointCount": "ポイント数",
+    "borderType": "境界線タイプ",
+    "borderStyle": "境界線スタイル",
+    "fillStyle": "塗りつぶしスタイル",
+    "eraserWidth": "消しゴム幅",
+    "opacity": "不透明度",
+    "layer": "レイヤー",
+    "imageFilters": "画像フィルター",
+    "fontStyle": "フォントスタイル",
+    "canvasBackground": "キャンバス背景",
+    "canvasSize": "キャンバスサイズ",
+    "drawCache": "描画キャッシュ",
+    "guideLine": "ガイドライン"
+  },
+  "canvasSize": {
+    "width": "幅",
+    "height": "高さ"
+  },
+  "drawType": {
+    "freeStyle": "フリースタイル",
+    "shape": "図形"
+  },
+  "style": {
+    "basic": "ベーシック",
+    "rainbow": "レインボー",
+    "shape": "図形",
+    "material": "素材",
+    "pixels": "ピクセル",
+    "multiColor": "マルチカラー",
+    "text": "テキスト",
+    "multiLine": "マルチライン",
+    "reticulate": "網状",
+    "multiPoint": "マルチポイント",
+    "wiggle": "ウィグル",
+    "thorn": "トゲ"
+  },
+  "operate": {
+    "undo": "元に戻す",
+    "redo": "やり直す",
+    "copy": "コピー",
+    "delete": "削除",
+    "text": "テキスト追加",
+    "image": "画像アップロード",
+    "clean": "クリア",
+    "save": "画像として保存",
+    "fileList": "ファイルリスト"
+  },
+  "info": {
+    "welecome": "スターへようこそ",
+    "FreeStyle": {
+      "line1": "ベーシックブラシ、レインボーブラシ、マルチ形状ブラシ、マルチ素材ブラシ、ピクセルブラシ、マルチカラーブラシ、テキストブラシ、マルチライン接続ブラシ、網状ブラシ、マルチポイント接続ブラシ、ウィグルブラシ、トゲブラシなど、12種類の異なるスタイルのブラシを提供しています。多様な描画を満たします",
+      "line2": "すべてのブラシは色とブラシ幅の設定をサポートしています",
+      "line3": "マルチシェイプでは、形状の種類と数量を柔軟に設定できます",
+      "line4": "マテリアルとマルチカラーでは、ブラシの素材タイプを調整できます",
+      "line5": "テキスト描画は循環テキストとフォント設定をサポートしています"
+    },
+    "ShapeDraw": {
+      "line1": "描画用の様々な一般的な形状が提供され、マルチポイントセグメントと矢印をサポートしています。形状は境界線と塗りつぶしスタイルをサポートしています。"
+    },
+    "EraserMode": {
+      "line1": "消しゴムモードはすべてのコンテンツを直線的に消去します",
+      "line2": "線形幅設定をサポートしています"
+    },
+    "SelectMode": {
+      "line1": "選択モードでは、描画のコンテンツをクリックして選択できます",
+      "line2": "ハンドルをクリックすることでドラッグアンドドロップ、ズームおよび回転操作をサポートし、柔軟な編集オプションを提供します",
+      "line3": "画像の選択は複数のフィルター設定をサポートしています",
+      "line4": "テキスト選択時のフォント設定をサポートしています",
+      "line5": "すべての描画に対して、レイヤーを上に移動、レイヤーを下に移動、最上部に移動、最下部に移動などのレイヤー設定をサポートしています",
+      "line6": "すべての描画は透明度設定をサポートしています"
+    },
+    "BoardMode": {
+      "line1": "描画ボードは色、背景画像、透明度を含む背景設定をサポートしています",
+      "line2": "描画ボードはカスタマイズされた幅と高さの設定をサポートしています",
+      "line3": "描画キャッシュの有効化をサポートしています。キャッシュを有効にすると、大量の描画コンテンツがある場合の描画パフォーマンスが向上しますが、キャッシュを無効にするとキャンバスの鮮明さが向上します。",
+      "line4": "ガイドラインのオン/オフをサポートしています"
+    },
+    "BorderConfig": {
+      "line1": "左下のボタンはリアルタイムの現在のズーム比率を表示します。クリックするとズーム比率がリセットされます",
+      "line2": "中央のボタンリストは、左から右の順に、元に戻す、やり直す、現在の選択をコピー、現在の選択を削除、テキスト描画、画像アップロード、描画クリア、画像として保存、ファイルリストを開くです",
+      "line3": "PC: スペースキーを押しながら左マウスボタンをクリックしてキャンバスを移動し、マウスホイールをスクロールしてキャンバスズームを実現し、バックスペースキーを押し続けて選択したコンテンツを削除し、Ctrl + Vキーを同時に押し続けてクリップボード画像を貼り付けます",
+      "line4": "モバイル: 二本指で押した後のキャンバスのドラッグとズームをサポートしています"
+    },
+    "FileConfig": {
+      "line1": "マルチファイル設定: 複数のキャンバス切り替えをサポートし、各キャンバスにカスタマイズされたタイトル、追加、削除が可能で、アップロードとダウンロードを提供します"
+    }
+  },
+  "cleanModal":{
+    "title": "コンテンツのクリアを確認しますか？"
+  },
+  "deleteFileModal": {
+    "title": "現在のファイルの削除を確認しますか？"
+  },
+  "toast": {
+    "uploadFileFail": "アップロードに失敗しました。もう一度お試しください"
+  },
+  "filters": {
+    "Sepia": "セピア",
+    "Invert": "反転",
+    "BlackWhite": "白黒",
+    "Grayscale": "グレースケール",
+    "Blur": "ぼかし",
+    "Vintage": "ビンテージ",
+    "BlendColor": "ブレンドカラー",
+    "Brownie": "ブラウニー",
+    "Kodachrome": "コダクローム",
+    "Pixelate": "ピクセル化",
+    "Polaroid": "ポラロイド",
+    "Technicolor": "テクニカラー",
+    "Brightness": "明るさ",
+    "Noise": "ノイズ",
+    "Convolute": "エンボス"
+  },
+  "fontStyle": {
+    "bold": "太字",
+    "italic": "イタリック",
+    "underLine": "下線",
+    "lineThrough": "打ち消し線"
+  },
+  "boardConfig": {
+    "cacheTip": "大量の描画コンテンツがある場合、キャッシュを有効にすると描画パフォーマンスが向上し、キャッシュを無効にするとキャンバスの鮮明さが向上します"
+  },
+  "request": {
+    "tip": "自由に描いてください...",
+    "loading": "データを読み込んでいます。お待ちください...",
+    "error": "問題が発生しました。後でもう一度お試しください。"
+  },
+  "uploadImage": {
+    "removeBackground": "背景を削除",
+    "removeBackgroundGpuTip": "このブラウザではWebGPUがサポートされていません。背景削除機能を使用するには、最新バージョンのGoogle Chromeを使用してください",
+    "removeBackgroundLoading": "背景削除機能を読み込み中",
+    "removeBackgroundFailed": "背景削除機能の読み込みに失敗しました",
+    "removeBackgroundSuccess": "背景削除機能が正常に読み込まれました",
+    "removeBackgroundProcessing": "背景削除処理中",
+    "removeBackgroundProcessingSuccess": "背景削除処理成功",
+    "restore": "復元",
+    "upload": "アップロード",
+    "imageSegmentation": "画像セグメンテーション",
+    "clearPoints": "ポイントをクリア",
+    "imageSegmentationLoading": "画像セグメンテーション機能を読み込み中",
+    "imageSegmentationFailed": "画像セグメンテーション機能の読み込みに失敗しました",
+    "imageSegmentationSuccess": "画像セグメンテーション機能が正常に読み込まれました",
+    "imageSegmentationProcessing": "画像処理中...",
+    "imageSegmentationProcessed": "画像が正常に処理されました。画像をクリックしてマークできます。緑色のマスク領域はセグメンテーション領域です。",
+    "imageSegmentationGpuTip": "このブラウザではWebGPUがサポートされていません。画像セグメンテーション機能を使用するには、最新バージョンのGoogle Chromeを使用してください。",
+    "positivePoint": "ポジティブ",
+    "negativePoint": "ネガティブ"
+  },
+  "downloadImage": {
+    "rotate": "回転",
+    "scale": "拡大縮小",
+    "size": "サイズ"
+  },
+  "eraserConfig": {
+    "eraser": "消しゴム",
+    "erasable": "消去可能"
+  }
+}

@@ -3,16 +3,39 @@ import { useTranslation } from 'react-i18next'
 import useBoardStore from '@/store/board'
 
 import InfoIcon from '@/components/icons/info.svg?react'
+import TranslateIcon from '@/components/icons/translate.svg?react'
 import ZoomInfo from '../zoomInfo'
 import Mask from '@/components/mask'
 import GuideInfoSwiper from './guideInfoSwiper'
+
+const languageList = [
+  {
+    value: 'en',
+    name: 'English'
+  },
+  {
+    value: 'zh',
+    name: '中文(简体)'
+  },
+  {
+    value: 'zh-tw',
+    name: '中文(繁體)'
+  },
+  {
+    value: 'ja',
+    name: '日本語'
+  },
+  {
+    value: 'ko',
+    name: '한국어'
+  }
+]
 
 const GuideInfo: React.FC = () => {
   const { t, i18n } = useTranslation()
   const { language, updateLanguage } = useBoardStore()
   const [showModal, setShowModal] = useState<boolean>(false)
-  const handleChangLang = () => {
-    const newLanguage = language === 'en' ? 'zh' : 'en'
+  const handleChangLang = (newLanguage: string) => {
     i18n.changeLanguage(newLanguage)
     updateLanguage(newLanguage)
   }
@@ -47,30 +70,25 @@ const GuideInfo: React.FC = () => {
               {t('info.welecome')}⭐️
             </div>
 
-            <div
-              className={`ml-5 h-8 w-8 rounded-full cursor-pointer relative shrink-0 hover:opacity-80 ${
-                language === 'en' ? 'bg-primary-content' : 'bg-primary'
-              }`}
-              onClick={handleChangLang}
-            >
-              <span
-                className={`w-6 h-6 transition-all duration-500 absolute top-1 left-1 text-neutral-content text-center origin-center ${
-                  language === 'en'
-                    ? 'opacity-100 rotate-0'
-                    : 'opacity-0 -rotate-45'
-                }`}
+            <div className="dropdown dropdown-bottom dropdown-end">
+              <label tabIndex={0}>
+                <TranslateIcon className="w-8 h-8 p-1 bg-[#66CC8960] rounded-md hover:bg-[#66CC8980] cursor-pointer" />
+              </label>
+              <ul
+                tabIndex={0}
+                className="dropdown-content menu menu-compact shadow bg-base-100 rounded-box w-40"
               >
-                中
-              </span>
-              <span
-                className={`w-6 h-6 transition-all duration-500 absolute top-1 left-1 text-primary-content text-center text-base origin-center ${
-                  language === 'zh'
-                    ? 'opacity-100 rotate-0'
-                    : 'opacity-0 rotate-45'
-                }`}
-              >
-                En
-              </span>
+                {languageList.map((item) => (
+                  <li
+                    key={item.value}
+                    onClick={() => handleChangLang(item.value)}
+                  >
+                    <a className={`${item.value === language ? 'active' : ''}`}>
+                      {item.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
           <GuideInfoSwiper />
