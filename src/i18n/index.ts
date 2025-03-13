@@ -4,7 +4,7 @@ import en from './en.json'
 import zh from './zh.json'
 import zh_tw from './zh-tw.json'
 import ja from './ja.json'
-import ko from './ko-KR.json'
+import ko from './ko-kr.json'
 import useBoardStore from '@/store/board'
 
 const lang = useBoardStore.getState().language

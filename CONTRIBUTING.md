@@ -23,7 +23,7 @@ In the case of new feature additions, please communicate with us first in Discus
 
 ## Development Environment
 
-+ Node.js 16 +
++ Node.js 18 +
 + Pnpm 8 +
 
 ## Code Style
