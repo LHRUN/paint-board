@@ -19,8 +19,8 @@
   <strong>中文(繁体)</strong> / 
   <a href="../README.md">English</a> / 
   <a href="./README.zh_cn.md">中文(简体)</a> / 
-  <a href="./ja.md">日本語</a> / 
-  <a href="./ko.md">한국어</a>
+  <a href="./README.ja.md">日本語</a> / 
+  <a href="./README.ko.md">한국어</a>
 </p>
 
 
