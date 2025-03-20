@@ -1,3 +1,13 @@
+# 1.5.6
+
+### Feat
+
+- draw
+  - basic / material / multi color: add line type connfig (solid / dashed / dotted)
+
+### refactor
+  - restructure core code directory
+
 # 1.5.5
 
 ### Feat
