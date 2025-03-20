@@ -1,4 +1,4 @@
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { useTranslation } from 'react-i18next'
 
 const CleanModal = () => {

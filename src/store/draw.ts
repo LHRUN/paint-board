@@ -1,21 +1,20 @@
 import { DrawShape, DrawStyle } from '@/constants/draw'
-import {
-  getDrawWidth,
-  getEraserWidth,
-  getShadowWidth
-} from '@/utils/common/draw'
-import { MATERIAL_TYPE, material } from '@/utils/element/draw/material'
+import { DrawLineType } from '@/constants/drawLineType'
+import { getDrawWidth, getEraserWidth, getShadowWidth } from '@/core/utils/draw'
+import { getStrokeDashArray } from '@/core/element/draw/utils'
+import { MATERIAL_TYPE, material } from '@/core/element/draw/material'
 import {
   MultiColorType,
   renderMultiColor
-} from '@/utils/element/draw/multiColor'
-import { paintBoard } from '@/utils/paintBoard'
+} from '@/core/element/draw/multiColor'
+import { paintBoard } from '@/core/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
 interface DrawState {
   drawWidth: number // draw brush width
   drawColors: string[] // draw brush colors
+  lineType: string // line type 'solid' | 'dashed' | 'dotted'
   shadowWidth: number // brush shadow blur
   shadowColor: string // brush shadow color
   drawTextValue: string // text draws the content
@@ -32,6 +31,7 @@ interface DrawState {
 interface DrawAction {
   updateDrawWidth: (drawWidth: number) => void
   updateDrawColors: (drawColors: string[]) => void
+  updateLineType: (lineType: string) => void
   updateShadowWidth: (shadowWidth: number) => void
   updateShadowColor: (shadowColor: string) => void
   updateDrawShape: (drawShape: string) => void
@@ -50,6 +50,7 @@ const useDrawStore = create<DrawState & DrawAction>()(
     (set, get) => ({
       drawWidth: 10,
       drawColors: ['#000000'],
+      lineType: DrawLineType.Solid,
       shadowWidth: 0,
       shadowColor: '#000000',
       drawTextValue: 'draw',
@@ -62,12 +63,25 @@ const useDrawStore = create<DrawState & DrawAction>()(
       textFontFamily: 'Georgia',
       fontStyles: [],
       updateDrawWidth(drawWidth) {
-        const oldDrawWidth = get().drawWidth
+        const { drawWidth: oldDrawWidth, drawStyle } = get()
         if (oldDrawWidth !== drawWidth && paintBoard.canvas) {
           paintBoard.canvas.freeDrawingBrush.width = getDrawWidth(drawWidth)
+
           set({
             drawWidth
           })
+
+          if (
+            [
+              DrawStyle.Basic,
+              DrawStyle.Material,
+              DrawStyle.MultiColor
+            ].includes(drawStyle) &&
+            paintBoard.canvas?.freeDrawingBrush
+          ) {
+            paintBoard.canvas.freeDrawingBrush.strokeDashArray =
+              getStrokeDashArray()
+          }
         }
       },
       updateDrawColors: (drawColors) => {
@@ -93,6 +107,26 @@ const useDrawStore = create<DrawState & DrawAction>()(
           }
           return { drawColors }
         })
+      },
+      updateLineType(lineType) {
+        const { lineType: oldLineType, drawStyle } = get()
+        if (oldLineType !== lineType) {
+          set({
+            lineType
+          })
+
+          if (
+            [
+              DrawStyle.Basic,
+              DrawStyle.Material,
+              DrawStyle.MultiColor
+            ].includes(drawStyle) &&
+            paintBoard.canvas?.freeDrawingBrush
+          ) {
+            paintBoard.canvas.freeDrawingBrush.strokeDashArray =
+              getStrokeDashArray()
+          }
+        }
       },
       updateShadowWidth: (shadowWidth) => {
         set(() => {

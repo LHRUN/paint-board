@@ -14,6 +14,7 @@
     "drawStyle": "绘画风格",
     "drawWidth": "画笔宽度",
     "drawColor": "画笔颜色",
+    "lineType": "画笔类型",
     "shadow": "阴影",
     "AI": "AI",
     "shapeType": "形状类型",

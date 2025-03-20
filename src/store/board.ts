@@ -6,15 +6,15 @@ import {
   getAlphaFromRgba,
   getColorFormat,
   hexToRgba
-} from '@/utils/common/color'
-import { paintBoard } from '@/utils/paintBoard'
+} from '@/utils/color'
+import { paintBoard } from '@/core/paintBoard'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { alignGuideLine } from '@/utils/common/fabricMixin/alignGuideLine'
+import { alignGuideLine } from '@/core/fabricMixin/alignGuideLine'
 import {
   updateCanvasBackgroundImage,
   handleBackgroundImageWhenCanvasSizeChange
-} from '@/utils/common/background'
+} from '@/core/utils/background'
 
 interface BoardState {
   mode: string // operating mode

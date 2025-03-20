@@ -3,7 +3,7 @@ import useFileStore from '@/store/files'
 import { useTranslation } from 'react-i18next'
 
 import { ActionMode } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 
 const DeleteFileModal = () => {
   const { t } = useTranslation()

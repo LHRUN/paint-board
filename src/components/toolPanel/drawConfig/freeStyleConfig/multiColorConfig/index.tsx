@@ -1,5 +1,5 @@
 import useDrawStore from '@/store/draw'
-import { MultiColorType } from '@/utils/element/draw/multiColor'
+import { MultiColorType } from '@/core/element/draw/multiColor'
 import { useTranslation } from 'react-i18next'
 
 const MultiColorSwitch = [

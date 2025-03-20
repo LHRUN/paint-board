@@ -1,8 +1,9 @@
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { FC, useCallback, useMemo } from 'react'
 import useShapeStore from '@/store/shape'
 import { debounce, omit } from 'lodash'
-import { ShapeBorderType, ShapeFillType } from '@/constants/shape'
+import { ShapeFillType } from '@/constants/shape'
+import { DrawLineType } from '@/constants/drawLineType'
 import { SHAPE_ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 import BorderTypeConfig from '@/components/toolPanel/drawConfig/shapeConfig/borderTypeConfig'
@@ -20,12 +21,12 @@ const SelectShapeConfig: FC<IProps> = ({ refreshCount }) => {
     if (Array.isArray(strokeDashArray)) {
       const [value1, value2] = strokeDashArray
       if (value1 > value2) {
-        return ShapeBorderType.Dashed
+        return DrawLineType.Dashed
       } else {
-        return ShapeBorderType.Dotted
+        return DrawLineType.Dotted
       }
     } else if (!strokeDashArray) {
-      return ShapeBorderType.Solid
+      return DrawLineType.Solid
     } else {
       return ''
     }
@@ -45,10 +46,10 @@ const SelectShapeConfig: FC<IProps> = ({ refreshCount }) => {
     }
     let strokeDashArray = undefined
     switch (type) {
-      case ShapeBorderType.Dashed:
+      case DrawLineType.Dashed:
         strokeDashArray = [strokeWidth * 3, strokeWidth * 2]
         break
-      case ShapeBorderType.Dotted:
+      case DrawLineType.Dotted:
         strokeDashArray = [strokeWidth, strokeWidth * 3]
         break
       default:
@@ -88,10 +89,10 @@ const SelectShapeConfig: FC<IProps> = ({ refreshCount }) => {
       const type = getTypeByDashArray(oldStrokeDashArray)
       let newStrokeDashArray = undefined
       switch (type) {
-        case ShapeBorderType.Dashed:
+        case DrawLineType.Dashed:
           newStrokeDashArray = [borderWidth * 3, borderWidth * 2]
           break
-        case ShapeBorderType.Dotted:
+        case DrawLineType.Dotted:
           newStrokeDashArray = [borderWidth, borderWidth * 3]
           break
         default:

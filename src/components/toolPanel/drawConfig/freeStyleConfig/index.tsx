@@ -10,6 +10,7 @@ import MultiColorConfig from './multiColorConfig'
 import DrawWidthConfig from './drawWidthConfig'
 import DrawColorConfig from './drawColorConfig'
 import DrawStyleConfig from './drawStyleConfig'
+import LineTypeConfig from './lineTypeConfig'
 
 const FreeDrawConfig = () => {
   const { drawStyle } = useDrawStore()
@@ -28,6 +29,9 @@ const FreeDrawConfig = () => {
       ) && <DrawWidthConfig />}
       {/* color config */}
       {drawStyle !== DrawStyle.Rainbow && <DrawColorConfig />}
+      {[DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
+        drawStyle
+      ) && <LineTypeConfig />}
       {[DrawStyle.Basic, DrawStyle.Material, DrawStyle.MultiColor].includes(
         drawStyle
       ) && <ShadowConfig />}

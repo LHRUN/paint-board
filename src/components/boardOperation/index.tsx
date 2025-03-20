@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react'
 import useBoardStore from '@/store/board'
 import { useTranslation } from 'react-i18next'
 import { ActionMode } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 
 import UndoIcon from '@/components/icons/boardOperation/undo.svg?react'
 import RedoIcon from '@/components/icons/boardOperation/redo.svg?react'
