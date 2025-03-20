@@ -1,6 +1,6 @@
 import { FC, useMemo } from 'react'
 import { ELEMENT_CUSTOM_TYPE } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 
 import FontFamilyConfg from '@/components/toolPanel/drawConfig/freeStyleConfig/fontFamilyConfig'
 

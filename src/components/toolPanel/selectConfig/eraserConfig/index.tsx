@@ -1,5 +1,5 @@
 import { useMemo, FC } from 'react'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { useTranslation } from 'react-i18next'
 
 interface IProps {

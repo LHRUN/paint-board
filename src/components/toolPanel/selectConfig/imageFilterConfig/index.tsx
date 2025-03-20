@@ -1,6 +1,6 @@
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { filtersCheckbox } from './constant'
-import { renderImageFilters } from '@/utils/element/image'
+import { renderImageFilters } from '@/core/element/image'
 import { useTranslation } from 'react-i18next'
 
 const ImageFilterConfig = () => {

@@ -1,4 +1,4 @@
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { debounce } from 'lodash'
 import { useCallback, useMemo, FC } from 'react'
 import { useTranslation } from 'react-i18next'

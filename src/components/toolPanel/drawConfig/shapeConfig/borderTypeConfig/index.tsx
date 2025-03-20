@@ -1,6 +1,6 @@
 import useShapeStore from '@/store/shape'
 import { useTranslation } from 'react-i18next'
-import { borderTypeSwitch } from './constant'
+import { drawLineTypeSwitch } from '@/constants/drawLineType'
 import { FC } from 'react'
 
 interface IProps {
@@ -17,9 +17,9 @@ const BorderTypeConfig: FC<IProps> = (props) => {
       <div className="font-bold text-sm font-fredokaOne">
         {t('title.borderType')}
       </div>
-      {Object.keys(borderTypeSwitch).map((lineKey) => (
+      {Object.keys(drawLineTypeSwitch).map((lineKey) => (
         <div key={lineKey} className="btn-group mt-1 flex">
-          {borderTypeSwitch[lineKey].map(({ type, icon }) => (
+          {drawLineTypeSwitch[lineKey].map(({ type, icon }) => (
             <button
               key={type}
               className={`btn btn-xs flex-grow ${

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { ELEMENT_CUSTOM_TYPE, SHAPE_ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 import LayerConfig from './layerConfig'

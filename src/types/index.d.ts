@@ -1,4 +1,4 @@
-import { Object as FabricObject, IAllFilters } from 'fabric/fabric-impl'
+import * as fabric from 'fabric/fabric-impl'
 
 declare global {
   interface Navigator {
@@ -11,7 +11,7 @@ declare module 'fabric/fabric-impl' {
     id: string
     _customType: string
     __corner: number
-    toObject_original: FabricObject.toObject
+    toObject_original: fabric.Object.toObject
     erasable: boolean
   }
 

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { fontStyleCheckbox } from './constant'
 import { useMemo, FC } from 'react'
 import { FontStyle } from '@/constants/font'

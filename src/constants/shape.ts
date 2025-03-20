@@ -21,12 +21,6 @@ export const ShapeStyle = {
   Alert: 'alert'
 }
 
-export const ShapeBorderType = {
-  Solid: 'solid',
-  Dashed: 'dashed',
-  Dotted: 'dotted'
-}
-
 export const ShapeFillType = {
   Transparent: 'transparent',
   Full: 'full'

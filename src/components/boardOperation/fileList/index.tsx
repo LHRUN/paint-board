@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import useFileStore from '@/store/files'
 import useBoardStore from '@/store/board'
 import { ActionMode } from '@/constants'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 
 import AddFileIcon from '@/components/icons/fileList/addFile.svg?react'
 import RemoveFileIcon from '@/components/icons/fileList/removeFile.svg?react'

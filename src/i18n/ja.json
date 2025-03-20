@@ -14,6 +14,7 @@
     "drawStyle": "描画スタイル",
     "drawWidth": "描画幅",
     "drawColor": "描画色",
+    "lineType": "ラインタイプ",
     "shadow": "影",
     "AI": "AI",
     "shapeType": "図形タイプ",

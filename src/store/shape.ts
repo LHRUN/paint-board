@@ -1,4 +1,5 @@
-import { ShapeBorderType, ShapeFillType, ShapeStyle } from '@/constants/shape'
+import { ShapeFillType, ShapeStyle } from '@/constants/shape'
+import { DrawLineType } from '@/constants/drawLineType'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
@@ -26,7 +27,7 @@ const useShapeStore = create<ShapeState & ShapeAction>()(
   persist(
     (set, get) => ({
       shapeStyle: ShapeStyle.Rect,
-      borderType: ShapeBorderType.Solid,
+      borderType: DrawLineType.Solid,
       borderColor: '#000000',
       borderWidth: 3,
       fillColor: '#FFFFFF',

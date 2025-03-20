@@ -8,8 +8,8 @@ import {
   PreTrainedModel,
   Processor
 } from '@huggingface/transformers'
-import { ImageElement } from '@/utils/element/image'
-import { cropTransparent } from '@/utils/common/cropTransparent'
+import { ImageElement } from '@/core/element/image'
+import { cropTransparent } from '@/utils/cropTransparent'
 
 import Mask from '@/components/mask'
 import ImageSegmentation from './imageSegmentation'

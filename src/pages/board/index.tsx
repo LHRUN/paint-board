@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 
 import ToolPanel from '@/components/toolPanel'
 import GuideInfo from '@/components/guideInfo'

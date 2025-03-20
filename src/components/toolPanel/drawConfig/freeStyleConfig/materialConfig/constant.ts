@@ -1,5 +1,5 @@
-import { formatPublicUrl } from '@/utils/common'
-import { MATERIAL_TYPE } from '@/utils/element/draw/material'
+import { formatPublicUrl } from '@/utils'
+import { MATERIAL_TYPE } from '@/core/element/draw/material'
 
 export const MaterialSwitch = [
   {

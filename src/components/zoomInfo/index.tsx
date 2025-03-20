@@ -1,4 +1,4 @@
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { CSSProperties, useEffect, useState } from 'react'
 
 const ZoomInfo = () => {

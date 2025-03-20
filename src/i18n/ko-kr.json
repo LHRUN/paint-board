@@ -14,6 +14,7 @@
     "drawStyle": "그리기 스타일",
     "drawWidth": "그리기 너비",
     "drawColor": "그리기 색상",
+    "lineType": "회선 유형",
     "shadow": "그림자",
     "AI": "AI",
     "shapeType": "도형 타입",

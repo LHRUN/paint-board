@@ -3,7 +3,7 @@ import SendBackWardIcon from '@/components/icons/layer/sendbackward.svg?react'
 import BringToFrontIcon from '@/components/icons/layer/bringtofront.svg?react'
 import SendToBackIcon from '@/components/icons/layer/sendtoback.svg?react'
 
-import { paintBoard } from '@/utils/paintBoard'
+import { paintBoard } from '@/core/paintBoard'
 import { useTranslation } from 'react-i18next'
 
 const LayerConfig = () => {
