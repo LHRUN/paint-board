@@ -59,4 +59,4 @@ Please keep the code comments and code content in English for better understandi
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
 + WeChat:
-  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/wechat.JPG" alt="wechat"/>
+<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
