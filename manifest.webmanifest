@@ -1,0 +1,1 @@
+{"name":"PAINT-BOARD","short_name":"paint-board","start_url":"/paint-board/","display":"standalone","background_color":"#eef1ff","lang":"en","scope":"/paint-board/","theme_color":"#eef1ff","icons":[{"src":"/paint-board/pwa-192.png","sizes":"192x192","type":"image/png"},{"src":"/paint-board/pwa-512.png","sizes":"512x512","type":"image/png"}]}
