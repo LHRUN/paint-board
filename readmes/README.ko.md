@@ -117,16 +117,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 + Telegram: https://t.me/longhao_song
 + Twiter: https://twitter.com/Song_LongHao
 + WeChat:
-  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1449.jpeg" alt="wechat"/>
-
-### 작성자에게 커피를 사주세요.
-
-👋 제 프로젝트가 멋지다고 생각하시고 제 개발 작업을 응원하고 싶으시다면 알리페이나 위챗으로 커피 한 잔 사주세요~!
-
-<div>
-  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1446.jpeg" alt="wechat"/>
-  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1447.jpeg" alt="wechat"/>
-</div>
+<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
 
 ## Contributing
 

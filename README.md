@@ -117,16 +117,8 @@ If you have any suggestions or good ideas, welcome to contact me at any time!
 + Telegram: https://t.me/longhao_song
 + Twiter: https://twitter.com/Song_LongHao
 + WeChat:
-  - <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1449.jpeg" alt="wechat"/>
+<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
 
-### Buy the author a coffee.
-
-👋 If you think my project is cool and want to support my development work, feel free to buy me a cup of coffee with Alipay or WeChat ~
-
-<div>
-  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1446.jpeg" alt="wechat"/>
-  <img style="width: 300px" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/IMG_1447.jpeg" alt="wechat"/>
-</div>
 
 ## Contributing
 
