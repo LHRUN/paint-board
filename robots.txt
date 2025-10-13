@@ -1,0 +1,27 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lhrun.github.io/paint-board/sitemap.xml
+
+# Crawl-delay for respectful crawling
+Crawl-delay: 1
+
+# Allow all search engines to access the main application
+Allow: /paint-board/
+
+# Block access to development and build files
+Disallow: /dev-dist/
+Disallow: /node_modules/
+Disallow: /*.map$
+
+# Allow access to important assets
+Allow: /paint-board/assets/
+Allow: /paint-board/pwa-*.png
+Allow: /paint-board/canvas.svg
+Allow: /paint-board/pattern/
+
+# Block access to source maps and development files
+Disallow: *.js.map
+Disallow: *.css.map
+Disallow: /src/
