@@ -30,16 +30,16 @@ export class TransformCanvasHandler {
 
     switch (direction) {
       case KeyCode.ARROW_LEFT:
-        deltaX = panDistance
-        break
-      case KeyCode.ARROW_RIGHT:
         deltaX = -panDistance
         break
+      case KeyCode.ARROW_RIGHT:
+        deltaX = panDistance
+        break
       case KeyCode.ARROW_UP:
-        deltaY = panDistance
+        deltaY = -panDistance
         break
       case KeyCode.ARROW_DOWN:
-        deltaY = -panDistance
+        deltaY = panDistance
         break
     }
 
