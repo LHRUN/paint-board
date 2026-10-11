@@ -8,25 +8,38 @@ import { useMemo } from 'react'
 import useBoardStore from './board'
 import { paintBoard } from '@/core/paintBoard'
 import { ActionMode } from '@/constants'
+import { parseImportedBoardFile } from '@/core/utils/importBoardFile'
+import {
+  shouldPersistFiles,
+  markFileHydrationFailed,
+  waitForHydration
+} from './fileHydration'
+import {
+  BOARD_VERSION,
+  DEFAULT_BACKGROUND_SORT,
+  createDefaultFile
+} from './fileModel'
+
+export {
+  BOARD_VERSION,
+  DEFAULT_BACKGROUND_COLOR_LIST,
+  DEFAULT_BACKGROUND_SORT
+} from './fileModel'
 
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
     return (await get(name)) || null
   },
   setItem: async (name: string, value: string): Promise<void> => {
+    if (!shouldPersistFiles()) {
+      return
+    }
     await set(name, value)
   },
   removeItem: async (name: string): Promise<void> => {
     await del(name)
   }
 }
-
-export const DEFAULT_BACKGROUND_SORT = ['camera', 'image', 'color']
-export const DEFAULT_BACKGROUND_COLOR_LIST = [
-  'rgba(102, 204, 138, 0.4)',
-  'linear-gradient(60deg, rgba(172,233,194,1) 0%, RGBA(23, 185, 48, 0.8) 49%, rgba(102,204,138,1) 100%)',
-  'radial-gradient(circle, rgba(160,186,165,1) 0%, rgba(79,190,119,1) 35%, RGB(20, 78, 44) 100%)'
-]
 
 export interface IBoardData {
   version: string // fabric version
@@ -59,17 +72,17 @@ interface FileState {
 interface FileAction {
   updateCurrentFile: (newId: string) => void
   updateFileTitle: (newTitle: string, id: string) => void
-  updateZoom: (newZoom: number) => void
-  updateTransform: (newTransform: number[]) => void
-  updateCanvasWidth: (width: number) => void
-  updateCanvasHeight: (height: number) => void
+  updateZoom: (newZoom: number, fileId?: string) => void
+  updateTransform: (newTransform: number[], fileId?: string) => void
+  updateCanvasWidth: (width: number, fileId?: string) => void
+  updateCanvasHeight: (height: number, fileId?: string) => void
   updateBackgroundColor: (colorIndex: number, color: string) => void
   updateCurrentBackgroundColor: (colorIndex: number) => void
   deleteBackgroundColor: (colorIndex: number) => void
   updateBackgroundImage: (image: string) => void
   updateBackgroundImageOpacity: (opacity: number) => void
   updateBackgroundSort: (oldIndex?: number, newIndex?: number) => void
-  updateBoardData: (data: Partial<IBoardData>) => void
+  updateBoardData: (data: Partial<IBoardData>, fileId?: string) => void
   addFile: () => void
   deleteFile: (fileId: string) => void
   saveJSON: () => void
@@ -78,48 +91,20 @@ interface FileAction {
 }
 
 const initId = uuidv4()
-export const BOARD_VERSION = '2.0.0'
 
-// Helper functions for common operations
 const findFileIndex = (files: IFile[], fileId: string): number => {
   return files.findIndex((file) => file.id === fileId)
 }
 
-const getCurrentFileIndex = (files: IFile[], currentId: string): number => {
-  const index = findFileIndex(files, currentId)
-  if (index === -1) {
-    console.warn(`Current file with id ${currentId} not found`)
-  }
-  return index
-}
-
-const createDefaultFile = (
-  id: string = uuidv4(),
-  title: string = 'empty title'
-): IFile => ({
-  id,
-  title,
-  boardVersion: BOARD_VERSION,
-  boardData: {},
-  zoom: 1,
-  canvasWidth: 1,
-  canvasHeight: 1,
-  backgroundColorList: [...DEFAULT_BACKGROUND_COLOR_LIST],
-  currentBackgroundColor: -1,
-  backgroundImage: '',
-  backgroundImageOpacity: 1,
-  backgroundSort: [...DEFAULT_BACKGROUND_SORT]
-})
-
-// Generic helper for current file operations
-const updateCurrentFile = (
+const updateFileById = (
   get: () => FileState & FileAction,
   set: (fn: any) => void,
+  fileId: string,
   updateFn: (file: IFile, index: number) => void,
   beforeUpdate?: () => void
 ) => {
-  const { files, currentId } = get()
-  const updateIndex = getCurrentFileIndex(files, currentId)
+  const { files } = get()
+  const updateIndex = findFileIndex(files, fileId)
   if (updateIndex > -1) {
     beforeUpdate?.()
     set(
@@ -128,6 +113,15 @@ const updateCurrentFile = (
       })
     )
   }
+}
+
+const updateCurrentFile = (
+  get: () => FileState & FileAction,
+  set: (fn: any) => void,
+  updateFn: (file: IFile, index: number) => void,
+  beforeUpdate?: () => void
+) => {
+  updateFileById(get, set, get().currentId, updateFn, beforeUpdate)
 }
 
 const useFileStore = create<FileState & FileAction>()(
@@ -154,46 +148,45 @@ const useFileStore = create<FileState & FileAction>()(
           )
         }
       },
-      updateBoardData(data) {
-        const { files, currentId } = get()
-        const updateIndex = getCurrentFileIndex(files, currentId)
-        if (updateIndex > -1) {
-          set(
-            produce((state) => {
-              state.files[updateIndex].boardVersion = BOARD_VERSION
-              state.files[updateIndex].boardData = data
-            })
-          )
-        }
+      updateBoardData(data, fileId) {
+        const targetId = fileId || get().currentId
+        updateFileById(get, set, targetId, (file) => {
+          file.boardVersion = BOARD_VERSION
+          file.boardData = data
+        })
       },
-      updateZoom(newZoom) {
-        updateCurrentFile(get, set, (file) => {
+      updateZoom(newZoom, fileId) {
+        updateFileById(get, set, fileId || get().currentId, (file) => {
           file.zoom = newZoom
         })
       },
-      updateTransform(newTransform) {
-        updateCurrentFile(get, set, (file) => {
+      updateTransform(newTransform, fileId) {
+        updateFileById(get, set, fileId || get().currentId, (file) => {
           file.viewportTransform = newTransform
         })
       },
-      updateCanvasWidth(width) {
-        updateCurrentFile(
+      updateCanvasWidth(width, fileId) {
+        const targetId = fileId || get().currentId
+        updateFileById(
           get,
           set,
+          targetId,
           (file) => {
             file.canvasWidth = width
           },
-          () => paintBoard.updateCanvasWidth(width)
+          () => paintBoard.updateCanvasWidth(width, targetId)
         )
       },
-      updateCanvasHeight(height) {
-        updateCurrentFile(
+      updateCanvasHeight(height, fileId) {
+        const targetId = fileId || get().currentId
+        updateFileById(
           get,
           set,
+          targetId,
           (file) => {
             file.canvasHeight = height
           },
-          () => paintBoard.updateCanvasHeight(height)
+          () => paintBoard.updateCanvasHeight(height, targetId)
         )
       },
       updateCurrentBackgroundColor(colorIndex) {
@@ -253,18 +246,27 @@ const useFileStore = create<FileState & FileAction>()(
         }
 
         const updateIndex = findFileIndex(files, fileId)
-        if (updateIndex > -1) {
-          set(
-            produce((state) => {
-              state.files.splice(updateIndex, 1)
+        if (updateIndex < 0) {
+          return
+        }
 
-              if (state.currentId === fileId) {
-                state.currentId = state.files[0].id
-                paintBoard.initCanvasStorage()
-                useBoardStore.getState().updateMode(ActionMode.DRAW)
-              }
-            })
-          )
+        const deletingCurrent = get().currentId === fileId
+        set(
+          produce((state: FileState) => {
+            const index = state.files.findIndex((file) => file.id === fileId)
+            if (index < 0) {
+              return
+            }
+            state.files.splice(index, 1)
+            if (state.currentId === fileId && state.files[0]) {
+              state.currentId = state.files[0].id
+            }
+          })
+        )
+
+        if (deletingCurrent) {
+          paintBoard.discardAndLoad(get().currentId)
+          useBoardStore.getState().updateMode(ActionMode.DRAW)
         }
       },
       saveJSON() {
@@ -295,51 +297,29 @@ const useFileStore = create<FileState & FileAction>()(
           if (file) {
             const reader = new FileReader()
             reader.onload = (fEvent) => {
-              const data = fEvent.target?.result as string
-              let result = false
-              if (data) {
-                const json = JSON.parse(data)
-                if (json?.boardData && json?.title) {
-                  const id = uuidv4()
-                  const { background, backgroundImage, ...otherBoardData } =
-                    json.boardData || {}
-
-                  let backgroundColorList = [...DEFAULT_BACKGROUND_COLOR_LIST]
-                  let currentBackgroundColor = -1
-                  if (background) {
-                    backgroundColorList = [background]
-                    currentBackgroundColor = 0
-                  } else if (json?.backgroundColorList) {
-                    backgroundColorList = json.backgroundColorList
-                    currentBackgroundColor = json.currentBackgroundColor
-                  }
-
-                  const newFile: IFile = {
-                    ...createDefaultFile(id, json?.title),
-                    boardVersion: json?.boardVersion || BOARD_VERSION,
-                    boardData: otherBoardData,
-                    canvasWidth: json?.canvasWidth || 1,
-                    canvasHeight: json?.canvasHeight || 1,
-                    backgroundColorList,
-                    currentBackgroundColor,
-                    backgroundImage:
-                      json?.backgroundImage || backgroundImage?.src || '',
-                    backgroundImageOpacity: json?.backgroundImageOpacity || 1,
-                    backgroundSort: json?.backgroundSort || [
-                      ...DEFAULT_BACKGROUND_SORT
-                    ]
-                  }
-
-                  set(
-                    produce((state) => {
-                      state.files.unshift(newFile)
-                      state.currentId = state.files[0].id
-                    })
-                  )
-                  result = true
-                }
+              const data = fEvent.target?.result
+              if (typeof data !== 'string') {
+                resolve(false)
+                return
               }
-              resolve(result)
+              const imported = parseImportedBoardFile(data)
+              if (!imported) {
+                resolve(false)
+                return
+              }
+
+              paintBoard.prepareForFileReplacement()
+              const newFile: IFile = {
+                ...imported,
+                boardData: imported.boardData as IFile['boardData']
+              }
+              set(
+                produce((state) => {
+                  state.files.unshift(newFile)
+                  state.currentId = newFile.id
+                })
+              )
+              resolve(true)
             }
             reader.onerror = (error) => {
               console.log('reader fail', error)
@@ -366,10 +346,22 @@ const useFileStore = create<FileState & FileAction>()(
     }),
     {
       name: 'PAINT-BOARD-FILES',
-      storage: createJSONStorage(() => storage)
+      storage: createJSONStorage(() => storage),
+      onRehydrateStorage: () => (_state, error) => {
+        if (error) {
+          markFileHydrationFailed()
+        }
+      }
     }
   )
 )
+
+export const waitForFilesHydration = () =>
+  waitForHydration({
+    hasHydrated: () => useFileStore.persist.hasHydrated(),
+    onFinishHydration: (listener) =>
+      useFileStore.persist.onFinishHydration(listener)
+  })
 
 export const useCurrentFile = () => {
   const { files, currentId } = useFileStore()

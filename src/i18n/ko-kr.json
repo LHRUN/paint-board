@@ -88,7 +88,8 @@
   "tip": {
     "uploadFileFail": "업로드 실패, 다시 시도해 주세요",
     "unselectedElementTip": "그림판 내용을 클릭하거나 선택해 주세요",
-    "cameraPermissionDenied": "카메라 권한이 거절되었습니다. 브라우저 권한을 확인해 주세요"
+    "cameraPermissionDenied": "카메라 권한이 거절되었습니다. 브라우저 권한을 확인해 주세요",
+    "fileHydrationFail": "저장된 그림을 복원하지 못했습니다. 페이지를 새로고침하세요. 복원에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다."
   },
   "filters": {
     "Sepia": "세피아",

@@ -13,18 +13,18 @@ interface IProps {
 }
 
 const FileItem: FC<IProps> = ({ file, handleDelete }) => {
-  const { files, currentId, updateCurrentFile, updateFileTitle } =
-    useFileStore()
+  const { files, currentId, updateFileTitle } = useFileStore()
   const { updateMode } = useBoardStore()
   const { updateOpenCamera } = useCameraStore()
   const [showNameInput, setShowNameInput] = useState(false)
 
   // update current file id
   const updateCurrentFileId = (id: string) => {
+    if (id === currentId) {
+      return
+    }
     updateOpenCamera(false)
-
-    updateCurrentFile(id)
-    paintBoard.initCanvasStorage()
+    paintBoard.switchFile(id)
     updateMode(ActionMode.DRAW)
   }
 

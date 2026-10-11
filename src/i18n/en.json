@@ -88,7 +88,8 @@
   "tip": {
     "uploadFileFail": "Upload failed, please try again",
     "unselectedElementTip": "Please click or select the content of the drawing board",
-    "cameraPermissionDenied": "Camera permission denied, please check the browser permission"
+    "cameraPermissionDenied": "Camera permission denied, please check the browser permission",
+    "fileHydrationFail": "Could not restore saved drawings. Refresh the page. New edits will not overwrite saved files until the reload succeeds."
   },
   "filters": {
     "Sepia": "Sepia",

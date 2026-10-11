@@ -88,7 +88,8 @@
   "tip": {
     "uploadFileFail": "アップロードに失敗しました。もう一度お試しください",
     "unselectedElementTip": "描画ボードのコンテンツをクリックまたは選択してください",
-    "cameraPermissionDenied": "カメラの権限が拒否されました。ブラウザの権限を確認してください"
+    "cameraPermissionDenied": "カメラの権限が拒否されました。ブラウザの権限を確認してください",
+    "fileHydrationFail": "保存した描画を復元できませんでした。ページを再読み込みしてください。復元できるまで、新しい編集は保存済みのファイルを上書きしません。"
   },
   "filters": {
     "Sepia": "セピア",

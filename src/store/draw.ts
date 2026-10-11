@@ -12,6 +12,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { produce } from 'immer'
 import { fabric } from 'fabric'
+import { reindexDrawColorSelection } from './drawColor'
 
 interface DrawState {
   drawWidth: number // draw brush width
@@ -152,23 +153,22 @@ const useDrawStore = create<DrawState & DrawAction>()(
         }
       },
       deleteDrawColor(colorIndex) {
-        set(
-          produce((state) => {
-            state.drawColors.splice(colorIndex, 1)
-
-            if (state.currentDrawColor === colorIndex) {
-              state.currentDrawColor = 0
-              updateDrawColors()
-            }
-
-            if (state.currentMultiColor.includes(colorIndex)) {
-              state.currentMultiColor = state.currentMultiColor.filter(
-                (item: number) => item !== colorIndex
-              )
-              updateDrawColors()
-            }
-          })
+        const { drawColors, currentDrawColor, currentMultiColor } = get()
+        const next = reindexDrawColorSelection(
+          drawColors,
+          colorIndex,
+          currentDrawColor,
+          currentMultiColor
         )
+        if (!next) {
+          return
+        }
+        set({
+          drawColors: next.drawColors,
+          currentDrawColor: next.currentDrawColor,
+          currentMultiColor: next.currentMultiColor
+        })
+        updateDrawColors()
       },
       updateLineType(lineType) {
         const { lineType: oldLineType, drawStyle } = get()

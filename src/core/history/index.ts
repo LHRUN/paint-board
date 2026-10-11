@@ -3,8 +3,8 @@ import { paintBoard } from '../paintBoard'
 import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
 import cloneDeep from 'lodash-es/cloneDeep'
 import { getCanvasJSON, handleCanvasJSONLoaded } from '../utils/loadCanvas'
-
-const initState = {}
+import { canWriteFile } from '../session/canvasWrite'
+import { appendHistoryStep } from './historyStep'
 
 /**
  * Operation History
@@ -24,34 +24,53 @@ export class History {
 
   saveState() {
     const canvas = paintBoard?.canvas
-    if (canvas) {
-      this.diffs = this.diffs.slice(0, this.index)
-      const canvasJson = getCanvasJSON()
-      const delta = diff(canvasJson, this.canvasData)
-      this.diffs.push(delta)
-
-      // More than 50 operations, remove initial state
-      if (this.diffs.length > 50) {
-        this.diffs.shift()
-      } else {
-        this.index++
-      }
-      this.canvasData = cloneDeep(canvasJson ?? {})
-      useFileStore.getState().updateBoardData(canvasJson)
+    const fileId = paintBoard.canvasFileId
+    if (!canvas || !canWriteFile(paintBoard.canvasFileId, fileId)) {
+      return
     }
+    const canvasJson = getCanvasJSON()
+    const delta = diff(canvasJson, this.canvasData)
+    const next = appendHistoryStep(this.diffs, this.index, delta)
+    if (!next.changed) {
+      return
+    }
+    this.diffs = next.diffs
+    this.index = next.index
+    this.canvasData = cloneDeep(canvasJson ?? {})
+    if (!canWriteFile(paintBoard.canvasFileId, fileId)) {
+      return
+    }
+    useFileStore.getState().updateBoardData(canvasJson, fileId)
+  }
+
+  replaceCurrentSnapshot(canvasJson: Partial<IBoardData>) {
+    this.canvasData = cloneDeep(canvasJson ?? {})
   }
 
   undo() {
     const canvas = paintBoard?.canvas
-    if (canvas && this.index > 0) {
+    const fileId = paintBoard.canvasFileId
+    const generation = paintBoard.getLoadGeneration()
+    if (
+      canvas &&
+      this.index > 0 &&
+      canWriteFile(paintBoard.canvasFileId, fileId)
+    ) {
       const delta = this.diffs[this.index - 1]
       this.index--
-      const canvasJson = patch(this.canvasData, delta) as IBoardData
-      canvas.loadFromJSON(canvasJson, () => {
-        handleCanvasJSONLoaded(canvas)
-
-        canvas.requestRenderAll()
-        useFileStore.getState().updateBoardData(canvasJson)
+      const canvasJson = patch(cloneDeep(this.canvasData), delta) as IBoardData
+      paintBoard.applyCanvasJson(canvasJson, (committed) => {
+        if (
+          !committed ||
+          !paintBoard.canvas ||
+          paintBoard.getLoadGeneration() !== generation ||
+          !canWriteFile(paintBoard.canvasFileId, fileId)
+        ) {
+          return
+        }
+        handleCanvasJSONLoaded(paintBoard.canvas)
+        paintBoard.canvas.requestRenderAll()
+        useFileStore.getState().updateBoardData(canvasJson, fileId)
         this.canvasData = cloneDeep(canvasJson ?? {})
         paintBoard.triggerHook()
       })
@@ -60,15 +79,31 @@ export class History {
 
   redo() {
     const canvas = paintBoard?.canvas
-    if (this.index < this.diffs.length && canvas) {
+    const fileId = paintBoard.canvasFileId
+    const generation = paintBoard.getLoadGeneration()
+    if (
+      this.index < this.diffs.length &&
+      canvas &&
+      canWriteFile(paintBoard.canvasFileId, fileId)
+    ) {
       const delta = this.diffs[this.index]
       this.index++
-      const canvasJson = unpatch(this.canvasData, delta) as IBoardData
-      canvas.loadFromJSON(canvasJson, () => {
-        handleCanvasJSONLoaded(canvas)
-        canvas.requestRenderAll()
-
-        useFileStore.getState().updateBoardData(canvasJson)
+      const canvasJson = unpatch(
+        cloneDeep(this.canvasData),
+        delta
+      ) as IBoardData
+      paintBoard.applyCanvasJson(canvasJson, (committed) => {
+        if (
+          !committed ||
+          !paintBoard.canvas ||
+          paintBoard.getLoadGeneration() !== generation ||
+          !canWriteFile(paintBoard.canvasFileId, fileId)
+        ) {
+          return
+        }
+        handleCanvasJSONLoaded(paintBoard.canvas)
+        paintBoard.canvas.requestRenderAll()
+        useFileStore.getState().updateBoardData(canvasJson, fileId)
         this.canvasData = cloneDeep(canvasJson ?? {})
         paintBoard.triggerHook()
       })
@@ -76,11 +111,14 @@ export class History {
   }
 
   clean() {
+    const fileId = paintBoard.canvasFileId
     paintBoard?.canvas?.clear()
     this.index = 0
     this.diffs = []
     this.canvasData = {}
-    useFileStore.getState().updateBoardData(initState)
+    if (canWriteFile(paintBoard.canvasFileId, fileId)) {
+      useFileStore.getState().updateBoardData({}, fileId)
+    }
   }
 
   initHistory() {

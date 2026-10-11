@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { DEFAULT_BACKGROUND_SORT, useCurrentFile } from '@/store/files'
+import { hasFileHydrationFailed } from '@/store/fileHydration'
 import { paintBoard } from '@/core/paintBoard'
+import Toast from '@/components/toast'
 
 import ToolPanel from '@/components/toolPanel'
 import HelpArea from '@/components/helpArea'
@@ -13,6 +15,7 @@ import BackgroundCamera from '@/components/background/backgroundCamera'
 const Board: React.FC = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null)
   const [canvasLoaded, setCanvasLoaded] = useState(false)
+  const [hydrationFailed, setHydrationFailed] = useState(false)
   const currentFile = useCurrentFile()
   const backgroundSort = useMemo(() => {
     return [
@@ -21,14 +24,22 @@ const Board: React.FC = () => {
   }, [currentFile])
 
   useEffect(() => {
+    let cancelled = false
     if (canvasEl.current) {
       paintBoard
         .initCanvas(canvasEl.current as HTMLCanvasElement)
         .then((loaded) => {
-          setCanvasLoaded(loaded)
+          if (cancelled) {
+            return
+          }
+          setHydrationFailed(hasFileHydrationFailed())
+          if (loaded) {
+            setCanvasLoaded(true)
+          }
         })
     }
     return () => {
+      cancelled = true
       paintBoard.removeCanvas()
     }
   }, [])
@@ -51,6 +62,9 @@ const Board: React.FC = () => {
           }
         })}
       </div>
+      {hydrationFailed && (
+        <Toast message="tip.fileHydrationFail" type="error" />
+      )}
       {canvasLoaded && (
         <>
           <ToolPanel />

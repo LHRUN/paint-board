@@ -51,8 +51,10 @@ export class TransformCanvasHandler {
     canvas.setViewportTransform(newVpt)
     canvas.renderAll()
 
-    // update the transformation information in the store
-    useFileStore.getState().updateTransform(newVpt)
+    const fileId = paintBoard.canvasFileId
+    if (fileId) {
+      useFileStore.getState().updateTransform(newVpt, fileId)
+    }
 
     console.log(`Canvas panned: ${direction}, delta: (${deltaX}, ${deltaY})`)
   }

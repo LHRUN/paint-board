@@ -49,7 +49,7 @@ const FileList: FC<IProps> = ({ updateShow }) => {
   const handleUploadFile = (file?: File) => {
     uploadFile(file).then((res: boolean) => {
       if (res) {
-        paintBoard.initCanvasStorage()
+        paintBoard.loadFile(useFileStore.getState().currentId)
         updateMode(ActionMode.DRAW)
       } else {
         updateShowUploadFail(true)

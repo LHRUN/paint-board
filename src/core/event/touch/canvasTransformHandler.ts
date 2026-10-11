@@ -71,7 +71,7 @@ export class CanvasTransformHandler {
       })
     }
     canvas.zoomToPoint(new fabric.Point(this.startX, this.startY), zoom)
-    paintBoard.evnet?.zoomEvent.updateZoomPercentage(true, zoom)
+    paintBoard.evnet?.zoomEvent.scheduleZoomWrite(zoom)
 
     // Calculate drag distance
     const currentPan = new fabric.Point(x - this.startX, y - this.startY)
@@ -93,7 +93,11 @@ export class CanvasTransformHandler {
         )
       )
       this.lastPan = currentPan
-      this.saveTransform()
+      const fileId = paintBoard.canvasFileId
+      const transform = canvas.viewportTransform
+      if (fileId && transform) {
+        this.saveTransform(fileId, [...transform])
+      }
     }
   }
 
@@ -101,16 +105,20 @@ export class CanvasTransformHandler {
     this.isDragging = false
   }
 
-  private saveTransform = debounce(() => {
-    const transform = paintBoard.canvas?.viewportTransform
-    if (transform) {
-      useFileStore.getState().updateTransform(transform)
-      if (!useBoardStore.getState().isObjectCaching) {
-        fabric.Object.prototype.set({
-          objectCaching: false
-        })
-      }
-      paintBoard.canvas?.requestRenderAll()
+  cancelPending() {
+    this.saveTransform.cancel()
+  }
+
+  private saveTransform = debounce((fileId: string, transform: number[]) => {
+    if (paintBoard.canvasFileId !== fileId) {
+      return
     }
+    useFileStore.getState().updateTransform(transform, fileId)
+    if (!useBoardStore.getState().isObjectCaching) {
+      fabric.Object.prototype.set({
+        objectCaching: false
+      })
+    }
+    paintBoard.canvas?.requestRenderAll()
   }, 500)
 }

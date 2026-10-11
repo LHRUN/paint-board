@@ -236,15 +236,20 @@ export class KeyboardHandler {
         paintBoard.evnet?.mouseEvent.setSpaceKeyDownState(false)
         canvas.defaultCursor = 'default'
 
-        if (canvas.viewportTransform) {
-          useFileStore.getState().updateTransform(canvas.viewportTransform)
-          if (!useBoardStore.getState().isObjectCaching) {
-            fabric.Object.prototype.set({
-              objectCaching: false
-            })
-          }
-          paintBoard.handleMode()
+        if (canvas.viewportTransform && paintBoard.canvasFileId) {
+          useFileStore
+            .getState()
+            .updateTransform(
+              [...canvas.viewportTransform],
+              paintBoard.canvasFileId
+            )
         }
+        if (!useBoardStore.getState().isObjectCaching) {
+          fabric.Object.prototype.set({
+            objectCaching: false
+          })
+        }
+        paintBoard.handleMode()
         break
       default:
         break

@@ -6,6 +6,7 @@ import {
   initCustomObjectAttr,
   filterUnlockedObjects
 } from '@/core/utils/object'
+import { shouldRecordObjectModified } from '@/core/history/recordObject'
 import { fabric } from 'fabric'
 
 export class ObjectEvent {
@@ -47,17 +48,16 @@ export class ObjectEvent {
       }
     })
     canvas?.on('object:modified', (e) => {
-      // Prohibit recording if the change is due to IText input content
-      if (e.target?.type === 'i-text') {
-        const obj = e.target as fabric.IText
-        if (obj._textBeforeEdit === obj.text) {
-          return
-        }
+      const target = e.target as fabric.IText | undefined
+      if (
+        !shouldRecordObjectModified({
+          action: e.action,
+          target
+        })
+      ) {
+        return
       }
-      // Usually operations that change the object such as dragging and zooming, record the operation
-      if (e.action && e.target) {
-        paintBoard.history?.saveState()
-      }
+      paintBoard.history?.saveState()
     })
   }
 
@@ -122,11 +122,13 @@ export class ObjectEvent {
           initCustomObjectAttr(obj, ELEMENT_CUSTOM_TYPE.I_TEXT)
         }
 
-        // If the text changes, update the record
+        // Content edits have no transform action, so they are stored here.
+        // A new text object is stored even when the default string is unchanged,
+        // otherwise the first drag becomes the only history step and undo deletes it.
         if (obj?._textBeforeEdit !== obj?.text) {
           canvas.discardActiveObject()
-          paintBoard.render()
         }
+        paintBoard.render()
       }
     })
   }
