@@ -1,5 +1,4 @@
 import { fabric } from 'fabric'
-import * as LucideIcons from 'lucide-react'
 import { renderToString } from 'react-dom/server'
 import { createElement } from 'react'
 import { paintBoard } from '@/core/paintBoard'
@@ -46,6 +45,14 @@ export class GraphElement {
   async initGraph(point: fabric.Point) {
     const canvas = paintBoard.canvas
     const generation = paintBoard.getLoadGeneration()
+    const LucideIcons = await import('lucide-react').catch((error) => {
+      console.warn('Failed to load Lucide icons', error)
+      return null
+    })
+    if (!LucideIcons || this.cancelled) {
+      this.settleReady(false)
+      return
+    }
     const { currentShapeIcon } = useShapeStore.getState()
 
     const strokeWidth = getShapeStrokeWidth()

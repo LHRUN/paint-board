@@ -75,7 +75,9 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
 | :--: | :--: | :--: | :--: |
-| 80+ | 80+ | 70+ | 13+ |
+| 80+ | 80+ | 70+ | 16.4+ |
+
+儲存圖片在 Safari 16.4 及以上使用 OffscreenCanvas，更舊的 Safari 會改用 canvas.toBlob。
 
 ## 聯繫我
 

@@ -3,14 +3,21 @@
   "private": true,
   "version": "2.0.0",
   "type": "module",
+  "packageManager": "pnpm@8.15.9",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=8.15.9 <9"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "lint": "pnpm lint:script && pnpm lint:style",
     "lint:script": "eslint --ext .ts,.tsx --fix --quiet ./",
-    "lint:style": "stylelint --fix \"src/**/*.css\""
+    "lint:style": "stylelint --fix \"src/**/*.css\"",
+    "lint:ci": "eslint --ext .ts,.tsx ./ && stylelint \"src/**/*.css\""
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",

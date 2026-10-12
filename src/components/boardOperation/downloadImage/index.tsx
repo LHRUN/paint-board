@@ -1,9 +1,11 @@
 import { useState, FC, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDebounceEffect } from '@/hooks/useDebounceEffect'
+import { canvasToPngBlob } from '@/core/utils/canvasBlob'
 
 import ReactCrop, { Crop } from 'react-image-crop'
 import { canvasPreview } from './canvasPreview'
+import Toast from '@/components/toast'
 
 import { Scaling, RotateCw, Proportions } from 'lucide-react'
 import Mask from '@/components/mask'
@@ -29,6 +31,7 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
   const blobUrlRef = useRef('')
+  const [downloadFailed, setDownloadFailed] = useState(false)
 
   const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget
@@ -64,48 +67,38 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
     if (!image || !previewCanvas || !completedCrop) {
-      throw new Error('Crop canvas does not exist')
+      setDownloadFailed(true)
+      return
     }
 
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
 
-    const offscreen = new OffscreenCanvas(
-      completedCrop.width * scaleX * saveImageSize,
-      completedCrop.height * scaleY * saveImageSize
-    )
-    const ctx = offscreen.getContext('2d')
-    if (!ctx) {
-      throw new Error('No 2d context')
-    }
+    try {
+      const blob = await canvasToPngBlob(
+        previewCanvas,
+        previewCanvas.width,
+        previewCanvas.height,
+        completedCrop.width * scaleX * saveImageSize,
+        completedCrop.height * scaleY * saveImageSize
+      )
 
-    ctx.drawImage(
-      previewCanvas,
-      0,
-      0,
-      previewCanvas.width,
-      previewCanvas.height,
-      0,
-      0,
-      offscreen.width,
-      offscreen.height
-    )
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current)
+      }
+      blobUrlRef.current = URL.createObjectURL(blob)
 
-    // or { type: "image/jpeg", quality: <0 to 1> }
-    const blob = await offscreen.convertToBlob({
-      type: 'image/png'
-    })
-
-    if (blobUrlRef.current) {
-      URL.revokeObjectURL(blobUrlRef.current)
-    }
-    blobUrlRef.current = URL.createObjectURL(blob)
-
-    if (hiddenAnchorRef.current) {
+      if (!hiddenAnchorRef.current) {
+        setDownloadFailed(true)
+        return
+      }
       hiddenAnchorRef.current.href = blobUrlRef.current
       hiddenAnchorRef.current.click()
-
+      setDownloadFailed(false)
       setShowModal(false)
+    } catch (error) {
+      console.error('Failed to download image', error)
+      setDownloadFailed(true)
     }
   }
 
@@ -137,6 +130,7 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
         setShowModal(false)
       }}
     >
+      {downloadFailed && <Toast message="tip.exportFail" type="error" />}
       <div className="p-6 bg-[#eef1ff] card shadow-xl overflow-auto max-w-[800px] w-[80vw] h-fit max-h-[60vh]">
         {completedCrop && (
           <div className="w-full flex justify-between">

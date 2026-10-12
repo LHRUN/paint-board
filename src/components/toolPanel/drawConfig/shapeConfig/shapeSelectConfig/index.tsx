@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useShapeStore from '@/store/shape'
 import { useTranslation } from 'react-i18next'
 
-import * as LucideIcons from 'lucide-react'
+import { CircleQuestionMark, Info, Trash2 } from 'lucide-react'
 import { SHAPE_ELEMENT_CUSTOM_TYPE } from '@/constants'
 
 const DEFAULT_SHAPE_ICON = [
@@ -49,6 +49,34 @@ const ShapeSelectConfig = () => {
   const [tipMessage, setTipMessage] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const [draggedIcon, setDraggedIcon] = useState<string | null>(null)
+  const [lucideIcons, setLucideIcons] = useState<Record<
+    string,
+    React.ComponentType<{
+      size?: number
+      color?: string
+      className?: string
+    }>
+  > | null>(null)
+  const lucideIconsRef = useRef(lucideIcons)
+
+  useEffect(() => {
+    let cancelled = false
+    import('lucide-react')
+      .then((icons) => {
+        if (cancelled) {
+          return
+        }
+        const loaded = icons as unknown as NonNullable<typeof lucideIcons>
+        lucideIconsRef.current = loaded
+        setLucideIcons(loaded)
+      })
+      .catch((error) => {
+        console.warn('Failed to load Lucide icons', error)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   // Convert icon names in different formats to PascalCase
   const convertToPascalCase = (name: string): string => {
@@ -80,7 +108,7 @@ const ShapeSelectConfig = () => {
     const pascalCaseName = convertToPascalCase(iconName.trim())
 
     // Check if the icon exists in lucide-react
-    const IconComponent = (LucideIcons as any)[pascalCaseName]
+    const IconComponent = lucideIconsRef.current?.[pascalCaseName]
 
     // Check if it is a valid React component
     if (IconComponent) {
@@ -136,7 +164,7 @@ const ShapeSelectConfig = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <LucideIcons.CircleQuestionMark size={16} />
+          <CircleQuestionMark size={16} />
         </a>
       </div>
       <div className="join w-full mt-2">
@@ -162,7 +190,7 @@ const ShapeSelectConfig = () => {
       {/* operation tips */}
       {tipMessage && (
         <div className="flex items-center gap-x-1 mt-2">
-          <LucideIcons.Info size={16} />
+          <Info size={16} />
           <span className="text-sm">{tipMessage}</span>
         </div>
       )}
@@ -170,7 +198,7 @@ const ShapeSelectConfig = () => {
       <div className="w-fit mt-2 bg-slate-50 shadow-inner shadow-slate-200 p-2 rounded-lg relative">
         <div className="flex flex-wrap w-64 gap-1 max-h-32 overflow-y-auto">
           {DEFAULT_SHAPE_ICON.map(({ type, iconName }) => {
-            const IconComponent = (LucideIcons as any)[iconName]
+            const IconComponent = lucideIcons?.[iconName]
             return IconComponent ? (
               <div
                 key={type}
@@ -189,7 +217,7 @@ const ShapeSelectConfig = () => {
             ) : null
           })}
           {shapeIconList.map((icon) => {
-            const IconComponent = (LucideIcons as any)[icon]
+            const IconComponent = lucideIcons?.[icon]
             return IconComponent ? (
               <div
                 key={icon}
@@ -220,7 +248,7 @@ const ShapeSelectConfig = () => {
             onDragOver={handleDeleteDragOver}
             onDrop={handleDeleteDrop}
           >
-            <LucideIcons.Trash2 size={16} color="#fff" />
+            <Trash2 size={16} color="#fff" />
           </div>
         )}
       </div>

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 const Shortcut = () => {
   const { t } = useTranslation()
   const isApple = isAppleDevice()
-  const metaKey = isApple ? 'Cmd' : 'Win'
+  const metaKey = isApple ? 'Cmd' : 'Ctrl'
 
   return (
     <div className="pb-10">

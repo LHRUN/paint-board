@@ -11,6 +11,7 @@ import {
 } from '@huggingface/transformers'
 import { ImageElement } from '@/core/element/image'
 import { cropTransparent } from '@/utils/cropTransparent'
+import { releaseModel, whenModelReleased } from './releaseModel'
 
 import { Info, LoaderCircle } from 'lucide-react'
 import Mask from '@/components/mask'
@@ -40,6 +41,9 @@ const SEGMENTATION_STATUS = {
 
 type SegmentationStatusType =
   (typeof SEGMENTATION_STATUS)[keyof typeof SEGMENTATION_STATUS]
+
+// Survives closing the dialog so a new open waits for the cancelled load to release.
+let segmentationLoadTask: Promise<void> = Promise.resolve()
 
 const ImageSegmentation: FC<IProps> = ({
   url,
@@ -81,44 +85,76 @@ const ImageSegmentation: FC<IProps> = ({
   }, [segmentationStatus])
 
   useEffect(() => {
-    ;(async () => {
+    if (!showModal) {
+      return
+    }
+    let cancelled = false
+    setSegmentationStatus(SEGMENTATION_STATUS.LOADING)
+    const previousLoad = segmentationLoadTask
+    const load = (async () => {
+      let model: PreTrainedModel | undefined
       try {
-        if (
-          !showModal ||
-          modelRef.current ||
-          processorRef.current ||
-          segmentationStatus === SEGMENTATION_STATUS.LOADING
-        ) {
+        await previousLoad
+        await whenModelReleased()
+        if (cancelled || modelRef.current || processorRef.current) {
           return
         }
-
-        setSegmentationStatus(SEGMENTATION_STATUS.LOADING)
         if (!navigator?.gpu) {
           setSegmentationStatus(SEGMENTATION_STATUS.NO_SUPPORT_WEBGPU)
           return
         }
         const model_id = 'Xenova/slimsam-77-uniform'
-        modelRef.current ??= await SamModel.from_pretrained(model_id, {
+        model = await SamModel.from_pretrained(model_id, {
           dtype: 'fp16', // or "fp32"
           device: 'webgpu'
         })
-        processorRef.current ??= await AutoProcessor.from_pretrained(model_id)
+        const processor = await AutoProcessor.from_pretrained(model_id)
+        if (cancelled) {
+          await releaseModel(model)
+          model = undefined
+          return
+        }
+        modelRef.current = model
+        processorRef.current = processor
+        model = undefined
 
         setSegmentationStatus(SEGMENTATION_STATUS.LOAD_SUCCESS)
       } catch (err) {
-        console.log('err', err)
-        setSegmentationStatus(SEGMENTATION_STATUS.LOAD_ERROR)
+        await releaseModel(model)
+        if (!cancelled) {
+          console.log('err', err)
+          setSegmentationStatus(SEGMENTATION_STATUS.LOAD_ERROR)
+        }
       }
     })()
+    segmentationLoadTask = load.then(
+      () => undefined,
+      () => undefined
+    )
+    return () => {
+      cancelled = true
+      const currentModel = modelRef.current
+      modelRef.current = undefined
+      processorRef.current = undefined
+      imageInputRef.current = undefined
+      imageProcessed.current = undefined
+      imageEmbeddings.current = undefined
+      void releaseModel(currentModel)
+      setSegmentationStatus(undefined)
+    }
   }, [showModal])
 
   useEffect(() => {
+    let cancelled = false
     ;(async () => {
+      const model = modelRef.current
+      const processor = processorRef.current
       try {
         if (
+          cancelled ||
           !showModal ||
-          !modelRef.current ||
-          !processorRef.current ||
+          !model ||
+          !processor ||
           !url ||
           segmentationStatus === SEGMENTATION_STATUS.PROCESSING
         ) {
@@ -128,18 +164,30 @@ const ImageSegmentation: FC<IProps> = ({
         clearPoints()
 
         imageInputRef.current = await RawImage.fromURL(url)
-        imageProcessed.current = await processorRef.current(
-          imageInputRef.current
+        if (cancelled) {
+          return
+        }
+        imageProcessed.current = await processor(imageInputRef.current)
+        if (cancelled) {
+          return
+        }
+        imageEmbeddings.current = await (model as any).get_image_embeddings(
+          imageProcessed.current
         )
-        imageEmbeddings.current = await (
-          modelRef.current as any
-        ).get_image_embeddings(imageProcessed.current)
+        if (cancelled) {
+          return
+        }
 
         setSegmentationStatus(SEGMENTATION_STATUS.PROCESSING_SUCCESS)
       } catch (err) {
-        console.log('err', err)
+        if (!cancelled) {
+          console.log('err', err)
+        }
       }
     })()
+    return () => {
+      cancelled = true
+    }
   }, [url, modelRef.current, processorRef.current, showModal])
 
   function updateMaskOverlay(mask: RawImage, scores: Float32Array) {
@@ -187,12 +235,11 @@ const ImageSegmentation: FC<IProps> = ({
   }
 
   const decode = async (markPoints: MarkPoint[]) => {
-    if (
-      !modelRef.current ||
-      !imageEmbeddings.current ||
-      !processorRef.current ||
-      !imageProcessed.current
-    ) {
+    const model = modelRef.current
+    const processor = processorRef.current
+    const embeddings = imageEmbeddings.current
+    const processed = imageProcessed.current
+    if (!model || !embeddings || !processor || !processed) {
       return
     }
 
@@ -209,32 +256,46 @@ const ImageSegmentation: FC<IProps> = ({
       return
     }
 
-    // Prepare inputs for decoding
-    const reshaped = imageProcessed.current.reshaped_input_sizes[0]
-    const points = markPoints
-      .map((x) => [x.position[0] * reshaped[1], x.position[1] * reshaped[0]])
-      .flat(Infinity)
-    const labels = markPoints.map((x) => BigInt(x.label)).flat(Infinity)
+    const stillCurrent = () => modelRef.current === model
+    try {
+      // Prepare inputs for decoding
+      const reshaped = processed.reshaped_input_sizes[0]
+      const points = markPoints
+        .map((x) => [x.position[0] * reshaped[1], x.position[1] * reshaped[0]])
+        .flat(Infinity)
+      const labels = markPoints.map((x) => BigInt(x.label)).flat(Infinity)
 
-    const num_points = markPoints.length
-    const input_points = new Tensor('float32', points, [1, 1, num_points, 2])
-    const input_labels = new Tensor('int64', labels, [1, 1, num_points])
+      const num_points = markPoints.length
+      const input_points = new Tensor('float32', points, [1, 1, num_points, 2])
+      const input_labels = new Tensor('int64', labels, [1, 1, num_points])
 
-    // Generate the mask
-    const { pred_masks, iou_scores } = await modelRef.current({
-      ...imageEmbeddings.current,
-      input_points,
-      input_labels
-    })
+      // Generate the mask
+      const { pred_masks, iou_scores } = await model({
+        ...embeddings,
+        input_points,
+        input_labels
+      })
+      if (!stillCurrent()) {
+        return
+      }
 
-    // Post-process the mask
-    const masks = await (processorRef.current as any).post_process_masks(
-      pred_masks,
-      imageProcessed.current.original_sizes,
-      imageProcessed.current.reshaped_input_sizes
-    )
+      // Post-process the mask
+      const masks = await (processor as any).post_process_masks(
+        pred_masks,
+        processed.original_sizes,
+        processed.reshaped_input_sizes
+      )
+      if (!stillCurrent()) {
+        return
+      }
 
-    updateMaskOverlay(RawImage.fromTensor(masks[0][0]), iou_scores.data)
+      updateMaskOverlay(RawImage.fromTensor(masks[0][0]), iou_scores.data)
+    } catch (err) {
+      if (!stillCurrent()) {
+        return
+      }
+      console.log('err', err)
+    }
   }
 
   const clamp = (x: number, min = 0, max = 1) => {

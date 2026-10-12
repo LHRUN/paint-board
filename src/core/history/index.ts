@@ -119,14 +119,4 @@ export class History {
       useFileStore.getState().updateBoardData({}, fileId)
     }
   }
-
-  initHistory() {
-    const canvas = paintBoard.canvas
-    if (canvas) {
-      const canvasJson = getCanvasJSON()
-      this.canvasData = canvasJson
-      this.index = 0
-      this.diffs = []
-    }
-  }
 }

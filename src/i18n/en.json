@@ -90,7 +90,8 @@
     "unselectedElementTip": "Please click or select the content of the drawing board",
     "cameraPermissionDenied": "Camera permission denied, please check the browser permission",
     "fileHydrationFail": "Could not restore saved drawings. Refresh the page. New edits will not overwrite saved files until the reload succeeds.",
-    "filePersistFail": "Could not save the drawing locally. Refresh the page. New edits will not overwrite saved files until saving works again."
+    "filePersistFail": "Could not save the drawing locally. Refresh the page. New edits will not overwrite saved files until saving works again.",
+    "exportFail": "Could not save the image. The canvas may contain a picture from another site."
   },
   "filters": {
     "Sepia": "Sepia",

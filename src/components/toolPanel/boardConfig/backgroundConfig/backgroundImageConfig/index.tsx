@@ -10,7 +10,7 @@ import {
 import { ImageUp, GripVertical } from 'lucide-react'
 import ClearIcon from '@/components/icons/clear.svg?react'
 import UploadSuccessIcon from '@/components/icons/uploadSuccess.svg?react'
-import UploadImage from '@/components/uploadImage'
+import UploadImage from '@/components/uploadImage/lazy'
 
 const BackgroundConfig = () => {
   const { updateBackgroundImage, updateBackgroundImageOpacity } = useFileStore()

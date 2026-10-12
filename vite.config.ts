@@ -4,7 +4,6 @@ import viteEslint from 'vite-plugin-eslint'
 import svgr from 'vite-plugin-svgr'
 import { VitePWA } from 'vite-plugin-pwa'
 import { resolve } from 'path'
-
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 
@@ -92,6 +91,12 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,jpg,svg}'],
+        globIgnores: [
+          '**/node_modules/**/*',
+          'sw.js',
+          'workbox-*.js',
+          '**/huggingface*.js'
+        ],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5MB
         runtimeCaching: [
           getCache({
@@ -117,7 +122,8 @@ export default defineConfig({
   },
   css: {
     postcss: {
-      plugins: [tailwindcss, autoprefixer]
+      // Autoprefixer's overload is not a PostCSS AcceptedPlugin.
+      plugins: [tailwindcss, autoprefixer] as any
     }
   },
   build: {
@@ -127,11 +133,7 @@ export default defineConfig({
           huggingface: ['@huggingface/transformers'],
           fabric: ['fabric'],
           'react-vendor': ['react', 'react-dom'],
-          'ui-libs': [
-            'daisyui',
-            'lucide-react',
-            'react-best-gradient-color-picker'
-          ],
+          'ui-libs': ['daisyui', 'react-best-gradient-color-picker'],
           utils: ['lodash-es', 'uuid', 'immer', 'jsondiffpatch'],
           i18n: ['i18next', 'react-i18next'],
           'canvas-libs': ['roughjs', 'gradient-parser'],

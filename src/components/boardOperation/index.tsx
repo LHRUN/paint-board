@@ -30,7 +30,8 @@ import {
 
 import FileList from './fileList'
 import DownloadImage from './downloadImage'
-import UploadImage from '@/components/uploadImage'
+import UploadImage from '@/components/uploadImage/lazy'
+import Toast from '@/components/toast'
 
 const isMobile = isMobileFn()
 
@@ -45,6 +46,7 @@ const BoardOperation = () => {
 
   const [downloadImageURL, setDownloadImageURL] = useState('')
   const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [exportFailed, setExportFailed] = useState(false)
 
   const [uploadImageURL, setUploadImageURL] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
@@ -146,6 +148,7 @@ const BoardOperation = () => {
       const ctx = offscreenCanvas.getContext('2d')
 
       if (!ctx) {
+        setExportFailed(true)
         return
       }
 
@@ -202,10 +205,15 @@ const BoardOperation = () => {
       // Draw the original canvas content
       ctx.drawImage(originalCanvas, 0, 0)
 
-      // Get the merged URL
-      const url = offscreenCanvas.toDataURL()
-      setDownloadImageURL(url)
-      setShowDownloadModal(true)
+      try {
+        const url = offscreenCanvas.toDataURL()
+        setDownloadImageURL(url)
+        setShowDownloadModal(true)
+        setExportFailed(false)
+      } catch (error) {
+        console.error('Failed to export canvas', error)
+        setExportFailed(true)
+      }
     }
   }
 
@@ -325,6 +333,7 @@ const BoardOperation = () => {
           </label>
         </div>
       </div>
+      {exportFailed && <Toast message="tip.exportFail" type="error" />}
       {showFile && <FileList updateShow={updateShowFile} />}
       {showDownloadModal && downloadImageURL && (
         <DownloadImage
