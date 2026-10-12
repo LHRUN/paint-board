@@ -35,6 +35,7 @@
     "layer": "レイヤー",
     "imageFilters": "画像フィルター",
     "fontStyle": "フォントスタイル",
+    "textColor": "文字色",
     "canvasBackground": "キャンバス背景",
     "canvasSize": "キャンバスサイズ",
     "drawCache": "描画キャッシュ",

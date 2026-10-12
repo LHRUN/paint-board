@@ -35,6 +35,7 @@
     "layer": "Layer",
     "imageFilters": "Image Filters",
     "fontStyle": "Font Style",
+    "textColor": "Text Color",
     "canvasBackground": "Canvas Background",
     "canvasSize": "Canvas Size",
     "drawCache": "Draw Cache",

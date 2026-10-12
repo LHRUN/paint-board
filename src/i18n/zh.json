@@ -35,6 +35,7 @@
     "layer": "图层",
     "imageFilters": "图像滤镜",
     "fontStyle": "字体样式",
+    "textColor": "文字颜色",
     "canvasBackground": "画板背景",
     "canvasSize": "画板尺寸",
     "drawCache": "绘制缓存",

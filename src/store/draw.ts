@@ -8,6 +8,10 @@ import {
   renderMultiColor
 } from '@/core/element/draw/multiColor'
 import { paintBoard } from '@/core/paintBoard'
+import {
+  DEFAULT_TEXT_COLORS,
+  TEXT_COLOR_LIMIT
+} from '@/core/element/text/textColor'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { produce } from 'immer'
@@ -33,6 +37,8 @@ interface DrawState {
   multiColorType: string // 'col' | 'row' | 'circle'
   textFontFamily: string // current text drawing font
   fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
+  textColors: string[] // text palette, separate from brush colors
+  currentTextColor: number // swatch used for the next new text
 }
 
 interface DrawAction {
@@ -54,6 +60,9 @@ interface DrawAction {
   updateMultiColorType: (multiColorType: string) => void
   updateTextFontFamily: (fontFamily: string) => void
   updateFontStyles: (type: string) => void
+  updateCurrentTextColor: (colorIndex: number) => void
+  updateTextColor: (color: string, colorIndex: number) => void
+  deleteTextColor: (colorIndex: number) => void
 }
 
 const useDrawStore = create<DrawState & DrawAction>()(
@@ -77,6 +86,8 @@ const useDrawStore = create<DrawState & DrawAction>()(
       multiColorType: MultiColorType.COL,
       textFontFamily: 'Georgia',
       fontStyles: [],
+      textColors: [...DEFAULT_TEXT_COLORS],
+      currentTextColor: 0,
       updateDrawWidth(drawWidth) {
         const { drawWidth: oldDrawWidth, drawStyle } = get()
         if (oldDrawWidth !== drawWidth && paintBoard.canvas) {
@@ -295,6 +306,51 @@ const useDrawStore = create<DrawState & DrawAction>()(
         }
         set({
           fontStyles
+        })
+      },
+      updateCurrentTextColor(colorIndex) {
+        const { textColors, currentTextColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= textColors.length ||
+          currentTextColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentTextColor: colorIndex })
+      },
+      updateTextColor(color, colorIndex) {
+        const { textColors } = get()
+        if (colorIndex < 0 || colorIndex > textColors.length) {
+          return
+        }
+        if (colorIndex === textColors.length) {
+          if (textColors.length >= TEXT_COLOR_LIMIT) {
+            return
+          }
+          set({ textColors: [...textColors, color] })
+          return
+        }
+        set(
+          produce((state) => {
+            state.textColors[colorIndex] = color
+          })
+        )
+      },
+      deleteTextColor(colorIndex) {
+        const { textColors, currentTextColor } = get()
+        const next = reindexDrawColorSelection(
+          textColors,
+          colorIndex,
+          currentTextColor,
+          [currentTextColor]
+        )
+        if (!next) {
+          return
+        }
+        set({
+          textColors: next.drawColors,
+          currentTextColor: next.currentDrawColor
         })
       }
     }),

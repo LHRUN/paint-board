@@ -9,7 +9,6 @@ import { ActionMode, ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 
 import debounce from 'lodash-es/debounce'
-import { isMobile } from '@/utils'
 import { EventModule } from './event'
 import { TextElement } from './element/text/index'
 import { material } from './element/draw/material'
@@ -77,9 +76,7 @@ export class PaintBoard {
     fabric.Line.prototype.strokeLineJoin = 'round'
     fabric.Line.prototype.strokeLineCap = 'round'
 
-    if (isMobile()) {
-      brushMouseMixin.initCanvas(this.canvas)
-    }
+    brushMouseMixin.initCanvas(this.canvas)
     alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
     this.evnet = new EventModule()

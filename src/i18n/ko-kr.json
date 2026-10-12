@@ -35,6 +35,7 @@
     "layer": "레이어",
     "imageFilters": "이미지 필터",
     "fontStyle": "글꼴 스타일",
+    "textColor": "텍스트 색상",
     "canvasBackground": "캔버스 배경",
     "canvasSize": "캔버스 크기",
     "drawCache": "그리기 캐시",

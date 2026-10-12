@@ -1,5 +1,6 @@
 import { fabric } from 'fabric'
 import { paintBoard } from '@/core/paintBoard'
+import { isCanvasTextObject } from '@/core/element/text/placeholder'
 import { DrawingHandler } from './draw/drawingHandler'
 
 export class CanvasMouseEvent {
@@ -55,13 +56,10 @@ export class CanvasMouseEvent {
     })
 
     canvas?.on('mouse:dblclick', (e) => {
-      if (e?.absolutePointer) {
-        const { x, y } = e.absolutePointer
-        paintBoard.textElement?.loadText({
-          x,
-          y
-        })
+      if (!isCanvasTextObject(e.target)) {
+        return
       }
+      paintBoard.textElement?.editText(e.target as fabric.IText)
     })
   }
 

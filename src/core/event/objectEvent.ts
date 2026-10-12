@@ -7,6 +7,11 @@ import {
   filterUnlockedObjects
 } from '@/core/utils/object'
 import { shouldRecordObjectModified } from '@/core/history/recordObject'
+import { shouldDiscardUneditedText } from '@/core/element/text/placeholder'
+import {
+  bindEditingBox,
+  refreshEditingBox
+} from '@/core/element/text/editingBox'
 import { fabric } from 'fabric'
 
 export class ObjectEvent {
@@ -47,6 +52,12 @@ export class ObjectEvent {
         paintBoard.history?.saveState()
       }
     })
+    canvas?.on('object:added', (e) => {
+      if (e.target?.type === 'i-text') {
+        bindEditingBox(e.target as fabric.IText)
+      }
+    })
+
     canvas?.on('object:modified', (e) => {
       const target = e.target as fabric.IText | undefined
       if (
@@ -108,28 +119,43 @@ export class ObjectEvent {
 
   initTextEvent() {
     const canvas = paintBoard?.canvas
-    canvas?.on('text:editing:entered', () => {
+    canvas?.on('text:editing:entered', (e) => {
       paintBoard.textElement.isTextEditing = true
+      const obj = e?.target as fabric.IText
+      if (obj?.type === 'i-text') {
+        bindEditingBox(obj)
+        void refreshEditingBox(obj)
+      }
     })
 
     canvas?.on('text:editing:exited', (e) => {
       const obj = e?.target as fabric.IText
-      if (obj) {
-        paintBoard.textElement.isTextEditing = false
-
-        // If there is no _customType, it means it is a new object.
-        if (!obj?._customType) {
-          initCustomObjectAttr(obj, ELEMENT_CUSTOM_TYPE.I_TEXT)
-        }
-
-        // Content edits have no transform action, so they are stored here.
-        // A new text object is stored even when the default string is unchanged,
-        // otherwise the first drag becomes the only history step and undo deletes it.
-        if (obj?._textBeforeEdit !== obj?.text) {
-          canvas.discardActiveObject()
-        }
-        paintBoard.render()
+      if (!obj) {
+        return
       }
+      paintBoard.textElement.isTextEditing = false
+
+      // A new text box has no custom type until this exit. Leaving the
+      // placeholder means the user never typed, so drop it before any save.
+      const isNew = !obj._customType
+      if (shouldDiscardUneditedText({ isNew, text: obj.text })) {
+        canvas.remove(obj)
+        if (paintBoard.textElement.text === obj) {
+          paintBoard.textElement.text = null
+        }
+        canvas.requestRenderAll()
+        return
+      }
+
+      if (isNew) {
+        initCustomObjectAttr(obj, ELEMENT_CUSTOM_TYPE.I_TEXT)
+      }
+
+      // Content edits have no transform action, so they are stored here.
+      if (obj._textBeforeEdit !== obj.text) {
+        canvas.discardActiveObject()
+      }
+      paintBoard.render()
     })
   }
 }

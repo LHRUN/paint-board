@@ -11,6 +11,7 @@ import LockConfig from './lockConfig'
 import ImageFilterConfig from './imageFilterConfig'
 import FontStyleConfig from './fontStyleConfig'
 import SelectFontFamilyConfig from './selectFontFamilyConfig'
+import TextColorConfig from './textColorConfig'
 
 const SelectConfig = () => {
   const { t } = useTranslation()
@@ -48,6 +49,8 @@ const SelectConfig = () => {
       {activeObject?._customType === ELEMENT_CUSTOM_TYPE.IMAGE && (
         <ImageFilterConfig />
       )}
+
+      <TextColorConfig refreshCount={refreshCount} />
 
       {activeObject?._customType === ELEMENT_CUSTOM_TYPE.I_TEXT && (
         <FontStyleConfig refreshCount={refreshCount} />
