@@ -1,6 +1,8 @@
 let fileHydrationFailed = false
+let filePersistFailed = false
 
 const failureListeners = new Set<() => void>()
+const persistListeners = new Set<() => void>()
 
 export const markFileHydrationFailed = () => {
   fileHydrationFailed = true
@@ -11,7 +13,25 @@ export const markFileHydrationFailed = () => {
 
 export const hasFileHydrationFailed = () => fileHydrationFailed
 
-export const shouldPersistFiles = () => !fileHydrationFailed
+export const shouldPersistFiles = () =>
+  !fileHydrationFailed && !filePersistFailed
+
+export const markFilePersistFailed = () => {
+  if (filePersistFailed) {
+    return
+  }
+  filePersistFailed = true
+  persistListeners.forEach((listener) => listener())
+}
+
+export const hasFilePersistFailed = () => filePersistFailed
+
+export const subscribeFilePersistFailed = (listener: () => void) => {
+  persistListeners.add(listener)
+  return () => {
+    persistListeners.delete(listener)
+  }
+}
 
 const subscribeFileHydrationFailed = (listener: () => void) => {
   failureListeners.add(listener)

@@ -17,6 +17,7 @@ import useFileStore, {
   IBoardData
 } from '@/store/files'
 import { CANVAS_CUSTOM_PROPERTIES } from './canvasProperties'
+import { markFileContentDirty } from '@/store/fileRecord'
 
 /**
  * get fabric.js canvas JSON data
@@ -110,6 +111,11 @@ export const handleFileListData = () => {
   })
 
   if (hasChanges) {
+    updatedFiles.forEach((file, index) => {
+      if (file !== files[index]) {
+        markFileContentDirty(file.id)
+      }
+    })
     useFileStore.setState({
       files: updatedFiles
     })

@@ -2,7 +2,22 @@ import { cameraFilters } from './cameraFilters'
 import { applyBasicAdjustments } from './adjustments'
 import useCameraStore from '@/store/camera'
 
-export let CameraImageData: string | null = null
+let previewCanvas: HTMLCanvasElement | null = null
+
+export const captureCameraFrame = () => {
+  if (
+    !previewCanvas ||
+    previewCanvas.width === 0 ||
+    previewCanvas.height === 0
+  ) {
+    return null
+  }
+  try {
+    return previewCanvas.toDataURL('image/jpeg', 0.85)
+  } catch {
+    return null
+  }
+}
 
 export class RenderLoop {
   video: HTMLVideoElement
@@ -19,6 +34,7 @@ export class RenderLoop {
     this.video = video
     this.canvas = canvas
     this.ctx = ctx
+    previewCanvas = canvas
     this.start()
   }
 
@@ -40,6 +56,9 @@ export class RenderLoop {
       cancelAnimationFrame(this.animationId)
       this.animationId = null
     }
+    if (previewCanvas === this.canvas) {
+      previewCanvas = null
+    }
   }
 
   renderCameraFrame(): void {
@@ -49,8 +68,13 @@ export class RenderLoop {
       return
     }
 
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
+    if (
+      canvas.width !== video.videoWidth ||
+      canvas.height !== video.videoHeight
+    ) {
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+    }
 
     ctx.save()
 
@@ -79,6 +103,5 @@ export class RenderLoop {
 
     // put image data back to canvas
     ctx.putImageData(imageData, 0, 0)
-    CameraImageData = canvas.toDataURL()
   }
 }

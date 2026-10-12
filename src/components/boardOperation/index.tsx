@@ -7,7 +7,7 @@ import { ActionMode } from '@/constants'
 import { paintBoard } from '@/core/paintBoard'
 import { isMobile as isMobileFn } from '@/utils'
 import { ImageElement } from '@/core/element/image'
-import { CameraImageData } from '@/core/camera/renderer'
+import { captureCameraFrame } from '@/core/camera/renderer'
 
 import { drawBackground } from '../background/backgroundColor/utils'
 import { drawBackgroundImage } from '../background/backgroundImage/utils'
@@ -181,17 +181,19 @@ const BoardOperation = () => {
               )
             }
             break
-          case 'camera':
-            if (CameraImageData && openCamera) {
+          case 'camera': {
+            const cameraFrame = openCamera ? captureCameraFrame() : null
+            if (cameraFrame) {
               await drawBackgroundImage(
                 ctx,
-                CameraImageData,
+                cameraFrame,
                 cameraOpacity,
                 width,
                 height
               )
             }
             break
+          }
           default:
             break
         }

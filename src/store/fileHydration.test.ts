@@ -25,6 +25,15 @@ describe('file hydration', () => {
     expect(shouldPersistFiles()).toBe(false)
   })
 
+  it('stops persisting after a later write fails', async () => {
+    const { markFilePersistFailed, shouldPersistFiles } = await import(
+      './fileHydration'
+    )
+    expect(shouldPersistFiles()).toBe(true)
+    markFilePersistFailed()
+    expect(shouldPersistFiles()).toBe(false)
+  })
+
   it('resolves immediately if hydration already failed', async () => {
     const { markFileHydrationFailed, waitForHydration } = await import(
       './fileHydration'

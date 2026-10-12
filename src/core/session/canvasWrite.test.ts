@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { canWriteFile, isCurrentCanvasLoad } from './canvasWrite'
+import {
+  canWriteFile,
+  isCurrentCanvasLoad,
+  shouldCommitDeferredCanvasWrite
+} from './canvasWrite'
 
 describe('canvas file alignment', () => {
   it('accepts a load only when the generation and file id are still current', () => {
@@ -13,5 +17,27 @@ describe('canvas file alignment', () => {
     expect(canWriteFile('file-a', 'file-b')).toBe(false)
     expect(canWriteFile(null, 'file-a')).toBe(false)
     expect(canWriteFile('file-a', undefined)).toBe(false)
+  })
+
+  it('drops a deferred image once the file, canvas, or history apply has moved on', () => {
+    const current = {
+      canvasMatches: true,
+      generationMatches: true,
+      canWrite: true,
+      historyApplying: false
+    }
+    expect(shouldCommitDeferredCanvasWrite(current)).toBe(true)
+    expect(
+      shouldCommitDeferredCanvasWrite({ ...current, canWrite: false })
+    ).toBe(false)
+    expect(
+      shouldCommitDeferredCanvasWrite({ ...current, generationMatches: false })
+    ).toBe(false)
+    expect(
+      shouldCommitDeferredCanvasWrite({ ...current, canvasMatches: false })
+    ).toBe(false)
+    expect(
+      shouldCommitDeferredCanvasWrite({ ...current, historyApplying: true })
+    ).toBe(false)
   })
 })

@@ -89,7 +89,8 @@
     "uploadFileFail": "上传失败，请重试",
     "unselectedElementTip": "请点击或者框选画板内容",
     "cameraPermissionDenied": "摄像头权限被拒绝，请检查浏览器权限",
-    "fileHydrationFail": "无法恢复已保存的画布。请刷新页面。在恢复成功之前，新的编辑不会覆盖已保存的文件。"
+    "fileHydrationFail": "无法恢复已保存的画布。请刷新页面。在恢复成功之前，新的编辑不会覆盖已保存的文件。",
+    "filePersistFail": "无法把画布保存到本地。请刷新页面。在保存成功之前，新的编辑不会覆盖已保存的文件。"
   },
   "filters": {
     "Sepia": "复古",

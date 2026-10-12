@@ -1,20 +1,41 @@
 import { fabric } from 'fabric'
 import { paintBoard } from '../../paintBoard'
 import { initCustomObjectAttr } from '../../utils/object'
+import { limitImageDataUrl } from '../../utils/imageLimit'
+import {
+  canWriteFile,
+  shouldCommitDeferredCanvasWrite
+} from '../../session/canvasWrite'
 import { ActionMode, ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useBoardStore from '@/store/board'
 
 export class ImageElement {
   image: fabric.Image | null = null
 
-  addImage(data: string) {
+  async addImage(data: string) {
     const canvas = paintBoard.canvas
-    if (!canvas) {
+    const generation = paintBoard.getLoadGeneration()
+    const fileId = paintBoard.canvasFileId
+    const stillCurrent = () =>
+      shouldCommitDeferredCanvasWrite({
+        canvasMatches: !!canvas && paintBoard.canvas === canvas,
+        generationMatches: paintBoard.getLoadGeneration() === generation,
+        canWrite: canWriteFile(paintBoard.canvasFileId, fileId),
+        historyApplying: paintBoard.history?.isApplying() ?? false
+      })
+    if (!canvas || !stillCurrent()) {
+      return
+    }
+    const limited = await limitImageDataUrl(data)
+    if (!stillCurrent()) {
       return
     }
     fabric.Image.fromURL(
-      data,
+      limited,
       (img) => {
+        if (!stillCurrent()) {
+          return
+        }
         const viewportCenter = canvas.getVpCenter()
 
         // get scaling

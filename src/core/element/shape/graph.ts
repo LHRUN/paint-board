@@ -12,20 +12,40 @@ import { getShapeStrokeDashArray, getShapeStrokeWidth } from './utils'
 import { svgShapesToPaths } from './utils/svgToPath'
 import { RoughShapeUtils } from './utils/roughUtils'
 import { StrokeStyleType } from '@/constants/shape'
+import { shouldAttachGraph } from './graphReady'
 
 export class GraphElement {
   graphInstance: fabric.Object | undefined
   startX = 0
   startY = 0
+  private cancelled = false
+  private readySettled = false
+  private pendingPoint: fabric.Point | undefined
+  private readyResolve: (attached: boolean) => void = () => {}
+  readonly ready: Promise<boolean>
 
   constructor(point: fabric.Point | undefined) {
+    this.ready = new Promise((resolve) => {
+      this.readyResolve = resolve
+    })
     if (!point) {
+      this.settleReady(false)
       return
     }
     this.initGraph(point)
   }
 
+  private settleReady(attached: boolean) {
+    if (this.readySettled) {
+      return
+    }
+    this.readySettled = true
+    this.readyResolve(attached)
+  }
+
   async initGraph(point: fabric.Point) {
+    const canvas = paintBoard.canvas
+    const generation = paintBoard.getLoadGeneration()
     const { currentShapeIcon } = useShapeStore.getState()
 
     const strokeWidth = getShapeStrokeWidth()
@@ -37,6 +57,7 @@ export class GraphElement {
 
     if (!iconComponent) {
       console.warn(`Icon "${currentShapeIcon}" not found in LucideIcons`)
+      this.settleReady(false)
       return
     }
 
@@ -56,7 +77,16 @@ export class GraphElement {
       groupObj = await this.renderNormalGraph(svgString, point)
     }
 
-    if (!groupObj) {
+    if (
+      !groupObj ||
+      !shouldAttachGraph({
+        cancelled: this.cancelled,
+        canvasMatches: !!canvas && paintBoard.canvas === canvas,
+        generationMatches: paintBoard.getLoadGeneration() === generation,
+        historyApplying: paintBoard.history?.isApplying() ?? false
+      })
+    ) {
+      this.settleReady(false)
       return
     }
 
@@ -65,6 +95,10 @@ export class GraphElement {
     this.startX = point.x
     this.startY = point.y
     initCustomObjectAttr(groupObj, ELEMENT_CUSTOM_TYPE.SHAPE_GRAPH)
+    if (this.pendingPoint) {
+      this.applyPosition(this.pendingPoint)
+    }
+    this.settleReady(true)
   }
 
   renderNormalGraph(
@@ -160,7 +194,18 @@ export class GraphElement {
   }
 
   addPosition(point: fabric.Point | undefined) {
-    if (!point || !this.graphInstance) {
+    if (!point) {
+      return
+    }
+    this.pendingPoint = point
+    if (!this.graphInstance) {
+      return
+    }
+    this.applyPosition(point)
+  }
+
+  private applyPosition(point: fabric.Point) {
+    if (!this.graphInstance) {
       return
     }
     const { x: moveToX, y: moveToY } = new fabric.Point(point.x, point.y)
@@ -181,8 +226,11 @@ export class GraphElement {
   }
 
   destroy() {
+    this.cancelled = true
     if (this.graphInstance) {
       paintBoard.canvas?.remove(this.graphInstance)
+      this.graphInstance = undefined
     }
+    this.settleReady(false)
   }
 }

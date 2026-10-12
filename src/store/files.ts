@@ -12,8 +12,14 @@ import { parseImportedBoardFile } from '@/core/utils/importBoardFile'
 import {
   shouldPersistFiles,
   markFileHydrationFailed,
+  markFilePersistFailed,
   waitForHydration
 } from './fileHydration'
+import {
+  readPersistedFiles,
+  writePersistedFiles,
+  markFileContentDirty
+} from './fileRecord'
 import {
   BOARD_VERSION,
   DEFAULT_BACKGROUND_SORT,
@@ -26,15 +32,31 @@ export {
   DEFAULT_BACKGROUND_SORT
 } from './fileModel'
 
+const fileDb = {
+  get: async (key: string) => (await get(key)) || null,
+  set: (key: string, value: string) => set(key, value),
+  del: (key: string) => del(key)
+}
+
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
-    return (await get(name)) || null
+    try {
+      return await readPersistedFiles((await get(name)) || null, fileDb, name)
+    } catch (error) {
+      markFileHydrationFailed()
+      throw error
+    }
   },
   setItem: async (name: string, value: string): Promise<void> => {
     if (!shouldPersistFiles()) {
       return
     }
-    await set(name, value)
+    try {
+      await writePersistedFiles(name, value, fileDb)
+    } catch (error) {
+      console.error('Failed to persist paint board file', error)
+      markFilePersistFailed()
+    }
   },
   removeItem: async (name: string): Promise<void> => {
     await del(name)
@@ -79,7 +101,7 @@ interface FileAction {
   updateBackgroundColor: (colorIndex: number, color: string) => void
   updateCurrentBackgroundColor: (colorIndex: number) => void
   deleteBackgroundColor: (colorIndex: number) => void
-  updateBackgroundImage: (image: string) => void
+  updateBackgroundImage: (image: string, fileId?: string) => void
   updateBackgroundImageOpacity: (opacity: number) => void
   updateBackgroundSort: (oldIndex?: number, newIndex?: number) => void
   updateBoardData: (data: Partial<IBoardData>, fileId?: string) => void
@@ -150,6 +172,7 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateBoardData(data, fileId) {
         const targetId = fileId || get().currentId
+        markFileContentDirty(targetId)
         updateFileById(get, set, targetId, (file) => {
           file.boardVersion = BOARD_VERSION
           file.boardData = data
@@ -208,8 +231,10 @@ const useFileStore = create<FileState & FileAction>()(
           file.backgroundColorList.splice(colorIndex, 1)
         })
       },
-      updateBackgroundImage(image) {
-        updateCurrentFile(get, set, (file) => {
+      updateBackgroundImage(image, fileId) {
+        const targetId = fileId || get().currentId
+        markFileContentDirty(targetId)
+        updateFileById(get, set, targetId, (file) => {
           file.backgroundImage = image
         })
       },

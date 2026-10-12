@@ -333,7 +333,7 @@ export class PaintBoard {
     this.evnet?.touchEvent.canvasTransformHandler.cancelPending()
   }
 
-  private setCanvasInteractive(interactive: boolean) {
+  setCanvasInteractive(interactive: boolean) {
     const upperCanvas = this.canvas?.upperCanvasEl
     if (!upperCanvas) {
       return

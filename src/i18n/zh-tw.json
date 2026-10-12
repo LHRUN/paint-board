@@ -89,7 +89,8 @@
     "uploadFileFail": "上傳失敗，請重試",
     "unselectedElementTip": "請點擊或者框選畫板內容",
     "cameraPermissionDenied": "攝影機權限被拒絕，請檢查瀏覽器權限",
-    "fileHydrationFail": "無法恢復已保存的畫布。請重新整理頁面。在恢復成功之前，新的編輯不會覆蓋已保存的檔案。"
+    "fileHydrationFail": "無法恢復已保存的畫布。請重新整理頁面。在恢復成功之前，新的編輯不會覆蓋已保存的檔案。",
+    "filePersistFail": "無法把畫布儲存到本地。請重新整理頁面。在儲存成功之前，新的編輯不會覆蓋已保存的檔案。"
   },
   "filters": {
     "Sepia": "復古",
