@@ -479,6 +479,7 @@ export class PaintBoard {
       if (object) {
         canvas.bringForward(object, true)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -493,6 +494,7 @@ export class PaintBoard {
       if (object) {
         canvas.sendBackwards(object, true)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -507,6 +509,7 @@ export class PaintBoard {
       if (object) {
         canvas.bringToFront(object)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -521,6 +524,7 @@ export class PaintBoard {
       if (object) {
         canvas.sendToBack(object)
         this.render()
+        this.triggerHook()
       }
     }
   }

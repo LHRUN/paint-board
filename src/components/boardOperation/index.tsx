@@ -25,10 +25,12 @@ import {
   Shrink,
   X,
   Menu,
-  BookText
+  BookText,
+  Layers
 } from 'lucide-react'
 
 import FileList from './fileList'
+import ObjectList from './objectList'
 import DownloadImage from './downloadImage'
 import UploadImage from '@/components/uploadImage/lazy'
 import Toast from '@/components/toast'
@@ -41,6 +43,7 @@ const BoardOperation = () => {
   const { cameraOpacity, openCamera } = useCameraStore()
   const currentFile = useCurrentFile()
   const [showFile, updateShowFile] = useState(false) // show file list draw
+  const [showObjectList, updateShowObjectList] = useState(false)
   const [showOperation, setShowOperation] = useState(true) // mobile: show all operation
   const [isFullscreen, setIsFullscreen] = useState(false)
 
@@ -308,6 +311,13 @@ const BoardOperation = () => {
                   )}
                 </div>
               )}
+              <div
+                onClick={() => updateShowObjectList((open) => !open)}
+                className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                data-tip={t('operate.objectList')}
+              >
+                <Layers strokeWidth={2} color="#66CC8A" />
+              </div>
               <label
                 htmlFor="my-drawer-4"
                 className="min-xs:tooltip cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
@@ -334,6 +344,7 @@ const BoardOperation = () => {
         </div>
       </div>
       {exportFailed && <Toast message="tip.exportFail" type="error" />}
+      {showObjectList && <ObjectList updateShow={updateShowObjectList} />}
       {showFile && <FileList updateShow={updateShowFile} />}
       {showDownloadModal && downloadImageURL && (
         <DownloadImage

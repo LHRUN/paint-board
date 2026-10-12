@@ -72,6 +72,7 @@
     "image": "画像アップロード",
     "clean": "クリア",
     "save": "画像として保存",
+    "objectList": "レイヤーリスト",
     "fileList": "ファイルリスト",
     "fullscreen": "全画面表示",
     "exitFullscreen": "全画面を終了",
@@ -79,6 +80,22 @@
     "deleteFile": "ファイル削除",
     "saveFile": "ファイルデータ保存",
     "uploadFile": "ファイルデータアップロード"
+  },
+  "objectList": {
+    "title": "レイヤー",
+    "empty": "このボードには要素がありません",
+    "show": "表示",
+    "hide": "非表示",
+    "brush": "ブラシ",
+    "text": "テキスト",
+    "image": "画像",
+    "line": "直線",
+    "arrow": "矢印",
+    "rectangle": "矩形",
+    "circle": "円",
+    "polygon": "多角形",
+    "graph": "図形",
+    "element": "要素"
   },
   "cleanModal": {
     "title": "コンテンツのクリアを確認しますか？"
@@ -246,7 +263,7 @@
     "bottomLeftDesc2": "円形プログレスバー：現在のズーム率をリアルタイム表示、クリックでズーム率をリセット",
     "bottomLeftDesc3": "カメラボタン：現在のカメラ状態を表示、複数の表示設定をサポート",
     "bottomOperationBar": "下部操作バー",
-    "bottomOperationDesc1": "左から右への機能：元に戻す、やり直し、現在の選択をコピー、現在の選択を削除、テキスト描画、画像アップロード、描画コンテンツをクリア、画像として保存、ファイルリストを開く",
+    "bottomOperationDesc1": "左から右への機能：元に戻す、やり直し、現在の選択をコピー、現在の選択を削除、テキスト描画、画像アップロード、描画コンテンツをクリア、画像として保存、レイヤーリストを開く、ファイルリストを開く",
     "bottomOperationDesc1_1": "画像アップロードは背景除去、画像セグメンテーションをサポート。この機能はWebGPUサポートが必要、最新版のGoogle Chromeの使用を推奨",
     "bottomOperationDesc1_2": "画像として保存はカスタム設定をサポート。回転、スケール、クロップ",
     "fileList": "ファイルリスト",

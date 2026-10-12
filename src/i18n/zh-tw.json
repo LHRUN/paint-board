@@ -72,6 +72,7 @@
     "image": "上傳圖片",
     "clean": "清除畫板",
     "save": "保存爲圖片",
+    "objectList": "圖層列表",
     "fileList": "文件列表",
     "fullscreen": "進入全螢幕",
     "exitFullscreen": "退出全螢幕",
@@ -79,6 +80,22 @@
     "deleteFile": "删除文件",
     "saveFile": "保存文件数据",
     "uploadFile": "上传文件数据"
+  },
+  "objectList": {
+    "title": "圖層",
+    "empty": "當前畫板還沒有元素",
+    "show": "顯示",
+    "hide": "隱藏",
+    "brush": "畫筆",
+    "text": "文字",
+    "image": "圖片",
+    "line": "直線",
+    "arrow": "箭頭",
+    "rectangle": "矩形",
+    "circle": "圓形",
+    "polygon": "多邊形",
+    "graph": "圖形",
+    "element": "元素"
   },
   "cleanModal": {
     "title": "確認清除內容？"
@@ -246,7 +263,7 @@
     "bottomLeftDesc2": "圓形進度條：實時展示當前縮放比例, 點擊後可重置縮放比例",
     "bottomLeftDesc3": "攝像頭按鈕：展示當前攝像頭狀態, 支持多個顯示配置",
     "bottomOperationBar": "底部操作欄",
-    "bottomOperationDesc1": "從左到右的功能分別為：撤銷、反撤銷、複製當前選擇內容、刪除當前選擇內容、繪製文字、上傳圖片、清除繪製內容、保存為圖片、打開文件列表",
+    "bottomOperationDesc1": "從左到右的功能分別為：撤銷、反撤銷、複製當前選擇內容、刪除當前選擇內容、繪製文字、上傳圖片、清除繪製內容、保存為圖片、打開圖層列表、打開文件列表",
     "bottomOperationDesc1_1": "上傳圖片支持去除背景, 圖像分割. 此功能需要瀏覽器支持WebGPU, 建議用最新版谷歌瀏覽器",
     "bottomOperationDesc1_2": "保存為圖片支持自定義配置. 旋轉, 縮放, 裁切",
     "fileList": "文件列表",

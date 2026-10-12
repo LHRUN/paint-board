@@ -72,6 +72,7 @@
     "image": "upload image",
     "clean": "clean",
     "save": "Save as image",
+    "objectList": "Layer List",
     "fileList": "File List",
     "fullscreen": "Enter Fullscreen",
     "exitFullscreen": "Exit Fullscreen",
@@ -79,6 +80,22 @@
     "deleteFile": "Delete File",
     "saveFile": "Save File Data",
     "uploadFile": "Upload File Data"
+  },
+  "objectList": {
+    "title": "Layers",
+    "empty": "This board has no elements yet",
+    "show": "Show",
+    "hide": "Hide",
+    "brush": "Brush",
+    "text": "Text",
+    "image": "Image",
+    "line": "Line",
+    "arrow": "Arrow",
+    "rectangle": "Rectangle",
+    "circle": "Circle",
+    "polygon": "Polygon",
+    "graph": "Graph",
+    "element": "Element"
   },
   "cleanModal": {
     "title": "Confirm clearing content?"
@@ -246,7 +263,7 @@
     "bottomLeftDesc2": "Circular progress bar: real-time display of current zoom ratio, click to reset zoom ratio",
     "bottomLeftDesc3": "Camera button: displays current camera status, supports multiple display configurations",
     "bottomOperationBar": "Bottom Operation Bar",
-    "bottomOperationDesc1": "Functions from left to right are: undo, redo, copy current selection, delete current selection, draw text, upload image, clear drawing content, save as image, open file list",
+    "bottomOperationDesc1": "Functions from left to right are: undo, redo, copy current selection, delete current selection, draw text, upload image, clear drawing content, save as image, open layer list, open file list",
     "bottomOperationDesc1_1": "Upload image supports background removal, image segmentation. This function requires browser support for WebGPU, recommend using the latest version of Google Chrome",
     "bottomOperationDesc1_2": "Save as image supports custom configuration. Rotate, scale, crop",
     "fileList": "File List",

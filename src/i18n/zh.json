@@ -72,6 +72,7 @@
     "image": "上传图片",
     "clean": "清除画板",
     "save": "保存为图片",
+    "objectList": "图层列表",
     "fileList": "文件列表",
     "fullscreen": "进入全屏",
     "exitFullscreen": "退出全屏",
@@ -79,6 +80,22 @@
     "deleteFile": "删除文件",
     "saveFile": "保存文件数据",
     "uploadFile": "上传文件数据"
+  },
+  "objectList": {
+    "title": "图层",
+    "empty": "当前画板还没有元素",
+    "show": "显示",
+    "hide": "隐藏",
+    "brush": "画笔",
+    "text": "文字",
+    "image": "图片",
+    "line": "直线",
+    "arrow": "箭头",
+    "rectangle": "矩形",
+    "circle": "圆形",
+    "polygon": "多边形",
+    "graph": "图形",
+    "element": "元素"
   },
   "cleanModal": {
     "title": "确认清除内容？"
@@ -246,7 +263,7 @@
     "bottomLeftDesc2": "圆形进度条：实时展示当前缩放比例, 点击后可重置缩放比例",
     "bottomLeftDesc3": "摄像头按钮：展示当前摄像头状态, 支持多个显示配置",
     "bottomOperationBar": "底部操作栏",
-    "bottomOperationDesc1": "从左到右的功能分别为：撤销、反撤销、复制当前选择内容、删除当前选择内容、绘制文字、上传图片、清除绘制内容、保存为图片、打开文件列表",
+    "bottomOperationDesc1": "从左到右的功能分别为：撤销、反撤销、复制当前选择内容、删除当前选择内容、绘制文字、上传图片、清除绘制内容、保存为图片、打开图层列表、打开文件列表",
     "bottomOperationDesc1_1": "上传图片支持去除背景, 图像分割. 此功能需要浏览器支持WebGPU, 建议用最新版谷歌浏览器",
     "bottomOperationDesc1_2": "保存为图片支持自定义配置. 旋转, 缩放, 裁切",
     "fileList": "文件列表",
