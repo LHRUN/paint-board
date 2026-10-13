@@ -134,6 +134,26 @@
     "underLine": "밑줄",
     "lineThrough": "취소선"
   },
+  "fontConfig": {
+    "settings": "글꼴 설정",
+    "title": "글꼴 설정",
+    "defaultBadge": "기본",
+    "add": "추가",
+    "placeholder": "Google Fonts 글꼴 이름",
+    "delete": "삭제",
+    "settingsTip": "글꼴 직접 설정",
+    "sourceTip": "글꼴은 Google Fonts에서 가져옵니다. 클릭하여 더 보기",
+    "setQuick": "패널에 표시",
+    "alreadyQuick": "패널에 표시 중",
+    "customCount": "사용자 글꼴",
+    "loading": "글꼴을 확인하는 중...",
+    "invalid": "올바른 글꼴 이름을 입력하세요",
+    "duplicate": "이미 목록에 있는 글꼴입니다",
+    "limit": "사용자 글꼴은 5개까지 추가할 수 있습니다",
+    "notFound": "해당 Google 글꼴을 찾을 수 없습니다",
+    "network": "네트워크 오류로 글꼴을 불러오지 못했습니다",
+    "loadFailed": "글꼴을 불러오지 못했습니다"
+  },
   "boardConfig": {
     "cacheTip": "대량의 그리기 내용이 있을 때 캐싱을 활성화하면 그리기 성능이 향상되고 캐싱을 비활성화하면 캔버스 선명도가 향상됩니다."
   },

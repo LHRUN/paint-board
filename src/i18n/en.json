@@ -134,6 +134,26 @@
     "underLine": "UnderLine",
     "lineThrough": "LineThrough"
   },
+  "fontConfig": {
+    "settings": "Font settings",
+    "title": "Font settings",
+    "defaultBadge": "Default",
+    "add": "Add",
+    "placeholder": "Enter a Google Fonts name",
+    "delete": "Delete",
+    "settingsTip": "Customize fonts",
+    "sourceTip": "Fonts come from Google Fonts. Click to browse more.",
+    "setQuick": "Show on panel",
+    "alreadyQuick": "On panel",
+    "customCount": "Custom fonts",
+    "loading": "Checking font...",
+    "invalid": "Enter a valid font name",
+    "duplicate": "This font is already in the list",
+    "limit": "You can add up to 5 custom fonts",
+    "notFound": "That Google font could not be found",
+    "network": "Network error. The font did not load",
+    "loadFailed": "The font failed to load"
+  },
   "boardConfig": {
     "cacheTip": "In the presence of a large amount of drawing content, enabling caching will improve drawing performance, while disabling caching will improve canvas sharpness"
   },

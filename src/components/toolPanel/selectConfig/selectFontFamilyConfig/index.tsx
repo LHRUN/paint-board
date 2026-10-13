@@ -1,10 +1,10 @@
 import { FC, useMemo } from 'react'
 import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { paintBoard } from '@/core/paintBoard'
-import { refreshEditingBox } from '@/core/element/text/editingBox'
 import { canSnapshotTextChange } from '@/core/element/text/editingSnapshot'
 
 import FontFamilyConfg from '@/components/toolPanel/drawConfig/freeStyleConfig/fontFamilyConfig'
+import { applyFontFamily } from '@/core/font/applyFont'
 
 interface IProps {
   refreshCount: number
@@ -13,14 +13,7 @@ interface IProps {
 const SelectFontFamilyConfig: FC<IProps> = ({ refreshCount }) => {
   const updateFontFamily = (fontFamily: string) => {
     const text = paintBoard.canvas?.getActiveObject() as fabric.Object
-    if (text?._customType === ELEMENT_CUSTOM_TYPE.I_TEXT) {
-      ;(text as fabric.IText).set('fontFamily', fontFamily)
-      void refreshEditingBox(text as fabric.IText)
-    } else if (text?._customType === ELEMENT_CUSTOM_TYPE.DRAW_TEXT) {
-      ;(text as fabric.Group)._objects.forEach((obj) => {
-        ;(obj as fabric.Text).set('fontFamily', fontFamily)
-      })
-    }
+    applyFontFamily(text, fontFamily)
     if (
       text?._customType === ELEMENT_CUSTOM_TYPE.I_TEXT &&
       !canSnapshotTextChange([text as fabric.IText])

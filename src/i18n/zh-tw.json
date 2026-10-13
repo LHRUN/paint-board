@@ -134,6 +134,26 @@
     "underLine": "下劃線",
     "lineThrough": "刪除線"
   },
+  "fontConfig": {
+    "settings": "字型設定",
+    "title": "字型設定",
+    "defaultBadge": "預設",
+    "add": "新增",
+    "placeholder": "輸入 Google Fonts 字型名稱",
+    "delete": "刪除",
+    "settingsTip": "自訂設定字型",
+    "sourceTip": "字型來源於 Google Fonts, 點擊查看更多字型",
+    "setQuick": "設為面板顯示",
+    "alreadyQuick": "面板顯示",
+    "customCount": "自訂字型",
+    "loading": "正在驗證字型...",
+    "invalid": "請輸入有效的字型名稱",
+    "duplicate": "這個字型已經在清單中",
+    "limit": "最多新增 5 個自訂字型",
+    "notFound": "找不到這個 Google 字型",
+    "network": "網路錯誤，字型沒有載入成功",
+    "loadFailed": "字型載入失敗"
+  },
   "boardConfig": {
     "cacheTip": "在存在大量繪製內容的情況下，啓用緩存將提高繪製性能，而禁用緩存則會提升畫布清晰度"
   },

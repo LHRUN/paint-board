@@ -134,6 +134,26 @@
     "underLine": "下線",
     "lineThrough": "打ち消し線"
   },
+  "fontConfig": {
+    "settings": "フォント設定",
+    "title": "フォント設定",
+    "defaultBadge": "標準",
+    "add": "追加",
+    "placeholder": "Google Fonts のフォント名",
+    "delete": "削除",
+    "settingsTip": "フォントをカスタマイズ",
+    "sourceTip": "フォントは Google Fonts から読み込みます。クリックしてさらに見る",
+    "setQuick": "パネルに表示",
+    "alreadyQuick": "パネル表示中",
+    "customCount": "カスタム",
+    "loading": "フォントを確認しています...",
+    "invalid": "有効なフォント名を入力してください",
+    "duplicate": "このフォントは既に追加されています",
+    "limit": "カスタムフォントは5つまでです",
+    "notFound": "その Google フォントは見つかりません",
+    "network": "ネットワークエラーでフォントを読み込めませんでした",
+    "loadFailed": "フォントの読み込みに失敗しました"
+  },
   "boardConfig": {
     "cacheTip": "大量の描画コンテンツがある場合、キャッシュを有効にすると描画パフォーマンスが向上し、キャッシュを無効にするとキャンバスの鮮明さが向上します"
   },

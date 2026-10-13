@@ -23,6 +23,8 @@ import {
 import { cloneObjects } from './utils/object'
 import { followupAfterBoardLoad } from './session/boardLoad'
 import { isCurrentCanvasLoad } from './session/canvasWrite'
+import { prepareBoardFonts } from './font/googleFont'
+import { clearFabricFontCache, relayoutFonts } from './font/applyFont'
 
 import useFileStore, { waitForFilesHydration } from '@/store/files'
 import useDrawStore from '@/store/draw'
@@ -274,6 +276,33 @@ export class PaintBoard {
       return
     }
     job.running = true
+    void this.loadBoardWhenFontsReady(job, canvas)
+  }
+
+  /**
+   * Web fonts have to be available before Fabric measures text during
+   * loadFromJSON. A slow font must not block the board forever.
+   */
+  private async loadBoardWhenFontsReady(
+    job: BoardLoadJob,
+    canvas: fabric.Canvas
+  ) {
+    let prepared: Awaited<ReturnType<typeof prepareBoardFonts>> = {
+      families: [],
+      timedOut: false,
+      finished: Promise.resolve()
+    }
+    try {
+      prepared = await prepareBoardFonts(job.boardData)
+    } catch (error) {
+      console.error('Failed to load board fonts', error)
+    }
+    if (job.serial !== this.loadSerial || this.canvas !== canvas) {
+      job.running = false
+      this.failBoardLoad(job)
+      return
+    }
+    prepared.families.forEach((family) => clearFabricFontCache(family))
     canvas.loadFromJSON(job.boardData, () => {
       job.running = false
       const latest = this.latestBoardLoad
@@ -286,6 +315,19 @@ export class PaintBoard {
       })
 
       if (action === 'commit') {
+        if (prepared.timedOut) {
+          void prepared.finished
+            .then(() => {
+              if (job.serial !== this.loadSerial || this.canvas !== canvas) {
+                return
+              }
+              relayoutFonts(canvas, prepared.families)
+              canvas.requestRenderAll()
+            })
+            .catch((error) => {
+              console.error('Failed to relayout board fonts', error)
+            })
+        }
         job.settled = true
         job.done(true)
         return

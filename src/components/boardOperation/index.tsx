@@ -8,6 +8,7 @@ import { paintBoard } from '@/core/paintBoard'
 import { isMobile as isMobileFn } from '@/utils'
 import { ImageElement } from '@/core/element/image'
 import { captureCameraFrame } from '@/core/camera/renderer'
+import { prepareCanvasTextForExport } from '@/core/font/applyFont'
 
 import { drawBackground } from '../background/backgroundColor/utils'
 import { drawBackgroundImage } from '../background/backgroundImage/utils'
@@ -139,6 +140,11 @@ const BoardOperation = () => {
   // save as image
   const saveImage = async () => {
     if (paintBoard.canvas) {
+      try {
+        await prepareCanvasTextForExport(paintBoard.canvas)
+      } catch (error) {
+        console.error('Failed to prepare fonts for export', error)
+      }
       // Get the original canvas dimensions
       const originalCanvas = paintBoard.canvas.getElement()
       const width = originalCanvas.width

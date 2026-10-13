@@ -134,6 +134,26 @@
     "underLine": "下划线",
     "lineThrough": "删除线"
   },
+  "fontConfig": {
+    "settings": "字体设置",
+    "title": "字体设置",
+    "defaultBadge": "默认",
+    "add": "添加",
+    "placeholder": "输入 Google Fonts 字体名称",
+    "delete": "删除",
+    "settingsTip": "自定义设置字体",
+    "sourceTip": "字体来源于 Google Fonts, 点击查看更多字体",
+    "setQuick": "设为面板显示",
+    "alreadyQuick": "面板显示",
+    "customCount": "自定义字体",
+    "loading": "正在验证字体...",
+    "invalid": "请输入有效的字体名称",
+    "duplicate": "该字体已经在列表中",
+    "limit": "最多添加 5 个自定义字体",
+    "notFound": "找不到这个 Google 字体",
+    "network": "网络错误，字体没有加载成功",
+    "loadFailed": "字体加载失败"
+  },
   "boardConfig": {
     "cacheTip": "在存在大量绘制内容的情况下，启用缓存将提高绘制性能，而禁用缓存则会提升画布清晰度"
   },

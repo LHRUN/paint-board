@@ -3,6 +3,7 @@ import useDrawStore from '@/store/draw'
 import { getDistance } from '@/utils'
 import { initCustomObjectAttr } from '@/core/utils/object'
 import { paintBoard } from '@/core/paintBoard'
+import { canMeasureFontText, ensureFontTextReady } from '@/core/font/googleFont'
 import { fabric } from 'fabric'
 
 const minFontSize = 3
@@ -87,9 +88,14 @@ function drawText(el: DrawTextElement) {
 }
 
 function textWidth(string: string, size: number) {
+  const family = useDrawStore.getState().textFontFamily
+  if (!canMeasureFontText(family, string)) {
+    void ensureFontTextReady(family, string).catch(() => undefined)
+    return undefined
+  }
   const text = new fabric.Text(string, {
     fontSize: size,
-    fontFamily: useDrawStore.getState().textFontFamily
+    fontFamily: family
   })
   return text.width
 }
