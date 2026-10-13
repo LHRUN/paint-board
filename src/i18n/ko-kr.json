@@ -109,7 +109,9 @@
     "cameraPermissionDenied": "카메라 권한이 거절되었습니다. 브라우저 권한을 확인해 주세요",
     "fileHydrationFail": "저장된 그림을 복원하지 못했습니다. 페이지를 새로고침하세요. 복원에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다.",
     "filePersistFail": "그림을 로컬에 저장하지 못했습니다. 페이지를 새로고침하세요. 저장에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다.",
-    "exportFail": "이미지를 저장하지 못했습니다. 캔버스에 다른 사이트의 그림이 있을 수 있습니다."
+    "exportFail": "이미지를 저장하지 못했습니다. 캔버스에 다른 사이트의 그림이 있을 수 있습니다.",
+    "exportTooLarge": "이미지가 너무 커서 내보낼 수 없습니다. 내용을 줄이거나 확대/축소를 낮춘 뒤 다시 시도해 주세요.",
+    "exportFailGeneric": "이미지를 저장하지 못했습니다. 다시 시도해 주세요."
   },
   "filters": {
     "Sepia": "세피아",
@@ -183,10 +185,17 @@
     "positivePoint": "긍정적",
     "negativePoint": "부정적"
   },
+  "exportImage": {
+    "viewport": "현재 보이는 영역 내보내기",
+    "content": "모든 그림 내보내기",
+    "selection": "선택한 내용 내보내기",
+    "board": "현재 보드 데이터 내보내기"
+  },
   "downloadImage": {
     "rotate": "회전",
     "scale": "크기 조정",
-    "size": "크기"
+    "size": "크기",
+    "background": "배경"
   },
   "eraserConfig": {
     "eraser": "지우개",

@@ -109,7 +109,9 @@
     "cameraPermissionDenied": "Camera permission denied, please check the browser permission",
     "fileHydrationFail": "Could not restore saved drawings. Refresh the page. New edits will not overwrite saved files until the reload succeeds.",
     "filePersistFail": "Could not save the drawing locally. Refresh the page. New edits will not overwrite saved files until saving works again.",
-    "exportFail": "Could not save the image. The canvas may contain a picture from another site."
+    "exportFail": "Could not save the image. The canvas may contain a picture from another site.",
+    "exportTooLarge": "The image is too large to export. Zoom out or export a smaller area.",
+    "exportFailGeneric": "Could not save the image. Please try again."
   },
   "filters": {
     "Sepia": "Sepia",
@@ -183,10 +185,17 @@
     "positivePoint": "Positive",
     "negativePoint": "Negative"
   },
+  "exportImage": {
+    "viewport": "Export visible area",
+    "content": "Export all drawings",
+    "selection": "Export selection",
+    "board": "Export current board"
+  },
   "downloadImage": {
     "rotate": "Rotate",
     "scale": "Scale",
-    "size": "Size"
+    "size": "Size",
+    "background": "Background"
   },
   "eraserConfig": {
     "eraser": "Eraser",

@@ -109,7 +109,9 @@
     "cameraPermissionDenied": "攝影機權限被拒絕，請檢查瀏覽器權限",
     "fileHydrationFail": "無法恢復已保存的畫布。請重新整理頁面。在恢復成功之前，新的編輯不會覆蓋已保存的檔案。",
     "filePersistFail": "無法把畫布儲存到本地。請重新整理頁面。在儲存成功之前，新的編輯不會覆蓋已保存的檔案。",
-    "exportFail": "無法儲存圖片。畫布裡可能有來自其他網站的圖片。"
+    "exportFail": "無法儲存圖片。畫布裡可能有來自其他網站的圖片。",
+    "exportTooLarge": "圖片太大，無法匯出。請縮小內容或降低縮放後再試。",
+    "exportFailGeneric": "無法儲存圖片，請重試。"
   },
   "filters": {
     "Sepia": "復古",
@@ -183,10 +185,17 @@
     "positivePoint": "正標記",
     "negativePoint": "負標記"
   },
+  "exportImage": {
+    "viewport": "匯出目前可視區域",
+    "content": "匯出所有繪圖內容",
+    "selection": "匯出選取內容",
+    "board": "匯出目前畫板資料"
+  },
   "downloadImage": {
     "rotate": "旋轉",
     "scale": "縮放",
-    "size": "尺寸"
+    "size": "尺寸",
+    "background": "背景"
   },
   "eraserConfig": {
     "eraser": "橡皮擦",

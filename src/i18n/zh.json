@@ -109,7 +109,9 @@
     "cameraPermissionDenied": "摄像头权限被拒绝，请检查浏览器权限",
     "fileHydrationFail": "无法恢复已保存的画布。请刷新页面。在恢复成功之前，新的编辑不会覆盖已保存的文件。",
     "filePersistFail": "无法把画布保存到本地。请刷新页面。在保存成功之前，新的编辑不会覆盖已保存的文件。",
-    "exportFail": "无法保存图片。画布里可能有来自其他网站的图片。"
+    "exportFail": "无法保存图片。画布里可能有来自其他网站的图片。",
+    "exportTooLarge": "图片太大，无法导出。请缩小内容或降低缩放后再试。",
+    "exportFailGeneric": "无法保存图片，请重试。"
   },
   "filters": {
     "Sepia": "复古",
@@ -183,10 +185,17 @@
     "positivePoint": "正标记",
     "negativePoint": "负标记"
   },
+  "exportImage": {
+    "viewport": "导出当前可视区域",
+    "content": "导出所有绘图内容",
+    "selection": "导出选中内容",
+    "board": "导出当前画板数据"
+  },
   "downloadImage": {
     "rotate": "旋转",
     "scale": "缩放",
-    "size": "尺寸"
+    "size": "尺寸",
+    "background": "背景"
   },
   "eraserConfig": {
     "eraser": "橡皮擦",

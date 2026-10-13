@@ -1,13 +1,18 @@
-import { useState, FC, useRef } from 'react'
+import { useState, FC, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useDebounceEffect } from '@/hooks/useDebounceEffect'
 import { canvasToPngBlob } from '@/core/utils/canvasBlob'
+import {
+  applyExportBackground,
+  type ExportBackground,
+  type ExportBackgroundFrame
+} from '@/core/export/exportCanvasImage'
 
 import ReactCrop, { Crop } from 'react-image-crop'
 import { canvasPreview } from './canvasPreview'
 import Toast from '@/components/toast'
 
-import { Scaling, RotateCw, Proportions } from 'lucide-react'
+import { Scaling, RotateCw, Proportions, Image } from 'lucide-react'
 import Mask from '@/components/mask'
 
 import 'react-image-crop/dist/ReactCrop.css'
@@ -16,13 +21,30 @@ interface IProps {
   url: string
   showModal: boolean
   setShowModal: (show: boolean) => void
+  background: ExportBackground | null
+  backgroundFrame: ExportBackgroundFrame | null
 }
 
-const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
+const DownloadImage: FC<IProps> = ({
+  url,
+  showModal,
+  setShowModal,
+  background,
+  backgroundFrame
+}) => {
   const { t } = useTranslation()
   const [saveImageRotate, updateSaveImageRotate] = useState(0)
   const [saveImageScale, updateSaveImageScale] = useState(1)
   const [saveImageSize, updateSaveImageSize] = useState(1)
+  const [includeBackground, setIncludeBackground] = useState(
+    Boolean(backgroundFrame)
+  )
+  const [displayUrl, setDisplayUrl] = useState(url)
+  const [imageVersion, setImageVersion] = useState(0)
+  const [backgroundPending, setBackgroundPending] = useState(
+    Boolean(backgroundFrame)
+  )
+  const previewUrl = useRef<string | null>(backgroundFrame ? null : url)
 
   const [completedCrop, setCompletedCrop] = useState<Crop | undefined>()
   const [crop, setCrop] = useState<Crop | undefined>()
@@ -31,19 +53,72 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
   const previewCanvasRef = useRef<HTMLCanvasElement>(null)
   const hiddenAnchorRef = useRef<HTMLAnchorElement>(null)
   const blobUrlRef = useRef('')
+  const cropInitialized = useRef(false)
   const [downloadFailed, setDownloadFailed] = useState(false)
 
-  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    const { width, height } = e.currentTarget
-    const crop: Crop = {
-      unit: 'px',
-      x: 0.1 * width,
-      y: 0.1 * height,
-      width: 0.8 * width,
-      height: 0.8 * height
+  useEffect(() => {
+    cropInitialized.current = false
+    setIncludeBackground(Boolean(backgroundFrame))
+    setDisplayUrl(url)
+    if (backgroundFrame) {
+      previewUrl.current = null
+      setBackgroundPending(true)
+    } else {
+      previewUrl.current = url
+      setBackgroundPending(false)
     }
-    setCrop({ ...crop })
-    setCompletedCrop({ ...crop })
+  }, [url, backgroundFrame])
+
+  useEffect(() => {
+    if (!includeBackground || !background || !backgroundFrame) {
+      previewUrl.current = url
+      setDisplayUrl(url)
+      const showingTarget = imgRef.current?.getAttribute('src') === url
+      setBackgroundPending(Boolean(backgroundFrame) && !showingTarget)
+      return
+    }
+    let cancelled = false
+    previewUrl.current = null
+    setBackgroundPending(true)
+    applyExportBackground(url, background, backgroundFrame)
+      .then((next) => {
+        if (cancelled) {
+          return
+        }
+        previewUrl.current = next
+        setDisplayUrl(next)
+      })
+      .catch((error) => {
+        console.error('Failed to composite export background', error)
+        if (cancelled) {
+          return
+        }
+        previewUrl.current = url
+        setDisplayUrl(url)
+        if (imgRef.current?.getAttribute('src') === url) {
+          setBackgroundPending(false)
+        }
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [url, includeBackground, background, backgroundFrame])
+
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!cropInitialized.current) {
+      const { width, height } = e.currentTarget
+      const nextCrop: Crop = {
+        unit: 'px',
+        x: 0.1 * width,
+        y: 0.1 * height,
+        width: 0.8 * width,
+        height: 0.8 * height
+      }
+      cropInitialized.current = true
+      setCrop({ ...nextCrop })
+      setCompletedCrop({ ...nextCrop })
+    }
+    setImageVersion((version) => version + 1)
   }
 
   const handleReset = () => {
@@ -66,6 +141,9 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
   const onDownloadCropClick = async () => {
     const image = imgRef.current
     const previewCanvas = previewCanvasRef.current
+    if (backgroundPending) {
+      return
+    }
     if (!image || !previewCanvas || !completedCrop) {
       setDownloadFailed(true)
       return
@@ -117,10 +195,14 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
           saveImageScale,
           saveImageRotate
         )
+        const target = previewUrl.current
+        if (target && imgRef.current.getAttribute('src') === target) {
+          setBackgroundPending(false)
+        }
       }
     },
     100,
-    [completedCrop, saveImageScale, saveImageRotate]
+    [completedCrop, saveImageScale, saveImageRotate, imageVersion]
   )
 
   return (
@@ -200,6 +282,26 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
                   }}
                 />
               </div>
+
+              {backgroundFrame && (
+                <div className="flex items-center mt-3">
+                  <div
+                    className="mr-[12px] shrink-0 min-xs:tooltip"
+                    data-tip={t('downloadImage.background')}
+                  >
+                    <Image color="#66CC8A" />
+                  </div>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-success toggle-sm"
+                    checked={includeBackground}
+                    aria-label={t('downloadImage.background') || undefined}
+                    onChange={(e) => {
+                      setIncludeBackground(e.target.checked)
+                    }}
+                  />
+                </div>
+              )}
             </div>
 
             <div className="w-[48%] flex flex-wrap gap-x-4 gap-y-2 h-fit">
@@ -217,6 +319,7 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
               </button>
               <button
                 className="btn btn-primary btn-sm"
+                disabled={backgroundPending}
                 onClick={onDownloadCropClick}
               >
                 {t('download')}
@@ -250,7 +353,7 @@ const DownloadImage: FC<IProps> = ({ url, showModal, setShowModal }) => {
                 >
                   <img
                     ref={imgRef}
-                    src={url}
+                    src={displayUrl}
                     style={{
                       transform: `scale(${saveImageScale}) rotate(${saveImageRotate}deg)`
                     }}
