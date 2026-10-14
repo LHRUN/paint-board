@@ -19,6 +19,7 @@ export interface ImportedBoardFile {
   backgroundImage: string
   backgroundImageOpacity: number
   backgroundSort: string[]
+  contentRevision: number
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -85,6 +86,7 @@ export const parseImportedBoardFile = (
       ? json.backgroundSort.filter(
           (item): item is string => typeof item === 'string'
         )
-      : [...DEFAULT_BACKGROUND_SORT]
+      : [...DEFAULT_BACKGROUND_SORT],
+    contentRevision: 0
   }
 }

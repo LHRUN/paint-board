@@ -73,7 +73,7 @@
     "clean": "clean",
     "save": "Save as image",
     "objectList": "Layer List",
-    "fileList": "File List",
+    "fileList": "Boards",
     "fullscreen": "Enter Fullscreen",
     "exitFullscreen": "Exit Fullscreen",
     "addFile": "Add File",
@@ -101,7 +101,48 @@
     "title": "Confirm clearing content?"
   },
   "deleteFileModal": {
-    "title": "Confirm deleting the current file?"
+    "title": "Delete the {{count}} selected boards?",
+    "keepCurrent": "At least one board must remain. The current board will be kept.",
+    "keepOne": "At least one board must remain"
+  },
+  "fileBoard": {
+    "title": "Boards",
+    "selected": "{{count}} selected",
+    "selectAll": "Select all",
+    "clearSelection": "Clear selection",
+    "select": "Select {{title}}",
+    "rename": "Rename",
+    "create": "New board",
+    "batchDelete": "Delete selected",
+    "batchDownload": "Download",
+    "noThumbnail": "No thumbnail yet",
+    "current": "Current",
+    "limit": "You can save up to {{count}} boards",
+    "close": "Close"
+  },
+  "renameFileModal": {
+    "title": "Rename board",
+    "createTitle": "New board",
+    "placeholder": "Board name",
+    "empty": "Name cannot be empty",
+    "duplicate": "A board with this name already exists"
+  },
+  "downloadFiles": {
+    "title": "Download boards",
+    "overall": "Overall {{current}}/{{total}}",
+    "waiting": "Waiting",
+    "writing": "Creating file",
+    "done": "Created",
+    "failed": "Failed",
+    "zipping": "Packing",
+    "downloadStarted": "Download started",
+    "allStarted": "Files were created and the download has started",
+    "partial": "Some files failed. The download of the rest has started",
+    "allFailed": "There are no files to download",
+    "zipFailed": "Packing failed",
+    "missing": "Board not found",
+    "stringifyFailed": "Could not create the board file",
+    "close": "Close"
   },
   "tip": {
     "uploadFileFail": "Upload failed, please try again",

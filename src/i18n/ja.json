@@ -73,7 +73,7 @@
     "clean": "クリア",
     "save": "画像として保存",
     "objectList": "レイヤーリスト",
-    "fileList": "ファイルリスト",
+    "fileList": "ボード",
     "fullscreen": "全画面表示",
     "exitFullscreen": "全画面を終了",
     "addFile": "ファイル追加",
@@ -101,7 +101,48 @@
     "title": "コンテンツのクリアを確認しますか？"
   },
   "deleteFileModal": {
-    "title": "現在のファイルの削除を確認しますか？"
+    "title": "選択した {{count}} 件のボードを削除しますか？",
+    "keepCurrent": "ボードは少なくとも 1 件残します。現在のボードは削除されません。",
+    "keepOne": "ボードは少なくとも 1 件残してください"
+  },
+  "fileBoard": {
+    "title": "ボード",
+    "selected": "{{count}} 件選択中",
+    "selectAll": "すべて選択",
+    "clearSelection": "選択解除",
+    "select": "{{title}} を選択",
+    "rename": "名前を変更",
+    "create": "ボードを作成",
+    "batchDelete": "選択を削除",
+    "batchDownload": "まとめてダウンロード",
+    "noThumbnail": "サムネイルはまだありません",
+    "current": "現在",
+    "limit": "ボードは最大 {{count}} 件までです",
+    "close": "閉じる"
+  },
+  "renameFileModal": {
+    "title": "ボード名を変更",
+    "createTitle": "ボードを作成",
+    "placeholder": "ボード名",
+    "empty": "名前を入力してください",
+    "duplicate": "同じ名前のボードがすでにあります"
+  },
+  "downloadFiles": {
+    "title": "まとめてダウンロード",
+    "overall": "全体 {{current}}/{{total}}",
+    "waiting": "待機",
+    "writing": "ファイルを作成中",
+    "done": "作成済み",
+    "failed": "失敗",
+    "zipping": "まとめています",
+    "downloadStarted": "ダウンロードを開始しました",
+    "allStarted": "ファイルを作成し、ダウンロードを開始しました",
+    "partial": "一部のファイルは失敗しました。残りはダウンロードを開始しました",
+    "allFailed": "ダウンロードできるファイルがありません",
+    "zipFailed": "まとめに失敗しました",
+    "missing": "ボードが見つかりません",
+    "stringifyFailed": "ボードファイルを作成できません",
+    "close": "閉じる"
   },
   "tip": {
     "uploadFileFail": "アップロードに失敗しました。もう一度お試しください",

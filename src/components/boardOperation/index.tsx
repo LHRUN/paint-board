@@ -284,14 +284,13 @@ const BoardOperation = () => {
               >
                 <Layers strokeWidth={2} color="#66CC8A" />
               </div>
-              <label
-                htmlFor="my-drawer-4"
+              <div
                 className="min-xs:tooltip cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
                 data-tip={t('operate.fileList')}
                 onClick={() => updateShowFile(true)}
               >
                 <BookText strokeWidth={2} color="#66CC8A" />
-              </label>
+              </div>
             </>
           )}
           <label className="btn btn-neutral btn-circle swap swap-rotate w-7 h-7 min-h-0 my-1.5 mx-2 min-xs:hidden">

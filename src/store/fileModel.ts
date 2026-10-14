@@ -9,6 +9,16 @@ export const DEFAULT_BACKGROUND_COLOR_LIST = [
 
 export const BOARD_VERSION = '2.0.0'
 
+/**
+ * Every board keeps its full drawing JSON in memory, and imported images
+ * can be as large as 2048px on the long edge. Twenty boards is enough for
+ * normal use without letting the list, thumbnails, or IndexedDB grow unbounded.
+ * Boards already saved above this limit stay available; only new ones are blocked.
+ */
+export const MAX_BOARD_COUNT = 20
+
+export const canAddBoard = (count: number, max = MAX_BOARD_COUNT) => count < max
+
 export const createDefaultFile = (
   id: string = uuidv4(),
   title: string = 'empty title'
@@ -24,5 +34,6 @@ export const createDefaultFile = (
   currentBackgroundColor: -1,
   backgroundImage: '',
   backgroundImageOpacity: 1,
-  backgroundSort: [...DEFAULT_BACKGROUND_SORT]
+  backgroundSort: [...DEFAULT_BACKGROUND_SORT],
+  contentRevision: 0
 })

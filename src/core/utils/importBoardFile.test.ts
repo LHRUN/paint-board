@@ -36,4 +36,16 @@ describe('parseImportedBoardFile', () => {
     expect(parsed?.boardData).toEqual({ objects: [{ type: 'rect' }] })
     expect(parsed?.boardData).not.toHaveProperty('background')
   })
+
+  it('starts a new revision and ignores a revision stored in the file', () => {
+    const parsed = parseImportedBoardFile(
+      JSON.stringify({
+        title: 'sketch',
+        contentRevision: 9,
+        boardData: { objects: [] }
+      })
+    )
+
+    expect(parsed?.contentRevision).toBe(0)
+  })
 })

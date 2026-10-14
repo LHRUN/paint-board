@@ -23,13 +23,19 @@ import {
 import {
   BOARD_VERSION,
   DEFAULT_BACKGROUND_SORT,
+  canAddBoard,
   createDefaultFile
 } from './fileModel'
+import { deleteThumbnail } from '@/core/thumbnail/thumbnailCache'
+import { boardDataChanged, nextContentRevision } from './boardRevision'
+import { boardTitleIssue, idsToDelete } from './boardRules'
 
 export {
   BOARD_VERSION,
   DEFAULT_BACKGROUND_COLOR_LIST,
-  DEFAULT_BACKGROUND_SORT
+  DEFAULT_BACKGROUND_SORT,
+  MAX_BOARD_COUNT,
+  canAddBoard
 } from './fileModel'
 
 const fileDb = {
@@ -84,6 +90,7 @@ export interface IFile {
   backgroundImageOpacity: number // canvas background image opacity
   backgroundSort: string[]
   boardData?: Partial<IBoardData>
+  contentRevision?: number
 }
 
 interface FileState {
@@ -105,11 +112,11 @@ interface FileAction {
   updateBackgroundImageOpacity: (opacity: number) => void
   updateBackgroundSort: (oldIndex?: number, newIndex?: number) => void
   updateBoardData: (data: Partial<IBoardData>, fileId?: string) => void
-  addFile: () => void
+  addFile: (title: string) => boolean
   deleteFile: (fileId: string) => void
+  deleteFiles: (ids: string[]) => void
   saveJSON: () => void
   uploadFile: (file: File | undefined) => Promise<boolean>
-  orderFileList: (oldIndex?: number, newIndex?: number) => void
 }
 
 const initId = uuidv4()
@@ -137,6 +144,11 @@ const updateFileById = (
   }
 }
 
+/** Thumbnails redraw only when drawn elements change. */
+const bumpContentRevision = (file: IFile) => {
+  file.contentRevision = nextContentRevision(file.contentRevision, true)
+}
+
 const updateCurrentFile = (
   get: () => FileState & FileAction,
   set: (fn: any) => void,
@@ -161,21 +173,41 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateFileTitle(newTitle, id) {
         const files = get().files
-        const updateIndex = findFileIndex(files, id)
-        if (updateIndex > -1 && files[updateIndex].title !== newTitle) {
-          set(
-            produce((state) => {
-              state.files[updateIndex].title = newTitle
-            })
-          )
+        const current = files.find((file) => file.id === id)
+        if (!current) {
+          return
         }
+        if (
+          boardTitleIssue(
+            newTitle,
+            files.map((file) => file.title),
+            current.title
+          )
+        ) {
+          return
+        }
+        const title = newTitle.trim()
+        if (current.title === title) {
+          return
+        }
+        const updateIndex = findFileIndex(files, id)
+        set(
+          produce((state) => {
+            state.files[updateIndex].title = title
+          })
+        )
       },
       updateBoardData(data, fileId) {
         const targetId = fileId || get().currentId
+        const current = get().files.find((file) => file.id === targetId)
+        if (!current || !boardDataChanged(current.boardData, data)) {
+          return
+        }
         markFileContentDirty(targetId)
         updateFileById(get, set, targetId, (file) => {
           file.boardVersion = BOARD_VERSION
           file.boardData = data
+          bumpContentRevision(file)
         })
       },
       updateZoom(newZoom, fileId) {
@@ -190,6 +222,10 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateCanvasWidth(width, fileId) {
         const targetId = fileId || get().currentId
+        const current = get().files.find((file) => file.id === targetId)
+        if (!current || current.canvasWidth === width) {
+          return
+        }
         updateFileById(
           get,
           set,
@@ -202,6 +238,10 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateCanvasHeight(height, fileId) {
         const targetId = fileId || get().currentId
+        const current = get().files.find((file) => file.id === targetId)
+        if (!current || current.canvasHeight === height) {
+          return
+        }
         updateFileById(
           get,
           set,
@@ -214,12 +254,19 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateCurrentBackgroundColor(colorIndex) {
         updateCurrentFile(get, set, (file) => {
-          file.currentBackgroundColor =
+          const next =
             colorIndex === file.currentBackgroundColor ? -1 : colorIndex
+          if (next === file.currentBackgroundColor) {
+            return
+          }
+          file.currentBackgroundColor = next
         })
       },
       updateBackgroundColor(colorIndex, color) {
         updateCurrentFile(get, set, (file) => {
+          if (file.backgroundColorList[colorIndex] === color) {
+            return
+          }
           file.backgroundColorList[colorIndex] = color
         })
       },
@@ -233,6 +280,10 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateBackgroundImage(image, fileId) {
         const targetId = fileId || get().currentId
+        const current = get().files.find((file) => file.id === targetId)
+        if (!current || current.backgroundImage === image) {
+          return
+        }
         markFileContentDirty(targetId)
         updateFileById(get, set, targetId, (file) => {
           file.backgroundImage = image
@@ -240,11 +291,18 @@ const useFileStore = create<FileState & FileAction>()(
       },
       updateBackgroundImageOpacity(opacity) {
         updateCurrentFile(get, set, (file) => {
+          if (file.backgroundImageOpacity === opacity) {
+            return
+          }
           file.backgroundImageOpacity = opacity
         })
       },
       updateBackgroundSort(oldIndex, newIndex) {
-        if (typeof oldIndex !== 'number' || typeof newIndex !== 'number') {
+        if (
+          typeof oldIndex !== 'number' ||
+          typeof newIndex !== 'number' ||
+          oldIndex === newIndex
+        ) {
           return
         }
         updateCurrentFile(get, set, (file) => {
@@ -256,34 +314,38 @@ const useFileStore = create<FileState & FileAction>()(
           file.backgroundSort = backgroundSort
         })
       },
-      addFile() {
+      addFile(title) {
+        const files = get().files
+        if (
+          boardTitleIssue(
+            title,
+            files.map((file) => file.title)
+          ) ||
+          !canAddBoard(files.length)
+        ) {
+          return false
+        }
         set(
           produce((state) => {
-            state.files.unshift(createDefaultFile())
+            state.files.unshift(createDefaultFile(uuidv4(), title.trim()))
           })
         )
+        return true
       },
       deleteFile(fileId) {
-        const files = get().files
-        if (files.length <= 1) {
-          console.warn('Cannot delete the last file')
+        get().deleteFiles([fileId])
+      },
+      deleteFiles(ids) {
+        const targets = idsToDelete(get().files, ids, get().currentId)
+        if (targets.length === 0) {
           return
         }
-
-        const updateIndex = findFileIndex(files, fileId)
-        if (updateIndex < 0) {
-          return
-        }
-
-        const deletingCurrent = get().currentId === fileId
+        const remove = new Set(targets)
+        const deletingCurrent = remove.has(get().currentId)
         set(
           produce((state: FileState) => {
-            const index = state.files.findIndex((file) => file.id === fileId)
-            if (index < 0) {
-              return
-            }
-            state.files.splice(index, 1)
-            if (state.currentId === fileId && state.files[0]) {
+            state.files = state.files.filter((file) => !remove.has(file.id))
+            if (remove.has(state.currentId) && state.files[0]) {
               state.currentId = state.files[0].id
             }
           })
@@ -293,6 +355,9 @@ const useFileStore = create<FileState & FileAction>()(
           paintBoard.discardAndLoad(get().currentId)
           useBoardStore.getState().updateMode(ActionMode.DRAW)
         }
+        targets.forEach((id) => {
+          void deleteThumbnail(id)
+        })
       },
       saveJSON() {
         const { files, currentId } = get()
@@ -319,6 +384,10 @@ const useFileStore = create<FileState & FileAction>()(
       },
       uploadFile(file) {
         return new Promise((resolve) => {
+          if (!canAddBoard(get().files.length)) {
+            resolve(false)
+            return
+          }
           if (file) {
             const reader = new FileReader()
             reader.onload = (fEvent) => {
@@ -333,10 +402,15 @@ const useFileStore = create<FileState & FileAction>()(
                 return
               }
 
+              if (!canAddBoard(get().files.length)) {
+                resolve(false)
+                return
+              }
               paintBoard.prepareForFileReplacement()
               const newFile: IFile = {
                 ...imported,
-                boardData: imported.boardData as IFile['boardData']
+                boardData: imported.boardData as IFile['boardData'],
+                contentRevision: 0
               }
               set(
                 produce((state) => {
@@ -355,18 +429,6 @@ const useFileStore = create<FileState & FileAction>()(
             resolve(false)
           }
         })
-      },
-      orderFileList(oldIndex, newIndex) {
-        if (typeof oldIndex !== 'number' || typeof newIndex !== 'number') {
-          return
-        }
-
-        set(
-          produce((state) => {
-            const removed = state.files.splice(oldIndex, 1)[0]
-            state.files.splice(newIndex, 0, removed)
-          })
-        )
       }
     }),
     {

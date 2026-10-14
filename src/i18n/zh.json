@@ -73,7 +73,7 @@
     "clean": "清除画板",
     "save": "保存为图片",
     "objectList": "图层列表",
-    "fileList": "文件列表",
+    "fileList": "画板",
     "fullscreen": "进入全屏",
     "exitFullscreen": "退出全屏",
     "addFile": "添加文件",
@@ -101,7 +101,48 @@
     "title": "确认清除内容？"
   },
   "deleteFileModal": {
-    "title": "确认删除当前文件吗？"
+    "title": "确认删除选中的 {{count}} 个画板？",
+    "keepCurrent": "至少保留一个画板，当前画板不会被删除。",
+    "keepOne": "至少保留一个画板"
+  },
+  "fileBoard": {
+    "title": "画板",
+    "selected": "已选 {{count}}",
+    "selectAll": "全选",
+    "clearSelection": "取消全选",
+    "select": "选择 {{title}}",
+    "rename": "重命名",
+    "create": "新建画板",
+    "batchDelete": "批量删除",
+    "batchDownload": "批量下载",
+    "noThumbnail": "暂无缩略图",
+    "current": "当前",
+    "limit": "最多保存 {{count}} 个画板",
+    "close": "关闭"
+  },
+  "renameFileModal": {
+    "title": "重命名画板",
+    "createTitle": "新建画板",
+    "placeholder": "画板名称",
+    "empty": "名称不能为空",
+    "duplicate": "画板名称已存在"
+  },
+  "downloadFiles": {
+    "title": "批量下载",
+    "overall": "整体进度 {{current}}/{{total}}",
+    "waiting": "等待",
+    "writing": "正在生成",
+    "done": "已生成",
+    "failed": "失败",
+    "zipping": "正在打包",
+    "downloadStarted": "已开始下载",
+    "allStarted": "文件已生成，并已开始下载",
+    "partial": "部分文件生成失败，其余文件已开始下载",
+    "allFailed": "没有可以下载的文件",
+    "zipFailed": "打包失败",
+    "missing": "找不到画板",
+    "stringifyFailed": "无法生成画板文件",
+    "close": "关闭"
   },
   "tip": {
     "uploadFileFail": "上传失败，请重试",
