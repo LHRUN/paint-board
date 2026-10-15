@@ -120,12 +120,20 @@
     "limit": "最多保存 {{count}} 个画板",
     "close": "关闭"
   },
+  "templatePrompt": {
+    "title": "预设模版",
+    "description": "可以选择以下预设模版，初步了解画板功能，也可以关闭从空白画板开始。",
+    "create": "创建",
+    "close": "关闭",
+    "selectFirst": "请先选择一个模板"
+  },
   "renameFileModal": {
     "title": "重命名画板",
     "createTitle": "新建画板",
     "placeholder": "画板名称",
     "empty": "名称不能为空",
-    "duplicate": "画板名称已存在"
+    "duplicate": "画板名称已存在",
+    "blank": "空白画板"
   },
   "downloadFiles": {
     "title": "批量下载",

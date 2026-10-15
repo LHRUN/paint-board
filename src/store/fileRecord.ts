@@ -1,5 +1,6 @@
 export const FILE_BLOB_PREFIX = 'paint-board-file:'
 export const FILE_LIST_BACKUP_KEY = 'PAINT-BOARD-FILES-BACKUP'
+export const FILE_LIST_STORAGE_KEY = 'PAINT-BOARD-FILES'
 
 export interface StoredFile {
   id: string

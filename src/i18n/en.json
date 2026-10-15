@@ -120,12 +120,20 @@
     "limit": "You can save up to {{count}} boards",
     "close": "Close"
   },
+  "templatePrompt": {
+    "title": "Preset templates",
+    "description": "Choose a preset below to get a feel for the board, or close this and start from a blank board.",
+    "create": "Create",
+    "close": "Close",
+    "selectFirst": "Select a template first"
+  },
   "renameFileModal": {
     "title": "Rename board",
     "createTitle": "New board",
     "placeholder": "Board name",
     "empty": "Name cannot be empty",
-    "duplicate": "A board with this name already exists"
+    "duplicate": "A board with this name already exists",
+    "blank": "Blank board"
   },
   "downloadFiles": {
     "title": "Download boards",

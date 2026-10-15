@@ -120,12 +120,20 @@
     "limit": "ボードは最大 {{count}} 件までです",
     "close": "閉じる"
   },
+  "templatePrompt": {
+    "title": "プリセット",
+    "description": "下のプリセットでボードの機能をひと通り確認できます。閉じると空白のボードから始められます。",
+    "create": "作成",
+    "close": "閉じる",
+    "selectFirst": "先にテンプレートを選択してください"
+  },
   "renameFileModal": {
     "title": "ボード名を変更",
     "createTitle": "ボードを作成",
     "placeholder": "ボード名",
     "empty": "名前を入力してください",
-    "duplicate": "同じ名前のボードがすでにあります"
+    "duplicate": "同じ名前のボードがすでにあります",
+    "blank": "空白のボード"
   },
   "downloadFiles": {
     "title": "まとめてダウンロード",

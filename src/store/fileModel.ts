@@ -8,6 +8,7 @@ export const DEFAULT_BACKGROUND_COLOR_LIST = [
 ]
 
 export const BOARD_VERSION = '2.0.0'
+export const INITIAL_FILE_TITLE = 'paint-board'
 
 /**
  * Every board keeps its full drawing JSON in memory, and imported images

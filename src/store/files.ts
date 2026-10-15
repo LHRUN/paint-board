@@ -18,11 +18,13 @@ import {
 import {
   readPersistedFiles,
   writePersistedFiles,
-  markFileContentDirty
+  markFileContentDirty,
+  FILE_LIST_STORAGE_KEY
 } from './fileRecord'
 import {
   BOARD_VERSION,
   DEFAULT_BACKGROUND_SORT,
+  INITIAL_FILE_TITLE,
   canAddBoard,
   createDefaultFile
 } from './fileModel'
@@ -113,6 +115,7 @@ interface FileAction {
   updateBackgroundSort: (oldIndex?: number, newIndex?: number) => void
   updateBoardData: (data: Partial<IBoardData>, fileId?: string) => void
   addFile: (title: string) => boolean
+  addBoard: (file: IFile, options?: { ignoreTitleOf?: string }) => boolean
   deleteFile: (fileId: string) => void
   deleteFiles: (ids: string[]) => void
   saveJSON: () => void
@@ -162,7 +165,7 @@ const useFileStore = create<FileState & FileAction>()(
   persist(
     (set, get) => ({
       currentId: initId,
-      files: [createDefaultFile(initId, 'paint-board')],
+      files: [createDefaultFile(initId, INITIAL_FILE_TITLE)],
       updateCurrentFile(newId) {
         const currentId = get().currentId
         if (newId !== currentId) {
@@ -332,6 +335,38 @@ const useFileStore = create<FileState & FileAction>()(
         )
         return true
       },
+      addBoard(file, options) {
+        const files = get().files
+        const ignored = options?.ignoreTitleOf
+          ? files.find((item) => item.id === options.ignoreTitleOf)
+          : undefined
+        if (
+          boardTitleIssue(
+            file.title,
+            files.map((item) => item.title),
+            ignored?.title
+          ) ||
+          !canAddBoard(files.length) ||
+          files.some((item) => item.id === file.id)
+        ) {
+          return false
+        }
+        let next: IFile
+        try {
+          next = JSON.parse(JSON.stringify(file)) as IFile
+        } catch (error) {
+          console.error('Failed to copy board', error)
+          return false
+        }
+        next.title = file.title.trim()
+        next.contentRevision = 0
+        set(
+          produce((state) => {
+            state.files.unshift(next)
+          })
+        )
+        return true
+      },
       deleteFile(fileId) {
         get().deleteFiles([fileId])
       },
@@ -432,7 +467,7 @@ const useFileStore = create<FileState & FileAction>()(
       }
     }),
     {
-      name: 'PAINT-BOARD-FILES',
+      name: FILE_LIST_STORAGE_KEY,
       storage: createJSONStorage(() => storage),
       onRehydrateStorage: () => (_state, error) => {
         if (error) {

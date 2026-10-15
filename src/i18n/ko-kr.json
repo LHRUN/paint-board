@@ -120,12 +120,20 @@
     "limit": "보드는 최대 {{count}}개까지 저장할 수 있습니다",
     "close": "닫기"
   },
+  "templatePrompt": {
+    "title": "프리셋 템플릿",
+    "description": "아래 프리셋으로 보드 기능을 살펴보거나, 닫고 빈 보드에서 시작할 수 있습니다.",
+    "create": "만들기",
+    "close": "닫기",
+    "selectFirst": "먼저 템플릿을 선택해 주세요"
+  },
   "renameFileModal": {
     "title": "보드 이름 바꾸기",
     "createTitle": "새 보드",
     "placeholder": "보드 이름",
     "empty": "이름을 입력해 주세요",
-    "duplicate": "같은 이름의 보드가 이미 있습니다"
+    "duplicate": "같은 이름의 보드가 이미 있습니다",
+    "blank": "빈 보드"
   },
   "downloadFiles": {
     "title": "일괄 다운로드",
