@@ -11,6 +11,12 @@ import {
 } from '@/core/element/text/textColor'
 import { applyTextFill } from '@/core/element/text/applyTextFill'
 import { canSnapshotTextChange } from '@/core/element/text/editingSnapshot'
+import {
+  editedColors,
+  paintObjectColor,
+  selectionEdit,
+  type Editable
+} from '@/core/element/selectEdit/paint'
 import ColorSwatchList from '@/components/toolPanel/colorSwatchList'
 
 interface IProps {
@@ -19,20 +25,34 @@ interface IProps {
 
 const readTextTargets = () => {
   const objects = paintBoard.canvas?.getActiveObjects() ?? []
-  if (
-    !objects.length ||
-    !objects.every((object) => isCanvasTextObject(object))
-  ) {
+  if (selectionEdit(objects as Editable[]).color !== 'text') {
     return []
   }
-  return objects as fabric.IText[]
+  return objects
 }
 
-const recordTextColor = (texts: fabric.IText[]) => {
-  const committed =
-    texts.length > 0 &&
-    texts.every((text) => text._customType === ELEMENT_CUSTOM_TYPE.I_TEXT)
-  if (committed && canSnapshotTextChange(texts)) {
+const paintTextColor = (object: fabric.Object, color: string) => {
+  if (object._customType === ELEMENT_CUSTOM_TYPE.DRAW_TEXT) {
+    paintObjectColor(object as Editable, color)
+    return
+  }
+  applyTextFill(object as fabric.IText, color)
+}
+
+const recordTextColor = (objects: fabric.Object[]) => {
+  const inputTexts = objects.filter((object) =>
+    isCanvasTextObject(object)
+  ) as fabric.IText[]
+  const hasDrawText = objects.some(
+    (object) => object._customType === ELEMENT_CUSTOM_TYPE.DRAW_TEXT
+  )
+  const inputReady =
+    inputTexts.length === 0 ||
+    (inputTexts.every(
+      (text) => text._customType === ELEMENT_CUSTOM_TYPE.I_TEXT
+    ) &&
+      canSnapshotTextChange(inputTexts))
+  if ((inputTexts.length > 0 || hasDrawText) && inputReady) {
     paintBoard.render()
   } else {
     paintBoard.canvas?.requestRenderAll()
@@ -54,7 +74,7 @@ const TextColorConfig = ({ refreshCount }: IProps) => {
   const targets = useMemo(() => readTextTargets(), [refreshCount])
   const activeIndexes = activeTextColorIndexes(
     textColors,
-    targets.map((text) => text.fill)
+    targets.flatMap((object) => editedColors(object as Editable))
   )
 
   if (targets.length === 0) {
@@ -62,10 +82,17 @@ const TextColorConfig = ({ refreshCount }: IProps) => {
   }
 
   const paintTargets = (color: string) => {
-    readTextTargets().forEach((text) => {
-      applyTextFill(text, color)
+    readTextTargets().forEach((object) => {
+      paintTextColor(object, color)
     })
   }
+
+  const colorChanged = (objects: fabric.Object[], color: string) =>
+    objects.some((object) =>
+      editedColors(object as Editable).some(
+        (fill) => fill.toLowerCase() !== color.toLowerCase()
+      )
+    )
 
   const selectColor = (index: number) => {
     const color = useDrawStore.getState().textColors[index]
@@ -73,10 +100,10 @@ const TextColorConfig = ({ refreshCount }: IProps) => {
       return
     }
     const texts = readTextTargets()
-    const changed = texts.some((text) => text.fill !== color)
+    const changed = colorChanged(texts, color)
     updateCurrentTextColor(index)
-    texts.forEach((text) => {
-      applyTextFill(text, color)
+    texts.forEach((object) => {
+      paintTextColor(object, color)
     })
     if (changed) {
       recordTextColor(texts)
@@ -108,8 +135,8 @@ const TextColorConfig = ({ refreshCount }: IProps) => {
     const changed = previousFills.some(
       (fill) => fill.toLowerCase() !== color.toLowerCase()
     )
-    texts.forEach((text) => {
-      applyTextFill(text, color)
+    texts.forEach((object) => {
+      paintTextColor(object, color)
     })
     if (!changed) {
       paintBoard.canvas?.requestRenderAll()
@@ -130,8 +157,8 @@ const TextColorConfig = ({ refreshCount }: IProps) => {
       onSelect={selectColor}
       onEditStart={(index) => {
         editingHighlighted.current = activeIndexes.includes(index)
-        fillsBeforeEdit.current = readTextTargets().map((text) =>
-          String(text.fill)
+        fillsBeforeEdit.current = readTextTargets().flatMap((object) =>
+          editedColors(object as Editable)
         )
       }}
       onEdit={editColor}

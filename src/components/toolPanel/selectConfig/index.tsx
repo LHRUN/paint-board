@@ -12,6 +12,8 @@ import ImageFilterConfig from './imageFilterConfig'
 import FontStyleConfig from './fontStyleConfig'
 import SelectFontFamilyConfig from './selectFontFamilyConfig'
 import TextColorConfig from './textColorConfig'
+import ObjectColorConfig from './objectColorConfig'
+import LineStyleConfig from './lineStyleConfig'
 
 const SelectConfig = () => {
   const { t } = useTranslation()
@@ -51,6 +53,12 @@ const SelectConfig = () => {
       )}
 
       <TextColorConfig refreshCount={refreshCount} />
+
+      <ObjectColorConfig refreshCount={refreshCount} kind="draw" />
+
+      <ObjectColorConfig refreshCount={refreshCount} kind="shape" />
+
+      <LineStyleConfig refreshCount={refreshCount} />
 
       {activeObject?._customType === ELEMENT_CUSTOM_TYPE.I_TEXT && (
         <FontStyleConfig refreshCount={refreshCount} />

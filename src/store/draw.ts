@@ -7,7 +7,9 @@ import {
   MultiColorType,
   renderMultiColor
 } from '@/core/element/draw/multiColor'
+import { shouldApplyMultiColorBrush } from '@/core/element/draw/multiColorBrush'
 import { paintBoard } from '@/core/paintBoard'
+import useBoardStore from '@/store/board'
 import {
   DEFAULT_TEXT_COLORS,
   TEXT_COLOR_LIMIT
@@ -44,6 +46,7 @@ interface DrawState {
 interface DrawAction {
   updateDrawWidth: (drawWidth: number) => void
   updateCurrentDrawColor: (colorIndex: number) => void
+  focusDrawColor: (colorIndex: number) => void
   updateDrawColor: (color: string, colorIndex: number) => void
   deleteDrawColor: (colorIndex: number) => void
   updateLineType: (lineType: string) => void
@@ -147,6 +150,17 @@ const useDrawStore = create<DrawState & DrawAction>()(
             break
         }
         updateDrawColors()
+      },
+      focusDrawColor(colorIndex) {
+        const { drawColors, currentDrawColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= drawColors.length ||
+          currentDrawColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentDrawColor: colorIndex })
       },
       updateDrawColor: (color: string, colorIndex: number) => {
         set(
@@ -373,6 +387,9 @@ const updateDrawColors = () => {
       material.render({})
       break
     case DrawStyle.MultiColor:
+      if (!shouldApplyMultiColorBrush(useBoardStore.getState().mode)) {
+        break
+      }
       renderMultiColor({})
       break
     default:
