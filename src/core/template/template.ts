@@ -38,6 +38,23 @@ const textOf = (value: unknown, key: string) => {
   return typeof text === 'string' ? text.trim() : ''
 }
 
+/**
+ * The language menu stores Traditional Chinese as `zh-tw`, while template
+ * files use the i18n resource key `zh-TW`. Match either spelling.
+ */
+const localeOf = (locales: unknown, language: string) => {
+  if (!isRecord(locales)) {
+    return undefined
+  }
+  const direct = locales[language]
+  if (isRecord(direct)) {
+    return direct
+  }
+  const folded = language.toLowerCase()
+  const key = Object.keys(locales).find((item) => item.toLowerCase() === folded)
+  return key && isRecord(locales[key]) ? locales[key] : undefined
+}
+
 const numberOr = (value: unknown, fallback: number) =>
   typeof value === 'number' && Number.isFinite(value) ? value : fallback
 
@@ -105,9 +122,7 @@ export const parseTemplateDocument = (
   }
   const templateId =
     typeof value.templateId === 'string' ? value.templateId.trim() : ''
-  const localized = isRecord(value.locales)
-    ? value.locales[language]
-    : undefined
+  const localized = localeOf(value.locales, language)
   const name = textOf(localized, 'name') || textOf(value, 'name')
   if (!templateId || !name) {
     return null

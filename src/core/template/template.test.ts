@@ -81,6 +81,19 @@ describe('template documents', () => {
       'en'
     )
     expect(fallback?.name).toBe('默认')
+
+    const traditional = parseTemplateDocument(
+      {
+        templateId: 'demo',
+        name: '默认',
+        locales: {
+          'zh-TW': { name: '預設' }
+        },
+        boardData: { objects: [{ type: 'path' }] }
+      },
+      'zh-tw'
+    )
+    expect(traditional?.name).toBe('預設')
   })
 
   it('rejects documents that cannot become a board', () => {
@@ -156,27 +169,68 @@ describe('template documents', () => {
     )
     expect(index).toEqual([
       'hello.json',
+      'user-guide.json',
       'simple-image.json',
-      'art-font.json',
       'simple-design.json',
-      'brush-showcase.json',
-      'simple-shape.json'
+      'simple-shape.json',
+      'art-font.json'
     ])
 
     const names = {
-      'hello.json': '欢迎来到 PAINT BOARD',
-      'simple-image.json': '图像处理',
-      'art-font.json': '艺术字体',
-      'simple-design.json': '简单设计',
-      'brush-showcase.json': '画笔展示',
-      'simple-shape.json': '图形展示'
+      'hello.json': {
+        zh: '欢迎来到 PAINT BOARD',
+        'zh-tw': '歡迎來到 PAINT BOARD',
+        en: 'Welcome to PAINT BOARD',
+        ja: 'PAINT BOARD へようこそ',
+        ko: 'PAINT BOARD에 오신 것을 환영합니다'
+      },
+      'user-guide.json': {
+        zh: '用户指南',
+        'zh-tw': '使用者指南',
+        en: 'User guide',
+        ja: 'ユーザーガイド',
+        ko: '사용자 가이드'
+      },
+      'simple-image.json': {
+        zh: '图像处理',
+        'zh-tw': '圖像處理',
+        en: 'Image processing',
+        ja: '画像処理',
+        ko: '이미지 처리'
+      },
+      'simple-design.json': {
+        zh: '简单设计',
+        'zh-tw': '簡單設計',
+        en: 'Simple design',
+        ja: 'シンプルデザイン',
+        ko: '간단한 디자인'
+      },
+      'simple-shape.json': {
+        zh: '图形展示',
+        'zh-tw': '圖形展示',
+        en: 'Shape showcase',
+        ja: '図形サンプル',
+        ko: '도형 모음'
+      },
+      'art-font.json': {
+        zh: '艺术字体',
+        'zh-tw': '藝術字體',
+        en: 'Art fonts',
+        ja: 'アートフォント',
+        ko: '아트 폰트'
+      }
     }
 
     index.forEach((name) => {
       const raw = JSON.parse(readFileSync(resolve(templateDir, name), 'utf8'))
       expect(raw.description).toBeUndefined()
+      const expected = names[name as keyof typeof names]
+      expect(parseTemplateDocument(raw, 'zh')?.name).toBe(expected.zh)
+      expect(parseTemplateDocument(raw, 'zh-tw')?.name).toBe(expected['zh-tw'])
+      expect(parseTemplateDocument(raw, 'en')?.name).toBe(expected.en)
+      expect(parseTemplateDocument(raw, 'ja')?.name).toBe(expected.ja)
+      expect(parseTemplateDocument(raw, 'ko')?.name).toBe(expected.ko)
       const parsed = parseTemplateDocument(raw, 'zh')
-      expect(parsed?.name).toBe(names[name as keyof typeof names])
       expect(parsed?.thumbnailUrl).toContain(
         `templates/${name.replace('.json', '.png')}`
       )
