@@ -13,3 +13,21 @@ export const FillStyleType = {
   ZigZag: 'zigZag',
   Dots: 'dots'
 }
+
+export const FILLABLE_GRAPH_ICONS = [
+  'MessageCircle',
+  'MessageSquare',
+  'Cloud',
+  'Badge',
+  'Heart',
+  'Zap',
+  'Flame',
+  'Moon',
+  'Folder',
+  'Sparkle',
+  'Star'
+]
+
+export const isFillableGraphIcon = (icon: string) => {
+  return (FILLABLE_GRAPH_ICONS as readonly string[]).includes(icon)
+}

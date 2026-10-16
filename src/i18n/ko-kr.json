@@ -67,6 +67,7 @@
     "undo": "실행 취소",
     "redo": "다시 실행",
     "copy": "복사",
+    "group": "그룹",
     "delete": "삭제",
     "text": "텍스트 추가",
     "image": "이미지 업로드",
@@ -95,6 +96,7 @@
     "circle": "원",
     "polygon": "다각형",
     "graph": "도형",
+    "group": "그룹",
     "element": "요소"
   },
   "cleanModal": {

@@ -7,6 +7,7 @@ import useFileStore, {
 import useCameraStore from '@/store/camera'
 import { useTranslation } from 'react-i18next'
 import { ActionMode } from '@/constants'
+import { canGroupActiveObjects } from '@/core/element/group/groupSelection'
 import { paintBoard } from '@/core/paintBoard'
 import { isMobile as isMobileFn } from '@/utils'
 import { ImageElement } from '@/core/element/image'
@@ -23,6 +24,7 @@ import {
   Redo2,
   Type,
   Copy,
+  Group,
   Trash2,
   ImageUp,
   BrushCleaning,
@@ -58,6 +60,7 @@ const BoardOperation = () => {
   const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [exportError, setExportError] = useState<string | null>(null)
   const [hasSelection, setHasSelection] = useState(false)
+  const [canGroup, setCanGroup] = useState(false)
   const exportingRef = useRef(false)
 
   const [uploadImageURL, setUploadImageURL] = useState('')
@@ -91,6 +94,10 @@ const BoardOperation = () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
     }
   }, [])
+
+  const groupObject = () => {
+    paintBoard.groupObject()
+  }
 
   // copy activity object
   const copyObject = () => {
@@ -147,7 +154,9 @@ const BoardOperation = () => {
 
   useEffect(() => {
     const refreshSelection = () => {
-      setHasSelection((paintBoard.canvas?.getActiveObjects().length ?? 0) > 0)
+      const count = paintBoard.canvas?.getActiveObjects().length ?? 0
+      setHasSelection(count > 0)
+      setCanGroup(canGroupActiveObjects(count))
     }
     paintBoard.addHookFn(refreshSelection)
     refreshSelection()
@@ -217,6 +226,15 @@ const BoardOperation = () => {
                   >
                     <Copy strokeWidth={2} color="#66CC8A" />
                   </div>
+                  {canGroup && (
+                    <div
+                      onClick={groupObject}
+                      className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                      data-tip={t('operate.group')}
+                    >
+                      <Group strokeWidth={2} color="#66CC8A" />
+                    </div>
+                  )}
                   <div
                     onClick={deleteObject}
                     className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"

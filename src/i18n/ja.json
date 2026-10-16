@@ -67,6 +67,7 @@
     "undo": "元に戻す",
     "redo": "やり直す",
     "copy": "コピー",
+    "group": "グループ化",
     "delete": "削除",
     "text": "テキスト追加",
     "image": "画像アップロード",
@@ -95,6 +96,7 @@
     "circle": "円",
     "polygon": "多角形",
     "graph": "図形",
+    "group": "グループ",
     "element": "要素"
   },
   "cleanModal": {

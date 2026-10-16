@@ -29,6 +29,9 @@ describe('object list', () => {
     expect(objectListLabel({ _customType: 'shapeLine' }).labelKey).toBe(
       'objectList.line'
     )
+    expect(
+      objectListLabel({ type: 'group', _customType: 'group' }).labelKey
+    ).toBe('objectList.group')
     expect(textSnippet('  one   two three four five  ')).toBe(
       'one two three fo…'
     )

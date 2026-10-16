@@ -67,6 +67,7 @@
     "undo": "撤銷",
     "redo": "重做",
     "copy": "複製",
+    "group": "組合",
     "delete": "刪除",
     "text": "添加文字",
     "image": "上傳圖片",
@@ -95,6 +96,7 @@
     "circle": "圓形",
     "polygon": "多邊形",
     "graph": "圖形",
+    "group": "組合",
     "element": "元素"
   },
   "cleanModal": {

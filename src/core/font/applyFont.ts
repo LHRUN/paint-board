@@ -19,7 +19,7 @@ export const clearFabricFontCache = (fontFamily: string) => {
   util.clearFabricFontCache?.(fontFamily)
 }
 
-const updateDrawTextBounds = (group: fabric.Group) => {
+const updateGroupBounds = (group: fabric.Group) => {
   const withBounds = group as GroupWithBounds
   withBounds._calcBounds?.(true)
   group.setCoords()
@@ -57,7 +57,7 @@ export const applyFontFamily = (
       text.set('fontFamily', fontFamily)
       text.dirty = true
     })
-    updateDrawTextBounds(group)
+    updateGroupBounds(group)
   }
 }
 
@@ -70,8 +70,10 @@ const relayoutObject = (obj: fabric.Object, families: string[]): boolean => {
         changed = true
       }
     })
-    if (changed && obj._customType === ELEMENT_CUSTOM_TYPE.DRAW_TEXT) {
-      updateDrawTextBounds(group)
+    // A late font can change text size inside a user group. Refresh every
+    // ancestor, or the outer group keeps the old box and clips the text.
+    if (changed) {
+      updateGroupBounds(group)
     }
     return changed
   }

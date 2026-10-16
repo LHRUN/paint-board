@@ -35,5 +35,8 @@ export const ELEMENT_CUSTOM_TYPE = {
   ...FREESTYLE_ELEMENT_CUSTOM_TYPE,
 
   // shape
-  ...SHAPE_ELEMENT_CUSTOM_TYPE
+  ...SHAPE_ELEMENT_CUSTOM_TYPE,
+
+  // User-made group. Brush and shape groups keep their own custom types.
+  GROUP: 'group'
 }

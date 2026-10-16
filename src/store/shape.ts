@@ -38,14 +38,23 @@ const useShapeStore = create<ShapeState & ShapeAction>()(
     (set, get) => ({
       currentShapeIcon: SHAPE_ELEMENT_CUSTOM_TYPE.SHAPE_LINE,
       shapeIconList: [
+        'MessageCircle',
+        'MessageSquare',
+        'Cloud',
+        'Badge',
+        'Heart',
+        'Zap',
+        'Flame',
+        'Moon',
+        'Folder',
+        'Sparkle',
+        'Star',
         'Angry',
         'Annoyed',
         'Laugh',
         'Meh',
         'Frown',
-        'Smile',
-        'Star',
-        'Axe'
+        'Smile'
       ],
       strokeStyle: StrokeStyleType.Solid,
       currentStrokeColor: 0,

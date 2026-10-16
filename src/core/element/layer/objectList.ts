@@ -21,7 +21,8 @@ const CUSTOM_LABEL: Record<string, string> = {
   [ELEMENT_CUSTOM_TYPE.SHAPE_TRIANGLE]: 'objectList.polygon',
   [ELEMENT_CUSTOM_TYPE.SHAPE_PENTAGON]: 'objectList.polygon',
   [ELEMENT_CUSTOM_TYPE.SHAPE_HEXAGON]: 'objectList.polygon',
-  [ELEMENT_CUSTOM_TYPE.SHAPE_GRAPH]: 'objectList.graph'
+  [ELEMENT_CUSTOM_TYPE.SHAPE_GRAPH]: 'objectList.graph',
+  [ELEMENT_CUSTOM_TYPE.GROUP]: 'objectList.group'
 }
 
 export type ObjectListSource = {

@@ -21,6 +21,7 @@ import {
   handleCanvasJSONLoaded
 } from './utils/loadCanvas'
 import { cloneObjects } from './utils/object'
+import { groupActiveSelection } from './element/group/groupActive'
 import { followupAfterBoardLoad } from './session/boardLoad'
 import { isCurrentCanvasLoad } from './session/canvasWrite'
 import { prepareBoardFonts } from './font/googleFont'
@@ -493,6 +494,13 @@ export class PaintBoard {
       this.canvas?.requestRenderAll()
       this.history?.saveState()
     }
+  }
+
+  /**
+   * Combine the current multi-selection into one group.
+   */
+  groupObject() {
+    groupActiveSelection()
   }
 
   /**

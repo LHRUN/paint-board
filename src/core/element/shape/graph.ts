@@ -7,11 +7,25 @@ import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import useShapeStore from '@/store/shape'
 
 import { initCustomObjectAttr } from '@/core/utils/object'
-import { getShapeStrokeDashArray, getShapeStrokeWidth } from './utils'
+import {
+  getFabricShapeOptions,
+  getRoughShapeOptions,
+  getShapeFillColor,
+  getShapeStrokeDashArray,
+  getShapeStrokeWidth
+} from './utils'
 import { svgShapesToPaths } from './utils/svgToPath'
 import { RoughShapeUtils } from './utils/roughUtils'
-import { StrokeStyleType } from '@/constants/shape'
+import { isFillableGraphIcon, StrokeStyleType } from '@/constants/shape'
 import { shouldAttachGraph } from './graphReady'
+
+const closeSvgPath = (path: string) => {
+  const trimmed = path.trim()
+  if (/[zZ]\s*$/.test(trimmed)) {
+    return trimmed
+  }
+  return `${trimmed} Z`
+}
 
 export class GraphElement {
   graphInstance: fabric.Object | undefined
@@ -116,10 +130,22 @@ export class GraphElement {
       // use fabric.loadSVGFromString to load SVG
       fabric.loadSVGFromString(svgString, (objects, options) => {
         const strokeWidth = getShapeStrokeWidth()
-        const { strokeColorList, currentStrokeColor } = useShapeStore.getState()
+        const { strokeColorList, currentStrokeColor, currentShapeIcon } =
+          useShapeStore.getState()
+        const fillable = isFillableGraphIcon(currentShapeIcon)
+        const fill = fillable ? getShapeFillColor() : undefined
 
         const svgGroup = fabric.util.groupSVGElements(objects, options)
         const dashArray = getShapeStrokeDashArray(strokeWidth)
+        const objectStyle = {
+          stroke: strokeColorList[currentStrokeColor],
+          strokeWidth,
+          strokeDashArray: dashArray,
+          strokeLineCap: 'round',
+          strokeUniform: true,
+          perPixelTargetFind: true,
+          ...(fillable ? { fill } : {})
+        }
 
         svgGroup.set({
           left: point.x,
@@ -130,7 +156,8 @@ export class GraphElement {
           strokeWidth,
           strokeUniform: true,
           strokeLineCap: 'round',
-          perPixelTargetFind: true
+          perPixelTargetFind: true,
+          ...(fillable ? { fill } : {})
         })
 
         // apply styles to all objects in the SVG group
@@ -138,21 +165,11 @@ export class GraphElement {
           const group = svgGroup as fabric.Group
           if (group.getObjects) {
             group.getObjects().forEach((obj: fabric.Object) => {
-              obj.set({
-                stroke: strokeColorList[currentStrokeColor],
-                strokeWidth,
-                strokeDashArray: dashArray,
-                strokeLineCap: 'round',
-                strokeUniform: true,
-                perPixelTargetFind: true
-              })
+              obj.set(objectStyle)
             })
           }
         } else {
-          // if not a group, set styles directly
-          svgGroup.set({
-            strokeDashArray: dashArray
-          })
+          svgGroup.set(objectStyle)
         }
 
         resolve(svgGroup)
@@ -164,26 +181,40 @@ export class GraphElement {
     const pathList = svgShapesToPaths(svgString)
 
     const strokeWidth = getShapeStrokeWidth()
-    const { strokeColorList, currentStrokeColor } = useShapeStore.getState()
-
-    const options = {
-      roughness: 0.3,
-      bowing: 0.7
-    }
+    const { strokeColorList, currentStrokeColor, currentShapeIcon } =
+      useShapeStore.getState()
+    const fillable = isFillableGraphIcon(currentShapeIcon)
+    const options = fillable
+      ? getRoughShapeOptions()
+      : {
+          roughness: 0.3,
+          bowing: 0.7
+        }
 
     const pathElementList: fabric.Path[] = []
     pathList.forEach((path) => {
-      const roughPathList = RoughShapeUtils.getPathPaths(path, options)
+      const roughPathList = RoughShapeUtils.getPathPaths(
+        fillable ? closeSvgPath(path) : path,
+        options
+      )
       roughPathList.forEach((roughPath) => {
-        const pathElement = new fabric.Path(roughPath.d, {
-          scaleX: 1,
-          scaleY: 1,
-          stroke: strokeColorList[currentStrokeColor],
-          strokeWidth,
-          strokeUniform: true,
-          strokeLineCap: 'round',
-          fill: 'transparent'
-        })
+        const pathElement = new fabric.Path(
+          roughPath.d,
+          fillable
+            ? {
+                ...getFabricShapeOptions(roughPath),
+                strokeWidth
+              }
+            : {
+                scaleX: 1,
+                scaleY: 1,
+                stroke: strokeColorList[currentStrokeColor],
+                strokeWidth,
+                strokeUniform: true,
+                strokeLineCap: 'round',
+                fill: 'transparent'
+              }
+        )
         pathElementList.push(pathElement)
       })
     })

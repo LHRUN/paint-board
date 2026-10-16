@@ -67,6 +67,7 @@
     "undo": "undo",
     "redo": "redo",
     "copy": "copy",
+    "group": "group",
     "delete": "delete",
     "text": "add text",
     "image": "upload image",
@@ -95,6 +96,7 @@
     "circle": "Circle",
     "polygon": "Polygon",
     "graph": "Graph",
+    "group": "Group",
     "element": "Element"
   },
   "cleanModal": {
