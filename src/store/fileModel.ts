@@ -7,7 +7,7 @@ export const DEFAULT_BACKGROUND_COLOR_LIST = [
   'radial-gradient(circle, rgba(160,186,165,1) 0%, rgba(79,190,119,1) 35%, RGB(20, 78, 44) 100%)'
 ]
 
-export const BOARD_VERSION = '2.0.0'
+export const BOARD_VERSION = '3.0.0'
 export const INITIAL_FILE_TITLE = 'paint-board'
 
 /**
