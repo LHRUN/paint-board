@@ -10,7 +10,6 @@
   <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
-  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
   <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
@@ -34,13 +33,13 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## Features
 + Drawing Mode
-  - Free Drawing: Provides 12 different brush styles, including basic brush, rainbow brush, multi-shape brush, multi-material brush, pixel brush, multi-color brush, text brush, multi-line connection brush, mesh brush, multi-point connection brush, wave curve brush, and thorn brush to meet diverse drawing needs.
+  - Free Drawing: Provides 15 brush styles: basic, pen, outlined pen, rainbow, multi-shape, material, pixels, multi-color, text, multi-line, mesh, multi-point, wave, thorn, and ink.
   - Shape Drawing: Supports drawing rich graphics, including built-in shapes and Lucide icon library graphics, which can be used with just a click. Configurable line width, line style, fill color, and fill style.
 + Eraser Mode: Can linearly erase all content and supports linear width configuration.
-+ Selection Mode: Supports clicking or box selection for editing. After selection, you can perform drag, scale, rotate operations and various custom configurations through handles.
++ Selection Mode: Supports clicking or box selection for editing. After selection, you can drag, scale, rotate, edit colors, and group multiple objects.
 + Canvas Mode: Supports canvas background, custom size, and global drawing configuration.
-+ Action Bar: Functions from left to right are undo, redo, copy current selection, delete current selection, draw text, upload image, clear drawing content, save as image, and open file list.
-+ Multi-file Configuration: Supports switching between multiple canvases, each canvas can have custom titles, add, delete, and provides sorting and upload/download functions.
++ Action Bar: Undo, redo, copy, group, delete, draw text, upload image, clear drawing content, save as image, open the layer list, and open the file list.
++ Multi-file Configuration: Supports switching between multiple canvases. Each canvas can have a custom title. You can add, rename, delete, upload, and batch-download boards.
 + i18n: 中文(简体), 中文(繁体), English, 日本語, 한국어.
 
 ## V1.3.0 Video Demo
@@ -52,23 +51,29 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## Quick Start
 ```
 git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
 pnpm install
 pnpm dev
 ```
 
 ### Docker Support
+1. Clone source code repository
+```sh
+git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
+```
 
-1. Build a Docker image with the name `paint-board`.
+2. Build a Docker image with the name `paint-board`.
 ```sh
 docker build -t paint-board .
 ```
 
-2. Start a docker container.
+3. Start a docker container.
 ```sh
 docker run -d -p 8080:80 --name paint-board paint-board
 ```
 
-3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
+4. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
 
 ## Browser support
 
@@ -78,17 +83,13 @@ We recommend using the latest version of Google Chrome, the following is the min
 | :--: | :--: | :--: | :--: |
 | 80+ | 80+ | 70+ | 16.4+ |
 
-Saving an image uses OffscreenCanvas on Safari 16.4 and later, and falls back to canvas.toBlob on older Safari.
-
 ## Contact me
 
 If you have any suggestions or good ideas, welcome to contact me at any time!
 
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
-+ Twiter: https://twitter.com/Song_LongHao
-+ WeChat:
-<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
++ WeChat: August8_L
 
 
 ## Contributing

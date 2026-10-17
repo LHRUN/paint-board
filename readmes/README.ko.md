@@ -10,7 +10,6 @@
   <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
-  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
   <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
@@ -34,13 +33,13 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## 기능 소개
 + 그리기 모드
-  - 자유 그리기: 기본 브러시, 무지개 브러시, 다중 모양 브러시, 다중 소재 브러시, 픽셀 브러시, 다색 브러시, 텍스트 브러시, 다중 선 연결 브러시, 그물 브러시, 다중 점 연결 브러시, 물결 곡선 브러시, 가시 브러시 등 12가지 스타일의 브러시를 제공합니다. 다양한 그림 요구를 충족시킵니다.
+  - 자유 그리기: 기본, 펜, 외곽선 펜, 무지개, 다중 모양, 소재, 픽셀, 다색, 텍스트, 다중 선, 그물, 다중 점, 물결, 가시, 잉크 등 15가지 브러시를 제공합니다.
   - 도형 그리기: 내장 도형과 Lucide 아이콘 라이브러리 도형을 포함해 풍부한 도형 그리기를 지원하며, 클릭 한 번으로 추가하여 사용할 수 있습니다. 선 너비, 선 스타일, 채우기 색상 및 채우기 스타일을 설정할 수 있습니다.
 + 지우개 모드: 모든 내용을 선형으로 지울 수 있으며 선형 너비 설정을 지원합니다.
-+ 선택 모드: 클릭 또는 박스 선택으로 콘텐츠 편집 가능. 선택 후 핸들을 통해 드래그, 확대/축소, 회전 조작 및 다양한 사용자 지정 설정 가능.
++ 선택 모드: 클릭 또는 박스 선택으로 편집할 수 있습니다. 선택 후 드래그, 확대/축소, 회전, 색 변경이 가능하고, 여러 객체를 그룹으로 묶을 수 있습니다.
 + 드로잉 보드 모드: 드로잉 보드 배경, 사용자 지정 크기 및 글로벌 그리기 설정 지원.
-+ 작업 모음: 왼쪽부터 오른쪽 순서로 기능은 다음과 같습니다: 실행 취소, 실행 취소 취소, 현재 선택 내용 복사, 현재 선택 내용 삭제, 텍스트 그리기, 이미지 업로드, 그리기 내용 지우기, 이미지로 저장, 파일 목록 열기.
-+ 다중 파일 설정: 여러 캔버스 전환 지원, 각 캔버스별 제목 사용자 정의, 추가/삭제 가능, 정렬 및 업로드/다운로드 기능 제공.
++ 작업 모음: 실행 취소, 다시 실행, 복사, 그룹, 삭제, 텍스트 그리기, 이미지 업로드, 그리기 내용 지우기, 이미지로 저장, 레이어 목록, 파일 목록.
++ 다중 파일 설정: 여러 캔버스를 전환할 수 있습니다. 각 캔버스의 제목을 바꿀 수 있고, 추가, 이름 변경, 삭제, 업로드, 일괄 다운로드를 지원합니다.
 + 국제화: 中文(简体), 中文(繁体), English, 日本語, 한국어.
 
 ## V1.3.0 Video Demo
@@ -52,23 +51,29 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## 빠른 시작
 ```
 git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
 pnpm install
 pnpm dev
 ```
 
 ### Docker
+1. Clone source code repository
+```sh
+git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
+```
 
-1. Build a Docker image with the name `paint-board`.
+2. Build a Docker image with the name `paint-board`.
 ```sh
 docker build -t paint-board .
 ```
 
-2. Start a docker container.
+3. Start a docker container.
 ```sh
 docker run -d -p 8080:80 --name paint-board paint-board
 ```
 
-3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
+4. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
 
 ## 브라우저 지원
 
@@ -78,17 +83,13 @@ docker run -d -p 8080:80 --name paint-board paint-board
 | :--: | :--: | :--: | :--: |
 | 80+ | 80+ | 70+ | 16.4+ |
 
-이미지 저장은 Safari 16.4 이상에서 OffscreenCanvas를 사용하고, 더 오래된 Safari에서는 canvas.toBlob으로 대체합니다.
-
 ## 문의하기
 
 제안이나 좋은 아이디어가 있으시면 언제든지 저에게 연락해 주세요!
 
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
-+ Twiter: https://twitter.com/Song_LongHao
-+ WeChat:
-<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
++ WeChat: August8_L
 
 ## Contributing
 
