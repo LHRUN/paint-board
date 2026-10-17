@@ -1,3 +1,46 @@
+# 3.0.0
+
+### Feat
+
+- Free Drawing
+  - Added pen, outlined pen, and ink brushes.
+- Selection Mode
+  - Selected drawings and shapes can change color and line style.
+  - Two or more selected objects can be combined into one group.
+- Text and Fonts
+  - Text has its own color palette, separate from brush colors.
+  - Google Fonts can be added to the font list and are loaded when a board opens.
+- Layers
+  - Added a layer list to reorder objects and show or hide them.
+- File List
+  - Boards open in a dialog with thumbnails, rename, and batch download.
+  - A new visit with an empty board can start from a template.
+  - Creating a board asks for a unique title. At most 20 boards can be added; boards already saved above that limit remain available.
+- Image Export
+  - Export can include or omit the canvas background, and a failed export no longer saves an empty image.
+- Canvas
+  - Panning skips object hit-testing until the pan ends.
+
+### Fix
+
+- Switching boards writes the current canvas back to its own file before the next board loads.
+- Opening the app waits for saved boards to load, and does not overwrite them when that load fails.
+- Rapid undo and redo no longer let a slower step overwrite a newer one.
+- Moving, scaling, or rotating text is kept in undo history.
+- Copy and paste keep custom object fields and line endpoint handles.
+- A click that does not move no longer leaves a dot or an empty undo step for the basic, material, multi-color, and eraser brushes.
+- Importing a board JSON keeps its zoom and viewport.
+
+### Note
+
+- The first successful save moves each board's drawing into its own local record. Paint Board 2.x cannot read those drawings. Do not open this site in 2.x and save; saving there can replace the drawing with an empty canvas. A JSON file exported from 2.x still opens in this version.
+- Free-drawing shortcut letters now match the letter on each brush button.
+- Boards can no longer be reordered by dragging. Double-clicking empty canvas no longer creates a text box; use the text button on the action bar.
+
+### CI
+
+- The production image and CI build use Node.js 22 and pnpm 8.15.9.
+
 # 2.0.0
 
 ### Feat
