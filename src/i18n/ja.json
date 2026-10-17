@@ -133,7 +133,9 @@
     "close": "閉じる"
   },
   "templatePrompt": {
-    "title": "プリセット",
+    "title": "Paint Board",
+    "tagline": "完全オープンソースの Web クリエイティブボード",
+    "star": "Star が一番の応援です ✨。ありがとうございます。",
     "description": "下のプリセットでボードの機能をひと通り確認できます。閉じると空白のボードから始められます。",
     "create": "作成",
     "close": "閉じる",

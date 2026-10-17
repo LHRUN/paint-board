@@ -133,7 +133,9 @@
     "close": "닫기"
   },
   "templatePrompt": {
-    "title": "프리셋 템플릿",
+    "title": "Paint Board",
+    "tagline": "완전히 오픈소스인 웹 창작 보드",
+    "star": "Star가 가장 큰 응원입니다 ✨. 감사합니다.",
     "description": "아래 프리셋으로 보드 기능을 살펴보거나, 닫고 빈 보드에서 시작할 수 있습니다.",
     "create": "만들기",
     "close": "닫기",

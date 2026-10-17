@@ -133,8 +133,10 @@
     "close": "关闭"
   },
   "templatePrompt": {
-    "title": "预设模版",
-    "description": "可以选择以下预设模版，初步了解画板功能，也可以关闭从空白画板开始。",
+    "title": "Paint Board",
+    "tagline": "一款完全开源的 Web 端创意画板",
+    "star": "欢迎点 Star ✨，Star 就是对我最大的支持，Thanks!",
+    "description": "可以选择以下预设模版，初步了解画板功能，或者直接关闭从空白画板开始。",
     "create": "创建",
     "close": "关闭",
     "selectFirst": "请先选择一个模板"
@@ -363,7 +365,7 @@
   },
   "helpInfo": {
     "openSourceRepo": "开源仓库",
-    "openSourceRepoDesc": "欢迎 Star，Star 就是对我最大的支持，感谢",
+    "openSourceRepoDesc": "欢迎 Star，Star 就是对我最大的支持，Thanks!",
     "docs": "文档",
     "docsDesc": "可点击查看此应用的详细功能说明",
     "featureIntro": "功能简介",

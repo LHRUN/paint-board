@@ -73,10 +73,26 @@ const TemplatePromptModal: FC<IProps> = ({ templates, onClose }) => {
       <div className="modal modal-open z-[85]">
         <div className="modal-box flex max-h-[min(88vh,760px)] w-[94vw] max-w-4xl flex-col overflow-hidden p-0">
           <div className="shrink-0 border-b border-slate-100 px-5 py-4">
-            <h3 className="font-fredokaOne text-2xl">
-              {t('templatePrompt.title')}
-            </h3>
-            <p className="mt-1 text-sm text-slate-500">
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h3 className="font-fredokaOne text-2xl">
+                {t('templatePrompt.title')}
+              </h3>
+              <p className="text-sm text-slate-500">
+                {t('templatePrompt.tagline')}
+              </p>
+            </div>
+            <p className="mt-2 flex flex-wrap items-baseline gap-x-2 text-sm text-slate-500">
+              <a
+                href="https://github.com/LHRUN/paint-board"
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary underline underline-offset-2"
+              >
+                github.com/LHRUN/paint-board
+              </a>
+              <span>{t('templatePrompt.star')}</span>
+            </p>
+            <p className="mt-2 text-sm text-slate-500">
               {t('templatePrompt.description')}
             </p>
           </div>

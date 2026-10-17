@@ -133,8 +133,10 @@
     "close": "關閉"
   },
   "templatePrompt": {
-    "title": "預設模版",
-    "description": "可以選擇以下預設模版，初步了解畫板功能，也可以關閉從空白畫板開始。",
+    "title": "Paint Board",
+    "tagline": "一款完全開源的 Web 端創意畫板",
+    "star": "歡迎點 Star ✨，Star 就是對我最大的支持，Thanks!",
+    "description": "可以選擇以下預設模版，初步了解畫板功能，或者直接關閉從空白畫板開始。",
     "create": "建立",
     "close": "關閉",
     "selectFirst": "請先選擇一個模板"

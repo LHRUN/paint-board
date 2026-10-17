@@ -133,7 +133,9 @@
     "close": "Close"
   },
   "templatePrompt": {
-    "title": "Preset templates",
+    "title": "Paint Board",
+    "tagline": "A fully open-source creative board for the web",
+    "star": "A star is the best support I can get ✨. Thanks!",
     "description": "Choose a preset below to get a feel for the board, or close this and start from a blank board.",
     "create": "Create",
     "close": "Close",
