@@ -353,6 +353,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "オープンソースリポジトリ",
+    "openSourceRepoDesc": "Star が一番の応援です。ありがとうございます。",
+    "docs": "ドキュメント",
+    "docsDesc": "アプリの詳しい機能説明を見られます。",
     "featureIntro": "機能紹介",
     "shortcuts": "ショートカット",
     "board": "ボード",

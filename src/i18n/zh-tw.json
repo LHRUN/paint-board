@@ -353,6 +353,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "開源倉庫",
+    "openSourceRepoDesc": "歡迎 Star，Star 就是對我最大的支持，感謝",
+    "docs": "文件",
+    "docsDesc": "可點擊查看此應用的詳細功能說明",
     "featureIntro": "功能簡介",
     "shortcuts": "快捷鍵",
     "board": "畫板",

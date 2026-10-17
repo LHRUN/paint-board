@@ -353,6 +353,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "Open Source Repository",
+    "openSourceRepoDesc": "A star is the best support I can get. Thank you.",
+    "docs": "Docs",
+    "docsDesc": "Open this for a detailed guide to the app.",
     "featureIntro": "Feature Introduction",
     "shortcuts": "Shortcuts",
     "board": "Board",

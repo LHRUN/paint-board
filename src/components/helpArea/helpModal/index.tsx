@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useBoardStore from '@/store/board'
 import { languageList } from './constants'
 
-import { Github, BookText, Film, Keyboard } from 'lucide-react'
+import { Github, BookOpen, BookText, Keyboard } from 'lucide-react'
 import TranslateIcon from '@/components/icons/translate.svg?react'
 import Shortcut from '../shortcut'
 import Features from '../features'
@@ -30,27 +30,47 @@ const HelpModal = () => {
         <button>close</button>
       </form>
       <div className="modal-box w-[90vw] max-w-[800px] h-[90vh] max-h-[800px] overflow-auto">
-        <div className="flex items-center gap-x-4 gap-y-2 flex-wrap mb-10">
-          <a
-            href="https://github.com/LHRUN/paint-board"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-x-2  py-2 px-3 rounded-md bg-[#eef1ff95] cursor-pointer hover:bg-[#eef1ff]"
-          >
-            <Github size={20} />
-            <span>{t('helpInfo.openSourceRepo')}</span>
-          </a>
-          <a
-            href="https://space.bilibili.com/317136468/lists/2495018?type=season"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-x-2  py-2 px-3 rounded-md bg-[#eef1ff95] cursor-pointer hover:bg-[#eef1ff]"
-          >
-            <Film size={20} />
-            <span>bilibili</span>
-          </a>
+        <div className="mb-8 flex items-start gap-3">
+          <div className="grid min-w-0 flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
+            <a
+              href="https://github.com/LHRUN/paint-board"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-start gap-3 rounded-xl bg-[#eef1ff95] px-4 py-3 transition-colors hover:bg-[#eef1ff]"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-700">
+                <Github size={18} />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-medium leading-5">
+                  {t('helpInfo.openSourceRepo')}
+                </span>
+                <span className="mt-1 block text-sm leading-5 text-slate-500">
+                  {t('helpInfo.openSourceRepoDesc')}
+                </span>
+              </span>
+            </a>
+            <a
+              href="https://songlh.top/paint-board-docs"
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-start gap-3 rounded-xl bg-[#eef1ff95] px-4 py-3 transition-colors hover:bg-[#eef1ff]"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-slate-700">
+                <BookOpen size={18} />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-medium leading-5">
+                  {t('helpInfo.docs')}
+                </span>
+                <span className="mt-1 block text-sm leading-5 text-slate-500">
+                  {t('helpInfo.docsDesc')}
+                </span>
+              </span>
+            </a>
+          </div>
 
-          <div className="dropdown dropdown-bottom dropdown-end ml-auto">
+          <div className="dropdown dropdown-bottom dropdown-end shrink-0">
             <div tabIndex={0} role="button">
               <TranslateIcon className="w-8 h-8 p-1 rounded-md cursor-pointer bg-[#66CC8960] hover:bg-[#66CC8980]" />
             </div>
