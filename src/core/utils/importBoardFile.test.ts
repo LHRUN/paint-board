@@ -47,5 +47,36 @@ describe('parseImportedBoardFile', () => {
     )
 
     expect(parsed?.contentRevision).toBe(0)
+    expect(parsed?.zoom).toBe(1)
+    expect(parsed?.viewportTransform).toBeUndefined()
+  })
+
+  it('restores a finite zoom and a 6-number viewport', () => {
+    const viewport = [1.5, 0, 0, 1.5, -20, 40]
+    const parsed = parseImportedBoardFile(
+      JSON.stringify({
+        title: 'sketch',
+        zoom: 1.5,
+        viewportTransform: viewport,
+        boardData: { objects: [{ type: 'rect' }] }
+      })
+    )
+
+    expect(parsed?.zoom).toBe(1.5)
+    expect(parsed?.viewportTransform).toEqual(viewport)
+  })
+
+  it('ignores a non-positive zoom and a malformed viewport', () => {
+    const parsed = parseImportedBoardFile(
+      JSON.stringify({
+        title: 'sketch',
+        zoom: 0,
+        viewportTransform: [1, 0, 0, 1, 'pan'],
+        boardData: { objects: [] }
+      })
+    )
+
+    expect(parsed?.zoom).toBe(1)
+    expect(parsed?.viewportTransform).toBeUndefined()
   })
 })

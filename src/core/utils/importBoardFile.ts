@@ -19,11 +19,31 @@ export interface ImportedBoardFile {
   backgroundImage: string
   backgroundImageOpacity: number
   backgroundSort: string[]
+  viewportTransform?: number[]
   contentRevision: number
 }
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
+
+const finiteNumber = (value: unknown) =>
+  typeof value === 'number' && Number.isFinite(value) ? value : undefined
+
+/**
+ * Fabric stores pan and zoom together in a 6-number viewport matrix.
+ * A short or non-numeric list is ignored so a bad export cannot move the canvas.
+ */
+const viewportOf = (value: unknown) => {
+  if (!Array.isArray(value) || value.length !== 6) {
+    return undefined
+  }
+  if (
+    !value.every((item) => typeof item === 'number' && Number.isFinite(item))
+  ) {
+    return undefined
+  }
+  return [...value]
+}
 
 export const parseImportedBoardFile = (
   raw: string
@@ -68,11 +88,16 @@ export const parseImportedBoardFile = (
       ? backgroundImageRecord.src
       : ''
 
+  const zoom = finiteNumber(json.zoom)
+  const viewportTransform = viewportOf(json.viewportTransform)
+
   return {
     ...createDefaultFile(uuidv4(), json.title),
     boardVersion:
       typeof json.boardVersion === 'string' ? json.boardVersion : BOARD_VERSION,
     boardData: otherBoardData,
+    ...(zoom !== undefined && zoom > 0 ? { zoom } : {}),
+    ...(viewportTransform ? { viewportTransform } : {}),
     canvasWidth: typeof json.canvasWidth === 'number' ? json.canvasWidth : 1,
     canvasHeight: typeof json.canvasHeight === 'number' ? json.canvasHeight : 1,
     backgroundColorList,
