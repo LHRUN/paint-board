@@ -39,7 +39,14 @@
     "canvasBackground": "Canvas Background",
     "canvasSize": "Canvas Size",
     "drawCache": "Draw Cache",
-    "guideLine": "GuideLine"
+    "guideLine": "GuideLine",
+    "freehandThinning": "Thinning",
+    "freehandSmoothing": "Smoothing",
+    "freehandStreamline": "Streamline",
+    "freehandStartTaper": "Start Taper",
+    "freehandEndTaper": "End Taper",
+    "freehandStrokeColor": "Stroke Color",
+    "freehandStrokeWidth": "Stroke Width"
   },
   "canvasSize": {
     "width": "Width",
@@ -61,7 +68,10 @@
     "reticulate": "Reticulate",
     "multiPoint": "MultiPoint",
     "wiggle": "Wiggle",
-    "thorn": "Thorn"
+    "thorn": "Thorn",
+    "freehand": "Pen",
+    "freehandStroke": "Outlined Pen",
+    "ink": "Ink"
   },
   "operate": {
     "undo": "undo",
@@ -394,7 +404,7 @@
       "switchFreeDrawing": "Switch to Free Drawing in Draw Mode",
       "switchShapeDrawing": "Switch to Shape Drawing in Draw Mode",
       "switchBrushType": "Switch Brush Type in Free Drawing",
-      "brushTypeNote": "(According to button labels)"
+      "brushTypeNote": "The letter on each button"
     },
     "keyboardShortcuts": {
       "spaceDrag": "Mouse Click and Drag",

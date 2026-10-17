@@ -30,6 +30,7 @@
     "jsondiffpatch": "^0.6.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.544.0",
+    "perfect-freehand": "1.2.3",
     "react": "^18.2.0",
     "react-best-gradient-color-picker": "^3.0.14",
     "react-dom": "^18.2.0",

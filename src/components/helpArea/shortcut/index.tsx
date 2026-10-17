@@ -239,10 +239,7 @@ const Shortcut = () => {
             <tr>
               <td>{t('helpInfo.toolOperations.switchBrushType')}</td>
               <td>
-                <kbd className="kbd kbd-sm">Q</kbd>
-                <span> ~ </span>
-                <kbd className="kbd kbd-sm">V</kbd>
-                <span> {t('helpInfo.toolOperations.brushTypeNote')}</span>
+                <span>{t('helpInfo.toolOperations.brushTypeNote')}</span>
               </td>
             </tr>
           </tbody>

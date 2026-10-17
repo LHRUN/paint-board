@@ -39,7 +39,14 @@
     "canvasBackground": "畫板背景",
     "canvasSize": "畫板尺寸",
     "drawCache": "繪製緩存",
-    "guideLine": "輔助線"
+    "guideLine": "輔助線",
+    "freehandThinning": "粗細變化",
+    "freehandSmoothing": "平滑度",
+    "freehandStreamline": "線條跟隨",
+    "freehandStartTaper": "起筆收尖",
+    "freehandEndTaper": "收筆收尖",
+    "freehandStrokeColor": "描邊顏色",
+    "freehandStrokeWidth": "描邊寬度"
   },
   "canvasSize": {
     "width": "寬度",
@@ -61,7 +68,10 @@
     "reticulate": "網狀",
     "multiPoint": "多點連接",
     "wiggle": "波浪曲線",
-    "thorn": "荊棘"
+    "thorn": "荊棘",
+    "freehand": "鋼筆",
+    "freehandStroke": "描邊鋼筆",
+    "ink": "墨水"
   },
   "operate": {
     "undo": "撤銷",
@@ -394,7 +404,7 @@
       "switchFreeDrawing": "在繪畫模式下切換自由繪畫",
       "switchShapeDrawing": "在繪畫模式下切換圖形繪畫",
       "switchBrushType": "在自由繪畫下切換畫筆類型",
-      "brushTypeNote": "(可根據按鈕標記)"
+      "brushTypeNote": "以按鈕上的字母為準"
     },
     "keyboardShortcuts": {
       "spaceDrag": "鼠標拖拽",

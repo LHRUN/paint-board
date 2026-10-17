@@ -14,65 +14,82 @@ export const styleSwitch: Record<string, Array<StyleSwitchType>> = {
       keyboard: 'Q'
     },
     {
-      type: DrawStyle.Rainbow,
-      text: 'style.rainbow',
+      type: DrawStyle.Freehand,
+      text: 'style.freehand',
       keyboard: 'W'
     },
     {
-      type: DrawStyle.Shape,
-      text: 'style.shape',
+      type: DrawStyle.FreehandStroke,
+      text: 'style.freehandStroke',
       keyboard: 'E'
     }
   ],
   line_2: [
     {
-      type: DrawStyle.Material,
-      text: 'style.material',
+      type: DrawStyle.Rainbow,
+      text: 'style.rainbow',
       keyboard: 'A'
     },
     {
-      type: DrawStyle.Pixels,
-      text: 'style.pixels',
+      type: DrawStyle.Shape,
+      text: 'style.shape',
       keyboard: 'S'
     },
     {
-      type: DrawStyle.MultiColor,
-      text: 'style.multiColor',
+      type: DrawStyle.Material,
+      text: 'style.material',
       keyboard: 'D'
     }
   ],
   line_3: [
     {
-      type: DrawStyle.Text,
-      text: 'style.text',
+      type: DrawStyle.Pixels,
+      text: 'style.pixels',
       keyboard: 'Z'
     },
     {
-      type: DrawStyle.MultiLine,
-      text: 'style.multiLine',
+      type: DrawStyle.MultiColor,
+      text: 'style.multiColor',
       keyboard: 'X'
     },
     {
-      type: DrawStyle.Reticulate,
-      text: 'style.reticulate',
+      type: DrawStyle.Text,
+      text: 'style.text',
       keyboard: 'C'
     }
   ],
   line_4: [
     {
-      type: DrawStyle.MultiPoint,
-      text: 'style.multiPoint',
+      type: DrawStyle.MultiLine,
+      text: 'style.multiLine',
       keyboard: 'R'
     },
     {
+      type: DrawStyle.Reticulate,
+      text: 'style.reticulate',
+      keyboard: 'F'
+    },
+    {
+      type: DrawStyle.MultiPoint,
+      text: 'style.multiPoint',
+      keyboard: 'V'
+    }
+  ],
+  line_5: [
+    {
       type: DrawStyle.Wiggle,
       text: 'style.wiggle',
-      keyboard: 'F'
+      keyboard: 'T'
     },
     {
       type: DrawStyle.Thorn,
       text: 'style.thorn',
-      keyboard: 'V'
+      keyboard: 'G'
+    },
+    {
+      type: DrawStyle.Ink,
+      text: 'style.ink',
+      keyboard: 'B'
     }
   ]
 }

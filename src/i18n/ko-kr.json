@@ -39,7 +39,14 @@
     "canvasBackground": "캔버스 배경",
     "canvasSize": "캔버스 크기",
     "drawCache": "그리기 캐시",
-    "guideLine": "안내선"
+    "guideLine": "안내선",
+    "freehandThinning": "굵기 변화",
+    "freehandSmoothing": "매끄러움",
+    "freehandStreamline": "궤적 따라가기",
+    "freehandStartTaper": "시작 가늘어짐",
+    "freehandEndTaper": "끝 가늘어짐",
+    "freehandStrokeColor": "윤곽 색",
+    "freehandStrokeWidth": "윤곽 두께"
   },
   "canvasSize": {
     "width": "너비",
@@ -61,7 +68,10 @@
     "reticulate": "그물형",
     "multiPoint": "다중 포인트",
     "wiggle": "지그재그",
-    "thorn": "가시"
+    "thorn": "가시",
+    "freehand": "펜",
+    "freehandStroke": "윤곽 펜",
+    "ink": "잉크"
   },
   "operate": {
     "undo": "실행 취소",
@@ -394,7 +404,7 @@
       "switchFreeDrawing": "그리기 모드에서 자유 그리기 전환",
       "switchShapeDrawing": "그리기 모드에서 도형 그리기 전환",
       "switchBrushType": "자유 그리기에서 브러시 유형 전환",
-      "brushTypeNote": "(버튼 라벨에 따라)"
+      "brushTypeNote": "버튼의 글자를 따름"
     },
     "keyboardShortcuts": {
       "spaceDrag": "마우스 클릭 후 드래그",

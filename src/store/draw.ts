@@ -38,6 +38,13 @@ interface DrawState {
   eraserWidth: number // eraser width
   multiColorType: string // 'col' | 'row' | 'circle'
   textFontFamily: string // current text drawing font
+  freehandThinning: number
+  freehandSmoothing: number
+  freehandStreamline: number
+  freehandStartTaper: number
+  freehandEndTaper: number
+  freehandStrokeColor: string
+  freehandStrokeWidth: number
   fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
   textColors: string[] // text palette, separate from brush colors
   currentTextColor: number // swatch used for the next new text
@@ -62,6 +69,13 @@ interface DrawAction {
   updateEraserWidth: (eraserWidth: number) => void
   updateMultiColorType: (multiColorType: string) => void
   updateTextFontFamily: (fontFamily: string) => void
+  updateFreehandThinning: (value: number) => void
+  updateFreehandSmoothing: (value: number) => void
+  updateFreehandStreamline: (value: number) => void
+  updateFreehandStartTaper: (value: number) => void
+  updateFreehandEndTaper: (value: number) => void
+  updateFreehandStrokeColor: (color: string) => void
+  updateFreehandStrokeWidth: (value: number) => void
   updateFontStyles: (type: string) => void
   updateCurrentTextColor: (colorIndex: number) => void
   updateTextColor: (color: string, colorIndex: number) => void
@@ -88,6 +102,13 @@ const useDrawStore = create<DrawState & DrawAction>()(
       eraserWidth: 20,
       multiColorType: MultiColorType.COL,
       textFontFamily: 'Georgia',
+      freehandThinning: 0.5,
+      freehandSmoothing: 0.5,
+      freehandStreamline: 0.5,
+      freehandStartTaper: 0,
+      freehandEndTaper: 20,
+      freehandStrokeColor: '#FF6363',
+      freehandStrokeWidth: 2,
       fontStyles: [],
       textColors: [...DEFAULT_TEXT_COLORS],
       currentTextColor: 0,
@@ -309,6 +330,27 @@ const useDrawStore = create<DrawState & DrawAction>()(
         set({
           textFontFamily: fontFamily
         })
+      },
+      updateFreehandThinning(value) {
+        set({ freehandThinning: value })
+      },
+      updateFreehandSmoothing(value) {
+        set({ freehandSmoothing: value })
+      },
+      updateFreehandStreamline(value) {
+        set({ freehandStreamline: value })
+      },
+      updateFreehandStartTaper(value) {
+        set({ freehandStartTaper: value })
+      },
+      updateFreehandEndTaper(value) {
+        set({ freehandEndTaper: value })
+      },
+      updateFreehandStrokeColor(color) {
+        set({ freehandStrokeColor: color })
+      },
+      updateFreehandStrokeWidth(value) {
+        set({ freehandStrokeWidth: value })
       },
       updateFontStyles(type) {
         const fontStyles = [...get().fontStyles]

@@ -26,6 +26,15 @@ describe('object list', () => {
 
   it('labels brushes, shapes, and clipped text', () => {
     expect(objectListLabel({ type: 'path' }).labelKey).toBe('objectList.brush')
+    expect(
+      objectListLabel({ type: 'path', _customType: 'freehand' }).labelKey
+    ).toBe('style.freehand')
+    expect(
+      objectListLabel({ type: 'path', _customType: 'freehandStroke' }).labelKey
+    ).toBe('style.freehandStroke')
+    expect(
+      objectListLabel({ type: 'group', _customType: 'ink' }).labelKey
+    ).toBe('style.ink')
     expect(objectListLabel({ _customType: 'shapeLine' }).labelKey).toBe(
       'objectList.line'
     )

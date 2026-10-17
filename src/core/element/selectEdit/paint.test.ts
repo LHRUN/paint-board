@@ -6,6 +6,7 @@ import {
   editedColors,
   paintLineStyle,
   paintObjectColor,
+  paintOutlineStroke,
   selectionEdit,
   shapeDashArray,
   sharedLineStyle,
@@ -106,6 +107,56 @@ describe('paint object color', () => {
     expect(link.stroke).toBe('#3A59D1')
     expect(arc.stroke).toBe('#3A59D1')
     expect(arc.fill).toBe('')
+  })
+
+  it('recolors a freehand fill and does not treat it as a dashed brush', () => {
+    const pen: Editable = {
+      type: 'path',
+      _customType: ELEMENT_CUSTOM_TYPE.FREEHAND,
+      fill: '#111111',
+      strokeWidth: 0
+    }
+    const basic: Editable = { type: 'path', stroke: '#111111' }
+
+    expect(selectionEdit([pen])).toEqual({ color: 'draw', line: null })
+    expect(selectionEdit([pen, basic])).toEqual({ color: 'draw', line: null })
+    expect(paintObjectColor(pen, '#65CC8A')).toBe(true)
+    expect(pen.fill).toBe('#65CC8A')
+    expect(editedColors(pen)).toEqual(['#65CC8A'])
+  })
+
+  it('recolors an outlined pen fill and stroke separately', () => {
+    const pen: Editable = {
+      type: 'path',
+      _customType: ELEMENT_CUSTOM_TYPE.FREEHAND_STROKE,
+      fill: '#111111',
+      stroke: '#FF6363',
+      strokeWidth: 2
+    }
+
+    expect(selectionEdit([pen])).toEqual({ color: 'draw', line: null })
+    expect(paintObjectColor(pen, '#65CC8A')).toBe(true)
+    expect(pen.fill).toBe('#65CC8A')
+    expect(pen.stroke).toBe('#FF6363')
+    expect(paintOutlineStroke(pen, '#000000')).toBe(true)
+    expect(pen.stroke).toBe('#000000')
+    expect(editedColors(pen)).toEqual(['#65CC8A'])
+
+    pen.strokeWidth = 0
+    expect(paintOutlineStroke(pen, '#FFFFFF')).toBe(false)
+    expect(pen.stroke).toBe('#000000')
+  })
+
+  it('recolors ink lines and splashes with one brush color', () => {
+    const line: Editable = { type: 'line', stroke: '#111111' }
+    const dot: Editable = { type: 'circle', fill: '#111111' }
+    const ink = group(ELEMENT_CUSTOM_TYPE.INK, [line, dot])
+
+    expect(selectionEdit([ink])).toEqual({ color: 'draw', line: null })
+    expect(paintObjectColor(ink, '#65CC8A')).toBe(true)
+    expect(line.stroke).toBe('#65CC8A')
+    expect(dot.fill).toBe('#65CC8A')
+    expect(editedColors(ink)).toEqual(['#65CC8A', '#65CC8A'])
   })
 
   it('recolors only the outline of a closed shape', () => {

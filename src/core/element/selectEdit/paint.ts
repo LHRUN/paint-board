@@ -34,7 +34,10 @@ const DRAW_COLOR_GROUPS = new Set<string>([
   ELEMENT_CUSTOM_TYPE.RETICULATE,
   ELEMENT_CUSTOM_TYPE.MULTI_POINT,
   ELEMENT_CUSTOM_TYPE.WIGGLE,
-  ELEMENT_CUSTOM_TYPE.THORN
+  ELEMENT_CUSTOM_TYPE.THORN,
+  ELEMENT_CUSTOM_TYPE.FREEHAND,
+  ELEMENT_CUSTOM_TYPE.FREEHAND_STROKE,
+  ELEMENT_CUSTOM_TYPE.INK
 ])
 
 const SHAPE_LINES = new Set<string>([
@@ -94,6 +97,10 @@ const isBasicBrush = (object: Editable) =>
   !object._customType &&
   typeof object.stroke === 'string'
 
+const isFreehandFill = (object: Editable) =>
+  object._customType === ELEMENT_CUSTOM_TYPE.FREEHAND ||
+  object._customType === ELEMENT_CUSTOM_TYPE.FREEHAND_STROKE
+
 const isDrawText = (object: Editable) =>
   object._customType === ELEMENT_CUSTOM_TYPE.DRAW_TEXT
 
@@ -126,6 +133,19 @@ const paintStrokeLeaves = (object: Editable, color: string): boolean => {
   }
   if (STROKE_LEAVES.has(object.type || '')) {
     return setStroke(object, color)
+  }
+  return false
+}
+
+const paintInk = (object: Editable, color: string): boolean => {
+  if (paintChildren(object, (child) => paintInk(child, color))) {
+    return true
+  }
+  if (object.type === 'line') {
+    return setStroke(object, color)
+  }
+  if (object.type === 'circle') {
+    return setFill(object, color)
   }
   return false
 }
@@ -215,6 +235,9 @@ export const paintObjectColor = (object: Editable, color: string) => {
   if (kind.color === 'draw' && isBasicBrush(object)) {
     return setStroke(object, color)
   }
+  if (kind.color === 'draw' && isFreehandFill(object)) {
+    return setFill(object, color)
+  }
   if (
     kind.color === 'draw' &&
     object._customType === ELEMENT_CUSTOM_TYPE.THORN
@@ -226,6 +249,9 @@ export const paintObjectColor = (object: Editable, color: string) => {
     object._customType === ELEMENT_CUSTOM_TYPE.MULTI_POINT
   ) {
     return paintMultiPoint(object, color)
+  }
+  if (kind.color === 'draw' && object._customType === ELEMENT_CUSTOM_TYPE.INK) {
+    return paintInk(object, color)
   }
   if (kind.color === 'draw') {
     return paintStrokeLeaves(object, color)
@@ -240,6 +266,16 @@ export const paintObjectColor = (object: Editable, color: string) => {
     return paintDrawText(object, color)
   }
   return false
+}
+
+export const paintOutlineStroke = (object: Editable, color: string) => {
+  if (object._customType !== ELEMENT_CUSTOM_TYPE.FREEHAND_STROKE) {
+    return false
+  }
+  if (!(object.strokeWidth && object.strokeWidth > 0)) {
+    return false
+  }
+  return setStroke(object, color)
 }
 
 const collect = (
@@ -262,6 +298,9 @@ export const editedColors = (object: Editable): string[] => {
   if (kind.color === 'draw' && isBasicBrush(object)) {
     return [colorText(object.stroke)]
   }
+  if (kind.color === 'draw' && isFreehandFill(object)) {
+    return [colorText(object.fill)]
+  }
   if (
     kind.color === 'draw' &&
     object._customType === ELEMENT_CUSTOM_TYPE.THORN
@@ -282,6 +321,16 @@ export const editedColors = (object: Editable): string[] => {
       }
       if (current.type === 'line') {
         colors.push(colorText(current.stroke))
+      }
+    })
+  }
+  if (kind.color === 'draw' && object._customType === ELEMENT_CUSTOM_TYPE.INK) {
+    return collect(object, (current, colors) => {
+      if (current.type === 'line') {
+        colors.push(colorText(current.stroke))
+      }
+      if (current.type === 'circle') {
+        colors.push(colorText(current.fill))
       }
     })
   }

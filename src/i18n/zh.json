@@ -39,7 +39,14 @@
     "canvasBackground": "画板背景",
     "canvasSize": "画板尺寸",
     "drawCache": "绘制缓存",
-    "guideLine": "辅助线"
+    "guideLine": "辅助线",
+    "freehandThinning": "粗细变化",
+    "freehandSmoothing": "平滑度",
+    "freehandStreamline": "线条跟随",
+    "freehandStartTaper": "起笔收尖",
+    "freehandEndTaper": "收笔收尖",
+    "freehandStrokeColor": "描边颜色",
+    "freehandStrokeWidth": "描边宽度"
   },
   "canvasSize": {
     "width": "宽度",
@@ -61,7 +68,10 @@
     "reticulate": "网状",
     "multiPoint": "多点连接",
     "wiggle": "波浪曲线",
-    "thorn": "荆棘"
+    "thorn": "荆棘",
+    "freehand": "钢笔",
+    "freehandStroke": "描边钢笔",
+    "ink": "墨水"
   },
   "operate": {
     "undo": "撤销",
@@ -394,7 +404,7 @@
       "switchFreeDrawing": "在绘画模式下切换自由绘画",
       "switchShapeDrawing": "在绘画模式下切换图形绘画",
       "switchBrushType": "在自由绘画下切换画笔类型",
-      "brushTypeNote": "(可根据按钮标记)"
+      "brushTypeNote": "以按钮上的字母为准"
     },
     "keyboardShortcuts": {
       "spaceDrag": "鼠标拖拽",

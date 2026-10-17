@@ -14,6 +14,7 @@ import SelectFontFamilyConfig from './selectFontFamilyConfig'
 import TextColorConfig from './textColorConfig'
 import ObjectColorConfig from './objectColorConfig'
 import LineStyleConfig from './lineStyleConfig'
+import OutlineStrokeConfig from './outlineStrokeConfig'
 
 const SelectConfig = () => {
   const { t } = useTranslation()
@@ -55,6 +56,8 @@ const SelectConfig = () => {
       <TextColorConfig refreshCount={refreshCount} />
 
       <ObjectColorConfig refreshCount={refreshCount} kind="draw" />
+
+      <OutlineStrokeConfig refreshCount={refreshCount} />
 
       <ObjectColorConfig refreshCount={refreshCount} kind="shape" />
 

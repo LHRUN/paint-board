@@ -16,6 +16,8 @@ import { RainbowElement } from '@/core/element/draw/rainbow'
 import { ThornElement } from '@/core/element/draw/thorn'
 import { MultiPointElement } from '@/core/element/draw/multiPoint'
 import { WiggleElement } from '@/core/element/draw/wiggle'
+import { FreehandElement } from '@/core/element/draw/freehand'
+import { InkElement } from '@/core/element/draw/ink'
 
 import { LineShape } from '@/core/element/shape/line'
 import { ArrowLineShape } from '@/core/element/shape/arrowLine'
@@ -36,6 +38,8 @@ export class DrawingHandler {
     | ThornElement
     | MultiPointElement
     | WiggleElement
+    | FreehandElement
+    | InkElement
     | LineShape
     | ArrowLineShape
     | RectElement
@@ -101,6 +105,15 @@ export class DrawingHandler {
           case DrawStyle.Wiggle:
             currentDrawingElement = new WiggleElement()
             break
+          case DrawStyle.Freehand:
+            currentDrawingElement = new FreehandElement(point)
+            break
+          case DrawStyle.FreehandStroke:
+            currentDrawingElement = new FreehandElement(point, true)
+            break
+          case DrawStyle.Ink:
+            currentDrawingElement = new InkElement(point)
+            break
           default:
             break
         }
@@ -126,13 +139,16 @@ export class DrawingHandler {
     this.currentDrawingElement = null
 
     let isDestroy = false
-    if (this.startPoint && point) {
-      const { x: startX, y: startY } = this.startPoint
-      const { x: endX, y: endY } = point
-      if (startX === endX && startY === endY) {
-        element.destroy()
-        isDestroy = true
-      }
+    const samePoint =
+      !!this.startPoint &&
+      !!point &&
+      this.startPoint.x === point.x &&
+      this.startPoint.y === point.y
+    // A freehand stroke can return to its start after a real curve.
+    // A press that never moves is dropped inside FreehandElement.finish.
+    if (samePoint && !(element instanceof FreehandElement)) {
+      element.destroy()
+      isDestroy = true
     }
 
     if (element instanceof GraphElement) {
@@ -154,6 +170,13 @@ export class DrawingHandler {
         paintBoard.history?.saveState()
       })
       return
+    }
+
+    if (!isDestroy && element instanceof FreehandElement) {
+      isDestroy = !element.finish(point)
+    }
+    if (!isDestroy && element instanceof InkElement) {
+      isDestroy = !element.finish()
     }
 
     if (!isDestroy) {

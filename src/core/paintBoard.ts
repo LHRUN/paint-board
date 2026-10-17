@@ -14,6 +14,7 @@ import { TextElement } from './element/text/index'
 import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
+import { ensureFreehandInput } from './element/draw/freehandInput'
 import { getEraserWidth } from './utils/draw'
 import {
   getCanvasJSON,
@@ -84,6 +85,7 @@ export class PaintBoard {
 
     this.evnet = new EventModule()
     this.handleMode()
+    ensureFreehandInput()
 
     const canvas = this.canvas
     await waitForFilesHydration()

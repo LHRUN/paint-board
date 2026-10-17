@@ -39,7 +39,14 @@
     "canvasBackground": "キャンバス背景",
     "canvasSize": "キャンバスサイズ",
     "drawCache": "描画キャッシュ",
-    "guideLine": "ガイドライン"
+    "guideLine": "ガイドライン",
+    "freehandThinning": "太さの変化",
+    "freehandSmoothing": "滑らかさ",
+    "freehandStreamline": "追従",
+    "freehandStartTaper": "始点の尖り",
+    "freehandEndTaper": "終点の尖り",
+    "freehandStrokeColor": "線の色",
+    "freehandStrokeWidth": "線の太さ"
   },
   "canvasSize": {
     "width": "幅",
@@ -61,7 +68,10 @@
     "reticulate": "網状",
     "multiPoint": "マルチポイント",
     "wiggle": "ウィグル",
-    "thorn": "トゲ"
+    "thorn": "トゲ",
+    "freehand": "ペン",
+    "freehandStroke": "縁取りペン",
+    "ink": "インク"
   },
   "operate": {
     "undo": "元に戻す",
@@ -394,7 +404,7 @@
       "switchFreeDrawing": "描画モードで自由描画切替",
       "switchShapeDrawing": "描画モードで図形描画切替",
       "switchBrushType": "自由描画でブラシタイプ切替",
-      "brushTypeNote": "(ボタンラベルに従って)"
+      "brushTypeNote": "ボタンの文字に従う"
     },
     "keyboardShortcuts": {
       "spaceDrag": "マウスクリックでドラッグ",

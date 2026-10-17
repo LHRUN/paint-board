@@ -21,6 +21,8 @@ export enum KeyCode {
   KEY_Z = 'KeyZ',
   KEY_X = 'KeyX',
   KEY_C = 'KeyC',
+  KEY_T = 'KeyT',
+  KEY_G = 'KeyG',
   KEY_V = 'KeyV',
   KEY_B = 'KeyB',
   BRACKET_LEFT = 'BracketLeft', // [
@@ -51,15 +53,18 @@ export const KeyCodeDrawTypeMap = {
 
 export const KeyCodeDrawStyleMap = {
   [KeyCode.KEY_Q]: DrawStyle.Basic,
-  [KeyCode.KEY_W]: DrawStyle.Rainbow,
-  [KeyCode.KEY_E]: DrawStyle.Shape,
-  [KeyCode.KEY_A]: DrawStyle.Material,
-  [KeyCode.KEY_S]: DrawStyle.Pixels,
-  [KeyCode.KEY_D]: DrawStyle.MultiColor,
-  [KeyCode.KEY_Z]: DrawStyle.Text,
-  [KeyCode.KEY_X]: DrawStyle.MultiLine,
-  [KeyCode.KEY_C]: DrawStyle.Reticulate,
-  [KeyCode.KEY_R]: DrawStyle.MultiPoint,
-  [KeyCode.KEY_F]: DrawStyle.Wiggle,
-  [KeyCode.KEY_V]: DrawStyle.Thorn
+  [KeyCode.KEY_W]: DrawStyle.Freehand,
+  [KeyCode.KEY_E]: DrawStyle.FreehandStroke,
+  [KeyCode.KEY_A]: DrawStyle.Rainbow,
+  [KeyCode.KEY_S]: DrawStyle.Shape,
+  [KeyCode.KEY_D]: DrawStyle.Material,
+  [KeyCode.KEY_Z]: DrawStyle.Pixels,
+  [KeyCode.KEY_X]: DrawStyle.MultiColor,
+  [KeyCode.KEY_C]: DrawStyle.Text,
+  [KeyCode.KEY_R]: DrawStyle.MultiLine,
+  [KeyCode.KEY_F]: DrawStyle.Reticulate,
+  [KeyCode.KEY_V]: DrawStyle.MultiPoint,
+  [KeyCode.KEY_T]: DrawStyle.Wiggle,
+  [KeyCode.KEY_G]: DrawStyle.Thorn,
+  [KeyCode.KEY_B]: DrawStyle.Ink
 }

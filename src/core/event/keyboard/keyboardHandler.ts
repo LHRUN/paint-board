@@ -54,6 +54,8 @@ export class KeyboardHandler {
       case KeyCode.KEY_X:
       case KeyCode.KEY_R:
       case KeyCode.KEY_F:
+      case KeyCode.KEY_T:
+      case KeyCode.KEY_G:
         this.modeHandler.switchDrawStyle(e.code)
         break
 
@@ -101,6 +103,8 @@ export class KeyboardHandler {
         if (this.isModifierKey(e) && !e.shiftKey && !e.altKey) {
           e.preventDefault()
           this.clipboardHandler.pasteClipboard()
+        } else {
+          this.modeHandler.switchDrawStyle(e.code)
         }
         break
 
