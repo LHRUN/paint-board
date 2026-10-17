@@ -321,7 +321,7 @@
   "features": {
     "drawingMode": "Drawing Mode",
     "freeDrawing": "Free Drawing",
-    "freeDrawingDesc1": "Provides 12 different styles of brushes: basic brush, rainbow brush, multi-shape brush, material brush, pixel brush, multi-color brush, text brush, multi-line connection brush, mesh brush, multi-point connection brush, wave curve brush, thorn brush. Meet diverse drawing needs",
+    "freeDrawingDesc1": "Provides 15 brush styles: basic, pen, outlined pen, rainbow, multi-shape, material, pixels, multi-color, text, multi-line, mesh, multi-point, wave, thorn, and ink",
     "freeDrawingDesc2": "All brushes support customization of color and brush width",
     "freeDrawingDesc3": "Multi-shape brush supports flexible configuration of shape type and quantity",
     "freeDrawingDesc4": "Material brush and multi-color brush can customize material types",
