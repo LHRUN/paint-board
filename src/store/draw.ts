@@ -19,6 +19,11 @@ import { persist } from 'zustand/middleware'
 import { produce } from 'immer'
 import { fabric } from 'fabric'
 import { reindexDrawColorSelection } from './drawColor'
+import {
+  DEFAULT_FREEHAND_STROKE_COLOR_INDEX,
+  DEFAULT_FREEHAND_STROKE_COLORS,
+  FREEHAND_STROKE_COLOR_LIMIT
+} from './freehandStrokeColor'
 
 interface DrawState {
   drawWidth: number // draw brush width
@@ -43,7 +48,8 @@ interface DrawState {
   freehandStreamline: number
   freehandStartTaper: number
   freehandEndTaper: number
-  freehandStrokeColor: string
+  freehandStrokeColors: string[]
+  currentFreehandStrokeColor: number
   freehandStrokeWidth: number
   fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
   textColors: string[] // text palette, separate from brush colors
@@ -74,7 +80,9 @@ interface DrawAction {
   updateFreehandStreamline: (value: number) => void
   updateFreehandStartTaper: (value: number) => void
   updateFreehandEndTaper: (value: number) => void
-  updateFreehandStrokeColor: (color: string) => void
+  updateCurrentFreehandStrokeColor: (colorIndex: number) => void
+  updateFreehandStrokeColor: (color: string, colorIndex: number) => void
+  deleteFreehandStrokeColor: (colorIndex: number) => void
   updateFreehandStrokeWidth: (value: number) => void
   updateFontStyles: (type: string) => void
   updateCurrentTextColor: (colorIndex: number) => void
@@ -107,7 +115,8 @@ const useDrawStore = create<DrawState & DrawAction>()(
       freehandStreamline: 0.5,
       freehandStartTaper: 0,
       freehandEndTaper: 20,
-      freehandStrokeColor: '#FF6363',
+      freehandStrokeColors: [...DEFAULT_FREEHAND_STROKE_COLORS],
+      currentFreehandStrokeColor: DEFAULT_FREEHAND_STROKE_COLOR_INDEX,
       freehandStrokeWidth: 2,
       fontStyles: [],
       textColors: [...DEFAULT_TEXT_COLORS],
@@ -346,8 +355,50 @@ const useDrawStore = create<DrawState & DrawAction>()(
       updateFreehandEndTaper(value) {
         set({ freehandEndTaper: value })
       },
-      updateFreehandStrokeColor(color) {
-        set({ freehandStrokeColor: color })
+      updateCurrentFreehandStrokeColor(colorIndex) {
+        const { freehandStrokeColors, currentFreehandStrokeColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= freehandStrokeColors.length ||
+          currentFreehandStrokeColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentFreehandStrokeColor: colorIndex })
+      },
+      updateFreehandStrokeColor(color, colorIndex) {
+        const { freehandStrokeColors } = get()
+        if (colorIndex < 0 || colorIndex > freehandStrokeColors.length) {
+          return
+        }
+        if (colorIndex === freehandStrokeColors.length) {
+          if (freehandStrokeColors.length >= FREEHAND_STROKE_COLOR_LIMIT) {
+            return
+          }
+          set({ freehandStrokeColors: [...freehandStrokeColors, color] })
+          return
+        }
+        set(
+          produce((state) => {
+            state.freehandStrokeColors[colorIndex] = color
+          })
+        )
+      },
+      deleteFreehandStrokeColor(colorIndex) {
+        const { freehandStrokeColors, currentFreehandStrokeColor } = get()
+        const next = reindexDrawColorSelection(
+          freehandStrokeColors,
+          colorIndex,
+          currentFreehandStrokeColor,
+          [currentFreehandStrokeColor]
+        )
+        if (!next) {
+          return
+        }
+        set({
+          freehandStrokeColors: next.drawColors,
+          currentFreehandStrokeColor: next.currentDrawColor
+        })
       },
       updateFreehandStrokeWidth(value) {
         set({ freehandStrokeWidth: value })

@@ -2,6 +2,7 @@ import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { initCustomObjectAttr } from '@/core/utils/object'
 import { paintBoard } from '@/core/paintBoard'
 import useDrawStore from '@/store/draw'
+import { currentFreehandStrokeColor } from '@/store/freehandStrokeColor'
 import { fabric } from 'fabric'
 import { currentPenPressure } from './freehandInput'
 import {
@@ -140,7 +141,10 @@ export class FreehandElement {
     const border = outlineStroke(
       this.outlined,
       state.freehandStrokeWidth,
-      state.freehandStrokeColor,
+      currentFreehandStrokeColor(
+        state.freehandStrokeColors,
+        state.currentFreehandStrokeColor
+      ),
       canvas.getZoom() || 1
     )
     const appearance = {

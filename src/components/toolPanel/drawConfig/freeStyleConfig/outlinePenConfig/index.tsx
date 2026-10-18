@@ -1,30 +1,40 @@
-import useDrawStore from '@/store/draw'
+import debounce from 'lodash-es/debounce'
 import { useTranslation } from 'react-i18next'
+import ColorSwatchList from '@/components/toolPanel/colorSwatchList'
+import useDrawStore from '@/store/draw'
+import { FREEHAND_STROKE_COLOR_LIMIT } from '@/store/freehandStrokeColor'
 
 const OutlinePenConfig = () => {
   const { t } = useTranslation()
   const {
-    freehandStrokeColor,
+    freehandStrokeColors,
+    currentFreehandStrokeColor,
     freehandStrokeWidth,
+    updateCurrentFreehandStrokeColor,
     updateFreehandStrokeColor,
+    deleteFreehandStrokeColor,
     updateFreehandStrokeWidth
   } = useDrawStore()
 
+  const handleStrokeColor = debounce((color: string, colorIndex: number) => {
+    updateFreehandStrokeColor(color, colorIndex)
+  }, 100)
+
   return (
     <>
-      <div className="mt-2">
-        <div className="font-bold text-sm font-fredokaOne">
-          {t('title.freehandStrokeColor')}
-        </div>
-        <div className="w-6 h-6 cursor-pointer mt-1">
-          <input
-            type="color"
-            value={freehandStrokeColor}
-            onChange={(event) => updateFreehandStrokeColor(event.target.value)}
-            className="colorInput"
-          />
-        </div>
-      </div>
+      <ColorSwatchList
+        label={t('title.freehandStrokeColor')}
+        inputId="freehand-stroke-color-input"
+        colors={freehandStrokeColors}
+        activeIndexes={[currentFreehandStrokeColor]}
+        maxColors={FREEHAND_STROKE_COLOR_LIMIT}
+        onSelect={updateCurrentFreehandStrokeColor}
+        onEdit={handleStrokeColor}
+        onAdd={() => {
+          updateFreehandStrokeColor('#000000', freehandStrokeColors.length)
+        }}
+        onDelete={deleteFreehandStrokeColor}
+      />
       <div className="mt-2">
         <div className="font-bold text-sm font-fredokaOne">
           {t('title.freehandStrokeWidth')}
