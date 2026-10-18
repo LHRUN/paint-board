@@ -40,6 +40,7 @@
 ### CI
 
 - The production image and CI build use Node.js 22 and pnpm 8.15.9.
+- GitHub Pages is published with the official Pages actions instead of pushing a `gh-pages` branch.
 
 # 2.0.0
 
