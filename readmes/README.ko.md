@@ -25,7 +25,8 @@
 
 
 ## 미리 보기
-Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
+Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)  
+Docs: [https://songlh.top/paint-board-docs/](https://songlh.top/paint-board-docs/)
 
 <div align="center" style="width: 100%;">
   <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="preview"/>
