@@ -16,7 +16,10 @@ export const FREESTYLE_ELEMENT_CUSTOM_TYPE = {
   RETICULATE: 'reticulate',
   MULTI_POINT: 'multiPoint',
   WIGGLE: 'wiggle',
-  THORN: 'thorn'
+  THORN: 'thorn',
+  FREEHAND: 'freehand',
+  FREEHAND_STROKE: 'freehandStroke',
+  INK: 'ink'
 }
 
 export const SHAPE_ELEMENT_CUSTOM_TYPE = {
@@ -35,5 +38,8 @@ export const ELEMENT_CUSTOM_TYPE = {
   ...FREESTYLE_ELEMENT_CUSTOM_TYPE,
 
   // shape
-  ...SHAPE_ELEMENT_CUSTOM_TYPE
+  ...SHAPE_ELEMENT_CUSTOM_TYPE,
+
+  // User-made group. Brush and shape groups keep their own custom types.
+  GROUP: 'group'
 }

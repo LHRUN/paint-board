@@ -7,6 +7,8 @@ import { ActionMode } from '@/constants'
 
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
+import { DEFAULT_TEXT_PLACEHOLDER } from './placeholder'
+import { textFillColor } from './textColor'
 
 export class TextElement {
   text: fabric.IText | null = null
@@ -17,16 +19,17 @@ export class TextElement {
     if (canvas) {
       // Creating editable text input
       const viewportCenter = canvas.getVpCenter()
-      const { fontStyles, drawColors, textFontFamily } = useDrawStore.getState()
+      const { fontStyles, textColors, currentTextColor, textFontFamily } =
+        useDrawStore.getState()
 
       const boardCenter = isUndefined(x) && isUndefined(y)
 
-      const textObj = new fabric.IText(text || 'Type here...', {
+      const textObj = new fabric.IText(text || DEFAULT_TEXT_PLACEHOLDER, {
         originX: boardCenter ? 'center' : 'left',
         originY: boardCenter ? 'center' : 'top',
         left: boardCenter ? viewportCenter.x : x,
         top: boardCenter ? viewportCenter.y : y,
-        fill: drawColors[0],
+        fill: textFillColor(textColors, currentTextColor),
         fontSize: 25 / (canvas?.getZoom() ?? 1),
         fontFamily: textFontFamily,
         fontWeight: fontStyles.includes(FontStyle.BOLD) ? 'bold' : 'normal',
@@ -43,6 +46,17 @@ export class TextElement {
       textObj.selectAll() // Selects entire text
       canvas.requestRenderAll()
     }
+  }
+
+  editText(textObj: fabric.IText) {
+    const canvas = paintBoard.canvas
+    if (!canvas || textObj.editable === false || textObj.isEditing) {
+      return
+    }
+    useBoardStore.getState().updateMode(ActionMode.SELECT)
+    canvas.setActiveObject(textObj)
+    textObj.enterEditing()
+    canvas.requestRenderAll()
   }
 
   resetText() {

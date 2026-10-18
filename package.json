@@ -1,15 +1,23 @@
 {
   "name": "paint-board",
   "private": true,
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
+  "packageManager": "pnpm@8.15.9",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=8.15.9 <9"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "lint": "pnpm lint:script && pnpm lint:style",
     "lint:script": "eslint --ext .ts,.tsx --fix --quiet ./",
-    "lint:style": "stylelint --fix \"src/**/*.css\""
+    "lint:style": "stylelint --fix \"src/**/*.css\"",
+    "lint:ci": "eslint --ext .ts,.tsx ./ && stylelint \"src/**/*.css\""
   },
   "dependencies": {
     "@huggingface/transformers": "^3.0.0",
@@ -22,6 +30,7 @@
     "jsondiffpatch": "^0.6.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.544.0",
+    "perfect-freehand": "1.2.3",
     "react": "^18.2.0",
     "react-best-gradient-color-picker": "^3.0.14",
     "react-dom": "^18.2.0",
@@ -67,7 +76,8 @@
     "vite": "^5.4.20",
     "vite-plugin-eslint": "^1.8.1",
     "vite-plugin-pwa": "0.20.5",
-    "vite-plugin-svgr": "^4.2.0"
+    "vite-plugin-svgr": "^4.2.0",
+    "vitest": "^2.1.9"
   },
   "lint-staged": {
     "*.{js,jsx,tsx,ts}": [

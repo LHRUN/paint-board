@@ -2,8 +2,10 @@ import { fabric } from 'fabric'
 import { formatPublicUrl } from '@/utils/index'
 import { paintBoard } from '@/core/paintBoard'
 import useDrawStore from '@/store/draw'
+import useBoardStore from '@/store/board'
 import { getDrawWidth } from '@/core/utils/draw'
 import { getStrokeDashArray } from './utils'
+import { shouldApplyMaterialBrush } from './materialBrush'
 
 export const MATERIAL_TYPE = {
   CRAYON: 'crayon',
@@ -20,6 +22,7 @@ export class Material {
   clothImage: HTMLImageElement | null = null
   oilImage: HTMLImageElement | null = null
   crayonDarkImage: HTMLImageElement | null = null
+  private renderSerial = 0
 
   constructor() {
     this.initMaterial()
@@ -47,7 +50,24 @@ export class Material {
       color = drawColors[currentDrawColor]
     }
 
+    const serial = ++this.renderSerial
+    const canvas = paintBoard.canvas
+    const generation = paintBoard.getLoadGeneration()
     this.initPromise?.then(() => {
+      if (serial !== this.renderSerial) {
+        return
+      }
+      if (
+        !shouldApplyMaterialBrush({
+          mode: useBoardStore.getState().mode,
+          drawType: useBoardStore.getState().drawType,
+          drawStyle: useDrawStore.getState().drawStyle,
+          canvasMatches: !!canvas && paintBoard.canvas === canvas,
+          generationMatches: paintBoard.getLoadGeneration() === generation
+        })
+      ) {
+        return
+      }
       switch (materialType) {
         case MATERIAL_TYPE.CRAYON:
           this.renderMaterial(this.crayonImage, color)

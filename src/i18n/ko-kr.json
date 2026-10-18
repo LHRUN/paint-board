@@ -35,10 +35,18 @@
     "layer": "레이어",
     "imageFilters": "이미지 필터",
     "fontStyle": "글꼴 스타일",
+    "textColor": "텍스트 색상",
     "canvasBackground": "캔버스 배경",
     "canvasSize": "캔버스 크기",
     "drawCache": "그리기 캐시",
-    "guideLine": "안내선"
+    "guideLine": "안내선",
+    "freehandThinning": "굵기 변화",
+    "freehandSmoothing": "매끄러움",
+    "freehandStreamline": "궤적 따라가기",
+    "freehandStartTaper": "시작 가늘어짐",
+    "freehandEndTaper": "끝 가늘어짐",
+    "freehandStrokeColor": "윤곽 색",
+    "freehandStrokeWidth": "윤곽 두께"
   },
   "canvasSize": {
     "width": "너비",
@@ -60,18 +68,23 @@
     "reticulate": "그물형",
     "multiPoint": "다중 포인트",
     "wiggle": "지그재그",
-    "thorn": "가시"
+    "thorn": "가시",
+    "freehand": "펜",
+    "freehandStroke": "윤곽 펜",
+    "ink": "잉크"
   },
   "operate": {
     "undo": "실행 취소",
     "redo": "다시 실행",
     "copy": "복사",
+    "group": "그룹",
     "delete": "삭제",
     "text": "텍스트 추가",
     "image": "이미지 업로드",
     "clean": "지우기",
     "save": "이미지로 저장",
-    "fileList": "파일 목록",
+    "objectList": "레이어 목록",
+    "fileList": "보드",
     "fullscreen": "전체 화면",
     "exitFullscreen": "전체 화면 종료",
     "addFile": "파일 추가",
@@ -79,16 +92,89 @@
     "saveFile": "파일 데이터 저장",
     "uploadFile": "파일 데이터 업로드"
   },
+  "objectList": {
+    "title": "레이어",
+    "empty": "이 보드에는 요소가 없습니다",
+    "show": "표시",
+    "hide": "숨기기",
+    "brush": "브러시",
+    "text": "텍스트",
+    "image": "이미지",
+    "line": "직선",
+    "arrow": "화살표",
+    "rectangle": "사각형",
+    "circle": "원",
+    "polygon": "다각형",
+    "graph": "도형",
+    "group": "그룹",
+    "element": "요소"
+  },
   "cleanModal": {
     "title": "내용을 지우시겠습니까?"
   },
   "deleteFileModal": {
-    "title": "현재 파일을 삭제하시겠습니까?"
+    "title": "선택한 보드 {{count}}개를 삭제할까요?",
+    "keepCurrent": "보드는 하나 이상 남겨야 합니다. 현재 보드는 삭제되지 않습니다.",
+    "keepOne": "보드는 하나 이상 남겨야 합니다"
+  },
+  "fileBoard": {
+    "title": "보드",
+    "selected": "{{count}}개 선택",
+    "selectAll": "전체 선택",
+    "clearSelection": "선택 해제",
+    "select": "{{title}} 선택",
+    "rename": "이름 바꾸기",
+    "create": "새 보드",
+    "batchDelete": "선택 삭제",
+    "batchDownload": "일괄 다운로드",
+    "noThumbnail": "썸네일 없음",
+    "current": "현재",
+    "limit": "보드는 최대 {{count}}개까지 저장할 수 있습니다",
+    "close": "닫기"
+  },
+  "templatePrompt": {
+    "title": "Paint Board",
+    "tagline": "완전히 오픈소스인 웹 창작 보드",
+    "star": "Star가 가장 큰 응원입니다 ✨. 감사합니다.",
+    "description": "아래 프리셋으로 보드 기능을 살펴보거나, 닫고 빈 보드에서 시작할 수 있습니다.",
+    "create": "만들기",
+    "close": "닫기",
+    "selectFirst": "먼저 템플릿을 선택해 주세요"
+  },
+  "renameFileModal": {
+    "title": "보드 이름 바꾸기",
+    "createTitle": "새 보드",
+    "placeholder": "보드 이름",
+    "empty": "이름을 입력해 주세요",
+    "duplicate": "같은 이름의 보드가 이미 있습니다",
+    "blank": "빈 보드"
+  },
+  "downloadFiles": {
+    "title": "일괄 다운로드",
+    "overall": "전체 {{current}}/{{total}}",
+    "waiting": "대기",
+    "writing": "파일 생성 중",
+    "done": "생성됨",
+    "failed": "실패",
+    "zipping": "묶는 중",
+    "downloadStarted": "다운로드를 시작했습니다",
+    "allStarted": "파일을 만들었고 다운로드를 시작했습니다",
+    "partial": "일부 파일은 실패했습니다. 나머지는 다운로드를 시작했습니다",
+    "allFailed": "다운로드할 파일이 없습니다",
+    "zipFailed": "묶기에 실패했습니다",
+    "missing": "보드를 찾을 수 없습니다",
+    "stringifyFailed": "보드 파일을 만들 수 없습니다",
+    "close": "닫기"
   },
   "tip": {
     "uploadFileFail": "업로드 실패, 다시 시도해 주세요",
     "unselectedElementTip": "그림판 내용을 클릭하거나 선택해 주세요",
-    "cameraPermissionDenied": "카메라 권한이 거절되었습니다. 브라우저 권한을 확인해 주세요"
+    "cameraPermissionDenied": "카메라 권한이 거절되었습니다. 브라우저 권한을 확인해 주세요",
+    "fileHydrationFail": "저장된 그림을 복원하지 못했습니다. 페이지를 새로고침하세요. 복원에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다.",
+    "filePersistFail": "그림을 로컬에 저장하지 못했습니다. 페이지를 새로고침하세요. 저장에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다.",
+    "exportFail": "이미지를 저장하지 못했습니다. 캔버스에 다른 사이트의 그림이 있을 수 있습니다.",
+    "exportTooLarge": "이미지가 너무 커서 내보낼 수 없습니다. 내용을 줄이거나 확대/축소를 낮춘 뒤 다시 시도해 주세요.",
+    "exportFailGeneric": "이미지를 저장하지 못했습니다. 다시 시도해 주세요."
   },
   "filters": {
     "Sepia": "세피아",
@@ -112,6 +198,26 @@
     "italic": "기울임",
     "underLine": "밑줄",
     "lineThrough": "취소선"
+  },
+  "fontConfig": {
+    "settings": "글꼴 설정",
+    "title": "글꼴 설정",
+    "defaultBadge": "기본",
+    "add": "추가",
+    "placeholder": "Google Fonts 글꼴 이름",
+    "delete": "삭제",
+    "settingsTip": "글꼴 직접 설정",
+    "sourceTip": "글꼴은 Google Fonts에서 가져옵니다. 클릭하여 더 보기",
+    "setQuick": "패널에 표시",
+    "alreadyQuick": "패널에 표시 중",
+    "customCount": "사용자 글꼴",
+    "loading": "글꼴을 확인하는 중...",
+    "invalid": "올바른 글꼴 이름을 입력하세요",
+    "duplicate": "이미 목록에 있는 글꼴입니다",
+    "limit": "사용자 글꼴은 5개까지 추가할 수 있습니다",
+    "notFound": "해당 Google 글꼴을 찾을 수 없습니다",
+    "network": "네트워크 오류로 글꼴을 불러오지 못했습니다",
+    "loadFailed": "글꼴을 불러오지 못했습니다"
   },
   "boardConfig": {
     "cacheTip": "대량의 그리기 내용이 있을 때 캐싱을 활성화하면 그리기 성능이 향상되고 캐싱을 비활성화하면 캔버스 선명도가 향상됩니다."
@@ -142,10 +248,17 @@
     "positivePoint": "긍정적",
     "negativePoint": "부정적"
   },
+  "exportImage": {
+    "viewport": "현재 보이는 영역 내보내기",
+    "content": "모든 그림 내보내기",
+    "selection": "선택한 내용 내보내기",
+    "board": "현재 보드 데이터 내보내기"
+  },
   "downloadImage": {
     "rotate": "회전",
     "scale": "크기 조정",
-    "size": "크기"
+    "size": "크기",
+    "background": "배경"
   },
   "eraserConfig": {
     "eraser": "지우개",
@@ -161,6 +274,7 @@
     "graphInputTip": "그래프 이름을 입력해 주세요",
     "add": "추가",
     "addSuccess": "추가 성공",
+    "deleteTip": "아이콘이 삭제되었습니다",
     "addFailed": "찾을 수 없음, 이름을 확인해 주세요"
   },
   "camera": {
@@ -207,7 +321,7 @@
   "features": {
     "drawingMode": "그리기 모드",
     "freeDrawing": "자유 그리기",
-    "freeDrawingDesc1": "12가지 다른 스타일의 브러시를 제공: 기본 브러시, 무지개 브러시, 다중 모양 브러시, 소재 브러시, 픽셀 브러시, 다중 색상 브러시, 텍스트 브러시, 다중 선 연결 브러시, 메시 브러시, 다중 점 연결 브러시, 파도 곡선 브러시, 가시 브러시. 다양한 그리기 요구를 충족",
+    "freeDrawingDesc1": "15가지 브러시를 제공합니다: 기본, 펜, 외곽선 펜, 무지개, 다중 모양, 소재, 픽셀, 다색, 텍스트, 다중 선, 메시, 다중 점, 물결, 가시, 잉크",
     "freeDrawingDesc2": "모든 브러시는 색상과 브러시 너비 사용자 정의를 지원",
     "freeDrawingDesc3": "다중 모양 브러시는 모양 유형과 수량의 유연한 구성을 지원",
     "freeDrawingDesc4": "소재 브러시와 다중 색상 브러시는 소재 유형을 사용자 정의 가능",
@@ -241,7 +355,7 @@
     "bottomLeftDesc2": "원형 진행 표시줄: 현재 확대/축소 비율을 실시간 표시, 클릭하여 확대/축소 비율 재설정",
     "bottomLeftDesc3": "카메라 버튼: 현재 카메라 상태를 표시, 여러 표시 구성을 지원",
     "bottomOperationBar": "하단 작업 표시줄",
-    "bottomOperationDesc1": "왼쪽에서 오른쪽으로의 기능: 실행 취소, 다시 실행, 현재 선택 복사, 현재 선택 삭제, 텍스트 그리기, 이미지 업로드, 그리기 콘텐츠 지우기, 이미지로 저장, 파일 목록 열기",
+    "bottomOperationDesc1": "왼쪽에서 오른쪽으로의 기능: 실행 취소, 다시 실행, 현재 선택 복사, 현재 선택 삭제, 텍스트 그리기, 이미지 업로드, 그리기 콘텐츠 지우기, 이미지로 저장, 레이어 목록 열기, 파일 목록 열기",
     "bottomOperationDesc1_1": "이미지 업로드는 배경 제거, 이미지 분할을 지원. 이 기능은 브라우저에서 WebGPU 지원이 필요하며, 최신 버전의 Google Chrome 사용을 권장",
     "bottomOperationDesc1_2": "이미지로 저장은 사용자 정의 구성을 지원. 회전, 스케일, 자르기",
     "fileList": "파일 목록",
@@ -251,6 +365,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "오픈소스 저장소",
+    "openSourceRepoDesc": "Star가 가장 큰 응원입니다. 감사합니다.",
+    "docs": "문서",
+    "docsDesc": "이 앱의 자세한 기능 설명을 볼 수 있습니다.",
     "featureIntro": "기능 소개",
     "shortcuts": "단축키",
     "board": "보드",
@@ -289,7 +406,7 @@
       "switchFreeDrawing": "그리기 모드에서 자유 그리기 전환",
       "switchShapeDrawing": "그리기 모드에서 도형 그리기 전환",
       "switchBrushType": "자유 그리기에서 브러시 유형 전환",
-      "brushTypeNote": "(버튼 라벨에 따라)"
+      "brushTypeNote": "버튼의 글자를 따름"
     },
     "keyboardShortcuts": {
       "spaceDrag": "마우스 클릭 후 드래그",

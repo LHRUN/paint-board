@@ -1,6 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { DEFAULT_BACKGROUND_SORT, useCurrentFile } from '@/store/files'
+import useBoardStore from '@/store/board'
+import {
+  hasFileHydrationFailed,
+  hasFilePersistFailed,
+  subscribeFilePersistFailed
+} from '@/store/fileHydration'
 import { paintBoard } from '@/core/paintBoard'
+import { loadTemplates, type BoardTemplate } from '@/core/template/template'
+import {
+  hasPersistedBoardList,
+  hasSeenTemplatePrompt,
+  markTemplatePromptSeen,
+  shouldOfferTemplatePrompt
+} from '@/core/template/templatePrompt'
+import Toast from '@/components/toast'
+import TemplatePromptModal from '@/components/boardOperation/templatePromptModal'
 
 import ToolPanel from '@/components/toolPanel'
 import HelpArea from '@/components/helpArea'
@@ -13,6 +28,11 @@ import BackgroundCamera from '@/components/background/backgroundCamera'
 const Board: React.FC = () => {
   const canvasEl = useRef<HTMLCanvasElement>(null)
   const [canvasLoaded, setCanvasLoaded] = useState(false)
+  const [hydrationFailed, setHydrationFailed] = useState(false)
+  const [persistFailed, setPersistFailed] = useState(false)
+  const [offerTemplates, setOfferTemplates] = useState<BoardTemplate[] | null>(
+    null
+  )
   const currentFile = useCurrentFile()
   const backgroundSort = useMemo(() => {
     return [
@@ -20,15 +40,59 @@ const Board: React.FC = () => {
     ].reverse()
   }, [currentFile])
 
+  useEffect(() => subscribeFilePersistFailed(() => setPersistFailed(true)), [])
+
   useEffect(() => {
+    if (!canvasLoaded) {
+      return
+    }
+    let cancelled = false
+    const offer = async () => {
+      if (hasFileHydrationFailed() || hasSeenTemplatePrompt()) {
+        return
+      }
+      const hasPersistedBoards = await hasPersistedBoardList()
+      if (cancelled || hasPersistedBoards) {
+        return
+      }
+      const templates = await loadTemplates(useBoardStore.getState().language)
+      if (
+        cancelled ||
+        !shouldOfferTemplatePrompt({
+          hydrationFailed: hasFileHydrationFailed(),
+          seen: hasSeenTemplatePrompt(),
+          hasPersistedBoards,
+          templateCount: templates.length
+        })
+      ) {
+        return
+      }
+      setOfferTemplates(templates)
+    }
+    void offer()
+    return () => {
+      cancelled = true
+    }
+  }, [canvasLoaded])
+
+  useEffect(() => {
+    let cancelled = false
     if (canvasEl.current) {
       paintBoard
         .initCanvas(canvasEl.current as HTMLCanvasElement)
         .then((loaded) => {
-          setCanvasLoaded(loaded)
+          if (cancelled) {
+            return
+          }
+          setHydrationFailed(hasFileHydrationFailed())
+          setPersistFailed(hasFilePersistFailed())
+          if (loaded) {
+            setCanvasLoaded(true)
+          }
         })
     }
     return () => {
+      cancelled = true
       paintBoard.removeCanvas()
     }
   }, [])
@@ -51,6 +115,10 @@ const Board: React.FC = () => {
           }
         })}
       </div>
+      {hydrationFailed && (
+        <Toast message="tip.fileHydrationFail" type="error" />
+      )}
+      {persistFailed && <Toast message="tip.filePersistFail" type="error" />}
       {canvasLoaded && (
         <>
           <ToolPanel />
@@ -58,6 +126,15 @@ const Board: React.FC = () => {
           <CleanModal />
           <BoardOperation />
         </>
+      )}
+      {offerTemplates && offerTemplates.length > 0 && (
+        <TemplatePromptModal
+          templates={offerTemplates}
+          onClose={() => {
+            markTemplatePromptSeen()
+            setOfferTemplates(null)
+          }}
+        />
       )}
     </div>
   )

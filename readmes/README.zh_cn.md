@@ -9,7 +9,6 @@
   <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
-  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
   <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
@@ -25,7 +24,8 @@
 
 
 ## 预览
-Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
+链接: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)  
+文档：[https://songlh.top/paint-board-docs/](https://songlh.top/paint-board-docs/)
 
 <div align="center" style="width: 100%;">
   <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="preview"/>
@@ -33,13 +33,13 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## 功能简介
 + 绘画模式
-  - 自由绘画: 提供了 12 种不同风格的画笔，包括基本画笔，彩虹画笔，多形状画笔，多素材画笔，像素画笔，多色画笔，文字画笔，多线连接画笔，网状画笔，多点连接画笔，波浪曲线画笔，荆棘画笔。以满足多样化的绘画需求。
+  - 自由绘画: 提供 15 种画笔：基本画笔、钢笔、描边钢笔、彩虹画笔、多形状画笔、多素材画笔、像素画笔、多色画笔、文字画笔、多线连接画笔、网状画笔、多点连接画笔、波浪曲线画笔、荆棘画笔、墨水笔。
   - 图形绘画: 支持绘制丰富的图形，包括内置图形与 Lucide 图标库图形，只需点击添加即可使用。可配置线条宽度、线条样式、填充颜色与填充样式。
 + 橡皮擦模式: 可线性擦除所有内容，并支持线性宽度配置。
-+ 选择模式: 支持点击或框选内容进行编辑, 选中后可通过手柄进行 拖拽、缩放、旋转 操作和多种自定义配置。
++ 选择模式: 支持点击或框选内容进行编辑。选中后可拖拽、缩放、旋转、修改颜色，也可把多个对象组合成一组。
 + 画板模式: 支持画板背景, 自定义尺寸和全局绘画配置。
-+ 操作栏: 从左到右的功能分别为撤销、反撤销、复制当前选择内容、删除当前选择内容、绘制文字、上传图片、清除绘制内容、保存为图片、打开文件列表。
-+ 多文件配置: 支持多个画布切换，每个画布可自定义标题、增加、删除，并提供排序和上传下载功能。
++ 操作栏: 撤销、重做、复制、组合、删除、绘制文字、上传图片、清除绘制内容、保存为图片、打开图层列表、打开画板列表。
++ 多文件配置: 支持多个画布切换。每个画布可自定义标题，并可新建、重命名、删除、上传和批量下载。
 + 国际化: 支持中文(简体), 中文(繁体), English, 日本語, 한국어。
 
 ## V1.3.0 视频演示
@@ -51,23 +51,29 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## 本地启动
 ```
 git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
 pnpm install
 pnpm dev
 ```
 
 ### Docker 支持
+1. Clone 源码仓库
+```sh
+git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
+```
 
-1. 构建 Docker 镜像，镜像名称为 `paint-board`。
+2. 构建 Docker 镜像，镜像名称为 `paint-board`。
 ```sh
 docker build -t paint-board .
 ```
 
-2. 启动 docker 容器。
+3. 启动 docker 容器。
 ```sh
 docker run -d -p 8080:80 --name paint-board paint-board
 ```
 
-3. 在浏览器打开 `http://localhost:8080/paint-board/` 即可访问。
+4. 在浏览器打开 `http://localhost:8080/paint-board/` 即可访问。
 
 ## 浏览器支持
 
@@ -75,7 +81,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
 | :--: | :--: | :--: | :--: |
-| 80+ | 80+ | 70+ | 13+ |
+| 80+ | 80+ | 70+ | 16.4+ |
 
 ## 联系我
 
@@ -83,9 +89,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
-+ Twiter: https://twitter.com/Song_LongHao
-+ 微信:
-<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
++ 微信: August8_L
 
 
 ## 贡献

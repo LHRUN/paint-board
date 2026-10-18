@@ -35,10 +35,18 @@
     "layer": "Layer",
     "imageFilters": "Image Filters",
     "fontStyle": "Font Style",
+    "textColor": "Text Color",
     "canvasBackground": "Canvas Background",
     "canvasSize": "Canvas Size",
     "drawCache": "Draw Cache",
-    "guideLine": "GuideLine"
+    "guideLine": "GuideLine",
+    "freehandThinning": "Thinning",
+    "freehandSmoothing": "Smoothing",
+    "freehandStreamline": "Streamline",
+    "freehandStartTaper": "Start Taper",
+    "freehandEndTaper": "End Taper",
+    "freehandStrokeColor": "Stroke Color",
+    "freehandStrokeWidth": "Stroke Width"
   },
   "canvasSize": {
     "width": "Width",
@@ -60,18 +68,23 @@
     "reticulate": "Reticulate",
     "multiPoint": "MultiPoint",
     "wiggle": "Wiggle",
-    "thorn": "Thorn"
+    "thorn": "Thorn",
+    "freehand": "Pen",
+    "freehandStroke": "Outlined Pen",
+    "ink": "Ink"
   },
   "operate": {
     "undo": "undo",
     "redo": "redo",
     "copy": "copy",
+    "group": "group",
     "delete": "delete",
     "text": "add text",
     "image": "upload image",
     "clean": "clean",
     "save": "Save as image",
-    "fileList": "File List",
+    "objectList": "Layer List",
+    "fileList": "Boards",
     "fullscreen": "Enter Fullscreen",
     "exitFullscreen": "Exit Fullscreen",
     "addFile": "Add File",
@@ -79,16 +92,89 @@
     "saveFile": "Save File Data",
     "uploadFile": "Upload File Data"
   },
+  "objectList": {
+    "title": "Layers",
+    "empty": "This board has no elements yet",
+    "show": "Show",
+    "hide": "Hide",
+    "brush": "Brush",
+    "text": "Text",
+    "image": "Image",
+    "line": "Line",
+    "arrow": "Arrow",
+    "rectangle": "Rectangle",
+    "circle": "Circle",
+    "polygon": "Polygon",
+    "graph": "Graph",
+    "group": "Group",
+    "element": "Element"
+  },
   "cleanModal": {
     "title": "Confirm clearing content?"
   },
   "deleteFileModal": {
-    "title": "Confirm deleting the current file?"
+    "title": "Delete the {{count}} selected boards?",
+    "keepCurrent": "At least one board must remain. The current board will be kept.",
+    "keepOne": "At least one board must remain"
+  },
+  "fileBoard": {
+    "title": "Boards",
+    "selected": "{{count}} selected",
+    "selectAll": "Select all",
+    "clearSelection": "Clear selection",
+    "select": "Select {{title}}",
+    "rename": "Rename",
+    "create": "New board",
+    "batchDelete": "Delete selected",
+    "batchDownload": "Download",
+    "noThumbnail": "No thumbnail yet",
+    "current": "Current",
+    "limit": "You can save up to {{count}} boards",
+    "close": "Close"
+  },
+  "templatePrompt": {
+    "title": "Paint Board",
+    "tagline": "A fully open-source creative board for the web",
+    "star": "A star is the best support I can get ✨. Thanks!",
+    "description": "Choose a preset below to get a feel for the board, or close this and start from a blank board.",
+    "create": "Create",
+    "close": "Close",
+    "selectFirst": "Select a template first"
+  },
+  "renameFileModal": {
+    "title": "Rename board",
+    "createTitle": "New board",
+    "placeholder": "Board name",
+    "empty": "Name cannot be empty",
+    "duplicate": "A board with this name already exists",
+    "blank": "Blank board"
+  },
+  "downloadFiles": {
+    "title": "Download boards",
+    "overall": "Overall {{current}}/{{total}}",
+    "waiting": "Waiting",
+    "writing": "Creating file",
+    "done": "Created",
+    "failed": "Failed",
+    "zipping": "Packing",
+    "downloadStarted": "Download started",
+    "allStarted": "Files were created and the download has started",
+    "partial": "Some files failed. The download of the rest has started",
+    "allFailed": "There are no files to download",
+    "zipFailed": "Packing failed",
+    "missing": "Board not found",
+    "stringifyFailed": "Could not create the board file",
+    "close": "Close"
   },
   "tip": {
     "uploadFileFail": "Upload failed, please try again",
     "unselectedElementTip": "Please click or select the content of the drawing board",
-    "cameraPermissionDenied": "Camera permission denied, please check the browser permission"
+    "cameraPermissionDenied": "Camera permission denied, please check the browser permission",
+    "fileHydrationFail": "Could not restore saved drawings. Refresh the page. New edits will not overwrite saved files until the reload succeeds.",
+    "filePersistFail": "Could not save the drawing locally. Refresh the page. New edits will not overwrite saved files until saving works again.",
+    "exportFail": "Could not save the image. The canvas may contain a picture from another site.",
+    "exportTooLarge": "The image is too large to export. Zoom out or export a smaller area.",
+    "exportFailGeneric": "Could not save the image. Please try again."
   },
   "filters": {
     "Sepia": "Sepia",
@@ -112,6 +198,26 @@
     "italic": "Italic",
     "underLine": "UnderLine",
     "lineThrough": "LineThrough"
+  },
+  "fontConfig": {
+    "settings": "Font settings",
+    "title": "Font settings",
+    "defaultBadge": "Default",
+    "add": "Add",
+    "placeholder": "Enter a Google Fonts name",
+    "delete": "Delete",
+    "settingsTip": "Customize fonts",
+    "sourceTip": "Fonts come from Google Fonts. Click to browse more.",
+    "setQuick": "Show on panel",
+    "alreadyQuick": "On panel",
+    "customCount": "Custom fonts",
+    "loading": "Checking font...",
+    "invalid": "Enter a valid font name",
+    "duplicate": "This font is already in the list",
+    "limit": "You can add up to 5 custom fonts",
+    "notFound": "That Google font could not be found",
+    "network": "Network error. The font did not load",
+    "loadFailed": "The font failed to load"
   },
   "boardConfig": {
     "cacheTip": "In the presence of a large amount of drawing content, enabling caching will improve drawing performance, while disabling caching will improve canvas sharpness"
@@ -142,10 +248,17 @@
     "positivePoint": "Positive",
     "negativePoint": "Negative"
   },
+  "exportImage": {
+    "viewport": "Export visible area",
+    "content": "Export all drawings",
+    "selection": "Export selection",
+    "board": "Export current board"
+  },
   "downloadImage": {
     "rotate": "Rotate",
     "scale": "Scale",
-    "size": "Size"
+    "size": "Size",
+    "background": "Background"
   },
   "eraserConfig": {
     "eraser": "Eraser",
@@ -208,7 +321,7 @@
   "features": {
     "drawingMode": "Drawing Mode",
     "freeDrawing": "Free Drawing",
-    "freeDrawingDesc1": "Provides 12 different styles of brushes: basic brush, rainbow brush, multi-shape brush, material brush, pixel brush, multi-color brush, text brush, multi-line connection brush, mesh brush, multi-point connection brush, wave curve brush, thorn brush. Meet diverse drawing needs",
+    "freeDrawingDesc1": "Provides 15 brush styles: basic, pen, outlined pen, rainbow, multi-shape, material, pixels, multi-color, text, multi-line, mesh, multi-point, wave, thorn, and ink",
     "freeDrawingDesc2": "All brushes support customization of color and brush width",
     "freeDrawingDesc3": "Multi-shape brush supports flexible configuration of shape type and quantity",
     "freeDrawingDesc4": "Material brush and multi-color brush can customize material types",
@@ -242,7 +355,7 @@
     "bottomLeftDesc2": "Circular progress bar: real-time display of current zoom ratio, click to reset zoom ratio",
     "bottomLeftDesc3": "Camera button: displays current camera status, supports multiple display configurations",
     "bottomOperationBar": "Bottom Operation Bar",
-    "bottomOperationDesc1": "Functions from left to right are: undo, redo, copy current selection, delete current selection, draw text, upload image, clear drawing content, save as image, open file list",
+    "bottomOperationDesc1": "Functions from left to right are: undo, redo, copy current selection, delete current selection, draw text, upload image, clear drawing content, save as image, open layer list, open file list",
     "bottomOperationDesc1_1": "Upload image supports background removal, image segmentation. This function requires browser support for WebGPU, recommend using the latest version of Google Chrome",
     "bottomOperationDesc1_2": "Save as image supports custom configuration. Rotate, scale, crop",
     "fileList": "File List",
@@ -252,6 +365,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "Open Source Repository",
+    "openSourceRepoDesc": "A star is the best support I can get. Thank you.",
+    "docs": "Docs",
+    "docsDesc": "Open this for a detailed guide to the app.",
     "featureIntro": "Feature Introduction",
     "shortcuts": "Shortcuts",
     "board": "Board",
@@ -290,7 +406,7 @@
       "switchFreeDrawing": "Switch to Free Drawing in Draw Mode",
       "switchShapeDrawing": "Switch to Shape Drawing in Draw Mode",
       "switchBrushType": "Switch Brush Type in Free Drawing",
-      "brushTypeNote": "(According to button labels)"
+      "brushTypeNote": "The letter on each button"
     },
     "keyboardShortcuts": {
       "spaceDrag": "Mouse Click and Drag",

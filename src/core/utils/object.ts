@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { paintBoard } from '../paintBoard'
 import { fabric } from 'fabric'
+import { CANVAS_CUSTOM_PROPERTIES } from './canvasProperties'
+import { initObjectControls } from './loadCanvas'
 
 export const initCustomObjectAttr = (obj: fabric.Object, type: string) => {
   const id = uuidv4()
@@ -33,16 +35,30 @@ export const cloneObjects = (objects: fabric.Object[]) => {
           id,
           perPixelTargetFind: true
         })
-        resolve(cloned)
         canvas.add(cloned)
-      })
+        // Endpoint handlers read the canvas transform, so the object has to be
+        // on the canvas before the controls are built and measured.
+        initObjectControls(cloned)
+        cloned.setCoords()
+        resolve(cloned)
+      }, CANVAS_CUSTOM_PROPERTIES)
     })
   })
   Promise.all(copys).then((objs) => {
-    const activeSelection = new fabric.ActiveSelection(objs, {
-      canvas: canvas
-    })
-    canvas.setActiveObject(activeSelection)
+    if (!objs.length) {
+      return
+    }
+    // A one-object ActiveSelection draws the default bounding-box handles.
+    // Select the copy itself so its own controls, such as line endpoints, show immediately.
+    if (objs.length === 1) {
+      canvas.setActiveObject(objs[0])
+    } else {
+      canvas.setActiveObject(
+        new fabric.ActiveSelection(objs, {
+          canvas
+        })
+      )
+    }
     paintBoard.render()
   })
 }

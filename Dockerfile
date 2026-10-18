@@ -1,11 +1,12 @@
-FROM node:18-alpine as build-stage
+FROM node:22-alpine as build-stage
 LABEL maintainer="Leo 'song.lhlh@gmail.com'"
 
 WORKDIR /app
 COPY . ./
 
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 RUN echo "https://registry.npmmirror.com" > .npmrc && \
-    npm install -g pnpm@8.7.6 && \
+    corepack enable && \
     pnpm install --frozen-lockfile && \
     pnpm build
 

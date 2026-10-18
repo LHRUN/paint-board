@@ -5,6 +5,7 @@ import { paintBoard } from '@/core/paintBoard'
 import { MAX_ZOOM, MIN_ZOOM } from '../zoomEvent'
 import useBoardStore from '@/store/board'
 import useFileStore from '@/store/files'
+import { beginCanvasPan, endCanvasPan } from '../canvasPan'
 
 /**
  * canvas transform handler
@@ -17,14 +18,32 @@ export class CanvasTransformHandler {
   startY = 0 // start center Y
   startScale = 1
   lastPan?: fabric.Point
+  private hitTestBypass = false
 
   reset() {
+    this.endHitTestBypass()
     this.isDragging = false
     this.startDistance = 1
     this.startX = 0
     this.startY = 0
     this.startScale = 1
     this.lastPan = undefined
+  }
+
+  private beginHitTestBypass() {
+    if (this.hitTestBypass) {
+      return
+    }
+    this.hitTestBypass = true
+    beginCanvasPan(paintBoard.canvas)
+  }
+
+  private endHitTestBypass() {
+    if (!this.hitTestBypass) {
+      return
+    }
+    this.hitTestBypass = false
+    endCanvasPan(paintBoard.canvas)
   }
 
   transformStart(touches: TouchList) {
@@ -43,6 +62,7 @@ export class CanvasTransformHandler {
     this.startX = (touch1.pageX + touch2.pageX) / 2
     this.startY = (touch1.pageY + touch2.pageY) / 2
     this.startScale = canvas.getZoom()
+    this.beginHitTestBypass()
   }
 
   transformMove(touches: TouchList) {
@@ -71,7 +91,7 @@ export class CanvasTransformHandler {
       })
     }
     canvas.zoomToPoint(new fabric.Point(this.startX, this.startY), zoom)
-    paintBoard.evnet?.zoomEvent.updateZoomPercentage(true, zoom)
+    paintBoard.evnet?.zoomEvent.scheduleZoomWrite(zoom)
 
     // Calculate drag distance
     const currentPan = new fabric.Point(x - this.startX, y - this.startY)
@@ -93,24 +113,33 @@ export class CanvasTransformHandler {
         )
       )
       this.lastPan = currentPan
-      this.saveTransform()
+      const fileId = paintBoard.canvasFileId
+      const transform = canvas.viewportTransform
+      if (fileId && transform) {
+        this.saveTransform(fileId, [...transform])
+      }
     }
   }
 
   transformEnd() {
+    this.endHitTestBypass()
     this.isDragging = false
   }
 
-  private saveTransform = debounce(() => {
-    const transform = paintBoard.canvas?.viewportTransform
-    if (transform) {
-      useFileStore.getState().updateTransform(transform)
-      if (!useBoardStore.getState().isObjectCaching) {
-        fabric.Object.prototype.set({
-          objectCaching: false
-        })
-      }
-      paintBoard.canvas?.requestRenderAll()
+  cancelPending() {
+    this.saveTransform.cancel()
+  }
+
+  private saveTransform = debounce((fileId: string, transform: number[]) => {
+    if (paintBoard.canvasFileId !== fileId) {
+      return
     }
+    useFileStore.getState().updateTransform(transform, fileId)
+    if (!useBoardStore.getState().isObjectCaching) {
+      fabric.Object.prototype.set({
+        objectCaching: false
+      })
+    }
+    paintBoard.canvas?.requestRenderAll()
   }, 500)
 }

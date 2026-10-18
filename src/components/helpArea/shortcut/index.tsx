@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 const Shortcut = () => {
   const { t } = useTranslation()
   const isApple = isAppleDevice()
-  const metaKey = isApple ? 'Cmd' : 'Win'
+  const metaKey = isApple ? 'Cmd' : 'Ctrl'
 
   return (
     <div className="pb-10">
@@ -239,10 +239,7 @@ const Shortcut = () => {
             <tr>
               <td>{t('helpInfo.toolOperations.switchBrushType')}</td>
               <td>
-                <kbd className="kbd kbd-sm">Q</kbd>
-                <span> ~ </span>
-                <kbd className="kbd kbd-sm">V</kbd>
-                <span> {t('helpInfo.toolOperations.brushTypeNote')}</span>
+                <span>{t('helpInfo.toolOperations.brushTypeNote')}</span>
               </td>
             </tr>
           </tbody>

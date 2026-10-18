@@ -1,10 +1,11 @@
 import useFileStore, { IBoardData } from '@/store/files'
 import { paintBoard } from '../paintBoard'
-import { diff, unpatch, patch, Delta } from 'jsondiffpatch'
+import { diff, Delta } from 'jsondiffpatch'
 import cloneDeep from 'lodash-es/cloneDeep'
 import { getCanvasJSON, handleCanvasJSONLoaded } from '../utils/loadCanvas'
-
-const initState = {}
+import { canWriteFile } from '../session/canvasWrite'
+import { appendHistoryStep } from './historyStep'
+import { nextHistorySnapshot, shouldRecordHistorySave } from './historyMove'
 
 /**
  * Operation History
@@ -13,6 +14,8 @@ export class History {
   diffs: Array<Delta> = []
   canvasData: Partial<IBoardData> = {}
   index = 0
+  private applyToken = 0
+  private applyInFlight = false
 
   constructor() {
     const canvas = paintBoard.canvas
@@ -22,74 +25,98 @@ export class History {
     }
   }
 
-  saveState() {
-    const canvas = paintBoard?.canvas
-    if (canvas) {
-      this.diffs = this.diffs.slice(0, this.index)
-      const canvasJson = getCanvasJSON()
-      const delta = diff(canvasJson, this.canvasData)
-      this.diffs.push(delta)
+  isApplying() {
+    return this.applyInFlight
+  }
 
-      // More than 50 operations, remove initial state
-      if (this.diffs.length > 50) {
-        this.diffs.shift()
-      } else {
-        this.index++
-      }
-      this.canvasData = cloneDeep(canvasJson ?? {})
-      useFileStore.getState().updateBoardData(canvasJson)
+  saveState() {
+    if (!shouldRecordHistorySave(this.applyInFlight)) {
+      return
     }
+    const canvas = paintBoard?.canvas
+    const fileId = paintBoard.canvasFileId
+    if (!canvas || !canWriteFile(paintBoard.canvasFileId, fileId)) {
+      return
+    }
+    const canvasJson = getCanvasJSON()
+    const delta = diff(canvasJson, this.canvasData)
+    const next = appendHistoryStep(this.diffs, this.index, delta)
+    if (!next.changed) {
+      return
+    }
+    this.diffs = next.diffs
+    this.index = next.index
+    this.canvasData = cloneDeep(canvasJson ?? {})
+    if (!canWriteFile(paintBoard.canvasFileId, fileId)) {
+      return
+    }
+    useFileStore.getState().updateBoardData(canvasJson, fileId)
+  }
+
+  replaceCurrentSnapshot(canvasJson: Partial<IBoardData>) {
+    this.canvasData = cloneDeep(canvasJson ?? {})
   }
 
   undo() {
-    const canvas = paintBoard?.canvas
-    if (canvas && this.index > 0) {
-      const delta = this.diffs[this.index - 1]
-      this.index--
-      const canvasJson = patch(this.canvasData, delta) as IBoardData
-      canvas.loadFromJSON(canvasJson, () => {
-        handleCanvasJSONLoaded(canvas)
-
-        canvas.requestRenderAll()
-        useFileStore.getState().updateBoardData(canvasJson)
-        this.canvasData = cloneDeep(canvasJson ?? {})
-        paintBoard.triggerHook()
-      })
-    }
+    this.moveHistory('undo')
   }
 
   redo() {
-    const canvas = paintBoard?.canvas
-    if (this.index < this.diffs.length && canvas) {
-      const delta = this.diffs[this.index]
-      this.index++
-      const canvasJson = unpatch(this.canvasData, delta) as IBoardData
-      canvas.loadFromJSON(canvasJson, () => {
-        handleCanvasJSONLoaded(canvas)
-        canvas.requestRenderAll()
+    this.moveHistory('redo')
+  }
 
-        useFileStore.getState().updateBoardData(canvasJson)
-        this.canvasData = cloneDeep(canvasJson ?? {})
-        paintBoard.triggerHook()
-      })
+  private moveHistory(direction: 'undo' | 'redo') {
+    const canvas = paintBoard?.canvas
+    const fileId = paintBoard.canvasFileId
+    const generation = paintBoard.getLoadGeneration()
+    if (!canvas || !canWriteFile(paintBoard.canvasFileId, fileId)) {
+      return
     }
+    const next = nextHistorySnapshot({
+      diffs: this.diffs,
+      index: this.index,
+      canvasData: this.canvasData,
+      direction
+    })
+    if (!next) {
+      return
+    }
+    const token = ++this.applyToken
+    this.applyInFlight = true
+    this.index = next.index
+    this.canvasData = next.canvasData
+    paintBoard.setCanvasInteractive(false)
+    paintBoard.applyCanvasJson(next.canvasData, (committed) => {
+      if (token !== this.applyToken) {
+        return
+      }
+      this.applyInFlight = false
+      if (paintBoard.getLoadGeneration() !== generation) {
+        return
+      }
+      paintBoard.setCanvasInteractive(true)
+      if (
+        !committed ||
+        !paintBoard.canvas ||
+        !canWriteFile(paintBoard.canvasFileId, fileId)
+      ) {
+        return
+      }
+      handleCanvasJSONLoaded(paintBoard.canvas)
+      paintBoard.canvas.requestRenderAll()
+      useFileStore.getState().updateBoardData(next.canvasData, fileId)
+      paintBoard.triggerHook()
+    })
   }
 
   clean() {
+    const fileId = paintBoard.canvasFileId
     paintBoard?.canvas?.clear()
     this.index = 0
     this.diffs = []
     this.canvasData = {}
-    useFileStore.getState().updateBoardData(initState)
-  }
-
-  initHistory() {
-    const canvas = paintBoard.canvas
-    if (canvas) {
-      const canvasJson = getCanvasJSON()
-      this.canvasData = canvasJson
-      this.index = 0
-      this.diffs = []
+    if (canWriteFile(paintBoard.canvasFileId, fileId)) {
+      useFileStore.getState().updateBoardData({}, fileId)
     }
   }
 }

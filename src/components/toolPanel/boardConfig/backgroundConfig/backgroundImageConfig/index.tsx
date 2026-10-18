@@ -1,10 +1,16 @@
 import { ChangeEvent, useState } from 'react'
 import useFileStore, { useCurrentFile } from '@/store/files'
+import { paintBoard } from '@/core/paintBoard'
+import { limitImageDataUrl } from '@/core/utils/imageLimit'
+import {
+  canWriteFile,
+  shouldCommitDeferredCanvasWrite
+} from '@/core/session/canvasWrite'
 
 import { ImageUp, GripVertical } from 'lucide-react'
 import ClearIcon from '@/components/icons/clear.svg?react'
 import UploadSuccessIcon from '@/components/icons/uploadSuccess.svg?react'
-import UploadImage from '@/components/uploadImage'
+import UploadImage from '@/components/uploadImage/lazy'
 
 const BackgroundConfig = () => {
   const { updateBackgroundImage, updateBackgroundImageOpacity } = useFileStore()
@@ -38,9 +44,36 @@ const BackgroundConfig = () => {
   }
 
   const handleUploadImage = (imageUrl: string) => {
-    if (imageUrl) {
-      updateBackgroundImage(imageUrl)
+    if (!imageUrl) {
+      return
     }
+    const canvas = paintBoard.canvas
+    const fileId = paintBoard.canvasFileId
+    const generation = paintBoard.getLoadGeneration()
+    if (
+      !shouldCommitDeferredCanvasWrite({
+        canvasMatches: !!canvas,
+        generationMatches: true,
+        canWrite: canWriteFile(fileId, fileId),
+        historyApplying: false
+      })
+    ) {
+      return
+    }
+    limitImageDataUrl(imageUrl).then((limited) => {
+      if (
+        !canWriteFile(paintBoard.canvasFileId, fileId) ||
+        !shouldCommitDeferredCanvasWrite({
+          canvasMatches: !!canvas && paintBoard.canvas === canvas,
+          generationMatches: paintBoard.getLoadGeneration() === generation,
+          canWrite: true,
+          historyApplying: false
+        })
+      ) {
+        return
+      }
+      updateBackgroundImage(limited, fileId)
+    })
   }
 
   return (

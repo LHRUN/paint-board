@@ -15,7 +15,10 @@ export const DrawStyle = {
   Reticulate: 'reticulate',
   MultiPoint: 'multiPoint',
   Wiggle: 'wiggle',
-  Thorn: 'thorn'
+  Thorn: 'thorn',
+  Freehand: 'freehand',
+  FreehandStroke: 'freehandStroke',
+  Ink: 'ink'
 }
 
 export const DrawShape = {

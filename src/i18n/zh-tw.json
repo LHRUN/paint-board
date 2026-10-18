@@ -35,10 +35,18 @@
     "layer": "圖層",
     "imageFilters": "圖像濾鏡",
     "fontStyle": "字體樣式",
+    "textColor": "文字顏色",
     "canvasBackground": "畫板背景",
     "canvasSize": "畫板尺寸",
     "drawCache": "繪製緩存",
-    "guideLine": "輔助線"
+    "guideLine": "輔助線",
+    "freehandThinning": "粗細變化",
+    "freehandSmoothing": "平滑度",
+    "freehandStreamline": "線條跟隨",
+    "freehandStartTaper": "起筆收尖",
+    "freehandEndTaper": "收筆收尖",
+    "freehandStrokeColor": "描邊顏色",
+    "freehandStrokeWidth": "描邊寬度"
   },
   "canvasSize": {
     "width": "寬度",
@@ -60,18 +68,23 @@
     "reticulate": "網狀",
     "multiPoint": "多點連接",
     "wiggle": "波浪曲線",
-    "thorn": "荊棘"
+    "thorn": "荊棘",
+    "freehand": "鋼筆",
+    "freehandStroke": "描邊鋼筆",
+    "ink": "墨水"
   },
   "operate": {
     "undo": "撤銷",
     "redo": "重做",
     "copy": "複製",
+    "group": "組合",
     "delete": "刪除",
     "text": "添加文字",
     "image": "上傳圖片",
     "clean": "清除畫板",
     "save": "保存爲圖片",
-    "fileList": "文件列表",
+    "objectList": "圖層列表",
+    "fileList": "畫板",
     "fullscreen": "進入全螢幕",
     "exitFullscreen": "退出全螢幕",
     "addFile": "添加文件",
@@ -79,16 +92,89 @@
     "saveFile": "保存文件数据",
     "uploadFile": "上传文件数据"
   },
+  "objectList": {
+    "title": "圖層",
+    "empty": "當前畫板還沒有元素",
+    "show": "顯示",
+    "hide": "隱藏",
+    "brush": "畫筆",
+    "text": "文字",
+    "image": "圖片",
+    "line": "直線",
+    "arrow": "箭頭",
+    "rectangle": "矩形",
+    "circle": "圓形",
+    "polygon": "多邊形",
+    "graph": "圖形",
+    "group": "組合",
+    "element": "元素"
+  },
   "cleanModal": {
     "title": "確認清除內容？"
   },
   "deleteFileModal": {
-    "title": "確認刪除當前文件嗎？"
+    "title": "確認刪除選中的 {{count}} 個畫板？",
+    "keepCurrent": "至少保留一個畫板，目前畫板不會被刪除。",
+    "keepOne": "至少保留一個畫板"
+  },
+  "fileBoard": {
+    "title": "畫板",
+    "selected": "已選 {{count}}",
+    "selectAll": "全選",
+    "clearSelection": "取消全選",
+    "select": "選擇 {{title}}",
+    "rename": "重命名",
+    "create": "新建畫板",
+    "batchDelete": "批量刪除",
+    "batchDownload": "批量下載",
+    "noThumbnail": "暫無縮圖",
+    "current": "目前",
+    "limit": "最多保存 {{count}} 個畫板",
+    "close": "關閉"
+  },
+  "templatePrompt": {
+    "title": "Paint Board",
+    "tagline": "一款完全開源的 Web 端創意畫板",
+    "star": "歡迎點 Star ✨，Star 就是對我最大的支持，Thanks!",
+    "description": "可以選擇以下預設模版，初步了解畫板功能，或者直接關閉從空白畫板開始。",
+    "create": "建立",
+    "close": "關閉",
+    "selectFirst": "請先選擇一個模板"
+  },
+  "renameFileModal": {
+    "title": "重命名畫板",
+    "createTitle": "新建畫板",
+    "placeholder": "畫板名稱",
+    "empty": "名稱不能為空",
+    "duplicate": "畫板名稱已存在",
+    "blank": "空白畫板"
+  },
+  "downloadFiles": {
+    "title": "批量下載",
+    "overall": "整體進度 {{current}}/{{total}}",
+    "waiting": "等待",
+    "writing": "正在生成",
+    "done": "已生成",
+    "failed": "失敗",
+    "zipping": "正在打包",
+    "downloadStarted": "已開始下載",
+    "allStarted": "檔案已生成，並已開始下載",
+    "partial": "部分檔案生成失敗，其餘檔案已開始下載",
+    "allFailed": "沒有可以下載的檔案",
+    "zipFailed": "打包失敗",
+    "missing": "找不到畫板",
+    "stringifyFailed": "無法生成畫板檔案",
+    "close": "關閉"
   },
   "tip": {
     "uploadFileFail": "上傳失敗，請重試",
     "unselectedElementTip": "請點擊或者框選畫板內容",
-    "cameraPermissionDenied": "攝影機權限被拒絕，請檢查瀏覽器權限"
+    "cameraPermissionDenied": "攝影機權限被拒絕，請檢查瀏覽器權限",
+    "fileHydrationFail": "無法恢復已保存的畫布。請重新整理頁面。在恢復成功之前，新的編輯不會覆蓋已保存的檔案。",
+    "filePersistFail": "無法把畫布儲存到本地。請重新整理頁面。在儲存成功之前，新的編輯不會覆蓋已保存的檔案。",
+    "exportFail": "無法儲存圖片。畫布裡可能有來自其他網站的圖片。",
+    "exportTooLarge": "圖片太大，無法匯出。請縮小內容或降低縮放後再試。",
+    "exportFailGeneric": "無法儲存圖片，請重試。"
   },
   "filters": {
     "Sepia": "復古",
@@ -112,6 +198,26 @@
     "italic": "斜體",
     "underLine": "下劃線",
     "lineThrough": "刪除線"
+  },
+  "fontConfig": {
+    "settings": "字型設定",
+    "title": "字型設定",
+    "defaultBadge": "預設",
+    "add": "新增",
+    "placeholder": "輸入 Google Fonts 字型名稱",
+    "delete": "刪除",
+    "settingsTip": "自訂設定字型",
+    "sourceTip": "字型來源於 Google Fonts, 點擊查看更多字型",
+    "setQuick": "設為面板顯示",
+    "alreadyQuick": "面板顯示",
+    "customCount": "自訂字型",
+    "loading": "正在驗證字型...",
+    "invalid": "請輸入有效的字型名稱",
+    "duplicate": "這個字型已經在清單中",
+    "limit": "最多新增 5 個自訂字型",
+    "notFound": "找不到這個 Google 字型",
+    "network": "網路錯誤，字型沒有載入成功",
+    "loadFailed": "字型載入失敗"
   },
   "boardConfig": {
     "cacheTip": "在存在大量繪製內容的情況下，啓用緩存將提高繪製性能，而禁用緩存則會提升畫布清晰度"
@@ -142,10 +248,17 @@
     "positivePoint": "正標記",
     "negativePoint": "負標記"
   },
+  "exportImage": {
+    "viewport": "匯出目前可視區域",
+    "content": "匯出所有繪圖內容",
+    "selection": "匯出選取內容",
+    "board": "匯出目前畫板資料"
+  },
   "downloadImage": {
     "rotate": "旋轉",
     "scale": "縮放",
-    "size": "尺寸"
+    "size": "尺寸",
+    "background": "背景"
   },
   "eraserConfig": {
     "eraser": "橡皮擦",
@@ -208,7 +321,7 @@
   "features": {
     "drawingMode": "繪畫模式",
     "freeDrawing": "自由繪畫",
-    "freeDrawingDesc1": "提供了 12 種不同風格的畫筆，基本畫筆，彩虹畫筆，多形狀畫筆，多素材畫筆，像素畫筆，多色畫筆，文字畫筆，多線連接畫筆，網狀畫筆，多點連接畫筆，波浪曲線畫筆，荊棘畫筆。滿足多樣化的繪畫",
+    "freeDrawingDesc1": "提供 15 種畫筆：基本畫筆、鋼筆、描邊鋼筆、彩虹畫筆、多形狀畫筆、多素材畫筆、像素畫筆、多色畫筆、文字畫筆、多線連接畫筆、網狀畫筆、多點連接畫筆、波浪曲線畫筆、荊棘畫筆、墨水筆",
     "freeDrawingDesc2": "所有畫筆均支持顏色和畫筆寬度的自定義",
     "freeDrawingDesc3": "多形狀畫筆支持靈活配置形狀類型與數量",
     "freeDrawingDesc4": "素材畫筆與多色畫筆可自定義素材類型",
@@ -242,7 +355,7 @@
     "bottomLeftDesc2": "圓形進度條：實時展示當前縮放比例, 點擊後可重置縮放比例",
     "bottomLeftDesc3": "攝像頭按鈕：展示當前攝像頭狀態, 支持多個顯示配置",
     "bottomOperationBar": "底部操作欄",
-    "bottomOperationDesc1": "從左到右的功能分別為：撤銷、反撤銷、複製當前選擇內容、刪除當前選擇內容、繪製文字、上傳圖片、清除繪製內容、保存為圖片、打開文件列表",
+    "bottomOperationDesc1": "從左到右的功能分別為：撤銷、反撤銷、複製當前選擇內容、刪除當前選擇內容、繪製文字、上傳圖片、清除繪製內容、保存為圖片、打開圖層列表、打開文件列表",
     "bottomOperationDesc1_1": "上傳圖片支持去除背景, 圖像分割. 此功能需要瀏覽器支持WebGPU, 建議用最新版谷歌瀏覽器",
     "bottomOperationDesc1_2": "保存為圖片支持自定義配置. 旋轉, 縮放, 裁切",
     "fileList": "文件列表",
@@ -252,6 +365,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "開源倉庫",
+    "openSourceRepoDesc": "歡迎 Star，Star 就是對我最大的支持，感謝",
+    "docs": "文件",
+    "docsDesc": "可點擊查看此應用的詳細功能說明",
     "featureIntro": "功能簡介",
     "shortcuts": "快捷鍵",
     "board": "畫板",
@@ -290,7 +406,7 @@
       "switchFreeDrawing": "在繪畫模式下切換自由繪畫",
       "switchShapeDrawing": "在繪畫模式下切換圖形繪畫",
       "switchBrushType": "在自由繪畫下切換畫筆類型",
-      "brushTypeNote": "(可根據按鈕標記)"
+      "brushTypeNote": "以按鈕上的字母為準"
     },
     "keyboardShortcuts": {
       "spaceDrag": "鼠標拖拽",

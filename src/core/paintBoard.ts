@@ -9,19 +9,37 @@ import { ActionMode, ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { DrawStyle, DrawType } from '@/constants/draw'
 
 import debounce from 'lodash-es/debounce'
-import { isMobile } from '@/utils'
 import { EventModule } from './event'
 import { TextElement } from './element/text/index'
 import { material } from './element/draw/material'
 import { renderMultiColor } from './element/draw/multiColor'
 import { renderPencilBrush } from './element/draw/basic'
+import { ensureFreehandInput } from './element/draw/freehandInput'
 import { getEraserWidth } from './utils/draw'
-import { handleFileListData, handleCanvasJSONLoaded } from './utils/loadCanvas'
+import {
+  getCanvasJSON,
+  handleFileListData,
+  handleCanvasJSONLoaded
+} from './utils/loadCanvas'
 import { cloneObjects } from './utils/object'
+import { groupActiveSelection } from './element/group/groupActive'
+import { followupAfterBoardLoad } from './session/boardLoad'
+import { isCurrentCanvasLoad } from './session/canvasWrite'
+import { prepareBoardFonts } from './font/googleFont'
+import { clearFabricFontCache, relayoutFonts } from './font/applyFont'
 
-import useFileStore from '@/store/files'
+import useFileStore, { waitForFilesHydration } from '@/store/files'
 import useDrawStore from '@/store/draw'
 import useBoardStore from '@/store/board'
+
+interface BoardLoadJob {
+  serial: number
+  boardData: object
+  done: (committed: boolean) => void
+  running: boolean
+  settled: boolean
+  staleNotified: boolean
+}
 
 /**
  * PaintBoard
@@ -30,8 +48,16 @@ export class PaintBoard {
   canvas: fabric.Canvas | null = null
   evnet: EventModule | null = null
   history: History | null = null
+  /**
+   * File id represented by the current canvas pixels.
+   * Null while a file is loading, so saves cannot land on another file.
+   */
+  canvasFileId: string | null = null
   textElement: TextElement
   hookFn: Array<() => void> = []
+  private loadGeneration = 0
+  private loadSerial = 0
+  private latestBoardLoad: BoardLoadJob | null = null
 
   constructor() {
     this.textElement = new TextElement()
@@ -54,79 +80,307 @@ export class PaintBoard {
     fabric.Line.prototype.strokeLineJoin = 'round'
     fabric.Line.prototype.strokeLineCap = 'round'
 
-    if (isMobile()) {
-      brushMouseMixin.initCanvas(this.canvas)
-    }
+    brushMouseMixin.initCanvas(this.canvas)
     alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
     this.evnet = new EventModule()
     this.handleMode()
+    ensureFreehandInput()
 
-    await this.initCanvasStorage()
+    const canvas = this.canvas
+    await waitForFilesHydration()
+    // A newer initCanvas may have replaced this canvas while hydration was in flight.
+    if (this.canvas !== canvas) {
+      return false
+    }
+    handleFileListData()
+    await this.loadFile(useFileStore.getState().currentId)
 
-    return true
+    return !!this.canvas
   }
 
   removeCanvas() {
+    this.flushCurrentFile()
+    this.loadGeneration += 1
+    this.canvasFileId = null
+    this.cancelPendingFileWrites()
     if (this.canvas) {
-      this?.canvas?.dispose()
+      this.canvas.dispose()
       this.evnet?.removeEvent()
       this.canvas = null
     }
   }
 
+  getLoadGeneration() {
+    return this.loadGeneration
+  }
+
   /**
-   * Initialize the canvas cache
+   * Write the visible canvas back to the file it belongs to.
    */
-  initCanvasStorage() {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        handleFileListData()
+  flushCurrentFile() {
+    const fileId = this.canvasFileId
+    const canvas = this.canvas
+    if (!fileId || !canvas) {
+      return
+    }
+    const canvasJson = getCanvasJSON()
+    useFileStore.getState().updateBoardData(canvasJson, fileId)
+    this.history?.replaceCurrentSnapshot(canvasJson)
+    if (canvas.viewportTransform) {
+      useFileStore
+        .getState()
+        .updateTransform([...canvas.viewportTransform], fileId)
+    }
+    useFileStore.getState().updateZoom(canvas.getZoom(), fileId)
+  }
 
-        const { files, currentId } = useFileStore.getState()
-        const file = files?.find((item) => item?.id === currentId)
+  /**
+   * Save the current file, then load another one.
+   */
+  switchFile(nextId: string) {
+    if (!nextId || nextId === useFileStore.getState().currentId) {
+      return Promise.resolve(false)
+    }
+    this.flushCurrentFile()
+    this.invalidatePendingLoad()
+    useFileStore.getState().updateCurrentFile(nextId)
+    return this.loadFile(nextId)
+  }
 
-        if (file && this.canvas) {
-          this.canvas.clear()
-          this.canvas.loadFromJSON(file.boardData, () => {
-            if (this.canvas) {
-              if (file.viewportTransform) {
-                this.canvas.setViewportTransform(file.viewportTransform)
-              }
+  /**
+   * Drop the visible canvas without writing it, then load a file.
+   * Used when the current file has just been deleted.
+   */
+  discardAndLoad(nextId: string) {
+    this.invalidatePendingLoad()
+    return this.loadFile(nextId)
+  }
 
-              this.canvas.setWidth(window.innerWidth * (file?.canvasWidth || 1))
-              this.canvas.setHeight(
-                window.innerHeight * (file?.canvasHeight || 1)
-              )
+  /**
+   * Save the current file and detach the canvas before the current id changes.
+   */
+  prepareForFileReplacement() {
+    this.flushCurrentFile()
+    this.invalidatePendingLoad()
+  }
 
-              if (file?.zoom && this.canvas.width && this.canvas.height) {
-                this.canvas.zoomToPoint(
-                  new fabric.Point(
-                    this.canvas.width / 2,
-                    this.canvas.height / 2
-                  ),
-                  file.zoom
-                )
-                this.evnet?.zoomEvent.handleZoomPercentage()
-              }
+  loadFile(fileId: string) {
+    const generation = ++this.loadGeneration
+    this.canvasFileId = null
+    this.setCanvasInteractive(false)
 
-              handleCanvasJSONLoaded(this.canvas)
-
-              fabric.Object.prototype.set({
-                objectCaching: useBoardStore.getState().isObjectCaching
-              })
-
-              this.canvas.renderAll()
-              this.triggerHook()
-              this.history = new History()
-            }
-            resolve(true)
-          })
-        } else {
-          resolve(true)
+    return new Promise<boolean>((resolve) => {
+      const canvas = this.canvas
+      const finish = (loaded: boolean) => {
+        if (generation === this.loadGeneration) {
+          this.setCanvasInteractive(true)
         }
-      }, 300)
+        resolve(loaded)
+      }
+
+      if (
+        !canvas ||
+        !isCurrentCanvasLoad(
+          generation,
+          this.loadGeneration,
+          fileId,
+          useFileStore.getState().currentId
+        )
+      ) {
+        finish(false)
+        return
+      }
+
+      const file = useFileStore
+        .getState()
+        .files.find((item) => item.id === fileId)
+      if (!file) {
+        finish(false)
+        return
+      }
+
+      canvas.clear()
+      this.applyCanvasJson(file.boardData || {}, (committed) => {
+        if (
+          !committed ||
+          !this.canvas ||
+          !isCurrentCanvasLoad(
+            generation,
+            this.loadGeneration,
+            fileId,
+            useFileStore.getState().currentId
+          )
+        ) {
+          finish(false)
+          return
+        }
+
+        const latest = useFileStore
+          .getState()
+          .files.find((item) => item.id === fileId)
+        if (!latest) {
+          finish(false)
+          return
+        }
+
+        if (latest.viewportTransform) {
+          this.canvas.setViewportTransform(latest.viewportTransform)
+        }
+        this.canvas.setWidth(window.innerWidth * (latest.canvasWidth || 1))
+        this.canvas.setHeight(window.innerHeight * (latest.canvasHeight || 1))
+        if (latest.zoom && this.canvas.width && this.canvas.height) {
+          this.canvas.zoomToPoint(
+            new fabric.Point(this.canvas.width / 2, this.canvas.height / 2),
+            latest.zoom
+          )
+          this.evnet?.zoomEvent.handleZoomPercentage()
+        }
+
+        handleCanvasJSONLoaded(this.canvas)
+        fabric.Object.prototype.set({
+          objectCaching: useBoardStore.getState().isObjectCaching
+        })
+        this.canvas.renderAll()
+        this.canvasFileId = fileId
+        this.history = new History()
+        this.triggerHook()
+        finish(true)
+      })
     })
+  }
+
+  /**
+   * Apply Fabric JSON. An older load that finishes late must not start a second
+   * loadFromJSON while the newest one is still applying. If it replaces the canvas
+   * after the newest load has committed, replay that load once so its controls rebuild.
+   */
+  applyCanvasJson(boardData: object, done: (committed: boolean) => void) {
+    const serial = ++this.loadSerial
+    const job: BoardLoadJob = {
+      serial,
+      boardData,
+      done,
+      running: false,
+      settled: false,
+      staleNotified: false
+    }
+    this.latestBoardLoad = job
+    this.runBoardLoad(job)
+  }
+
+  private runBoardLoad(job: BoardLoadJob) {
+    const canvas = this.canvas
+    if (!canvas) {
+      this.failBoardLoad(job)
+      return
+    }
+    if (job.running) {
+      return
+    }
+    job.running = true
+    void this.loadBoardWhenFontsReady(job, canvas)
+  }
+
+  /**
+   * Web fonts have to be available before Fabric measures text during
+   * loadFromJSON. A slow font must not block the board forever.
+   */
+  private async loadBoardWhenFontsReady(
+    job: BoardLoadJob,
+    canvas: fabric.Canvas
+  ) {
+    let prepared: Awaited<ReturnType<typeof prepareBoardFonts>> = {
+      families: [],
+      timedOut: false,
+      finished: Promise.resolve()
+    }
+    try {
+      prepared = await prepareBoardFonts(job.boardData)
+    } catch (error) {
+      console.error('Failed to load board fonts', error)
+    }
+    if (job.serial !== this.loadSerial || this.canvas !== canvas) {
+      job.running = false
+      this.failBoardLoad(job)
+      return
+    }
+    prepared.families.forEach((family) => clearFabricFontCache(family))
+    canvas.loadFromJSON(job.boardData, () => {
+      job.running = false
+      const latest = this.latestBoardLoad
+      const action = followupAfterBoardLoad({
+        callbackIsLatest: job.serial === this.loadSerial,
+        callbackCanvasMatches: this.canvas === canvas,
+        latestAvailable: !!latest && latest.serial === this.loadSerial,
+        latestRunning: !!latest?.running,
+        latestSettled: !!latest?.settled
+      })
+
+      if (action === 'commit') {
+        if (prepared.timedOut) {
+          void prepared.finished
+            .then(() => {
+              if (job.serial !== this.loadSerial || this.canvas !== canvas) {
+                return
+              }
+              relayoutFonts(canvas, prepared.families)
+              canvas.requestRenderAll()
+            })
+            .catch((error) => {
+              console.error('Failed to relayout board fonts', error)
+            })
+        }
+        job.settled = true
+        job.done(true)
+        return
+      }
+      if (action === 'ignore') {
+        return
+      }
+      this.failBoardLoad(job)
+      if (
+        action !== 'replay' ||
+        !latest ||
+        latest.serial !== this.loadSerial ||
+        latest.running
+      ) {
+        return
+      }
+      // The stale load already replaced the objects. Allow the success callback
+      // to run again so endpoint controls are rebuilt on the restored objects.
+      latest.settled = false
+      this.runBoardLoad(latest)
+    })
+  }
+
+  private failBoardLoad(job: BoardLoadJob) {
+    if (job.staleNotified || job.settled) {
+      return
+    }
+    job.staleNotified = true
+    job.done(false)
+  }
+
+  private invalidatePendingLoad() {
+    this.loadGeneration += 1
+    this.canvasFileId = null
+    this.cancelPendingFileWrites()
+  }
+
+  private cancelPendingFileWrites() {
+    this.updateCanvasWidth.cancel()
+    this.updateCanvasHeight.cancel()
+    this.evnet?.zoomEvent.cancelPendingZoomWrite()
+    this.evnet?.touchEvent.canvasTransformHandler.cancelPending()
+  }
+
+  setCanvasInteractive(interactive: boolean) {
+    const upperCanvas = this.canvas?.upperCanvasEl
+    if (!upperCanvas) {
+      return
+    }
+    upperCanvas.style.pointerEvents = interactive ? '' : 'none'
   }
 
   /**
@@ -245,6 +499,13 @@ export class PaintBoard {
   }
 
   /**
+   * Combine the current multi-selection into one group.
+   */
+  groupObject() {
+    groupActiveSelection()
+  }
+
+  /**
    * copy active objects
    */
   copyObject() {
@@ -270,6 +531,7 @@ export class PaintBoard {
       if (object) {
         canvas.bringForward(object, true)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -284,6 +546,7 @@ export class PaintBoard {
       if (object) {
         canvas.sendBackwards(object, true)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -298,6 +561,7 @@ export class PaintBoard {
       if (object) {
         canvas.bringToFront(object)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -312,6 +576,7 @@ export class PaintBoard {
       if (object) {
         canvas.sendToBack(object)
         this.render()
+        this.triggerHook()
       }
     }
   }
@@ -344,14 +609,14 @@ export class PaintBoard {
     })
   }
 
-  updateCanvasWidth = debounce((width) => {
-    if (this.canvas) {
+  updateCanvasWidth = debounce((width: number, fileId: string) => {
+    if (this.canvas && this.canvasFileId === fileId) {
       this.canvas.setWidth(window.innerWidth * width)
     }
   }, 500)
 
-  updateCanvasHeight = debounce((height) => {
-    if (this.canvas) {
+  updateCanvasHeight = debounce((height: number, fileId: string) => {
+    if (this.canvas && this.canvasFileId === fileId) {
       this.canvas.setHeight(window.innerHeight * height)
     }
   }, 500)

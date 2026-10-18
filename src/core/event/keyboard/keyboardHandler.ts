@@ -10,6 +10,7 @@ import { ClipboardHandler } from './clipboardHandler'
 import { HistoryHandler } from './historyHandler'
 import { TransformCanvasHandler } from './transformCanvasHandler'
 import { ModeHandler } from './modeHandler'
+import { beginCanvasPan, endCanvasPan } from '../canvasPan'
 
 /**
  * Main keyboard shortcuts handler
@@ -20,6 +21,7 @@ export class KeyboardHandler {
   private historyHandler: HistoryHandler
   private transformCanvasHandler: TransformCanvasHandler
   private modeHandler: ModeHandler
+  private spacePanBypass = false
 
   constructor() {
     this.clipboardHandler = new ClipboardHandler()
@@ -52,6 +54,8 @@ export class KeyboardHandler {
       case KeyCode.KEY_X:
       case KeyCode.KEY_R:
       case KeyCode.KEY_F:
+      case KeyCode.KEY_T:
+      case KeyCode.KEY_G:
         this.modeHandler.switchDrawStyle(e.code)
         break
 
@@ -99,6 +103,8 @@ export class KeyboardHandler {
         if (this.isModifierKey(e) && !e.shiftKey && !e.altKey) {
           e.preventDefault()
           this.clipboardHandler.pasteClipboard()
+        } else {
+          this.modeHandler.switchDrawStyle(e.code)
         }
         break
 
@@ -203,6 +209,10 @@ export class KeyboardHandler {
       case KeyCode.SPACE:
         paintBoard?.evnet?.mouseEvent.setSpaceKeyDownState(true)
         if (canvas) {
+          if (!this.spacePanBypass) {
+            this.spacePanBypass = true
+            beginCanvasPan(canvas)
+          }
           if (!useBoardStore.getState().isObjectCaching) {
             fabric.Object.prototype.set({
               objectCaching: true
@@ -235,16 +245,25 @@ export class KeyboardHandler {
          */
         paintBoard.evnet?.mouseEvent.setSpaceKeyDownState(false)
         canvas.defaultCursor = 'default'
-
-        if (canvas.viewportTransform) {
-          useFileStore.getState().updateTransform(canvas.viewportTransform)
-          if (!useBoardStore.getState().isObjectCaching) {
-            fabric.Object.prototype.set({
-              objectCaching: false
-            })
-          }
-          paintBoard.handleMode()
+        if (this.spacePanBypass) {
+          this.spacePanBypass = false
+          endCanvasPan(canvas)
         }
+
+        if (canvas.viewportTransform && paintBoard.canvasFileId) {
+          useFileStore
+            .getState()
+            .updateTransform(
+              [...canvas.viewportTransform],
+              paintBoard.canvasFileId
+            )
+        }
+        if (!useBoardStore.getState().isObjectCaching) {
+          fabric.Object.prototype.set({
+            objectCaching: false
+          })
+        }
+        paintBoard.handleMode()
         break
       default:
         break

@@ -6,6 +6,12 @@ import {
   initCustomObjectAttr,
   filterUnlockedObjects
 } from '@/core/utils/object'
+import { shouldRecordObjectModified } from '@/core/history/recordObject'
+import { shouldDiscardUneditedText } from '@/core/element/text/placeholder'
+import {
+  bindEditingBox,
+  refreshEditingBox
+} from '@/core/element/text/editingBox'
 import { fabric } from 'fabric'
 
 export class ObjectEvent {
@@ -46,18 +52,23 @@ export class ObjectEvent {
         paintBoard.history?.saveState()
       }
     })
-    canvas?.on('object:modified', (e) => {
-      // Prohibit recording if the change is due to IText input content
+    canvas?.on('object:added', (e) => {
       if (e.target?.type === 'i-text') {
-        const obj = e.target as fabric.IText
-        if (obj._textBeforeEdit === obj.text) {
-          return
-        }
+        bindEditingBox(e.target as fabric.IText)
       }
-      // Usually operations that change the object such as dragging and zooming, record the operation
-      if (e.action && e.target) {
-        paintBoard.history?.saveState()
+    })
+
+    canvas?.on('object:modified', (e) => {
+      const target = e.target as fabric.IText | undefined
+      if (
+        !shouldRecordObjectModified({
+          action: e.action,
+          target
+        })
+      ) {
+        return
       }
+      paintBoard.history?.saveState()
     })
   }
 
@@ -108,26 +119,43 @@ export class ObjectEvent {
 
   initTextEvent() {
     const canvas = paintBoard?.canvas
-    canvas?.on('text:editing:entered', () => {
+    canvas?.on('text:editing:entered', (e) => {
       paintBoard.textElement.isTextEditing = true
+      const obj = e?.target as fabric.IText
+      if (obj?.type === 'i-text') {
+        bindEditingBox(obj)
+        void refreshEditingBox(obj)
+      }
     })
 
     canvas?.on('text:editing:exited', (e) => {
       const obj = e?.target as fabric.IText
-      if (obj) {
-        paintBoard.textElement.isTextEditing = false
-
-        // If there is no _customType, it means it is a new object.
-        if (!obj?._customType) {
-          initCustomObjectAttr(obj, ELEMENT_CUSTOM_TYPE.I_TEXT)
-        }
-
-        // If the text changes, update the record
-        if (obj?._textBeforeEdit !== obj?.text) {
-          canvas.discardActiveObject()
-          paintBoard.render()
-        }
+      if (!obj) {
+        return
       }
+      paintBoard.textElement.isTextEditing = false
+
+      // A new text box has no custom type until this exit. Leaving the
+      // placeholder means the user never typed, so drop it before any save.
+      const isNew = !obj._customType
+      if (shouldDiscardUneditedText({ isNew, text: obj.text })) {
+        canvas.remove(obj)
+        if (paintBoard.textElement.text === obj) {
+          paintBoard.textElement.text = null
+        }
+        canvas.requestRenderAll()
+        return
+      }
+
+      if (isNew) {
+        initCustomObjectAttr(obj, ELEMENT_CUSTOM_TYPE.I_TEXT)
+      }
+
+      // Content edits have no transform action, so they are stored here.
+      if (obj._textBeforeEdit !== obj.text) {
+        canvas.discardActiveObject()
+      }
+      paintBoard.render()
     })
   }
 }

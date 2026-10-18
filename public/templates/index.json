@@ -1,0 +1,10 @@
+{
+  "templates": [
+    "hello.json",
+    "user-guide.json",
+    "simple-image.json",
+    "simple-design.json",
+    "simple-shape.json",
+    "art-font.json"
+  ]
+}

@@ -7,11 +7,23 @@ import {
   MultiColorType,
   renderMultiColor
 } from '@/core/element/draw/multiColor'
+import { shouldApplyMultiColorBrush } from '@/core/element/draw/multiColorBrush'
 import { paintBoard } from '@/core/paintBoard'
+import useBoardStore from '@/store/board'
+import {
+  DEFAULT_TEXT_COLORS,
+  TEXT_COLOR_LIMIT
+} from '@/core/element/text/textColor'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { produce } from 'immer'
 import { fabric } from 'fabric'
+import { reindexDrawColorSelection } from './drawColor'
+import {
+  DEFAULT_FREEHAND_STROKE_COLOR_INDEX,
+  DEFAULT_FREEHAND_STROKE_COLORS,
+  FREEHAND_STROKE_COLOR_LIMIT
+} from './freehandStrokeColor'
 
 interface DrawState {
   drawWidth: number // draw brush width
@@ -31,12 +43,23 @@ interface DrawState {
   eraserWidth: number // eraser width
   multiColorType: string // 'col' | 'row' | 'circle'
   textFontFamily: string // current text drawing font
+  freehandThinning: number
+  freehandSmoothing: number
+  freehandStreamline: number
+  freehandStartTaper: number
+  freehandEndTaper: number
+  freehandStrokeColors: string[]
+  currentFreehandStrokeColor: number
+  freehandStrokeWidth: number
   fontStyles: string[] // ['bold', 'italic', 'underLine', 'lineThrough']
+  textColors: string[] // text palette, separate from brush colors
+  currentTextColor: number // swatch used for the next new text
 }
 
 interface DrawAction {
   updateDrawWidth: (drawWidth: number) => void
   updateCurrentDrawColor: (colorIndex: number) => void
+  focusDrawColor: (colorIndex: number) => void
   updateDrawColor: (color: string, colorIndex: number) => void
   deleteDrawColor: (colorIndex: number) => void
   updateLineType: (lineType: string) => void
@@ -52,7 +75,19 @@ interface DrawAction {
   updateEraserWidth: (eraserWidth: number) => void
   updateMultiColorType: (multiColorType: string) => void
   updateTextFontFamily: (fontFamily: string) => void
+  updateFreehandThinning: (value: number) => void
+  updateFreehandSmoothing: (value: number) => void
+  updateFreehandStreamline: (value: number) => void
+  updateFreehandStartTaper: (value: number) => void
+  updateFreehandEndTaper: (value: number) => void
+  updateCurrentFreehandStrokeColor: (colorIndex: number) => void
+  updateFreehandStrokeColor: (color: string, colorIndex: number) => void
+  deleteFreehandStrokeColor: (colorIndex: number) => void
+  updateFreehandStrokeWidth: (value: number) => void
   updateFontStyles: (type: string) => void
+  updateCurrentTextColor: (colorIndex: number) => void
+  updateTextColor: (color: string, colorIndex: number) => void
+  deleteTextColor: (colorIndex: number) => void
 }
 
 const useDrawStore = create<DrawState & DrawAction>()(
@@ -75,7 +110,17 @@ const useDrawStore = create<DrawState & DrawAction>()(
       eraserWidth: 20,
       multiColorType: MultiColorType.COL,
       textFontFamily: 'Georgia',
+      freehandThinning: 0.5,
+      freehandSmoothing: 0.5,
+      freehandStreamline: 0.5,
+      freehandStartTaper: 0,
+      freehandEndTaper: 20,
+      freehandStrokeColors: [...DEFAULT_FREEHAND_STROKE_COLORS],
+      currentFreehandStrokeColor: DEFAULT_FREEHAND_STROKE_COLOR_INDEX,
+      freehandStrokeWidth: 2,
       fontStyles: [],
+      textColors: [...DEFAULT_TEXT_COLORS],
+      currentTextColor: 0,
       updateDrawWidth(drawWidth) {
         const { drawWidth: oldDrawWidth, drawStyle } = get()
         if (oldDrawWidth !== drawWidth && paintBoard.canvas) {
@@ -136,6 +181,17 @@ const useDrawStore = create<DrawState & DrawAction>()(
         }
         updateDrawColors()
       },
+      focusDrawColor(colorIndex) {
+        const { drawColors, currentDrawColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= drawColors.length ||
+          currentDrawColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentDrawColor: colorIndex })
+      },
       updateDrawColor: (color: string, colorIndex: number) => {
         set(
           produce((state) => {
@@ -152,23 +208,22 @@ const useDrawStore = create<DrawState & DrawAction>()(
         }
       },
       deleteDrawColor(colorIndex) {
-        set(
-          produce((state) => {
-            state.drawColors.splice(colorIndex, 1)
-
-            if (state.currentDrawColor === colorIndex) {
-              state.currentDrawColor = 0
-              updateDrawColors()
-            }
-
-            if (state.currentMultiColor.includes(colorIndex)) {
-              state.currentMultiColor = state.currentMultiColor.filter(
-                (item: number) => item !== colorIndex
-              )
-              updateDrawColors()
-            }
-          })
+        const { drawColors, currentDrawColor, currentMultiColor } = get()
+        const next = reindexDrawColorSelection(
+          drawColors,
+          colorIndex,
+          currentDrawColor,
+          currentMultiColor
         )
+        if (!next) {
+          return
+        }
+        set({
+          drawColors: next.drawColors,
+          currentDrawColor: next.currentDrawColor,
+          currentMultiColor: next.currentMultiColor
+        })
+        updateDrawColors()
       },
       updateLineType(lineType) {
         const { lineType: oldLineType, drawStyle } = get()
@@ -285,6 +340,69 @@ const useDrawStore = create<DrawState & DrawAction>()(
           textFontFamily: fontFamily
         })
       },
+      updateFreehandThinning(value) {
+        set({ freehandThinning: value })
+      },
+      updateFreehandSmoothing(value) {
+        set({ freehandSmoothing: value })
+      },
+      updateFreehandStreamline(value) {
+        set({ freehandStreamline: value })
+      },
+      updateFreehandStartTaper(value) {
+        set({ freehandStartTaper: value })
+      },
+      updateFreehandEndTaper(value) {
+        set({ freehandEndTaper: value })
+      },
+      updateCurrentFreehandStrokeColor(colorIndex) {
+        const { freehandStrokeColors, currentFreehandStrokeColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= freehandStrokeColors.length ||
+          currentFreehandStrokeColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentFreehandStrokeColor: colorIndex })
+      },
+      updateFreehandStrokeColor(color, colorIndex) {
+        const { freehandStrokeColors } = get()
+        if (colorIndex < 0 || colorIndex > freehandStrokeColors.length) {
+          return
+        }
+        if (colorIndex === freehandStrokeColors.length) {
+          if (freehandStrokeColors.length >= FREEHAND_STROKE_COLOR_LIMIT) {
+            return
+          }
+          set({ freehandStrokeColors: [...freehandStrokeColors, color] })
+          return
+        }
+        set(
+          produce((state) => {
+            state.freehandStrokeColors[colorIndex] = color
+          })
+        )
+      },
+      deleteFreehandStrokeColor(colorIndex) {
+        const { freehandStrokeColors, currentFreehandStrokeColor } = get()
+        const next = reindexDrawColorSelection(
+          freehandStrokeColors,
+          colorIndex,
+          currentFreehandStrokeColor,
+          [currentFreehandStrokeColor]
+        )
+        if (!next) {
+          return
+        }
+        set({
+          freehandStrokeColors: next.drawColors,
+          currentFreehandStrokeColor: next.currentDrawColor
+        })
+      },
+      updateFreehandStrokeWidth(value) {
+        set({ freehandStrokeWidth: value })
+      },
       updateFontStyles(type) {
         const fontStyles = [...get().fontStyles]
         const typeIndex = fontStyles.findIndex((item) => item === type)
@@ -295,6 +413,51 @@ const useDrawStore = create<DrawState & DrawAction>()(
         }
         set({
           fontStyles
+        })
+      },
+      updateCurrentTextColor(colorIndex) {
+        const { textColors, currentTextColor } = get()
+        if (
+          colorIndex < 0 ||
+          colorIndex >= textColors.length ||
+          currentTextColor === colorIndex
+        ) {
+          return
+        }
+        set({ currentTextColor: colorIndex })
+      },
+      updateTextColor(color, colorIndex) {
+        const { textColors } = get()
+        if (colorIndex < 0 || colorIndex > textColors.length) {
+          return
+        }
+        if (colorIndex === textColors.length) {
+          if (textColors.length >= TEXT_COLOR_LIMIT) {
+            return
+          }
+          set({ textColors: [...textColors, color] })
+          return
+        }
+        set(
+          produce((state) => {
+            state.textColors[colorIndex] = color
+          })
+        )
+      },
+      deleteTextColor(colorIndex) {
+        const { textColors, currentTextColor } = get()
+        const next = reindexDrawColorSelection(
+          textColors,
+          colorIndex,
+          currentTextColor,
+          [currentTextColor]
+        )
+        if (!next) {
+          return
+        }
+        set({
+          textColors: next.drawColors,
+          currentTextColor: next.currentDrawColor
         })
       }
     }),
@@ -317,6 +480,9 @@ const updateDrawColors = () => {
       material.render({})
       break
     case DrawStyle.MultiColor:
+      if (!shouldApplyMultiColorBrush(useBoardStore.getState().mode)) {
+        break
+      }
       renderMultiColor({})
       break
     default:

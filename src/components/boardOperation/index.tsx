@@ -1,36 +1,47 @@
-import { ChangeEvent, useState, useCallback, useEffect } from 'react'
+import { ChangeEvent, useState, useCallback, useEffect, useRef } from 'react'
 import useBoardStore from '@/store/board'
-import { DEFAULT_BACKGROUND_SORT, useCurrentFile } from '@/store/files'
+import useFileStore, {
+  DEFAULT_BACKGROUND_SORT,
+  useCurrentFile
+} from '@/store/files'
 import useCameraStore from '@/store/camera'
 import { useTranslation } from 'react-i18next'
 import { ActionMode } from '@/constants'
+import { canGroupActiveObjects } from '@/core/element/group/groupSelection'
 import { paintBoard } from '@/core/paintBoard'
 import { isMobile as isMobileFn } from '@/utils'
 import { ImageElement } from '@/core/element/image'
-import { CameraImageData } from '@/core/camera/renderer'
-
-import { drawBackground } from '../background/backgroundColor/utils'
-import { drawBackgroundImage } from '../background/backgroundImage/utils'
+import { captureCameraFrame } from '@/core/camera/renderer'
+import {
+  exportCanvasImage,
+  ExportImageResult,
+  ExportScope
+} from '@/core/export/exportCanvasImage'
+import { exportErrorMessageKey } from '@/core/export/exportError'
 
 import {
   Undo2,
   Redo2,
   Type,
   Copy,
+  Group,
   Trash2,
   ImageUp,
   BrushCleaning,
-  Save,
   Expand,
   Shrink,
   X,
   Menu,
-  BookText
+  BookText,
+  Layers
 } from 'lucide-react'
 
 import FileList from './fileList'
+import ObjectList from './objectList'
 import DownloadImage from './downloadImage'
-import UploadImage from '@/components/uploadImage'
+import ExportImageMenu from './exportImageMenu'
+import UploadImage from '@/components/uploadImage/lazy'
+import Toast from '@/components/toast'
 
 const isMobile = isMobileFn()
 
@@ -39,12 +50,18 @@ const BoardOperation = () => {
   const { mode } = useBoardStore()
   const { cameraOpacity, openCamera } = useCameraStore()
   const currentFile = useCurrentFile()
+  const saveJSON = useFileStore((state) => state.saveJSON)
   const [showFile, updateShowFile] = useState(false) // show file list draw
+  const [showObjectList, updateShowObjectList] = useState(false)
   const [showOperation, setShowOperation] = useState(true) // mobile: show all operation
   const [isFullscreen, setIsFullscreen] = useState(false)
 
-  const [downloadImageURL, setDownloadImageURL] = useState('')
+  const [exportImage, setExportImage] = useState<ExportImageResult | null>(null)
   const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+  const [hasSelection, setHasSelection] = useState(false)
+  const [canGroup, setCanGroup] = useState(false)
+  const exportingRef = useRef(false)
 
   const [uploadImageURL, setUploadImageURL] = useState('')
   const [showUploadModal, setShowUploadModal] = useState(false)
@@ -77,6 +94,10 @@ const BoardOperation = () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
     }
   }, [])
+
+  const groupObject = () => {
+    paintBoard.groupObject()
+  }
 
   // copy activity object
   const copyObject = () => {
@@ -131,79 +152,48 @@ const BoardOperation = () => {
     }
   }
 
+  useEffect(() => {
+    const refreshSelection = () => {
+      const count = paintBoard.canvas?.getActiveObjects().length ?? 0
+      setHasSelection(count > 0)
+      setCanGroup(canGroupActiveObjects(count))
+    }
+    paintBoard.addHookFn(refreshSelection)
+    refreshSelection()
+    return () => {
+      paintBoard.removeHookFn(refreshSelection)
+    }
+  }, [])
+
   // save as image
-  const saveImage = async () => {
-    if (paintBoard.canvas) {
-      // Get the original canvas dimensions
-      const originalCanvas = paintBoard.canvas.getElement()
-      const width = originalCanvas.width
-      const height = originalCanvas.height
-
-      // Create off-screen canvas
-      const offscreenCanvas = document.createElement('canvas')
-      offscreenCanvas.width = width
-      offscreenCanvas.height = height
-      const ctx = offscreenCanvas.getContext('2d')
-
-      if (!ctx) {
-        return
-      }
-
-      const backgroundSort =
-        currentFile?.backgroundSort || DEFAULT_BACKGROUND_SORT
-      const reverseBackgroundSort = [...backgroundSort].reverse()
-      for (let i = 0; i < reverseBackgroundSort.length; i++) {
-        const type = reverseBackgroundSort[i]
-        switch (type) {
-          case 'image':
-            if (currentFile?.backgroundImage) {
-              await drawBackgroundImage(
-                ctx,
-                currentFile.backgroundImage,
-                currentFile.backgroundImageOpacity,
-                width,
-                height
-              )
-            }
-            break
-          case 'color':
-            if (
-              currentFile?.backgroundColorList?.length &&
-              currentFile?.currentBackgroundColor !== -1
-            ) {
-              drawBackground(
-                ctx,
-                currentFile.backgroundColorList[
-                  currentFile.currentBackgroundColor
-                ],
-                width,
-                height
-              )
-            }
-            break
-          case 'camera':
-            if (CameraImageData && openCamera) {
-              await drawBackgroundImage(
-                ctx,
-                CameraImageData,
-                cameraOpacity,
-                width,
-                height
-              )
-            }
-            break
-          default:
-            break
-        }
-      }
-
-      // Draw the original canvas content
-      ctx.drawImage(originalCanvas, 0, 0)
-
-      // Get the merged URL
-      const url = offscreenCanvas.toDataURL()
-      setDownloadImageURL(url)
+  const saveImage = async (scope: ExportScope) => {
+    const canvas = paintBoard.canvas
+    if (!canvas || exportingRef.current) {
+      return
+    }
+    exportingRef.current = true
+    const colorIndex = currentFile?.currentBackgroundColor ?? -1
+    const colorList = currentFile?.backgroundColorList
+    try {
+      const result = await exportCanvasImage(canvas, scope, {
+        sort: currentFile?.backgroundSort || DEFAULT_BACKGROUND_SORT,
+        color:
+          colorList?.length && colorIndex >= 0
+            ? colorList[colorIndex] || null
+            : null,
+        imageUrl: currentFile?.backgroundImage || '',
+        imageOpacity: currentFile?.backgroundImageOpacity ?? 1,
+        cameraFrame: openCamera ? captureCameraFrame() : null,
+        cameraOpacity
+      })
+      setExportImage(result)
       setShowDownloadModal(true)
+      setExportError(null)
+    } catch (error) {
+      console.error('Failed to export canvas', error)
+      setExportError(exportErrorMessageKey(error))
+    } finally {
+      exportingRef.current = false
     }
   }
 
@@ -236,6 +226,15 @@ const BoardOperation = () => {
                   >
                     <Copy strokeWidth={2} color="#66CC8A" />
                   </div>
+                  {canGroup && (
+                    <div
+                      onClick={groupObject}
+                      className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                      data-tip={t('operate.group')}
+                    >
+                      <Group strokeWidth={2} color="#66CC8A" />
+                    </div>
+                  )}
                   <div
                     onClick={deleteObject}
                     className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
@@ -274,13 +273,11 @@ const BoardOperation = () => {
               >
                 <BrushCleaning strokeWidth={2} color="#66CC8A" />
               </label>
-              <div
-                onClick={saveImage}
-                className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
-                data-tip={t('operate.save')}
-              >
-                <Save strokeWidth={2} color="#66CC8A" />
-              </div>
+              <ExportImageMenu
+                hasSelection={hasSelection}
+                onExport={saveImage}
+                onExportBoard={saveJSON}
+              />
               {!isMobile && (
                 <div
                   onClick={toggleFullscreen}
@@ -298,14 +295,20 @@ const BoardOperation = () => {
                   )}
                 </div>
               )}
-              <label
-                htmlFor="my-drawer-4"
+              <div
+                onClick={() => updateShowObjectList((open) => !open)}
+                className="min-xs:tooltip cursor-pointer py-1.5 px-2 hover:bg-slate-200"
+                data-tip={t('operate.objectList')}
+              >
+                <Layers strokeWidth={2} color="#66CC8A" />
+              </div>
+              <div
                 className="min-xs:tooltip cursor-pointer py-1.5 pl-2 pr-3 rounded-r-full hover:bg-slate-200 xs:pr-2 xs:rounded-r-none xs:rounded-b-full"
                 data-tip={t('operate.fileList')}
                 onClick={() => updateShowFile(true)}
               >
                 <BookText strokeWidth={2} color="#66CC8A" />
-              </label>
+              </div>
             </>
           )}
           <label className="btn btn-neutral btn-circle swap swap-rotate w-7 h-7 min-h-0 my-1.5 mx-2 min-xs:hidden">
@@ -323,10 +326,14 @@ const BoardOperation = () => {
           </label>
         </div>
       </div>
+      {exportError && <Toast message={exportError} type="error" />}
+      {showObjectList && <ObjectList updateShow={updateShowObjectList} />}
       {showFile && <FileList updateShow={updateShowFile} />}
-      {showDownloadModal && downloadImageURL && (
+      {showDownloadModal && exportImage && (
         <DownloadImage
-          url={downloadImageURL}
+          url={exportImage.url}
+          background={exportImage.background}
+          backgroundFrame={exportImage.backgroundFrame}
           showModal={showDownloadModal}
           setShowModal={setShowDownloadModal}
         />

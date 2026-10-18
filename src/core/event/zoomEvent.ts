@@ -41,7 +41,7 @@ export class CanvasZoomEvent {
       const canvasWidth = (canvas?.width || 1) / 2
       const canvasHeight = (canvas?.height || 1) / 2
       canvas.zoomToPoint(new fabric.Point(canvasWidth, canvasHeight), 1)
-      this.updateZoomPercentage(true, 1)
+      this.scheduleZoomWrite(1)
     }
   }
 
@@ -70,23 +70,41 @@ export class CanvasZoomEvent {
     const centerY = (canvas?.height || 1) / 2
     canvas.zoomToPoint({ x: centerX, y: centerY }, zoom)
 
-    this.updateZoomPercentage(true, zoom)
+    this.scheduleZoomWrite(zoom)
+  }
+
+  cancelPendingZoomWrite() {
+    this.updateZoomPercentage.cancel()
+  }
+
+  scheduleZoomWrite(zoom: number) {
+    const fileId = paintBoard.canvasFileId
+    if (!fileId) {
+      return
+    }
+    this.updateZoomPercentage(true, zoom, fileId)
   }
 
   /**
    * Update current zoom percentage
    */
-  updateZoomPercentage = debounce((triggerCb = true, zoom: number) => {
-    const percentage = this.handleZoomPercentage(triggerCb)
-    useFileStore.getState().updateZoom(zoom)
-    if (!useBoardStore.getState().isObjectCaching) {
-      fabric.Object.prototype.set({
-        objectCaching: false
-      })
-    }
-    paintBoard.canvas?.requestRenderAll()
-    return percentage
-  }, 500)
+  updateZoomPercentage = debounce(
+    (triggerCb = true, zoom: number, fileId: string) => {
+      if (paintBoard.canvasFileId !== fileId) {
+        return
+      }
+      const percentage = this.handleZoomPercentage(triggerCb)
+      useFileStore.getState().updateZoom(zoom, fileId)
+      if (!useBoardStore.getState().isObjectCaching) {
+        fabric.Object.prototype.set({
+          objectCaching: false
+        })
+      }
+      paintBoard.canvas?.requestRenderAll()
+      return percentage
+    },
+    500
+  )
 
   handleZoomPercentage(triggerCb = true) {
     const canvas = paintBoard.canvas

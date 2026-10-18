@@ -23,8 +23,8 @@ In the case of new feature additions, please communicate with us first in Discus
 
 ## Development Environment
 
-+ Node.js 18 +
-+ Pnpm 8 +
++ Node.js 22+
++ pnpm 8, using the version in `packageManager` in package.json (currently 8.15.9)
 
 ## Code Style
 

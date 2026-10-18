@@ -35,10 +35,18 @@
     "layer": "レイヤー",
     "imageFilters": "画像フィルター",
     "fontStyle": "フォントスタイル",
+    "textColor": "文字色",
     "canvasBackground": "キャンバス背景",
     "canvasSize": "キャンバスサイズ",
     "drawCache": "描画キャッシュ",
-    "guideLine": "ガイドライン"
+    "guideLine": "ガイドライン",
+    "freehandThinning": "太さの変化",
+    "freehandSmoothing": "滑らかさ",
+    "freehandStreamline": "追従",
+    "freehandStartTaper": "始点の尖り",
+    "freehandEndTaper": "終点の尖り",
+    "freehandStrokeColor": "線の色",
+    "freehandStrokeWidth": "線の太さ"
   },
   "canvasSize": {
     "width": "幅",
@@ -60,18 +68,23 @@
     "reticulate": "網状",
     "multiPoint": "マルチポイント",
     "wiggle": "ウィグル",
-    "thorn": "トゲ"
+    "thorn": "トゲ",
+    "freehand": "ペン",
+    "freehandStroke": "縁取りペン",
+    "ink": "インク"
   },
   "operate": {
     "undo": "元に戻す",
     "redo": "やり直す",
     "copy": "コピー",
+    "group": "グループ化",
     "delete": "削除",
     "text": "テキスト追加",
     "image": "画像アップロード",
     "clean": "クリア",
     "save": "画像として保存",
-    "fileList": "ファイルリスト",
+    "objectList": "レイヤーリスト",
+    "fileList": "ボード",
     "fullscreen": "全画面表示",
     "exitFullscreen": "全画面を終了",
     "addFile": "ファイル追加",
@@ -79,16 +92,89 @@
     "saveFile": "ファイルデータ保存",
     "uploadFile": "ファイルデータアップロード"
   },
+  "objectList": {
+    "title": "レイヤー",
+    "empty": "このボードには要素がありません",
+    "show": "表示",
+    "hide": "非表示",
+    "brush": "ブラシ",
+    "text": "テキスト",
+    "image": "画像",
+    "line": "直線",
+    "arrow": "矢印",
+    "rectangle": "矩形",
+    "circle": "円",
+    "polygon": "多角形",
+    "graph": "図形",
+    "group": "グループ",
+    "element": "要素"
+  },
   "cleanModal": {
     "title": "コンテンツのクリアを確認しますか？"
   },
   "deleteFileModal": {
-    "title": "現在のファイルの削除を確認しますか？"
+    "title": "選択した {{count}} 件のボードを削除しますか？",
+    "keepCurrent": "ボードは少なくとも 1 件残します。現在のボードは削除されません。",
+    "keepOne": "ボードは少なくとも 1 件残してください"
+  },
+  "fileBoard": {
+    "title": "ボード",
+    "selected": "{{count}} 件選択中",
+    "selectAll": "すべて選択",
+    "clearSelection": "選択解除",
+    "select": "{{title}} を選択",
+    "rename": "名前を変更",
+    "create": "ボードを作成",
+    "batchDelete": "選択を削除",
+    "batchDownload": "まとめてダウンロード",
+    "noThumbnail": "サムネイルはまだありません",
+    "current": "現在",
+    "limit": "ボードは最大 {{count}} 件までです",
+    "close": "閉じる"
+  },
+  "templatePrompt": {
+    "title": "Paint Board",
+    "tagline": "完全オープンソースの Web クリエイティブボード",
+    "star": "Star が一番の応援です ✨。ありがとうございます。",
+    "description": "下のプリセットでボードの機能をひと通り確認できます。閉じると空白のボードから始められます。",
+    "create": "作成",
+    "close": "閉じる",
+    "selectFirst": "先にテンプレートを選択してください"
+  },
+  "renameFileModal": {
+    "title": "ボード名を変更",
+    "createTitle": "ボードを作成",
+    "placeholder": "ボード名",
+    "empty": "名前を入力してください",
+    "duplicate": "同じ名前のボードがすでにあります",
+    "blank": "空白のボード"
+  },
+  "downloadFiles": {
+    "title": "まとめてダウンロード",
+    "overall": "全体 {{current}}/{{total}}",
+    "waiting": "待機",
+    "writing": "ファイルを作成中",
+    "done": "作成済み",
+    "failed": "失敗",
+    "zipping": "まとめています",
+    "downloadStarted": "ダウンロードを開始しました",
+    "allStarted": "ファイルを作成し、ダウンロードを開始しました",
+    "partial": "一部のファイルは失敗しました。残りはダウンロードを開始しました",
+    "allFailed": "ダウンロードできるファイルがありません",
+    "zipFailed": "まとめに失敗しました",
+    "missing": "ボードが見つかりません",
+    "stringifyFailed": "ボードファイルを作成できません",
+    "close": "閉じる"
   },
   "tip": {
     "uploadFileFail": "アップロードに失敗しました。もう一度お試しください",
     "unselectedElementTip": "描画ボードのコンテンツをクリックまたは選択してください",
-    "cameraPermissionDenied": "カメラの権限が拒否されました。ブラウザの権限を確認してください"
+    "cameraPermissionDenied": "カメラの権限が拒否されました。ブラウザの権限を確認してください",
+    "fileHydrationFail": "保存した描画を復元できませんでした。ページを再読み込みしてください。復元できるまで、新しい編集は保存済みのファイルを上書きしません。",
+    "filePersistFail": "描画をローカルに保存できませんでした。ページを再読み込みしてください。保存できるまで、新しい編集は保存済みのファイルを上書きしません。",
+    "exportFail": "画像を保存できませんでした。キャンバスに他のサイトの画像が含まれている可能性があります。",
+    "exportTooLarge": "画像が大きすぎて書き出せません。内容を縮小するか、ズームを下げてからもう一度お試しください。",
+    "exportFailGeneric": "画像を保存できませんでした。もう一度お試しください。"
   },
   "filters": {
     "Sepia": "セピア",
@@ -112,6 +198,26 @@
     "italic": "イタリック",
     "underLine": "下線",
     "lineThrough": "打ち消し線"
+  },
+  "fontConfig": {
+    "settings": "フォント設定",
+    "title": "フォント設定",
+    "defaultBadge": "標準",
+    "add": "追加",
+    "placeholder": "Google Fonts のフォント名",
+    "delete": "削除",
+    "settingsTip": "フォントをカスタマイズ",
+    "sourceTip": "フォントは Google Fonts から読み込みます。クリックしてさらに見る",
+    "setQuick": "パネルに表示",
+    "alreadyQuick": "パネル表示中",
+    "customCount": "カスタム",
+    "loading": "フォントを確認しています...",
+    "invalid": "有効なフォント名を入力してください",
+    "duplicate": "このフォントは既に追加されています",
+    "limit": "カスタムフォントは5つまでです",
+    "notFound": "その Google フォントは見つかりません",
+    "network": "ネットワークエラーでフォントを読み込めませんでした",
+    "loadFailed": "フォントの読み込みに失敗しました"
   },
   "boardConfig": {
     "cacheTip": "大量の描画コンテンツがある場合、キャッシュを有効にすると描画パフォーマンスが向上し、キャッシュを無効にするとキャンバスの鮮明さが向上します"
@@ -142,10 +248,17 @@
     "positivePoint": "ポジティブ",
     "negativePoint": "ネガティブ"
   },
+  "exportImage": {
+    "viewport": "表示中の領域を書き出す",
+    "content": "すべての描画を書き出す",
+    "selection": "選択中の内容を書き出す",
+    "board": "現在のボードデータを書き出す"
+  },
   "downloadImage": {
     "rotate": "回転",
     "scale": "拡大縮小",
-    "size": "サイズ"
+    "size": "サイズ",
+    "background": "背景"
   },
   "eraserConfig": {
     "eraser": "消しゴム",
@@ -208,7 +321,7 @@
   "features": {
     "drawingMode": "描画モード",
     "freeDrawing": "フリー描画",
-    "freeDrawingDesc1": "12種類の異なるスタイルのブラシを提供：基本ブラシ、レインボーブラシ、マルチシェイプブラシ、マテリアルブラシ、ピクセルブラシ、マルチカラーブラシ、テキストブラシ、マルチライン接続ブラシ、メッシュブラシ、マルチポイント接続ブラシ、波曲線ブラシ、トゲブラシ。多様な描画ニーズを満たします",
+    "freeDrawingDesc1": "15種類のブラシを提供：基本、ペン、アウトラインペン、レインボー、マルチシェイプ、マテリアル、ピクセル、マルチカラー、テキスト、マルチライン、メッシュ、マルチポイント、波曲線、トゲ、インク",
     "freeDrawingDesc2": "すべてのブラシは色とブラシ幅のカスタマイズをサポート",
     "freeDrawingDesc3": "マルチシェイプブラシはシェイプタイプと数量の柔軟な設定をサポート",
     "freeDrawingDesc4": "マテリアルブラシとマルチカラーブラシはマテリアルタイプをカスタマイズ可能",
@@ -242,7 +355,7 @@
     "bottomLeftDesc2": "円形プログレスバー：現在のズーム率をリアルタイム表示、クリックでズーム率をリセット",
     "bottomLeftDesc3": "カメラボタン：現在のカメラ状態を表示、複数の表示設定をサポート",
     "bottomOperationBar": "下部操作バー",
-    "bottomOperationDesc1": "左から右への機能：元に戻す、やり直し、現在の選択をコピー、現在の選択を削除、テキスト描画、画像アップロード、描画コンテンツをクリア、画像として保存、ファイルリストを開く",
+    "bottomOperationDesc1": "左から右への機能：元に戻す、やり直し、現在の選択をコピー、現在の選択を削除、テキスト描画、画像アップロード、描画コンテンツをクリア、画像として保存、レイヤーリストを開く、ファイルリストを開く",
     "bottomOperationDesc1_1": "画像アップロードは背景除去、画像セグメンテーションをサポート。この機能はWebGPUサポートが必要、最新版のGoogle Chromeの使用を推奨",
     "bottomOperationDesc1_2": "画像として保存はカスタム設定をサポート。回転、スケール、クロップ",
     "fileList": "ファイルリスト",
@@ -252,6 +365,9 @@
   },
   "helpInfo": {
     "openSourceRepo": "オープンソースリポジトリ",
+    "openSourceRepoDesc": "Star が一番の応援です。ありがとうございます。",
+    "docs": "ドキュメント",
+    "docsDesc": "アプリの詳しい機能説明を見られます。",
     "featureIntro": "機能紹介",
     "shortcuts": "ショートカット",
     "board": "ボード",
@@ -290,7 +406,7 @@
       "switchFreeDrawing": "描画モードで自由描画切替",
       "switchShapeDrawing": "描画モードで図形描画切替",
       "switchBrushType": "自由描画でブラシタイプ切替",
-      "brushTypeNote": "(ボタンラベルに従って)"
+      "brushTypeNote": "ボタンの文字に従う"
     },
     "keyboardShortcuts": {
       "spaceDrag": "マウスクリックでドラッグ",

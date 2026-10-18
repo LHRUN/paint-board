@@ -1,5 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { paintBoard } from '@/core/paintBoard'
+import { refreshEditingBox } from '@/core/element/text/editingBox'
+import { canSnapshotTextChange } from '@/core/element/text/editingSnapshot'
 import { fontStyleCheckbox } from './constant'
 import { useMemo, FC } from 'react'
 import { FontStyle } from '@/constants/font'
@@ -59,7 +61,14 @@ const FontStyleConfig: FC<IProps> = ({ refreshCount }) => {
       default:
         break
     }
-    paintBoard.render()
+    if (obj?.type === 'i-text') {
+      void refreshEditingBox(obj)
+    }
+    if (canSnapshotTextChange(obj ? [obj] : [])) {
+      paintBoard.render()
+    } else {
+      paintBoard.canvas?.requestRenderAll()
+    }
     paintBoard.triggerHook()
   }
 

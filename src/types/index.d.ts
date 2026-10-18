@@ -12,7 +12,7 @@ declare module 'fabric/fabric-impl' {
     _customType: string
     __corner: number
     toObject_original: fabric.Object.toObject
-    erasable: boolean
+    erasable: boolean | 'deep'
   }
 
   export interface Canvas {

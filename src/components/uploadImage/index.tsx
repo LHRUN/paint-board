@@ -9,6 +9,7 @@ import {
   Processor
 } from '@huggingface/transformers'
 import { cropTransparent } from '@/utils/cropTransparent'
+import { releaseModel, whenModelReleased } from './releaseModel'
 
 import { Info } from 'lucide-react'
 import Mask from '@/components/mask'
@@ -33,6 +34,9 @@ const REMOVE_BACKGROUND_STATUS = {
 type RemoveBackgroundStatusType =
   (typeof REMOVE_BACKGROUND_STATUS)[keyof typeof REMOVE_BACKGROUND_STATUS]
 
+// Survives closing the dialog so a new open waits for the cancelled load to release.
+let backgroundLoadTask: Promise<void> = Promise.resolve()
+
 const UploadImage: FC<IProps> = ({
   url,
   showModal,
@@ -50,6 +54,7 @@ const UploadImage: FC<IProps> = ({
 
   const modelRef = useRef<PreTrainedModel>()
   const processorRef = useRef<Processor>()
+  const sessionRef = useRef(0)
 
   const removeBackgroundBtnTip = useMemo(() => {
     switch (removeBackgroundStatus) {
@@ -71,18 +76,20 @@ const UploadImage: FC<IProps> = ({
   }, [removeBackgroundStatus])
 
   useEffect(() => {
-    ;(async () => {
+    if (!showModal) {
+      return
+    }
+    let cancelled = false
+    setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOADING)
+    const previousLoad = backgroundLoadTask
+    const load = (async () => {
+      let model: PreTrainedModel | undefined
       try {
-        if (
-          !showModal ||
-          modelRef.current ||
-          processorRef.current ||
-          removeBackgroundStatus === REMOVE_BACKGROUND_STATUS.LOADING
-        ) {
+        await previousLoad
+        await whenModelReleased()
+        if (cancelled || modelRef.current || processorRef.current) {
           return
         }
-
-        setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOADING)
         if (!navigator?.gpu) {
           setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.NO_SUPPORT_WEBGPU)
           return
@@ -91,16 +98,40 @@ const UploadImage: FC<IProps> = ({
         if (env.backends.onnx.wasm) {
           env.backends.onnx.wasm.proxy = false
         }
-        modelRef.current ??= await AutoModel.from_pretrained(model_id, {
+        model = await AutoModel.from_pretrained(model_id, {
           device: 'webgpu'
         })
-        processorRef.current ??= await AutoProcessor.from_pretrained(model_id)
+        const processor = await AutoProcessor.from_pretrained(model_id)
+        if (cancelled) {
+          await releaseModel(model)
+          model = undefined
+          return
+        }
+        modelRef.current = model
+        processorRef.current = processor
+        model = undefined
         setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOAD_SUCCESS)
       } catch (err) {
-        console.log('err', err)
-        setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOAD_ERROR)
+        await releaseModel(model)
+        if (!cancelled) {
+          console.log('err', err)
+          setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOAD_ERROR)
+        }
       }
     })()
+    backgroundLoadTask = load.then(
+      () => undefined,
+      () => undefined
+    )
+    return () => {
+      cancelled = true
+      sessionRef.current += 1
+      const currentModel = modelRef.current
+      modelRef.current = undefined
+      processorRef.current = undefined
+      void releaseModel(currentModel)
+      setRemoveBackgroundStatus(undefined)
+    }
   }, [showModal])
 
   const handleCancel = () => {
@@ -116,6 +147,7 @@ const UploadImage: FC<IProps> = ({
       return
     }
 
+    const session = sessionRef.current
     const model = modelRef.current
     const processor = processorRef.current
 
@@ -125,41 +157,62 @@ const UploadImage: FC<IProps> = ({
 
     setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.PROCESSING)
 
-    // Load image
-    const img = await RawImage.fromURL(url)
+    try {
+      const stillCurrent = () => session === sessionRef.current
+      // Load image
+      const img = await RawImage.fromURL(url)
+      if (!stillCurrent()) {
+        return
+      }
 
-    // Pre-process image
-    const { pixel_values } = await processor(img)
+      // Pre-process image
+      const { pixel_values } = await processor(img)
+      if (!stillCurrent()) {
+        return
+      }
 
-    // Predict alpha matte
-    const { output } = await model({ input: pixel_values })
+      // Predict alpha matte
+      const { output } = await model({ input: pixel_values })
+      if (!stillCurrent()) {
+        return
+      }
 
-    const maskData = (
-      await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(
-        img.width,
-        img.height
-      )
-    ).data
+      const maskData = (
+        await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(
+          img.width,
+          img.height
+        )
+      ).data
+      if (!stillCurrent()) {
+        return
+      }
 
-    // Create new canvas
-    const canvas = document.createElement('canvas')
-    canvas.width = img.width
-    canvas.height = img.height
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+      // Create new canvas
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
 
-    // Draw original image output to canvas
-    ctx.drawImage(img.toCanvas(), 0, 0)
+      // Draw original image output to canvas
+      ctx.drawImage(img.toCanvas(), 0, 0)
 
-    // Update alpha channel
-    const pixelData = ctx.getImageData(0, 0, img.width, img.height)
-    for (let i = 0; i < maskData.length; ++i) {
-      pixelData.data[4 * i + 3] = maskData[i]
+      // Update alpha channel
+      const pixelData = ctx.getImageData(0, 0, img.width, img.height)
+      for (let i = 0; i < maskData.length; ++i) {
+        pixelData.data[4 * i + 3] = maskData[i]
+      }
+      ctx.putImageData(pixelData, 0, 0)
+
+      setProcessedImage(canvas.toDataURL('image/png'))
+      setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.PROCESSING_SUCCESS)
+      setShowOriginImage(false)
+    } catch (err) {
+      if (session !== sessionRef.current) {
+        return
+      }
+      console.log('err', err)
+      setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.LOAD_SUCCESS)
     }
-    ctx.putImageData(pixelData, 0, 0)
-
-    setProcessedImage(canvas.toDataURL('image/png'))
-    setRemoveBackgroundStatus(REMOVE_BACKGROUND_STATUS.PROCESSING_SUCCESS)
-    setShowOriginImage(false)
   }
 
   const clickUploadImage = () => {

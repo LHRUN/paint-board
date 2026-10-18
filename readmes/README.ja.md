@@ -10,7 +10,6 @@
   <a href="https://github.com/LHRUN/paint-board/stargazers"><img src="https://img.shields.io/github/stars/LHRUN/paint-board" alt="Stars Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/github/forks/LHRUN/paint-board" alt="Forks Badge"/></a>
   <a href="https://github.com/LHRUN/paint-board/blob/master/LICENSE"><img src="https://img.shields.io/github/license/LHRUN/paint-board" alt="License Badge"/></a>
-  <a href="https://github.com/LHRUN/paint-board"><img src="https://img.shields.io/badge/Made%20with-React%20%26%20Vite-pink" alt="Next&Prisma" /></a>
   <a href="https://github.com/LHRUN/paint-board/releases"><img alt="release" src="https://img.shields.io/github/package-json/v/LHRUN/paint-board" /></a>
 </div>
 
@@ -26,7 +25,8 @@
 
 
 ## プレビュー
-Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
+Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)  
+Docs: [https://songlh.top/paint-board-docs/](https://songlh.top/paint-board-docs/)
 
 <div align="center" style="width: 100%;">
   <img style="width: 100%" src="https://raw.githubusercontent.com/LHRUN/file-store/main/paint-board/preview_device.png" alt="preview"/>
@@ -34,13 +34,13 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 
 ## 機能概要
 + ペイントモード
-  - フリーペイント: 基本ブラシ、レインボーブラシ、マルチシェイプブラシ、マルチ素材ブラシ、ピクセルブラシ、マルチカラーブラシ、テキストブラシ、マルチライン接続ブラシ、メッシュブラシ、マルチポイント接続ブラシ、波状曲線ブラシ、トゲブラシなど、12種類の異なるスタイルのブラシを提供。多様な描画ニーズに対応します。
+  - フリーペイント: 基本、ペン、アウトラインペン、レインボー、マルチシェイプ、素材、ピクセル、マルチカラー、テキスト、マルチライン、メッシュ、マルチポイント、波状曲線、トゲ、インクの 15 種類のブラシを提供します。
   - 図形描画: 内蔵図形とLucideアイコンライブラリの図形を含む豊富な図形の描画をサポート。クリックするだけで追加・使用可能。線の太さ、線種、塗りつぶし色、塗りつぶしパターンを設定可能。
 + 消しゴムモード: 全内容を直線的に消去可能。直線幅の設定をサポート。
-+ 選択モード: クリックまたは範囲選択による編集をサポート。選択後はハンドル操作でドラッグ・拡大縮小・回転が可能。各種カスタム設定にも対応。
++ 選択モード: クリックまたは範囲選択による編集をサポート。選択後はドラッグ、拡大縮小、回転、色の変更ができ、複数のオブジェクトをグループにできます。
 + アートボードモード: アートボード背景、カスタムサイズ、グローバル描画設定をサポート。
-+ 操作バー: 左から右へ、それぞれ「元に戻す」「やり直し」「選択内容のコピー」「選択内容の削除」「文字描画」「画像アップロード」「描画内容のクリア」「画像として保存」「ファイルリストを開く」の機能。
-+ 複数ファイル設定: 複数のキャンバス切り替えをサポート。各キャンバスはタイトルのカスタマイズ、追加・削除が可能で、並べ替えやアップロード/ダウンロード機能を提供。
++ 操作バー: 元に戻す、やり直し、コピー、グループ化、削除、文字描画、画像アップロード、描画内容のクリア、画像として保存、レイヤーリスト、ファイルリスト。
++ 複数ファイル設定: 複数のキャンバスを切り替えられます。各キャンバスのタイトルは変更でき、追加、名前の変更、削除、アップロード、一括ダウンロードができます。新規キャンバスは 20 枚までです。
 + i18n: 支持中文(简体), 中文(繁体), English, 日本語, 한국어。
 
 ## V1.3.0 Video Demo
@@ -52,23 +52,29 @@ Link: [https://songlh.top/paint-board/](https://songlh.top/paint-board/)
 ## クイックスタート
 ```
 git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
 pnpm install
 pnpm dev
 ```
 
 ### Docker
+1. Clone source code repository
+```sh
+git clone https://github.com/LHRUN/paint-board.git
+cd paint-board
+```
 
-1. Build a Docker image with the name `paint-board`.
+2. Build a Docker image with the name `paint-board`.
 ```sh
 docker build -t paint-board .
 ```
 
-2. Start a docker container.
+3. Start a docker container.
 ```sh
 docker run -d -p 8080:80 --name paint-board paint-board
 ```
 
-3. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
+4. Accessed by opening `http://localhost:8080/paint-board/` in your browser.
 
 ## ブラウザサポート
 
@@ -76,7 +82,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt=" Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari |
 | :--: | :--: | :--: | :--: |
-| 80+ | 80+ | 70+ | 13+ |
+| 80+ | 80+ | 70+ | 16.4+ |
 
 ## Contact me
 
@@ -84,9 +90,7 @@ docker run -d -p 8080:80 --name paint-board paint-board
 
 + Email: song.lhlh@gmail.com
 + Telegram: https://t.me/longhao_song
-+ Twiter: https://twitter.com/Song_LongHao
-+ WeChat:
-<img style="width: 300px" src="https://github.com/user-attachments/assets/719265e1-dbfa-4760-9482-aa0823b72df8" alt="wechat"/>
++ WeChat: August8_L
 
 
 ## Contributing
