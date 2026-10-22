@@ -2,7 +2,6 @@ import { FC, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { paintBoard } from '@/core/paintBoard'
 import {
-  applyFilterSnapshots,
   commitFilterSnapshots,
   getActiveImage,
   originalImageSrc,
@@ -53,10 +52,7 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
   const { t } = useTranslation()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const imageRef = useRef<fabric.Image | null>(null)
-  const baselineRef = useRef<FilterSnapshot[]>([])
   const draftRef = useRef<FilterSnapshot[]>([])
-  const appliedRef = useRef(false)
-  const frameRef = useRef(0)
   const [draft, setDraft] = useState<FilterSnapshot[]>([])
   const [category, setCategory] = useState<FilterGroupId>('adjust')
   const [failed, setFailed] = useState(false)
@@ -70,25 +66,13 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
     const cloned = cloneSnapshots(next)
     draftRef.current = cloned
     setDraft(cloned)
+    setFailed(false)
     return cloned
   }
 
-  const paint = (snapshots: FilterSnapshot[], notify: boolean) => {
-    const image = imageRef.current
-    if (!image || image.canvas !== paintBoard.canvas) {
-      return false
-    }
-    return applyFilterSnapshots(image, snapshots, false, notify)
-  }
-
+  /** Draft only. The board image changes when the user applies. */
   const preview = (next: FilterSnapshot[]) => {
-    const cloned = remember(next)
-    cancelAnimationFrame(frameRef.current)
-    frameRef.current = requestAnimationFrame(() => {
-      if (!paint(cloned, false)) {
-        setFailed(true)
-      }
-    })
+    remember(next)
   }
 
   useEffect(() => {
@@ -111,16 +95,9 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
     const image = getActiveImage()
     imageRef.current = image
     const baseline = image ? readFilterSnapshots(image) : []
-    baselineRef.current = cloneSnapshots(baseline)
     remember(baseline)
     setCategory('adjust')
-    setFailed(false)
-    appliedRef.current = false
   }, [open])
-
-  useEffect(() => {
-    return () => cancelAnimationFrame(frameRef.current)
-  }, [])
 
   useEffect(() => {
     const dialog = compareRef.current
@@ -134,11 +111,6 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
       dialog.close()
     }
   }, [compare])
-
-  const revert = () => {
-    cancelAnimationFrame(frameRef.current)
-    paint(baselineRef.current, true)
-  }
 
   const setNumber = (type: string, key: string, value: number) => {
     preview(
@@ -190,7 +162,6 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
   const apply = () => {
     const image = imageRef.current
     if (!image || image.canvas !== paintBoard.canvas) {
-      appliedRef.current = true
       dialogRef.current?.close()
       return
     }
@@ -198,7 +169,6 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
       setFailed(true)
       return
     }
-    appliedRef.current = true
     dialogRef.current?.close()
   }
 
@@ -220,10 +190,6 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
         className="modal"
         onClose={() => {
           setCompare(null)
-          if (!appliedRef.current) {
-            revert()
-          }
-          appliedRef.current = false
           onClose()
         }}
       >
@@ -643,7 +609,7 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
           </h3>
           <div className="mt-3 grid grid-cols-2 gap-3">
             <figure className="flex min-w-0 flex-col">
-              <figcaption className="mb-2 text-center text-sm font-fredokaOne">
+              <figcaption className="w-full mb-2 text-left text-sm font-fredokaOne">
                 {t('imageFilter.original')}
               </figcaption>
               {compare?.original && (
@@ -655,7 +621,7 @@ const AdjustFilterModal: FC<IProps> = ({ open, onClose }) => {
               )}
             </figure>
             <figure className="flex min-w-0 flex-col">
-              <figcaption className="mb-2 text-center text-sm font-fredokaOne">
+              <figcaption className="w-full text-left mb-2 text-sm font-fredokaOne">
                 {t('imageFilter.currentEffect')}
               </figcaption>
               {compare?.current && (

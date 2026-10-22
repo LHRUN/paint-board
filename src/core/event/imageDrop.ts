@@ -145,7 +145,9 @@ export class ImageDrop {
       { width: canvas.getWidth(), height: canvas.getHeight() },
       canvas.viewportTransform ? [...canvas.viewportTransform] : []
     )
-    void this.placeFiles(files, point, this.session)
+    // A newer drop, or detach, abandons a read that has not finished.
+    const session = ++this.session
+    void this.placeFiles(files, point, session)
   }
 
   private showHint = () => {
