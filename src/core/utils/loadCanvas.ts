@@ -18,6 +18,7 @@ import useFileStore, {
 } from '@/store/files'
 import { CANVAS_CUSTOM_PROPERTIES } from './canvasProperties'
 import { markFileContentDirty } from '@/store/fileRecord'
+import { applyRoughShapePadding } from '@/core/element/shape/utils/roughGroup'
 
 /**
  * get fabric.js canvas JSON data
@@ -37,6 +38,7 @@ export const getCanvasJSON = (): Partial<IBoardData> => {
  * (JSON load, undo, or paste) has to build them again from `_customType`.
  */
 export const initObjectControls = (obj: fabric.Object) => {
+  applyRoughShapePadding(obj, paintBoard.canvas?.getZoom() ?? 1)
   if (obj.type === 'group') {
     ;(obj as fabric.Group).getObjects().forEach(initObjectControls)
   }

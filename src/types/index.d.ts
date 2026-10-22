@@ -10,6 +10,7 @@ declare module 'fabric/fabric-impl' {
   export interface Object {
     id: string
     _customType: string
+    roughStrokeOutset?: number
     __corner: number
     toObject_original: fabric.Object.toObject
     erasable: boolean | 'deep'

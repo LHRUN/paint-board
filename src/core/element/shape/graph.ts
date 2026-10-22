@@ -16,6 +16,8 @@ import {
 } from './utils'
 import { svgShapesToPaths } from './utils/svgToPath'
 import { RoughShapeUtils } from './utils/roughUtils'
+import { SHAPE_VIEWBOX } from './utils/roughFrame'
+import { createRoughShapeGroup, layoutRoughShape } from './utils/roughGroup'
 import { isFillableGraphIcon, StrokeStyleType } from '@/constants/shape'
 import { shouldAttachGraph } from './graphReady'
 
@@ -34,6 +36,7 @@ export class GraphElement {
   private cancelled = false
   private readySettled = false
   private pendingPoint: fabric.Point | undefined
+  private contentOffset = { x: 0, y: 0 }
   private readyResolve: (attached: boolean) => void = () => {}
   readonly ready: Promise<boolean>
 
@@ -219,15 +222,12 @@ export class GraphElement {
       })
     })
 
-    const group = new fabric.Group(pathElementList, {
-      top: point.y,
-      left: point.x,
-      width: 26,
-      height: 26,
-      scaleX: 0,
-      scaleY: 0
-    })
-
+    const { group, offsetX, offsetY } = createRoughShapeGroup(
+      pathElementList,
+      point,
+      paintBoard.canvas?.getZoom() ?? 1
+    )
+    this.contentOffset = { x: offsetX, y: offsetY }
     return group
   }
 
@@ -246,20 +246,14 @@ export class GraphElement {
     if (!this.graphInstance) {
       return
     }
-    const { x: moveToX, y: moveToY } = new fabric.Point(point.x, point.y)
-    const width = Math.abs(moveToX - this.startX)
-    const height = Math.abs(moveToY - this.startY)
-    const left = moveToX > this.startX ? this.startX : this.startX - width
-    const top = moveToY > this.startY ? this.startY : this.startY - height
-
-    this.graphInstance.set({
-      scaleX: width / 24,
-      scaleY: height / 24,
-      left,
-      top
-    })
-
-    this.graphInstance.setCoords()
+    layoutRoughShape(
+      this.graphInstance,
+      this.startX,
+      this.startY,
+      point,
+      { x: SHAPE_VIEWBOX, y: SHAPE_VIEWBOX },
+      this.contentOffset
+    )
     paintBoard.canvas?.requestRenderAll()
   }
 

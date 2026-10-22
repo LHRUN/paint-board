@@ -6,6 +6,7 @@ import { MAX_ZOOM, MIN_ZOOM } from '../zoomEvent'
 import useBoardStore from '@/store/board'
 import useFileStore from '@/store/files'
 import { beginCanvasPan, endCanvasPan } from '../canvasPan'
+import { syncRoughShapePadding } from '@/core/element/shape/utils/roughGroup'
 
 /**
  * canvas transform handler
@@ -90,6 +91,7 @@ export class CanvasTransformHandler {
         objectCaching: true
       })
     }
+    syncRoughShapePadding(canvas.getObjects(), zoom)
     canvas.zoomToPoint(new fabric.Point(this.startX, this.startY), zoom)
     paintBoard.evnet?.zoomEvent.scheduleZoomWrite(zoom)
 

@@ -5,6 +5,8 @@ import { initCustomObjectAttr } from '@/core/utils/object'
 import { getRoughShapeOptions, getFabricShapeOptions } from './utils'
 import { ELEMENT_CUSTOM_TYPE } from '@/constants'
 import { RoughShapeUtils } from './utils/roughUtils'
+import { SHAPE_VIEWBOX } from './utils/roughFrame'
+import { createRoughShapeGroup, layoutRoughShape } from './utils/roughGroup'
 
 export class RectElement {
   graphInstance: fabric.Object | undefined
@@ -25,44 +27,26 @@ export class RectElement {
 
   renderSketchRect(point: fabric.Point) {
     const paths = RoughShapeUtils.getRectanglePaths(
-      24,
-      24,
+      SHAPE_VIEWBOX,
+      SHAPE_VIEWBOX,
       getRoughShapeOptions()
-    )
-    const pathElementList = paths.map((path) => {
-      return new fabric.Path(path.d, getFabricShapeOptions(path))
-    })
+    ).map((path) => new fabric.Path(path.d, getFabricShapeOptions(path)))
 
-    const group = new fabric.Group(pathElementList, {
-      top: point.y,
-      left: point.x,
-      width: 26,
-      height: 26,
-      scaleX: 0,
-      scaleY: 0
-    })
-
-    return group
+    return createRoughShapeGroup(
+      paths,
+      point,
+      paintBoard.canvas?.getZoom() ?? 1
+    ).group
   }
 
   addPosition(point: fabric.Point | undefined) {
     if (!point || !this.graphInstance) {
       return
     }
-    const { x: moveToX, y: moveToY } = new fabric.Point(point.x, point.y)
-    const width = Math.abs(moveToX - this.startX)
-    const height = Math.abs(moveToY - this.startY)
-    const left = moveToX > this.startX ? this.startX : this.startX - width
-    const top = moveToY > this.startY ? this.startY : this.startY - height
-
-    this.graphInstance.set({
-      scaleX: width / 26,
-      scaleY: height / 26,
-      left,
-      top
+    layoutRoughShape(this.graphInstance, this.startX, this.startY, point, {
+      x: this.graphInstance.width || 1,
+      y: this.graphInstance.height || 1
     })
-
-    this.graphInstance.setCoords()
     paintBoard.canvas?.requestRenderAll()
   }
 
