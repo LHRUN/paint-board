@@ -2,6 +2,7 @@ import { FillStyleType, StrokeStyleType } from '@/constants/shape'
 import { paintBoard } from '@/core/paintBoard'
 import useShapeStore from '@/store/shape'
 import { PathInfo } from 'roughjs/bin/core'
+import { buildRoughShapeOptions } from './roughFrame'
 
 export const getShapeStrokeWidth = () => {
   const zoom = paintBoard.canvas?.getZoom() ?? 1
@@ -59,13 +60,12 @@ export const getRoughShapeOptions = () => {
   const { strokeColorList, currentStrokeColor, strokeStyle } =
     useShapeStore.getState()
 
-  return {
-    roughness: strokeStyle === StrokeStyleType.Sketch ? 0.3 : 0,
-    bowing: strokeStyle === StrokeStyleType.Sketch ? 0.7 : 0,
+  return buildRoughShapeOptions({
     stroke: strokeColorList[currentStrokeColor],
+    strokeStyle,
     fill: getShapeFillColor(),
     fillStyle: getShapeFillStyle()
-  }
+  })
 }
 
 export const getFabricShapeOptions = (path: PathInfo) => {

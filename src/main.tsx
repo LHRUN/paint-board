@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
 import './i18n'
+import { loadUiChineseFont } from '@/core/font/googleFont'
+
+// Do not await. The interface renders with the system Chinese fallback first.
+void loadUiChineseFont()
 
 if (import.meta.env.PROD) {
   const script = document.createElement('script')

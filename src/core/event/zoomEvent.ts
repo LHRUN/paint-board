@@ -8,6 +8,7 @@ import useDrawStore from '@/store/draw'
 import useFileStore from '@/store/files'
 import debounce from 'lodash-es/debounce'
 import { getStrokeDashArray } from '@/core/element/draw/utils'
+import { syncRoughShapePadding } from '@/core/element/shape/utils/roughGroup'
 
 let zoomHook: (zoom: number) => undefined
 export const MIN_ZOOM = 0.3
@@ -40,6 +41,7 @@ export class CanvasZoomEvent {
     if (canvas) {
       const canvasWidth = (canvas?.width || 1) / 2
       const canvasHeight = (canvas?.height || 1) / 2
+      syncRoughShapePadding(canvas.getObjects(), 1)
       canvas.zoomToPoint(new fabric.Point(canvasWidth, canvasHeight), 1)
       this.scheduleZoomWrite(1)
     }
@@ -68,6 +70,7 @@ export class CanvasZoomEvent {
 
     const centerX = (canvas?.width || 1) / 2
     const centerY = (canvas?.height || 1) / 2
+    syncRoughShapePadding(canvas.getObjects(), zoom)
     canvas.zoomToPoint({ x: centerX, y: centerY }, zoom)
 
     this.scheduleZoomWrite(zoom)

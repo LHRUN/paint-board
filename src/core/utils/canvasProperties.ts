@@ -3,6 +3,7 @@ export const CANVAS_CUSTOM_PROPERTIES = [
   '_customType',
   'perPixelTargetFind',
   'objectCaching',
+  'roughStrokeOutset',
   'lockMovementX',
   'lockMovementY',
   'lockRotation',

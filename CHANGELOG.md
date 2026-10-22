@@ -1,3 +1,19 @@
+# 3.1.0
+
+### Feat
+
+- Eraser
+  - Eraser mode shows a circle that follows the pointer and matches the erase size as zoom changes.
+- Images
+  - Supports custom filter configuration and preview.
+- Fonts
+  - Chinese interface text uses ZCOOL KuaiLe.
+
+### Fix
+
+- Selection Mode
+  - Fixed the selection logic for hand-drawn shapes and the calculation of the selection box's range
+
 # 3.0.0
 
 ### Feat

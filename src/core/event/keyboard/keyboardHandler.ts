@@ -11,6 +11,7 @@ import { HistoryHandler } from './historyHandler'
 import { TransformCanvasHandler } from './transformCanvasHandler'
 import { ModeHandler } from './modeHandler'
 import { beginCanvasPan, endCanvasPan } from '../canvasPan'
+import { isModalDialogOpen } from './modalGuard'
 
 /**
  * Main keyboard shortcuts handler
@@ -41,8 +42,12 @@ export class KeyboardHandler {
 
     const target = e.target as HTMLElement
 
-    // Skip if user is typing in input fields
-    if (this.isInputActive(target)) {
+    // Skip if user is typing in input fields, or a modal such as image
+    // adjust is open. Those dialogs must not delete or duplicate the image.
+    if (
+      this.isInputActive(target) ||
+      isModalDialogOpen(typeof document === 'undefined' ? null : document)
+    ) {
       return
     }
 
@@ -240,6 +245,13 @@ export class KeyboardHandler {
 
     switch (e.code) {
       case KeyCode.SPACE:
+        // A dialog that never started a pan should not restore draw mode.
+        if (
+          !this.spacePanBypass &&
+          isModalDialogOpen(typeof document === 'undefined' ? null : document)
+        ) {
+          return
+        }
         /**
          * restores all states.
          */

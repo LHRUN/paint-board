@@ -1,42 +1,79 @@
-import { paintBoard } from '@/core/paintBoard'
-import { filtersCheckbox } from './constant'
-import { renderImageFilters } from '@/core/element/image'
+import { useState } from 'react'
+import { Settings } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { paintBoard } from '@/core/paintBoard'
+import { isPresetActive } from '@/core/element/image/filterCatalog'
+import {
+  readFilterSnapshots,
+  toggleImageFilter
+} from '@/core/element/image/filterActions'
+import useImageFilterStore from '@/store/imageFilter'
+import QuickFilterModal from './quickFilterModal'
+import AdjustFilterModal from './adjustFilterModal'
 
 const ImageFilterConfig = () => {
   const { t } = useTranslation()
-
-  // update current image filters
-  const updateImageFilters = (filter: string) => {
-    const image = paintBoard.canvas?.getActiveObject() as fabric.Image
-    renderImageFilters(image, filter)
-    paintBoard.render()
-    paintBoard.triggerHook()
-  }
-
-  const filters =
-    (paintBoard.canvas?.getActiveObject() as fabric.Image)?.filters?.map(
-      (item: any) => item?.type ?? ''
-    ) ?? []
+  const quickFilters = useImageFilterStore((state) => state.quickFilters)
+  const [showQuick, setShowQuick] = useState(false)
+  const [showAdjust, setShowAdjust] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const image = paintBoard.canvas?.getActiveObject() as fabric.Image | undefined
+  const active = image ? readFilterSnapshots(image) : []
 
   return (
-    <div className="flex items-start mt-2">
-      <div className="font-bold font-fredokaOne text-sm w-20 shrink-0 text-right">
-        {t('title.imageFilters')}
+    <div className="mt-2 flex items-start">
+      <div className="flex shrink-0 items-center justify-end gap-1 pt-0.5">
+        <span className="whitespace-nowrap text-right font-fredokaOne text-sm font-bold leading-none">
+          {t('title.imageFilters')}
+        </span>
+        <button
+          type="button"
+          className="inline-flex shrink-0 cursor-pointer tooltip tooltip-right"
+          data-tip={t('imageFilter.settings') as string}
+          aria-label={t('imageFilter.settings') as string}
+          onClick={() => setShowQuick(true)}
+        >
+          <Settings size={14} />
+        </button>
       </div>
-      <div className="flex flex-row flex-wrap w-44 items-center ml-2">
-        {filtersCheckbox.map((item, index) => (
-          <label key={index} className="cursor-pointer label inline-flex p-1">
-            <span className="label-text mr-2 text-xs">{t(item.text)}</span>
-            <input
-              type="checkbox"
-              checked={filters.includes(item.type)}
-              onChange={() => updateImageFilters(item.type)}
-              className="checkbox checkbox-xs checkbox-success"
-            />
-          </label>
-        ))}
+      <div className="ml-2 w-44">
+        <div className="grid grid-cols-3 gap-x-1 gap-y-1">
+          {quickFilters.map((id) => (
+            <label
+              key={id}
+              className="flex items-center gap-1 min-w-0 cursor-pointer"
+            >
+              <span className="text-xs truncate">{t(`filters.${id}`)}</span>
+              <input
+                type="checkbox"
+                checked={isPresetActive(active, id)}
+                onChange={() => {
+                  if (!image) {
+                    return
+                  }
+                  setFailed(!toggleImageFilter(image, id))
+                }}
+                className="checkbox checkbox-xs checkbox-success"
+              />
+            </label>
+          ))}
+        </div>
+        {failed && (
+          <p className="mt-1 text-xs text-error">{t('imageFilter.failed')}</p>
+        )}
+        <button
+          type="button"
+          className="btn btn-outline btn-xs w-full mt-2"
+          onClick={() => setShowAdjust(true)}
+        >
+          {t('imageFilter.custom')}
+        </button>
       </div>
+      <QuickFilterModal open={showQuick} onClose={() => setShowQuick(false)} />
+      <AdjustFilterModal
+        open={showAdjust}
+        onClose={() => setShowAdjust(false)}
+      />
     </div>
   )
 }

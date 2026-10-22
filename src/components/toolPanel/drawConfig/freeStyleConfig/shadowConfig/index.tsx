@@ -18,7 +18,7 @@ const ShadowConfig = () => {
     <div className="mt-2">
       <div className="font-bold text-sm font-fredokaOne">
         {t('title.shadow')}
-        <span className="text-xs font-georgia font-normal">
+        <span className="text-xs font-fredokaOne">
           ({t('shadow.configTip')})
         </span>
       </div>
