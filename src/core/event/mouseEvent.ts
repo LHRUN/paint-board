@@ -1,14 +1,17 @@
 import { fabric } from 'fabric'
 import { paintBoard } from '@/core/paintBoard'
 import { isCanvasTextObject } from '@/core/element/text/placeholder'
+import { EraserCursor } from '@/core/element/eraser/cursor'
 import { DrawingHandler } from './draw/drawingHandler'
 
 export class CanvasMouseEvent {
   drawingHandler: DrawingHandler
   isMouseDown = false
   isSpaceKeyDown = false
+  private eraserCursor: EraserCursor
 
-  constructor() {
+  constructor(eraserCursor: EraserCursor) {
+    this.eraserCursor = eraserCursor
     this.drawingHandler = new DrawingHandler()
     this.initMouseEvents()
   }
@@ -24,6 +27,18 @@ export class CanvasMouseEvent {
 
       if (e.absolutePointer) {
         this.drawingHandler.drawingStart(e.absolutePointer)
+      }
+    })
+
+    // Drawing mode returns before `mouse:move`, but `mouse:move:before`
+    // still carries the pointer. The eraser ring follows that event.
+    canvas?.on('mouse:move:before', (e) => {
+      this.eraserCursor.move(e.e)
+    })
+
+    canvas?.on('mouse:out', (e) => {
+      if (e.e.type === 'mouseout') {
+        this.eraserCursor.leave()
       }
     })
 

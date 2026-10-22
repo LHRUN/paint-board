@@ -318,9 +318,10 @@ const useDrawStore = create<DrawState & DrawAction>()(
       },
       updateEraserWidth(eraserWidth) {
         set((state) => {
-          if (state.drawWidth !== eraserWidth && paintBoard.canvas) {
+          if (state.eraserWidth !== eraserWidth && paintBoard.canvas) {
             paintBoard.canvas.freeDrawingBrush.width =
               getEraserWidth(eraserWidth)
+            paintBoard.evnet?.eraserCursor.refresh()
           }
           return { eraserWidth }
         })

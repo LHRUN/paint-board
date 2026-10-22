@@ -83,7 +83,7 @@ export class PaintBoard {
     brushMouseMixin.initCanvas(this.canvas)
     alignGuideLine.init(this.canvas, useBoardStore.getState().openGuideLine)
 
-    this.evnet = new EventModule()
+    this.evnet = new EventModule(this.canvas)
     this.handleMode()
     ensureFreehandInput()
 
@@ -104,6 +104,7 @@ export class PaintBoard {
     this.loadGeneration += 1
     this.canvasFileId = null
     this.cancelPendingFileWrites()
+    this.evnet?.eraserCursor.detach()
     if (this.canvas) {
       this.canvas.dispose()
       this.evnet?.removeEvent()
@@ -381,6 +382,7 @@ export class PaintBoard {
       return
     }
     upperCanvas.style.pointerEvents = interactive ? '' : 'none'
+    this.evnet?.eraserCursor.setInteractive(interactive)
   }
 
   /**
@@ -441,6 +443,7 @@ export class PaintBoard {
     })
 
     this.canvas.requestRenderAll()
+    this.evnet?.eraserCursor.setActive(mode === ActionMode.ERASE)
   }
 
   /**
