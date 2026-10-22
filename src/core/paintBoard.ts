@@ -105,6 +105,7 @@ export class PaintBoard {
     this.canvasFileId = null
     this.cancelPendingFileWrites()
     this.evnet?.eraserCursor.detach()
+    this.evnet?.imageDrop.detach()
     if (this.canvas) {
       this.canvas.dispose()
       this.evnet?.removeEvent()

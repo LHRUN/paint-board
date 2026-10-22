@@ -174,7 +174,9 @@
     "filePersistFail": "Could not save the drawing locally. Refresh the page. New edits will not overwrite saved files until saving works again.",
     "exportFail": "Could not save the image. The canvas may contain a picture from another site.",
     "exportTooLarge": "The image is too large to export. Zoom out or export a smaller area.",
-    "exportFailGeneric": "Could not save the image. Please try again."
+    "exportFailGeneric": "Could not save the image. Please try again.",
+    "dropImageUnsupported": "Only JPEG and PNG images can be dropped onto the board.",
+    "dropImageReadFail": "Could not read that image. Please try again."
   },
   "filters": {
     "Sepia": "Sepia",

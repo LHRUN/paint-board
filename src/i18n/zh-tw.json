@@ -174,7 +174,9 @@
     "filePersistFail": "無法把畫布儲存到本地。請重新整理頁面。在儲存成功之前，新的編輯不會覆蓋已保存的檔案。",
     "exportFail": "無法儲存圖片。畫布裡可能有來自其他網站的圖片。",
     "exportTooLarge": "圖片太大，無法匯出。請縮小內容或降低縮放後再試。",
-    "exportFailGeneric": "無法儲存圖片，請重試。"
+    "exportFailGeneric": "無法儲存圖片，請重試。",
+    "dropImageUnsupported": "只能把 JPEG 或 PNG 圖片拖到畫板上。",
+    "dropImageReadFail": "無法讀取這張圖片，請再試一次。"
   },
   "filters": {
     "Sepia": "復古",

@@ -174,7 +174,9 @@
     "filePersistFail": "그림을 로컬에 저장하지 못했습니다. 페이지를 새로고침하세요. 저장에 성공하기 전에는 새 편집이 저장된 파일을 덮어쓰지 않습니다.",
     "exportFail": "이미지를 저장하지 못했습니다. 캔버스에 다른 사이트의 그림이 있을 수 있습니다.",
     "exportTooLarge": "이미지가 너무 커서 내보낼 수 없습니다. 내용을 줄이거나 확대/축소를 낮춘 뒤 다시 시도해 주세요.",
-    "exportFailGeneric": "이미지를 저장하지 못했습니다. 다시 시도해 주세요."
+    "exportFailGeneric": "이미지를 저장하지 못했습니다. 다시 시도해 주세요.",
+    "dropImageUnsupported": "보드에는 JPEG 또는 PNG 이미지만 놓을 수 있습니다.",
+    "dropImageReadFail": "이미지를 읽지 못했습니다. 다시 시도해 주세요."
   },
   "filters": {
     "Sepia": "세피아",

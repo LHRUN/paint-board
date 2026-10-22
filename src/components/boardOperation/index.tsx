@@ -42,6 +42,7 @@ import DownloadImage from './downloadImage'
 import ExportImageMenu from './exportImageMenu'
 import UploadImage from '@/components/uploadImage/lazy'
 import Toast from '@/components/toast'
+import { subscribeImageDropNotice } from '@/core/event/imageDrop'
 
 const isMobile = isMobileFn()
 
@@ -64,6 +65,7 @@ const BoardOperation = () => {
   const exportingRef = useRef(false)
 
   const [uploadImageURL, setUploadImageURL] = useState('')
+  const [dropNotice, setDropNotice] = useState<string | null>(null)
   const [showUploadModal, setShowUploadModal] = useState(false)
 
   // toggle fullscreen mode
@@ -151,6 +153,19 @@ const BoardOperation = () => {
       image.addImage(imageUrl)
     }
   }
+
+  useEffect(() => {
+    let timer = 0
+    const unsubscribe = subscribeImageDropNotice((notice) => {
+      setDropNotice(notice)
+      window.clearTimeout(timer)
+      timer = window.setTimeout(() => setDropNotice(null), 2800)
+    })
+    return () => {
+      unsubscribe()
+      window.clearTimeout(timer)
+    }
+  }, [])
 
   useEffect(() => {
     const refreshSelection = () => {
@@ -327,6 +342,7 @@ const BoardOperation = () => {
         </div>
       </div>
       {exportError && <Toast message={exportError} type="error" />}
+      {dropNotice && <Toast message={dropNotice} type="warning" />}
       {showObjectList && <ObjectList updateShow={updateShowObjectList} />}
       {showFile && <FileList updateShow={updateShowFile} />}
       {showDownloadModal && exportImage && (
