@@ -7,11 +7,25 @@ module.exports = {
         georgia: ['Georgia'],
         fredokaOne: [
           'Fredoka One',
+          'ZCOOL KuaiLe',
+          'system-ui',
           'PingFang SC',
-          'Microsoft Yahei',
+          'Microsoft YaHei',
           'Helvetica',
           'Arial',
           'sans-serif'
+        ],
+        sans: [
+          'ui-sans-serif',
+          'system-ui',
+          'ZCOOL KuaiLe',
+          'PingFang SC',
+          'Microsoft YaHei',
+          'sans-serif',
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"'
         ],
         hanaleiFill: ['Hanalei Fill'],
         ruslanDisplay: ['Ruslan Display'],

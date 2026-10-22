@@ -8,6 +8,9 @@ import {
 } from './fontConfig'
 
 const FONT_PROBE = 'Aa'
+
+/** Interface Chinese. Only weight 400 exists, and Google serves it in unicode-range slices. */
+export const UI_CHINESE_FONT = 'ZCOOL KuaiLe'
 export const BOARD_FONT_WAIT_MS = 8000
 const FONT_FACE_PROBE_MS = 400
 
@@ -511,6 +514,19 @@ export const ensureFontSamples = async (
       ensureFontTextReady(job.family, job.text).catch(() => undefined)
     )
   )
+}
+
+/**
+ * Start loading the interface Chinese font.
+ * The returned promise never rejects: a missing font, a timeout, or an
+ * offline browser leaves the system-font fallback in place.
+ */
+export const loadUiChineseFont = (deps?: FontLoadDeps) => {
+  try {
+    return loadGoogleFont(UI_CHINESE_FONT, deps).catch(() => undefined)
+  } catch {
+    return Promise.resolve()
+  }
 }
 
 export const prepareBoardFonts = async (boardData: unknown) => {

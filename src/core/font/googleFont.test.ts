@@ -6,7 +6,9 @@ import {
   interpretGoogleFontResponse,
   isGoogleFontStylesheet,
   listedFontFaceStatus,
-  loadGoogleFont
+  loadGoogleFont,
+  loadUiChineseFont,
+  UI_CHINESE_FONT
 } from './googleFont'
 
 const stylesheet =
@@ -109,6 +111,15 @@ describe('google font loading', () => {
       reason: 'not-found'
     })
     expect(missing.injectStylesheet).not.toHaveBeenCalled()
+  })
+
+  it('does not fail the interface when the chinese font cannot load', async () => {
+    const offline = depsFor(new Error('offline'))
+    offline.loadStylesheetLink = vi.fn(async () => 'error' as const)
+    offline.isOnline = () => false
+    await expect(loadUiChineseFont(offline)).resolves.toBeUndefined()
+    expect(offline.injectStylesheet).not.toHaveBeenCalled()
+    expect(UI_CHINESE_FONT).toBe('ZCOOL KuaiLe')
   })
 
   it('reports a network error when the browser is offline', async () => {
